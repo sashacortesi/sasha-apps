@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1793423068">
+<html lang="fr" data-build="1793442995">
 <head>
 <meta charset="utf-8">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -327,7 +327,7 @@ svg{display:block}
     <div class="prof pad"><div class="bigav"><span>SC</span></div>
       <div class="stats"><div><b id="mPosted">0</b><span>postées · 30 j</span></div><div><b id="mViews">0</b><span>vues · 30 j</span></div><div><b id="mStreak">0</b><span>série</span></div></div></div>
     <div class="pad mebody">
-      <button class="jude" id="judeBtn"><span class="jl"><b>Récap pour JUDE</b><small>Pour Wissam et Raphaël : rythme, stats, meilleures vidéos, prochaines vidéos</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></button>
+      <button class="jude" id="judeBtn"><span class="jl"><b>Récap pour JUDE</b><small>Pour Wissam et Rafaella : rythme, stats, meilleures vidéos, prochaines vidéos</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></button>
       <div class="sech"><h2>Meilleures vidéos</h2></div>
       <div id="topVids" class="ilist"></div>
       <div class="sech"><h2>Ce qui marche</h2><small>vues moyennes</small></div>
@@ -623,7 +623,7 @@ function judeText(){const L=last30();const S=L.filter(p=>p.stats&&p.stats.v);con
   const cats=Object.entries(by).map(([k,a])=>[(T[k]||T.daily).n,a.reduce((s,x)=>s+x,0)/a.length,a.length]).sort((a,b)=>b[1]-a[1]);
   const pill={};L.forEach(p=>{const n=(T[p.t]||T.daily).n;pill[n]=(pill[n]||0)+1});
   const nx=[];const t0=day0(new Date());for(let i=0;i<7;i++){const d=new Date(t0);d.setDate(d.getDate()+i);posts.filter(p=>p.date===iso(d)).sort((a,b)=>a.time.localeCompare(b.time)).forEach(p=>nx.push(p))}
-  let s=`RÉCAP CONTENU · Sasha Cortesi (@sashacortesi)\nPour Wissam et Raphaël, JUDE MGMT · ${dt}\n\n`;
+  let s=`RÉCAP CONTENU · Sasha Cortesi (@sashacortesi)\nPour Wissam et Rafaella, JUDE MGMT · ${dt}\n\n`;
   s+=`RYTHME\n${L.length} vidéo${L.length>1?'s':''} postée${L.length>1?'s':''} sur les 30 derniers jours. Objectif : 2 vidéos par jour pendant 3 mois (depuis le ${new Date(START+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}).\n\n`;
   if(S.length)s+=`CHIFFRES (${S.length} vidéos renseignées)\nVues cumulées : ${V.toLocaleString('fr-FR')}\nVues moyennes par vidéo : ${Math.round(V/S.length).toLocaleString('fr-FR')}\nTaux d'engagement moyen : ${(E/V*100).toFixed(1).replace('.',',')} %\n\n`;
   if(Object.keys(pill).length)s+=`PILIERS DE CONTENU (30 j)\n${Object.entries(pill).sort((a,b)=>b[1]-a[1]).map(([n,c])=>'· '+n+' : '+c+' vidéo'+(c>1?'s':'')).join('\n')}\n\n`;
