@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1793424003">
+<html lang="fr" data-build="1793424523">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -88,6 +88,29 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .step .ctl{display:flex;align-items:center;gap:6px}
 .step button{width:44px;height:44px;border-radius:22px;border:0;background:var(--soft);font-size:22px;font-weight:700}
 .step output{min-width:36px;text-align:center;font-size:22px;font-weight:800}
+.nav{width:38px;height:38px;border-radius:19px;border:0;background:var(--soft);font-size:22px;font-weight:700;line-height:1}.nav:disabled{opacity:.3}
+.dh b{text-transform:capitalize}
+.dtot{display:flex;justify-content:space-between;align-items:baseline}.dtot span{color:var(--muted);font-size:14px}.dtot b{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cat{border:0;background:var(--soft);border-radius:16px;padding:12px 6px 10px;display:grid;justify-items:center;gap:5px;font-size:13px;font-weight:700;position:relative}
+.cat .ci{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 16%,transparent)}
+.cat svg{width:20px;height:20px;fill:none;stroke:var(--c);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cat em{position:absolute;top:6px;right:6px;font-style:normal;font-size:10.5px;font-weight:800;background:var(--c);color:#fff;border-radius:999px;padding:1px 6px}
+.cat.on{box-shadow:inset 0 0 0 2px var(--c);background:var(--card)}
+.amt{background:var(--soft);border-radius:16px;padding:12px;display:grid;gap:10px}
+.ah{display:flex;justify-content:space-between;align-items:center}.ah b{font-size:16px}
+.x{width:28px;height:28px;border-radius:14px;border:0;background:var(--card);color:var(--muted);font-size:16px;line-height:1}
+.qp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.qp button{border:0;border-radius:12px;padding:12px 0;background:var(--card);font-weight:800;font-size:16px}
+.af{display:grid;grid-template-columns:1fr auto;gap:6px}.af input{min-width:0;border:1.5px solid transparent;border-radius:12px;background:var(--card);padding:11px 12px;font-size:16px;font-weight:700;color:var(--ink)}.af input:focus{outline:none;border-color:var(--a1)}
+.af button{border:0;border-radius:12px;background:var(--a1);color:#fff;font-weight:800;padding:0 16px}
+.elist{display:grid}.ent{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;padding-block:9px;border-top:1px solid var(--line);font-size:15px}
+.ent .dot{width:10px;height:10px;border-radius:50%}.ent .x{background:var(--soft)}
+.sep{height:1px;background:var(--line)}
+.wt{display:flex;justify-content:space-between;font-weight:800;padding-top:4px;border-top:1px solid var(--line)}.wt span{font-weight:800}
+.wd{border:0;background:none;display:grid;justify-items:center;gap:4px;font-size:11px;color:var(--muted);font-weight:700;padding:0}
+.wd.sel i{box-shadow:0 0 0 2px var(--a1)}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:40;white-space:nowrap}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 .tog{display:flex;gap:8px}
 .tog button{flex:1;border:0;border-radius:12px;padding:11px;background:var(--soft);font-weight:700;font-size:14px}
 .tog button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -122,13 +145,13 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
     <div class="card" id="rev"></div>
     <h2>Ce qui sort, tous les mois</h2>
     <div class="card" id="fix"></div>
-    <div class="card"><div class="row"><span class="n"><span>Conso (shit, beuh, clopes, malbouffe)</span><small>Calculé dans l'onglet Conso</small></span><b id="consoM">—</b></div></div>
+    <div class="card"><div class="row"><span class="n"><span>Conso (shit, beuh, clopes, malbouffe)</span><small id="consoNote">Calculé dans l'onglet Conso</small></span><b id="consoM">—</b></div><div class="row"><span class="n"><span>Noté ce mois-ci</span><small>Tout ce que tu as noté dans Suivi</small></span><b id="monthReal">—</b></div></div>
   </main>
 
   <!-- CONSO -->
   <main class="pane" data-p="conso" hidden>
     <div class="hero warm"><small>Ce que ta conso te coûte</small><b id="cYear">—</b><span class="sub2" id="cSub"></span></div>
-    <p class="tip">Ce que tu dépenses en moyenne <b>par semaine</b>. Les gris sont des exemples.</p>
+    <p class="tip">Ton estimation de départ, <b>par semaine</b>. Dès 3 jours notés dans Suivi, les chiffres se calculent tout seuls avec tes vraies dépenses.</p>
     <div class="card" id="conso"></div>
     <div class="big3"><div><span>Par jour</span><b id="cD">—</b></div><div><span>Par mois</span><b id="cM">—</b></div><div><span>Part de tes revenus</span><b id="cP">—</b></div></div>
     <div class="card"><div class="bars" id="cBars"></div></div>
@@ -150,11 +173,19 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
   <main class="pane" data-p="suivi" hidden>
     <div class="jar" id="jar1"></div>
     <div class="day">
-      <div class="dh"><b id="dLabel">Aujourd'hui</b><span class="tip" id="dCost"></span></div>
+      <div class="dh"><button type="button" class="nav" id="dPrev" aria-label="Jour précédent">‹</button><b id="dLabel">Aujourd'hui</b><button type="button" class="nav" id="dNext" aria-label="Jour suivant">›</button></div>
+      <div class="dtot"><span>Dépensé ce jour</span><b id="dTot">0 €</b></div>
+      <div class="cats" id="cats"></div>
+      <div class="amt" id="amt" hidden><div class="ah"><b id="aCat"></b><button type="button" class="x" id="aX" aria-label="Fermer">×</button></div>
+        <div class="qp" id="qp"></div>
+        <form class="af" id="af"><input id="aV" inputmode="decimal" placeholder="Autre montant" aria-label="Montant" autocomplete="off"><button type="submit">Ajouter</button></form></div>
+      <div class="elist" id="elist"></div>
+      <div class="sep"></div>
       <div class="step"><span>Joints</span><span class="ctl"><button type="button" data-s="j" data-d="-1" aria-label="Moins de joints">−</button><output id="oj">0</output><button type="button" data-s="j" data-d="1" aria-label="Plus de joints">+</button></span></div>
       <div class="step"><span>Clopes</span><span class="ctl"><button type="button" data-s="c" data-d="-1" aria-label="Moins de clopes">−</button><output id="oc">0</output><button type="button" data-s="c" data-d="1" aria-label="Plus de clopes">+</button></span></div>
-      <div><span class="tip">Malbouffe aujourd'hui ?</span><div class="tog" id="mb" style="margin-top:6px"><button type="button" data-v="0" aria-pressed="false">Non</button><button type="button" data-v="1" aria-pressed="false">Oui</button></div></div>
     </div>
+    <h2>Cette semaine</h2>
+    <div class="card"><div class="bars" id="wBars"></div></div>
     <h2>Les 7 derniers jours</h2>
     <div class="card" style="padding:14px 16px"><div class="streak" id="week"></div></div>
     <div class="help"><b>Besoin d'en parler ?</b>
@@ -199,11 +230,15 @@ function bindRows(){
   $$('#rev input,#fix input').forEach(i=>i.oninput=()=>{const r=S[i.dataset.k].find(x=>x.id===i.closest('.row').dataset.id);if(i.dataset.f==='n')r.n=i.value;else r.v=i.value.trim()===''?null:num(i.value);save();calc()});
   $$('#rev .del,#fix .del').forEach(b=>b.onclick=()=>{const id=b.closest('.row').dataset.id;S[b.dataset.k]=S[b.dataset.k].filter(x=>x.id!==id);save();renderBudget()});
   $$('[data-add]').forEach(b=>b.onclick=()=>{S[b.dataset.add].push({id:'u'+Date.now().toString(36),n:'',ph:'Nom',v:null,pv:null});save();renderBudget();const ins=$$(`#${b.dataset.add} .name`);ins[ins.length-1].focus()})}
-function consoMonth(){return (cv('shit')+cv('beuh')+cv('clopes')+cv('malb'))*W}
+function realW(k){if(typeof weekReal!=='function')return null;const r=weekReal();return r.n>=3?r.t[k]/r.n*7:null}
+const cr=k=>{const r=realW(k);return r!=null?r:cv(k)};
+function consoMonth(){return (cr('shit')+cr('beuh')+cr('clopes')+cr('malb'))*W}
+const isReal=()=>typeof weekReal==='function'&&weekReal().n>=3;
 function calc(){const rev=S.rev.reduce((s,r)=>s+val(r),0),fix=S.fix.reduce((s,r)=>s+val(r),0),cm=consoMonth(),reste=rev-fix-cm;
   $('#hReste').textContent=eur(reste);$('#hReste').className=reste<0?'neg':'';
   $('#hSub').textContent=`${eur(rev)} qui rentrent · ${eur(fix)} de charges · ${eur(cm)} de conso`;
-  $('#consoM').textContent=eur(cm);
+  $('#consoM').textContent=eur(cm);$('#consoNote').textContent=isReal()?'D’après ta vraie semaine':'Estimation (onglet Conso)';
+  {const ym=iso(new Date()).slice(0,7);let t=0;Object.keys(S.days).forEach(k=>{if(k.startsWith(ym))(S.days[k].e||[]).forEach(x=>t+=x.v)});const el=$('#monthReal');if(el)el.textContent=eur(t)}
   renderConsoStats();renderPlace()}
 
 /* ---------- Conso ---------- */
@@ -212,9 +247,9 @@ function renderConso(){$('#conso').innerHTML=CF.map(([k,n,u,s])=>`<div class="ro
   $$('[data-c]').forEach(i=>i.oninput=()=>{S.conso[i.dataset.c]=i.value.trim()===''?null:num(i.value);save();calc()})}
 const CC={shit:'#D63B3B',beuh:'#13B5A0',clopes:'#C27803',malb:'#5B5BF0'};
 function renderConsoStats(){const cm=consoMonth(),rev=S.rev.reduce((s,r)=>s+val(r),0);
-  $('#cYear').textContent=eur(cm*12)+' / an';$('#cSub').innerHTML=`Soit ${eur(cm)} par mois${exUsed()?' <span class="ex" style="background:rgba(255,255,255,.2);color:#fff">avec exemples</span>':''}`;
+  $('#cYear').textContent=eur(cm*12)+' / an';$('#cSub').innerHTML=`Soit ${eur(cm)} par mois `+(isReal()?`<span class="ex" style="background:rgba(255,255,255,.2);color:#fff">d’après tes ${weekReal().n} derniers jours</span>`:exUsed()?'<span class="ex" style="background:rgba(255,255,255,.2);color:#fff">estimation</span>':'');
   $('#cD').textContent=(cm/30.4).toFixed(2).replace('.',',')+' €';$('#cM').textContent=eur(cm);$('#cP').textContent=rev?Math.round(cm/rev*100)+' %':'—';
-  const items=['shit','beuh','clopes','malb'].map(k=>[k,cv(k)*W]);const mx=Math.max(...items.map(x=>x[1]),1);
+  const items=['shit','beuh','clopes','malb'].map(k=>[k,cr(k)*W]);const mx=Math.max(...items.map(x=>x[1]),1);
   $('#cBars').innerHTML=items.map(([k,v])=>`<div class="bl"><div class="lab">${({shit:'Shit',beuh:'Beuh',clopes:'Clopes',malb:'Malbouffe'})[k]}<span>${eur(v)} / mois · ${eur(v*12)} / an</span></div><div class="bar"><i style="width:${v/mx*100}%;background:${CC[k]}"></i></div></div>`).join('')}
 
 /* ---------- À la place ---------- */
@@ -228,11 +263,11 @@ const ALTS=[
  ['piscine','Piscine','Abonnement municipal',30,'/mois','<path d="M3 17c2 0 2-1.5 4.5-1.5S9.5 17 12 17s2-1.5 4.5-1.5S18.5 17 21 17M7 14V5a2 2 0 0 1 4 0M15 14V5a2 2 0 0 1 4 0M7 9h8"/>'],
  ['sommeil','Bien dormir','Nouvel oreiller et linge de lit',90,'','<path d="M3 18V8M3 14h18v4M21 18v-4a3 3 0 0 0-3-3h-7v3M7 11a1.5 1.5 0 1 0 0-.01"/>']];
 if(!S.goal)S.goal='sport';if(S.spent==null)S.spent=0;
-function piggy(){let s=0;Object.keys(S.days).forEach(k=>s+=Math.max(0,baseDay()-dayCost(S.days[k])));return Math.max(0,s-(S.spent||0))}
+function piggy(){let s=0;Object.keys(S.days).forEach(k=>{if(tracked(S.days[k]))s+=Math.max(0,baseDay()-dayCost(S.days[k]))});return Math.max(0,s-(S.spent||0))}
 function jarHTML(){const g=ALTS.find(a=>a[0]===S.goal)||ALTS[0],have=piggy(),pct=Math.min(1,have/g[3]),done=pct>=1;
-  const d=S.days[today];const todayGain=d?Math.max(0,baseDay()-dayCost(d)):0;
+  const d=tracked(S.days[today])?S.days[today]:null;const todayGain=d?Math.max(0,baseDay()-dayCost(d)):0;
   return `<div class="jt"><div class="ring" style="--p:${pct*360}deg"><span>${Math.round(pct*100)}%</span></div><div class="jx"><small>Ma tirelire</small><b>${eur(have)}</b><span>${done?'Objectif atteint, offre-toi :':'Pour :'} <strong>${g[1]}</strong> · ${g[3]} €</span></div></div>
-   ${d?`<div class="jtoday">${todayGain>0?`+${todayGain.toFixed(2).replace('.',',')} € aujourd’hui`:'Rien de mis de côté aujourd’hui'}</div>`:'<div class="jtoday mute">Note ta journée ce soir pour remplir ta tirelire</div>'}
+   ${d?`<div class="jtoday">${todayGain>0?`+${todayGain.toFixed(2).replace('.',',')} € aujourd’hui`:'Rien de mis de côté aujourd’hui'}</div>`:'<div class="jtoday mute">Note tes joints et clopes du jour pour remplir ta tirelire</div>'}
    ${done?`<button type="button" class="treat" data-treat="${g[3]}">Je me l’offre</button>`:''}`}
 function renderJar(){['#jar1','#jar2'].forEach(s=>{const el=$(s);if(!el)return;el.innerHTML=jarHTML();const t=el.querySelector('[data-treat]');if(t)t.onclick=()=>{S.spent=(S.spent||0)+ +t.dataset.treat;save();renderJar();renderPlace()}})}
 function renderPlace(){const r=S.red/100,gm=consoMonth()*r;$('#rv').textContent=S.red+' %';$('#red').value=S.red;$('#gM').textContent=eur(gm);$('#gY').textContent=eur(gm*12);
@@ -245,30 +280,59 @@ const IDEAS=[['Bouge 10 minutes','Une marche, des pompes, monter les escaliers. 
 $('#ideas').innerHTML=IDEAS.map(([b,s,ic])=>`<div class="idea"><span class="e"><svg viewBox="0 0 24 24">${ic}</svg></span><span><b>${b}</b><small>${s}</small></span></div>`).join('');
 
 /* ---------- Suivi ---------- */
-const today=iso(new Date());
+const today=iso(new Date());let cur=today;
+const CATS=[['repas','Repas','#5B5BF0','<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 4-3 8h3"/>',[5,10,15,20]],
+ ['malb','Malbouffe','#E0703A','<path d="M4 11h16M5 11a7 7 0 0 1 14 0M5 15h14l-1 4H6z"/>',[5,10,15,25]],
+ ['shit','Shit','#D63B3B','<path d="M5 9l7-5 7 5v8l-7 4-7-4z"/>',[10,20,30,50]],
+ ['beuh','Beuh','#13B5A0','<path d="M12 21v-6M12 15c-5 0-8-4-8-9 4 0 8 3 8 9 0-6 4-9 8-9 0 5-3 9-8 9z"/>',[10,20,30,50]],
+ ['clopes','Clopes','#C27803','<path d="M3 14h14v4H3zM17 14h4v4h-4M18 11c0-2 2-2 2-4M15 11c0-2 2-2 2-4"/>',[13,26]],
+ ['autre','Autre','#6E7380','<circle cx="6" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/>',[5,10,20]]];
+const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));
 const costJ=()=>{const j=cv('jpd');return j>0?(cv('shit')+cv('beuh'))/(j*7):0};
 const costC=()=>{const c=cv('cpd');return c>0?cv('clopes')/(c*7):0};
 const baseDay=()=>(cv('shit')+cv('beuh')+cv('clopes')+cv('malb'))/7;
-const dayCost=d=>(d.j||0)*costJ()+(d.c||0)*costC()+(d.m?cv('malb')/3:0);
-function renderSuivi(){const d=S.days[today]||{j:null,c:null,m:null};
-  $('#oj').textContent=d.j??0;$('#oc').textContent=d.c??0;$$('#mb button').forEach(b=>b.setAttribute('aria-pressed',d.m!=null&&String(+d.m)===b.dataset.v));
-  $('#dCost').textContent=d.j!=null||d.c!=null||d.m!=null?'≈ '+dayCost(d).toFixed(2).replace('.',',')+' € aujourd’hui':'';
+const sumCat=(d,c)=>(d&&d.e||[]).filter(x=>x.cat===c).reduce((s,x)=>s+x.v,0);
+const dayCost=d=>(d.j||0)*costJ()+(d.c||0)*costC()+((d.e||[]).some(x=>x.cat==='malb')?sumCat(d,'malb'):(d.m?cv('malb')/3:0));
+const dayOf=k=>S.days[k]=S.days[k]||{e:[]};
+const tracked=d=>d&&(d.j!=null||d.c!=null);
+function last7(){const ks=[];for(let i=0;i<7;i++){const x=new Date();x.setDate(x.getDate()-i);ks.push(iso(x))}return ks}
+function weekReal(){const ks=last7().filter(k=>S.days[k]&&(S.days[k].e||[]).length);const t={};CATS.forEach(c=>t[c[0]]=0);ks.forEach(k=>(S.days[k].e||[]).forEach(x=>t[x.cat]=(t[x.cat]||0)+x.v));return{n:ks.length,t}}
+let openCat=null;
+function renderSuivi(){const d=S.days[cur]||{j:0,c:0,e:[]};const dt=new Date(cur+'T12:00');
+  $('#dLabel').textContent=cur===today?'Aujourd’hui':dt.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'});$('#dNext').disabled=cur===today;
+  $('#oj').textContent=d.j||0;$('#oc').textContent=d.c||0;
+  const tot=(d.e||[]).reduce((s,x)=>s+x.v,0);$('#dTot').textContent=tot.toFixed(2).replace('.',',').replace(',00','')+' €';
+  $('#cats').innerHTML=CATS.map(([id,n,col,ic])=>{const s=sumCat(d,id);return `<button type="button" class="cat ${openCat===id?'on':''}" data-cat="${id}" style="--c:${col}"><span class="ci"><svg viewBox="0 0 24 24">${ic}</svg></span><span>${n}</span>${s?`<em>${Math.round(s)} €</em>`:''}</button>`}).join('');
+  $$('[data-cat]').forEach(b=>b.onclick=()=>{openCat=openCat===b.dataset.cat?null:b.dataset.cat;renderSuivi();if(openCat)setTimeout(()=>$('#amt').scrollIntoView({block:'nearest',behavior:'smooth'}),30)});
+  const A=$('#amt');A.hidden=!openCat;if(openCat){const c=CN[openCat];$('#aCat').textContent=c[1];$('#qp').innerHTML=c[4].map(v=>`<button type="button" data-q="${v}">${v} €</button>`).join('');
+    $$('[data-q]').forEach(b=>b.onclick=()=>addE(+b.dataset.q))}
+  $('#elist').innerHTML=(d.e||[]).slice().reverse().map(x=>`<div class="ent"><span class="dot" style="background:${CN[x.cat][2]}"></span><span>${CN[x.cat][1]}</span><b>${String(x.v).replace('.',',')} €</b><button type="button" class="x" data-rm="${x.id}" aria-label="Retirer">×</button></div>`).join('');
+  $$('[data-rm]').forEach(b=>b.onclick=()=>{const dd=dayOf(cur);dd.e=dd.e.filter(x=>x.id!==b.dataset.rm);save();refresh()});
+  const W7=weekReal(),mx=Math.max(1,...Object.values(W7.t));
+  $('#wBars').innerHTML=W7.n?CATS.filter(c=>W7.t[c[0]]>0).map(([id,n,col])=>`<div class="bl"><div class="lab">${n}<span>${eur(W7.t[id])}</span></div><div class="bar"><i style="width:${W7.t[id]/mx*100}%;background:${col}"></i></div></div>`).join('')+`<div class="lab wt">Total 7 jours<span>${eur(Object.values(W7.t).reduce((a,b)=>a+b,0))}</span></div>`:'<p class="tip" style="padding:4px 0">Note tes dépenses du jour : ta semaine se remplit toute seule ici.</p>';
   const wk=[];for(let i=6;i>=0;i--){const x=new Date();x.setDate(x.getDate()-i);const k=iso(x),v=S.days[k];let cls='',t='';
-    if(v){const j=v.j||0,base=cv('jpd');cls=j===0?'g':j<base?'m':'b';t=j}
-    wk.push(`<div><i class="${cls}">${t}</i>${['D','L','M','M','J','V','S'][x.getDay()]}</div>`)}
-  $('#week').innerHTML=wk.join('');renderJar()}
-$$('[data-s]').forEach(b=>b.onclick=()=>{const d=S.days[today]=S.days[today]||{j:0,c:0,m:null};const k=b.dataset.s;d[k]=Math.max(0,(d[k]||0)+ +b.dataset.d);if(navigator.vibrate)navigator.vibrate(8);save();renderSuivi()});
-$('#mb').onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=S.days[today]=S.days[today]||{j:0,c:0,m:null};d.m=b.dataset.v==='1';save();renderSuivi()};
+    if(v&&(v.j!=null)){const j=v.j||0,base=cv('jpd');cls=j===0?'g':j<base?'m':'b';t=j}
+    wk.push(`<button type="button" class="wd ${k===cur?'sel':''}" data-day="${k}"><i class="${cls}">${t}</i>${['D','L','M','M','J','V','S'][x.getDay()]}</button>`)}
+  $('#week').innerHTML=wk.join('');$$('[data-day]').forEach(b=>b.onclick=()=>{cur=b.dataset.day;openCat=null;renderSuivi();window.scrollTo({top:0,behavior:'smooth'})});
+  renderJar()}
+function addE(v){if(!(v>0)||!openCat)return;const d=dayOf(cur);d.e=d.e||[];d.e.push({id:Date.now().toString(36),cat:openCat,v:Math.round(v*100)/100});$('#aV').value='';if(navigator.vibrate)navigator.vibrate(8);save();toastE(CN[openCat][1]+' +'+String(v).replace('.',',')+' €');openCat=null;refresh()}
+function refresh(){renderSuivi();calc()}
+function toastE(t){let el=$('#toast');if(!el){el=document.createElement('div');el.id='toast';el.className='toast';document.body.appendChild(el)}el.textContent=t;el.classList.add('on');clearTimeout(toastE.k);toastE.k=setTimeout(()=>el.classList.remove('on'),1400)}
+$('#af').onsubmit=e=>{e.preventDefault();addE(num($('#aV').value))};
+$('#aX').onclick=()=>{openCat=null;renderSuivi()};
+$('#dPrev').onclick=()=>{const x=new Date(cur+'T12:00');x.setDate(x.getDate()-1);cur=iso(x);openCat=null;renderSuivi()};
+$('#dNext').onclick=()=>{if(cur===today)return;const x=new Date(cur+'T12:00');x.setDate(x.getDate()+1);cur=iso(x);openCat=null;renderSuivi()};
+$$('[data-s]').forEach(b=>b.onclick=()=>{const d=dayOf(cur);const k=b.dataset.s;d[k]=Math.max(0,(d[k]||0)+ +b.dataset.d);if(navigator.vibrate)navigator.vibrate(8);save();refresh()});
 
 /* ---------- Onglets ---------- */
 const TT={budget:'Budget',conso:'Conso',suivi:'Suivi',place:'Bien-être'};
-function go(){let h=location.hash.slice(1);if(!TT[h]){try{h=localStorage.getItem('libreTab')||'budget'}catch(e){h='budget'}if(!TT[h])h='budget'}
+function go(){let h=location.hash.slice(1);if(!TT[h]){try{h=localStorage.getItem('libreTab')||'suivi'}catch(e){h='suivi'}if(!TT[h])h='suivi'}
   $$('.pane').forEach(p=>p.hidden=p.dataset.p!==h);$$('#tabs a').forEach(a=>a.dataset.t===h?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
   $('#title').textContent=TT[h];try{localStorage.setItem('libreTab',h)}catch(e){}window.scrollTo(0,0);if(h==='suivi')renderSuivi()}
 addEventListener('hashchange',go);
 /* champs : sélectionner au toucher */
 document.addEventListener('focusin',e=>{const i=e.target;if(i.matches&&i.matches('input[inputmode=decimal]')&&i.value)setTimeout(()=>{try{i.setSelectionRange(0,i.value.length)}catch(_){}},60)});
-renderBudget();renderConso();calc();renderSuivi();go();
+renderBudget();renderConso();renderSuivi();calc();go();
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 })();
 </script>
