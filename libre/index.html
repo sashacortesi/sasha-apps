@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1793424948">
+<html lang="fr" data-build="1793425309">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -138,6 +138,31 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .tabbar a{flex:1;max-width:130px;display:grid;justify-items:center;gap:3px;padding:8px 0 6px;color:var(--muted);text-decoration:none;font-size:10.5px;font-weight:600}
 .tabbar svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .tabbar a[aria-current="page"]{color:var(--ink)}.tabbar a[aria-current="page"] svg{stroke:var(--a1);stroke-width:2.3}
+.sos{width:100%;border:0;border-radius:18px;padding:16px;font-weight:800;font-size:17px;color:#fff;background:linear-gradient(120deg,#5B5BF0,#13B5A0);box-shadow:0 6px 18px rgba(91,91,240,.25)}
+.ov{position:fixed;inset:0;z-index:60;background:#0E1020;color:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.ovin{max-width:520px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:grid;gap:16px;position:relative}
+.ovx{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:max(14px,env(safe-area-inset-right,0px));width:40px;height:40px;border-radius:20px;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:22px}
+.ovk{margin:0;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.breath{position:relative;height:230px;display:grid;place-items:center}
+.orb{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7DE8D8,#5B5BF0);box-shadow:0 0 60px rgba(63,216,194,.45);transform:scale(.7);transition:transform 4s ease-in-out}
+.orb.big{transform:scale(1.55)}
+.breath span{position:absolute;font-size:20px;font-weight:800;text-shadow:0 2px 12px rgba(0,0,0,.4)}
+.ovt{margin:0;text-align:center;font-size:15px;color:rgba(255,255,255,.85)}
+.ovstats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ovstats div{background:rgba(255,255,255,.08);border-radius:16px;padding:12px;display:grid;gap:2px}
+.ovstats b{font-size:22px;font-weight:800}.ovstats span{font-size:12.5px;color:rgba(255,255,255,.7)}
+.ovcard{background:rgba(255,255,255,.08);border-radius:18px;padding:16px;display:grid;gap:8px}
+.ovcard b{font-size:18px;line-height:1.35;font-weight:700}
+.ovcard ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:16px;font-weight:600}
+.ovcard input{border:0;border-radius:12px;background:rgba(255,255,255,.12);color:#fff;padding:11px 12px;font-size:16px;min-width:0}
+.ovcard input::placeholder{color:rgba(255,255,255,.5)}
+.ovcard form{display:grid;grid-template-columns:1fr auto;gap:6px}.ovcard form button{border:0;border-radius:12px;background:#fff;color:#14161A;font-weight:800;padding:0 14px}
+.rnext{justify-self:start;border:0;background:none;color:#7DE8D8;font-weight:800;padding:0}
+.ovact{display:grid;grid-template-columns:1.4fr 1fr;gap:8px}
+.won{border:0;border-radius:16px;padding:16px;font-weight:800;font-size:17px;background:#3DD598;color:#062B1C}
+.lost{border:0;border-radius:16px;padding:16px;font-weight:700;font-size:15px;background:rgba(255,255,255,.1);color:#fff}
+.ovhelp{margin:0;font-size:13px;color:rgba(255,255,255,.65);text-align:center}.ovhelp .num{color:#fff}
+@media (prefers-reduced-motion:reduce){.orb{transition:none}}
 @media (prefers-reduced-motion:reduce){.pane{animation:none}}
 </style>
 </head>
@@ -173,6 +198,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 
   <!-- SUIVI -->
   <main class="pane" data-p="suivi">
+    <button type="button" class="sos" data-sos>J’ai envie de fumer</button>
     <div class="box">
       <div class="dh"><button type="button" class="nav" id="dPrev" aria-label="Jour précédent">‹</button><b id="dLabel">Aujourd'hui</b><button type="button" class="nav" id="dNext" aria-label="Jour suivant">›</button></div>
       <div class="dtot"><div><span>Dépensé</span><b id="dOut">0 €</b></div><div class="in2"><span>Gagné</span><b id="dIn">0 €</b></div></div>
@@ -203,6 +229,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
   <!-- BIEN-ÊTRE -->
   <main class="pane" data-p="place" hidden>
     <div class="jar" id="jar"></div>
+    <button type="button" class="sos" data-sos>J’ai envie de fumer</button>
     <h2>Ton corps</h2>
     <div class="body2" id="bodyTabs"></div>
     <div class="card"><div class="tl" id="timeline"></div></div>
@@ -216,6 +243,20 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
       <p>Tabac Info Service, avec un coach gratuit : <span class="num">39 89</span></p>
       <p>Ton médecin peut aussi prescrire des substituts nicotiniques remboursés.</p></div>
   </main>
+</div>
+
+<div class="ov" id="ov" hidden role="dialog" aria-modal="true" aria-label="J'ai envie de fumer">
+  <div class="ovin">
+    <button type="button" class="ovx" id="ovX" aria-label="Fermer">×</button>
+    <p class="ovk">Respire avec le cercle</p>
+    <div class="breath"><div class="orb" id="orb"></div><span id="bTxt">Inspire</span></div>
+    <p class="ovt" id="ovTimer">L’envie passe en général en quelques minutes. Tiens 3 minutes.</p>
+    <div class="ovcard reason"><span class="ovk" id="rKind"></span><b id="rTxt"></b><button type="button" class="rnext" id="rNext">Une autre raison</button></div>
+    <div class="ovcard" id="ovMine"></div>
+    <div class="ovstats" id="ovStats"></div>
+    <div class="ovact"><button type="button" class="won" id="won">J’ai tenu</button><button type="button" class="lost" id="lost">J’ai craqué</button></div>
+    <p class="ovhelp">Besoin de parler maintenant : Drogues Info Service <span class="num">0 800 23 13 13</span> · Tabac Info Service <span class="num">39 89</span></p>
+  </div>
 </div>
 
 <nav class="tabbar" id="tabs">
@@ -416,6 +457,38 @@ function renderBody(){const st={tabac:streak('c'),cannabis:streak('j')};
     (n===0?'<p class="tip" style="padding:10px 0">Le compteur avance chaque jour où tu notes 0 dans Suivi.</p>':'')}
 const IDEAS=[['Bouge 10 minutes','Une marche, des pompes, les escaliers. L’envie baisse souvent en 10 min.','<path d="M13 4a2 2 0 1 0 0-.01M7 21l3-7 3 2 2 5M10 14l1-5 4 2 3-2"/>'],['Bois un grand verre d’eau','Ou un thé. Occupe les mains et la bouche.','<path d="M7 3h10l-1.5 17h-7z"/>'],['Appelle ou écris à quelqu’un','Pas forcément pour en parler. Juste changer d’air.','<path d="M4 5h16v11H8l-4 4z"/>'],['Douche, puis musique','Casser le moment du soir, là où ça arrive le plus.','<path d="M9 18V6l11-2v12M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>'],['Repousse de 30 minutes','Pas « jamais », juste « pas tout de suite ». Ça compte déjà.','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'],['Mange vrai, pas fast-food','Un plat simple chez toi coûte 3 à 4 fois moins cher qu’une livraison.','<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 4-3 8h3"/>']];
 $('#ideas').innerHTML=IDEAS.map(([b,s,ic])=>`<div class="idea"><span class="e"><svg viewBox="0 0 24 24">${ic}</svg></span><span><b>${b}</b><small>${s}</small></span></div>`).join('');
+
+/* ---------- J'ai envie de fumer ---------- */
+const REASONS=[
+ ['Cannabis','Le cannabis abîme le sommeil profond. Tu dors, mais tu ne récupères pas vraiment.'],
+ ['Cannabis','Il ralentit la mémoire et la concentration. Après quelques semaines sans, elles reviennent.'],
+ ['Cannabis','Il peut augmenter l’anxiété et les idées noires, surtout le lendemain.'],
+ ['Cannabis','Il coupe l’envie de faire des choses. Arrêter, c’est retrouver de l’élan.'],
+ ['Cannabis','Mélangé au tabac, un joint envoie plus de goudron dans les poumons qu’une cigarette seule.'],
+ ['Tabac','Chaque clope fait monter ta tension et ton rythme cardiaque pendant 20 minutes.'],
+ ['Tabac','Le tabac abîme la peau, les dents, les cheveux et le souffle.'],
+ ['Tabac','La nicotine donne l’impression de calmer, mais c’est le manque qu’elle calme. Elle le recrée juste après.'],
+ ['Tabac','Fumer est la première cause de cancer évitable en France.'],
+ ['Toi','L’envie monte, culmine, puis redescend. Elle dure rarement plus de quelques minutes.'],
+ ['Toi','Chaque fois que tu tiens, l’envie suivante est un peu moins forte.'],
+ ['Toi','Tu n’as pas à arrêter pour toujours aujourd’hui. Juste ne pas fumer maintenant.'],
+ ['Toi','Cet argent peut aller dans ta tirelire, pour ton objectif.']];
+let rI=Math.floor(Math.random()*REASONS.length),bT=null,cT=null;
+if(!Array.isArray(S.mine))S.mine=[];if(!Array.isArray(S.crav))S.crav=[];
+function showReason(){const [k,t]=REASONS[rI%REASONS.length];$('#rKind').textContent=k==='Toi'?'À te rappeler':'Pourquoi ne pas fumer · '+k;$('#rTxt').textContent=t}
+function renderMine(){const box=$('#ovMine');box.innerHTML=`<span class="ovk">Mes raisons d’arrêter</span>${S.mine.length?`<ul>${S.mine.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:'<b style="font-size:15px;font-weight:600;color:rgba(255,255,255,.8)">Écris pourquoi tu veux arrêter. Tu les reverras à chaque envie.</b>'}<form id="mineF"><input id="mineI" placeholder="Ex. être en forme, mieux dormir…" maxlength="80" aria-label="Ajouter une raison"><button type="submit">OK</button></form>`;
+  $('#mineF').onsubmit=e=>{e.preventDefault();const v=$('#mineI').value.trim();if(!v)return;S.mine.push(v);save();renderMine()}}
+function renderOvStats(){const g=ALTS.find(a=>a[0]===S.goal)||ALTS[0];const cj=(hv('shit')+hv('beuh'))/Math.max(.1,hv('jpd')*7);const won=S.crav.filter(c=>c.w).length;
+  $('#ovStats').innerHTML=`<div><b>${streak('j')} j</b><span>sans joint</span></div><div><b>${streak('c')} j</b><span>sans clope</span></div><div><b>${eur(piggy())}</b><span>dans ta tirelire pour ${esc(g[1].toLowerCase())}</span></div><div><b>${won}</b><span>envie${won>1?'s':''} déjà battue${won>1?'s':''}</span></div>`+
+   `<div style="grid-column:1/-1"><span>Un joint, c’est environ</span><b>${cj.toFixed(2).replace('.',',')} €</b><span>${Math.round(cj/g[3]*100)} % de ${esc(g[1].toLowerCase())}</span></div>`}
+function breathe(){const o=$('#orb'),t=$('#bTxt');let inh=true;const step=()=>{o.classList.toggle('big',inh);t.textContent=inh?'Inspire':'Expire';inh=!inh};step();bT=setInterval(step,4000);
+  let s=180;$('#ovTimer').textContent='Tiens 3:00. L’envie passe en général en quelques minutes.';cT=setInterval(()=>{s--;if(s<=0){clearInterval(cT);$('#ovTimer').textContent='3 minutes tenues. L’envie a déjà baissé.';return}$('#ovTimer').textContent=`Tiens ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}. L’envie passe en général en quelques minutes.`},1000)}
+function openSOS(){$('#ov').hidden=false;document.body.style.overflow='hidden';rI++;showReason();renderMine();renderOvStats();breathe();buzz()}
+function closeSOS(){$('#ov').hidden=true;document.body.style.overflow='';clearInterval(bT);clearInterval(cT)}
+$$('[data-sos]').forEach(b=>b.onclick=openSOS);
+$('#ovX').onclick=closeSOS;$('#rNext').onclick=()=>{rI++;showReason()};
+$('#won').onclick=()=>{S.crav.push({t:Date.now(),w:1});save();closeSOS();toast('Bien joué. Une envie de battue.');if(navigator.vibrate)navigator.vibrate([20,60,20]);refresh()};
+$('#lost').onclick=()=>{S.crav.push({t:Date.now(),w:0});const d=dayOf(today);d.j=(d.j||0)+1;save();closeSOS();toast('Noté. Ce n’est pas grave, la prochaine fois.');refresh()};
 
 /* ---------- Liens entre onglets ---------- */
 function refresh(){renderSuivi();renderBudget();renderConso();renderJar();renderBody()}
