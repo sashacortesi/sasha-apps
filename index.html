@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<!doctype html><html lang="fr" data-build="1793423068"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="Budget">
 <meta name="theme-color" content="#F4F4F5"><meta name="robots" content="noindex,nofollow">
@@ -41,4 +41,11 @@ async function fromPw(pw){
       await open_(key);
     }catch(x){err.textContent='Code incorrect.'}};
 })();
-</script></body></html>
+</script><script>
+/* Mise à jour auto : si une version plus récente existe en ligne, on la recharge (évite le cache de l'icône) */
+(()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;
+const chk=()=>fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=t.match(/data-build="([^"]+)"/);
+  if(m&&m[1]!==mark){let k='upd:'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+m[1]+location.hash)}}).catch(()=>{});
+chk();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')chk()});})();
+</script>
+</body></html>

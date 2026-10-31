@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-build="1793423068">
 <head>
 <meta charset="utf-8">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -882,5 +882,12 @@ renderHome();route();try{navigator.storage&&navigator.storage.persist&&navigator
 })();
 </script>
 
+<script>
+/* Mise à jour auto : si une version plus récente existe en ligne, on la recharge (évite le cache de l'icône) */
+(()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;
+const chk=()=>fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=t.match(/data-build="([^"]+)"/);
+  if(m&&m[1]!==mark){let k='upd:'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+m[1]+location.hash)}}).catch(()=>{});
+chk();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')chk()});})();
+</script>
 </body>
 </html>
