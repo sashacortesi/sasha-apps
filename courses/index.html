@@ -295,5 +295,16 @@ document.getElementById("vs").onclick = function(){ view = "s"; render(); };
 document.getElementById("vc").onclick = function(){ view = "c"; render(); };
 view = (START === "c" || location.hash === "#courses") ? "c" : "j";
 render();
+var BUILD = "1793718020";
+function checkUpdate(){
+  try {
+    fetch(location.pathname + "?c=" + Date.now(), {cache:"no-store"}).then(function(r){ return r.text(); }).then(function(t){
+      var m = t.match(/var BUILD = "(\d+)"/);
+      if(m && m[1] !== BUILD){ location.replace(location.pathname + "?v=" + m[1]); }
+    }).catch(function(){});
+  } catch(e) {}
+}
+checkUpdate();
+document.addEventListener("visibilitychange", function(){ if(!document.hidden) checkUpdate(); });
 </script>
 </body></html>
