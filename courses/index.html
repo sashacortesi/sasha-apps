@@ -78,7 +78,8 @@ details.rc summary::-webkit-details-marker{display:none}
   <div id="list"></div>
   <div id="rec" hidden></div>
   <p class="hint" id="hint">Touche un article que tu as déjà : il est barré et déduit du total.</p>
-  <a class="go" href="https://www.carrefour.fr">Ouvrir Carrefour</a>
+  <a class="go" href="https://claude.ai/new?q=Remplis%20mon%20panier%20Carrefour%20pour%20la%20semaine%20%3A%20mes%20objectifs%20%28prendre%20du%20muscle%20et%20rester%20sec%29%2C%20les%207%20jours%20de%20recettes%20de%20mon%20menu%2C%20sans%20four%20ni%20flocons%20d%27avoine%2C%20plafond%20125%20%E2%82%AC%20livraison%20comprise%2C%20livraison%20lundi%20%C3%A0%20mon%20adresse%20habituelle.%20Donne-moi%20ensuite%20le%20lien%20direct%20du%20panier.">Remplir mon panier Carrefour</a>
+  <a class="go" href="https://www.carrefour.fr" style="margin-top:10px">Ouvrir Carrefour</a>
   <a class="go" href="../menu/" style="margin-top:10px">Menu de la semaine</a>
 </main>
 <script>
@@ -232,7 +233,7 @@ render();
   el.className="next"+(urgent?" urgent":"");
   var t = days===0 ? "Commande ce soir avant 18 h" : days===1 ? "Commande demain avant 18 h" : "Prochaine commande dans "+days+" jours";
   var sub = days===0 ? "Livraison lundi. Choisis ton créneau maintenant." : "Chaque dimanche, livraison le lundi. Alerte sur ton téléphone ce jour-là.";
-  el.innerHTML='<b>'+t+'</b><span>'+sub+'</span><a href="https://www.carrefour.fr">Commander sur Carrefour</a>';
+  el.innerHTML='<b>'+t+'</b><span>'+sub+'</span><a href="https://claude.ai/new?q=Remplis%20mon%20panier%20Carrefour%20pour%20la%20semaine%20%3A%20mes%20objectifs%20%28prendre%20du%20muscle%20et%20rester%20sec%29%2C%20les%207%20jours%20de%20recettes%20de%20mon%20menu%2C%20sans%20four%20ni%20flocons%20d%27avoine%2C%20plafond%20125%20%E2%82%AC%20livraison%20comprise%2C%20livraison%20lundi%20%C3%A0%20mon%20adresse%20habituelle.%20Donne-moi%20ensuite%20le%20lien%20direct%20du%20panier.">Remplir mon panier Carrefour</a>';
 })();
 </script>
 </body>
