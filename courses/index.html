@@ -98,6 +98,12 @@ body{padding-bottom:110px!important}
 .srow.has .lb,.srow.has .pr{text-decoration:line-through;color:var(--mute)}
 .lb{flex:1;min-width:0;font-size:16px}
 .pr{font-variant-numeric:tabular-nums;color:var(--mute);font-size:15px}
+.swb{display:block;width:calc(100% - 28px);margin:0 14px 10px;padding:11px;border-radius:12px;border:1px solid var(--line);background:none;color:var(--fg);font:700 14px var(--body)}
+.swl{margin:0 14px 10px;display:flex;flex-direction:column;gap:6px}
+.swl button{display:flex;justify-content:space-between;gap:10px;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);text-align:left;font:14px var(--body)}
+.swl button span{color:var(--mute);text-align:right;min-width:0}
+.swl p{font-size:12px;color:var(--mute);margin:2px 0 0}
+.swr{display:block;margin:16px auto;background:none;border:0;color:var(--mute);text-decoration:underline;font:14px var(--body)}
 </style></head><body>
 <main>
   <div class="top">
@@ -165,6 +171,13 @@ var D = [
 var di = (new Date().getDay() + 6) % 7, view = "j", eaten = {};
 try { eaten = JSON.parse(localStorage.getItem("menu-eaten") || "{}") || {}; } catch(e) { eaten = {}; }
 function save(){ try { localStorage.setItem("menu-eaten", JSON.stringify(eaten)); } catch(e) {} }
+var swaps = [];
+try { swaps = JSON.parse(localStorage.getItem("menu-swaps") || "[]") || []; } catch(e) { swaps = []; }
+function doSwap(a,b,i){ var t = D[a][i]; D[a][i] = D[b][i]; D[b][i] = t; }
+swaps.forEach(function(x){ doSwap(x[0],x[1],x[2]); });
+function addSwap(a,b,i){ doSwap(a,b,i); swaps.push([a,b,i]); try { localStorage.setItem("menu-swaps", JSON.stringify(swaps)); } catch(e) {} }
+function resetSwaps(){ for(var n = swaps.length - 1; n >= 0; n--) doSwap(swaps[n][0],swaps[n][1],swaps[n][2]); swaps = []; try { localStorage.removeItem("menu-swaps"); } catch(e) {} }
+var swapOpen = -1;
 function k(d,i){ return d + ":" + i; }
 function tot(d){ var a = 0, p = 0, e = 0, n = 0; D[d].forEach(function(m,i){ a += m[2]; p += m[3]; if(eaten[k(d,i)]){ e += m[2]; n++; } }); return {kcal:a, prot:p, eaten:e, n:n}; }
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
@@ -190,10 +203,15 @@ function renderDay(){
     a.className = "m s-" + c + (on ? " done" : "");
     a.innerHTML = '<div class="art">' + ART[c] + '<span class="slot">' + esc(m[0]) + '</span><button class="chk" aria-pressed="' + on + '" aria-label="Marquer comme mangé">' + (on ? "✓" : "") + '</button></div>' +
       '<div class="body"><h3>' + esc(m[1]) + '</h3><div class="chips"><span class="chip">' + m[2] + ' kcal</span><span class="chip">' + m[3] + ' g protéines</span></div></div>' +
-      '<details><summary>Recette</summary><ul class="ing">' + m[4].map(function(x){ return '<li>' + esc(x) + '</li>'; }).join("") + '</ul><p class="how">' + esc(m[5]) + '</p></details>';
+      '<button class="swb" data-i="' + i + '">⇄ Changer de jour</button>' + (swapOpen === i ? '<div class="swl">' + D.map(function(dd,j){ return j === di ? '' : '<button data-j="' + j + '"><b>' + DN[j] + '</b><span>' + esc(dd[i][1]) + '</span></button>'; }).join("") + '<p>Les deux repas s’échangent. Les courses restent identiques.</p></div>' : '') + '<details><summary>Recette</summary><ul class="ing">' + m[4].map(function(x){ return '<li>' + esc(x) + '</li>'; }).join("") + '</ul><p class="how">' + esc(m[5]) + '</p></details>';
     a.querySelector(".chk").onclick = function(){ if(eaten[k(di,i)]) delete eaten[k(di,i)]; else eaten[k(di,i)] = 1; save(); render(); };
+    a.querySelector(".swb").onclick = function(){ swapOpen = swapOpen === i ? -1 : i; render(); };
+    Array.prototype.forEach.call(a.querySelectorAll(".swl button"), function(b){
+      b.onclick = function(){ addSwap(di, +b.getAttribute("data-j"), i); swapOpen = -1; render(); };
+    });
     feed.appendChild(a);
   });
+  if(swaps.length){ var r = document.createElement("button"); r.className = "swr"; r.textContent = "Remettre le menu d’origine"; r.onclick = function(){ resetSwaps(); render(); }; feed.appendChild(r); }
 }
 function renderWeek(){
   var w = document.getElementById("week"); w.innerHTML = "";
