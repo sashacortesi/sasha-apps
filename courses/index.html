@@ -60,6 +60,12 @@ details.rc summary::-webkit-details-marker{display:none}
 .next.urgent{background:var(--warn);color:#fff}.next.urgent span{color:#fff}
 .next a{margin-top:6px;display:block;text-align:center;padding:12px;border-radius:12px;background:var(--fg);color:var(--bg);font-weight:800;text-decoration:none}
 .next.urgent a{background:#fff;color:#111}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;gap:10px;background:var(--bg);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px))}
+.dock a{display:flex;align-items:center;justify-content:center;text-align:center;padding:16px 12px;border-radius:16px;font-weight:800;font-size:16px;text-decoration:none;min-height:54px}
+.dock .p{flex:1 1 auto;background:var(--accent);color:var(--bg)}
+.dock .q{flex:0 0 auto;background:var(--card);color:var(--fg);border:1px solid var(--line)}
+main{padding-bottom:110px!important}
+.next a{padding:16px;font-size:16px}
 </style>
 </head>
 <body>
@@ -78,10 +84,9 @@ details.rc summary::-webkit-details-marker{display:none}
   <div id="list"></div>
   <div id="rec" hidden></div>
   <p class="hint" id="hint">Touche un article que tu as déjà : il est barré et déduit du total.</p>
-  <a class="go" href="https://claude.ai/new?q=Remplis%20mon%20panier%20Carrefour%20pour%20la%20semaine%20%3A%20mes%20objectifs%20%28prendre%20du%20muscle%20et%20rester%20sec%29%2C%20les%207%20jours%20de%20recettes%20de%20mon%20menu%2C%20sans%20four%20ni%20flocons%20d%27avoine%2C%20plafond%20125%20%E2%82%AC%20livraison%20comprise%2C%20livraison%20lundi%20%C3%A0%20mon%20adresse%20habituelle.%20Donne-moi%20ensuite%20le%20lien%20direct%20du%20panier.">Remplir mon panier Carrefour</a>
-  <a class="go" href="https://www.carrefour.fr" style="margin-top:10px">Ouvrir Carrefour</a>
-  <a class="go" href="../menu/" style="margin-top:10px">Menu de la semaine</a>
 </main>
+<nav class="dock"><a class="p" href="https://claude.ai/new?q=Remplis%20mon%20panier%20Carrefour%20pour%20la%20semaine%20%3A%20mes%20objectifs%20%28prendre%20du%20muscle%20et%20rester%20sec%29%2C%20les%207%20jours%20de%20recettes%20de%20mon%20menu%2C%20sans%20four%20ni%20flocons%20d%27avoine%2C%20plafond%20125%20%E2%82%AC%20livraison%20comprise%2C%20livraison%20lundi%20%C3%A0%20mon%20adresse%20habituelle.%20Donne-moi%20ensuite%20le%20lien%20direct%20du%20panier.">Remplir mon panier Carrefour</a><a class="q" href="../menu/">Recettes</a></nav>
+
 <script>
 var FEES = 4, CAP = 125, MONTH_CAP = 500;
 var base = {

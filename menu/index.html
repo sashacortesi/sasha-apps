@@ -74,6 +74,11 @@ details[open] summary::after{content:" −"}
 .links a{display:block;text-align:center;padding:14px;border-radius:16px;background:var(--fg);color:var(--bg);font-weight:700;text-decoration:none}
 .note{margin:18px 0 0;font-size:13px;color:var(--mute)}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;gap:10px;background:var(--bg);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px))}
+.dock a{display:flex;align-items:center;justify-content:center;padding:16px 12px;border-radius:16px;font-weight:800;font-size:16px;text-decoration:none;min-height:54px}
+.dock .p{flex:1 1 auto;background:var(--fg);color:var(--bg)}
+.dock .q{flex:0 0 auto;background:var(--card);color:var(--fg);border:1px solid var(--line)}
+body{padding-bottom:110px!important}
 </style></head><body>
 <main>
   <div class="top">
@@ -85,12 +90,10 @@ details[open] summary::after{content:" −"}
     <div class="feed" id="feed"></div>
   </div>
   <div id="week" class="wk" hidden></div>
-  <div class="links">
-    <a href="../courses/">Liste de courses</a>
-    <a href="https://www.carrefour.fr">Carrefour</a>
-  </div>
-  <p class="note">Estimations de calories et de protéines. Aucune cuisson au four.</p>
+    <p class="note">Estimations de calories et de protéines. Aucune cuisson au four.</p>
 </main>
+<nav class="dock"><a class="p" href="https://claude.ai/new?q=Remplis%20mon%20panier%20Carrefour%20pour%20la%20semaine%20%3A%20mes%20objectifs%20%28prendre%20du%20muscle%20et%20rester%20sec%29%2C%20les%207%20jours%20de%20recettes%20de%20mon%20menu%2C%20sans%20four%20ni%20flocons%20d%27avoine%2C%20plafond%20125%20%E2%82%AC%20livraison%20comprise%2C%20livraison%20lundi%20%C3%A0%20mon%20adresse%20habituelle.%20Donne-moi%20ensuite%20le%20lien%20direct%20du%20panier.">Remplir mon panier Carrefour</a><a class="q" href="../courses/">Courses</a></nav>
+
 <script>
 var DN = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 var DS = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
