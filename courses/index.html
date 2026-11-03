@@ -1,161 +1,130 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="utf-8">
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="Courses"><meta name="theme-color" content="#12141A"><meta name="robots" content="noindex,nofollow">
-<title>Courses novembre</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="Courses">
+<meta name="theme-color" content="#12141A"><meta name="robots" content="noindex,nofollow">
+<title>Menu de la semaine</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff;--fg:#111;--mute:#6b6b6b;--line:#ececec;--card:#f6f6f4;--accent:#1f5a34;--warn:#c4391d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101110;--fg:#f2f2ef;--mute:#9a9a96;--line:#262826;--card:#1a1c1a;--accent:#6fcf8f;--warn:#ff7a5c}}
-:root[data-theme="dark"]{--bg:#101110;--fg:#f2f2ef;--mute:#9a9a96;--line:#262826;--card:#1a1c1a;--accent:#6fcf8f;--warn:#ff7a5c}
+/* Layout: day stories on top, one tall card per meal, a week view as a second tab. */
+:root{--bg:#F3F4F7;--card:#FFFFFF;--fg:#12141A;--mute:#6B7080;--line:#E3E5EB;
+--c-matin:#FFB020;--c-midi:#34C47A;--c-coll:#FF6B96;--c-soir:#4C45E6;--c-dodo:#12A3B0;
+--on-matin:#14161B;--on-midi:#14161B;--on-coll:#14161B;--on-soir:#FFFFFF;--on-dodo:#14161B;
+--display:"Unbounded","Arial Black",system-ui,sans-serif;--body:"Figtree",system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1014;--card:#181B21;--fg:#F2F3F6;--mute:#9AA0AE;--line:#272B34;
+--c-matin:#FFC04D;--c-midi:#4BD18B;--c-coll:#FF86A8;--c-soir:#8A83FF;--c-dodo:#3CC4CF;--on-soir:#0E1014;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1014;--card:#181B21;--fg:#F2F3F6;--mute:#9AA0AE;--line:#272B34;
+--c-matin:#FFC04D;--c-midi:#4BD18B;--c-coll:#FF86A8;--c-soir:#8A83FF;--c-dodo:#3CC4CF;--on-soir:#0E1014;color-scheme:dark}
 *{box-sizing:border-box}
-html,body{max-width:100%;overflow-x:hidden}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-tap-highlight-color:transparent}
-main{max-width:520px;margin:0 auto;padding:0 16px 40px}
-.stories{display:flex;gap:6px;padding:16px 0 12px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
-.st{flex:1;min-width:0;border:0;background:none;color:var(--fg);font:inherit;text-align:center;cursor:pointer;padding:0}
-.ring{width:100%;max-width:62px;aspect-ratio:1;margin:0 auto 6px;border-radius:50%;padding:3px;background:var(--line);display:grid;place-items:center;transition:background .2s}
-.st[aria-selected="true"] .ring{background:conic-gradient(var(--accent),#e8b04a,var(--accent))}
-.ring span{width:100%;height:100%;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-weight:800;font-size:clamp(11px,3.6vw,18px);border:3px solid var(--bg)}
-.st small{font-size:11px;white-space:nowrap;color:var(--mute)}
-.st[aria-selected="true"] small{color:var(--fg);font-weight:600}
-.hero{padding:8px 0 4px}
-.big{font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1}
-.big em{font-style:normal;font-size:18px;font-weight:600;color:var(--mute);margin-left:6px}
-.sub{color:var(--mute);font-size:14px;margin-top:6px}
-.bar{height:8px;border-radius:99px;background:var(--line);margin:14px 0 6px;overflow:hidden}
-.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .3s,background .3s}
-.bar.over i{background:var(--warn)}
-.month{margin-top:10px;padding:12px 14px;border-radius:16px;background:var(--card);display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
-.month b{font-size:20px;font-weight:800}
-h2{font-size:17px;font-weight:800;margin:26px 0 6px}
-.row{display:flex;align-items:center;gap:12px;width:100%;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:none;color:var(--fg);font:inherit;text-align:left;cursor:pointer}
-.row:focus-visible,.st:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
-.dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:13px;color:transparent;transition:.15s}
-.lab{flex:1;font-size:16px}
-.px{font-variant-numeric:tabular-nums;color:var(--mute);font-size:15px}
-.row.has .dot{background:var(--accent);border-color:var(--accent);color:var(--bg)}
-.row.has .lab,.row.has .px{text-decoration:line-through;color:var(--mute)}
-.chg{font-size:11px;font-weight:600;background:var(--card);border-radius:99px;padding:3px 8px;margin-left:8px;white-space:nowrap}
-.hint{font-size:13px;color:var(--mute);margin:18px 0 0}
-a.go{display:block;margin-top:22px;text-align:center;padding:15px;border-radius:14px;background:var(--fg);color:var(--bg);font-weight:800;text-decoration:none;font-size:16px}
-.seg{display:flex;gap:6px;background:var(--card);border-radius:99px;padding:4px;margin-top:12px}
-.seg button{flex:1;border:0;border-radius:99px;padding:10px;font:inherit;font-weight:600;background:none;color:var(--mute);cursor:pointer}
+body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.4;-webkit-tap-highlight-color:transparent;
+padding-block:0 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+main{max-width:520px;margin:0 auto}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--fg);outline-offset:3px;border-radius:10px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:14px 0 10px}
+.seg{display:flex;gap:4px;padding:4px;border-radius:99px;background:var(--card);border:1px solid var(--line)}
+.seg button{flex:1;border:0;border-radius:99px;padding:10px;background:none;font-weight:700;color:var(--mute)}
 .seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
-.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-details.rc{border-bottom:1px solid var(--line);padding:14px 0}
-details.rc summary{list-style:none;cursor:pointer;font-weight:600;font-size:17px}
-details.rc summary::-webkit-details-marker{display:none}
-.rc .k{color:var(--mute);font-size:13px;font-weight:400;display:block;margin-top:3px}
-.rc ul{margin:10px 0 6px;padding-left:18px;font-size:15px;line-height:1.5}
-.rc p{margin:6px 0 0;font-size:15px;line-height:1.5;color:var(--mute)}
-.wk{display:grid;grid-template-columns:44px 1fr 1fr;gap:10px;font-size:14px;padding:6px 0;border-bottom:1px solid var(--line)}
-.wk b{font-weight:800}
-.day{margin-top:14px;padding:12px 14px;border-radius:16px;background:var(--card);font-size:14px;line-height:1.45}
-[hidden]{display:none!important}
-.next{margin-top:14px;padding:14px;border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:6px}
-.next b{font-size:17px}.next span{font-size:14px;color:var(--mute)}
-.next.urgent{background:var(--warn);color:#fff}.next.urgent span{color:#fff}
-.next a{margin-top:6px;display:block;text-align:center;padding:12px;border-radius:12px;background:var(--fg);color:var(--bg);font-weight:800;text-decoration:none}
-.next.urgent a{background:#fff;color:#111}
+.days{display:flex;justify-content:space-between;gap:6px;margin-top:14px}
+.d{flex:1;min-width:0;border:0;background:none;text-align:center;padding:0}
+.ring{width:100%;max-width:56px;aspect-ratio:1;margin:0 auto 5px;border-radius:50%;padding:3px;display:grid;place-items:center;background:conic-gradient(var(--fg) calc(var(--p)*1%),var(--line) 0)}
+.ring span{width:100%;height:100%;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-family:var(--display);font-size:11px;font-weight:700}
+.d[aria-selected="true"] .ring span{background:var(--fg);color:var(--bg)}
+.d small{font-size:11px;color:var(--mute);font-weight:500}
+.hero{padding:18px 0 6px}
+.hero h1{margin:0;font-family:var(--display);font-weight:700;font-size:34px;letter-spacing:-.03em;line-height:1.05;text-wrap:balance}
+.kc{margin-top:8px;font-size:15px;color:var(--mute);font-variant-numeric:tabular-nums}
+.kc b{color:var(--fg)}
+.bar{height:8px;border-radius:99px;background:var(--line);margin-top:12px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--fg);border-radius:99px;transition:width .3s}
+.feed{display:flex;flex-direction:column;gap:16px;margin-top:18px}
+.m{background:var(--card);border-radius:22px;overflow:hidden;border:1px solid var(--line)}
+.art{position:relative;height:96px;background:var(--c);color:var(--on);display:flex;align-items:flex-end;padding:12px 16px}
+.art svg{position:absolute;right:0;top:0;height:100%;width:auto;fill:currentColor;opacity:.28}
+.slot{position:relative;font-family:var(--display);font-weight:500;font-size:12px;letter-spacing:.04em}
+.chk{position:absolute;right:12px;bottom:10px;width:40px;height:40px;border-radius:50%;border:2px solid var(--on);background:transparent;color:var(--on);display:grid;place-items:center;font-size:18px;line-height:1}
+.chk[aria-pressed="true"]{background:var(--on);color:var(--c)}
+.body{padding:14px 16px 6px}
+.body h3{margin:0;font-family:var(--display);font-weight:500;font-size:18px;line-height:1.25;letter-spacing:-.01em;text-wrap:balance}
+.chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.chip{padding:5px 10px;border-radius:99px;background:var(--bg);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+details{padding:4px 16px 14px}
+summary{cursor:pointer;list-style:none;font-weight:700;font-size:14px;padding:10px 0;color:var(--mute)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:" +"}
+details[open] summary::after{content:" −"}
+.ing{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.ing li{padding:6px 10px;border-radius:12px;background:var(--bg);font-size:14px}
+.how{margin:12px 0 0;font-size:15px;line-height:1.5}
+.m.done .body h3{text-decoration:line-through;text-decoration-thickness:2px;opacity:.6}
+.s-matin{--c:var(--c-matin);--on:var(--on-matin)}.s-midi{--c:var(--c-midi);--on:var(--on-midi)}
+.s-coll{--c:var(--c-coll);--on:var(--on-coll)}.s-soir{--c:var(--c-soir);--on:var(--on-soir)}.s-dodo{--c:var(--c-dodo);--on:var(--on-dodo)}
+.wk{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+.wd{width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px}
+.wd header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.wd h2{margin:0;font-family:var(--display);font-size:18px;font-weight:700}
+.wd header span{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.wd ul{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.wd li{display:flex;gap:10px;align-items:center;font-size:15px;min-width:0}
+.wd li i{flex:none;width:12px;height:12px;border-radius:50%;background:var(--c)}
+.wd li span{min-width:0}
+.wd.today{border-color:var(--fg);border-width:2px}
+.links{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+.links a{display:block;text-align:center;padding:14px;border-radius:16px;background:var(--fg);color:var(--bg);font-weight:700;text-decoration:none}
+.note{margin:18px 0 0;font-size:13px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;gap:10px;background:var(--bg);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px))}
-.dock a{display:flex;align-items:center;justify-content:center;text-align:center;padding:16px 12px;border-radius:16px;font-weight:800;font-size:16px;text-decoration:none;min-height:54px}
-.dock .p{flex:1 1 auto;background:var(--accent);color:var(--bg)}
+.dock a{display:flex;align-items:center;justify-content:center;padding:16px 12px;border-radius:16px;font-weight:800;font-size:16px;text-decoration:none;min-height:54px}
+.dock .p{flex:1 1 auto;background:var(--fg);color:var(--bg)}
 .dock .q{flex:0 0 auto;background:var(--card);color:var(--fg);border:1px solid var(--line)}
-main{padding-bottom:110px!important}
-.next a{padding:16px;font-size:16px}
-</style>
-</head>
-<body>
+body{padding-bottom:110px!important}
+
+:root{--warn:#C4391D}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--warn:#FF7A5C}}
+:root[data-theme="dark"]{--warn:#FF7A5C}
+.bar.over i{background:var(--warn)}
+.sh-hero{padding:18px 0 6px}
+.sh-big{font-family:var(--display);font-weight:700;font-size:40px;letter-spacing:-.03em;line-height:1}
+.sh-big em{font-style:normal;font-size:15px;color:var(--mute);font-family:var(--body);font-weight:700;margin-left:8px;letter-spacing:0}
+.sh-sub{color:var(--mute);font-size:14px;margin-top:8px;font-variant-numeric:tabular-nums}
+.nx{margin-top:14px;padding:14px;border-radius:18px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.nx b{font-size:17px}.nx span{font-size:14px;color:var(--mute)}
+.nx.urgent{background:var(--warn);color:#fff;border-color:transparent}.nx.urgent span{color:#fff}
+.sh-g{margin:24px 0 4px;font-family:var(--display);font-weight:500;font-size:14px;letter-spacing:.02em}
+.srow{display:flex;align-items:center;gap:12px;width:100%;padding:13px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left}
+.srow .dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:13px;color:transparent}
+.srow.has .dot{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.srow.has .lb,.srow.has .pr{text-decoration:line-through;color:var(--mute)}
+.lb{flex:1;min-width:0;font-size:16px}
+.pr{font-variant-numeric:tabular-nums;color:var(--mute);font-size:15px}
+</style></head><body>
 <main>
-  <div class="next" id="next"></div>
-  <div class="seg"><button id="vc" aria-pressed="true">Courses</button><button id="vr" aria-pressed="false">Recettes</button></div>
-  <div class="stories" id="tabs" role="tablist"></div>
-  <div class="stories" id="dtabs" role="tablist" hidden></div>
-  <section class="hero" id="hero">
-    <div class="big"><span id="tot">0</span><em>€ avec les frais</em></div>
-    <div class="sub" id="sub"></div>
-    <div class="bar" id="bar"><i></i></div>
-    <div class="month"><span>Total du mois</span><b id="mon">0 €</b></div>
-    <div class="sub">Objectif par jour : ≈ 2 800 kcal · 160 g protéines · 390 g glucides · 70 g lipides</div>
-  </section>
-  <div id="list"></div>
-  <div id="rec" hidden></div>
-  <p class="hint" id="hint">Touche un article que tu as déjà : il est barré et déduit du total.</p>
+  <div class="top">
+    <div class="seg" role="group" aria-label="Affichage"><button id="vj" aria-pressed="true">Jour</button><button id="vs" aria-pressed="false">Semaine</button><button id="vc" aria-pressed="false">Courses</button></div>
+    <div class="days" id="days" role="tablist"></div>
+  </div>
+  <div id="day">
+    <section class="hero"><h1 id="dn"></h1><div class="kc" id="kc"></div><div class="bar"><i id="pb"></i></div></section>
+    <div class="feed" id="feed"></div>
+  </div>
+  <div id="week" class="wk" hidden></div>
+  <div id="shop" hidden></div>
+    <p class="note">Estimations de calories et de protéines. Aucune cuisson au four.</p>
 </main>
-<nav class="dock"><a class="p" href="https://claude.ai/new?q=Remplis%20mon%20panier%20Carrefour%20pour%20la%20semaine%20%3A%20mes%20objectifs%20%28prendre%20du%20muscle%20et%20rester%20sec%29%2C%20les%207%20jours%20de%20recettes%20de%20mon%20menu%2C%20sans%20four%20ni%20flocons%20d%27avoine%2C%20plafond%20125%20%E2%82%AC%20livraison%20comprise%2C%20livraison%20lundi%20%C3%A0%20mon%20adresse%20habituelle.%20Donne-moi%20ensuite%20le%20lien%20direct%20du%20panier.">Remplir mon panier Carrefour</a><a class="q" href="../menu/">Recettes</a></nav>
+<nav class="dock"><a class="p" href="https://claude.ai/new?q=Remplis%20mon%20panier%20Carrefour%20pour%20la%20semaine%20%3A%20mes%20objectifs%20%28prendre%20du%20muscle%20et%20rester%20sec%29%2C%20les%207%20jours%20de%20recettes%20de%20mon%20menu%2C%20sans%20four%20ni%20flocons%20d%27avoine%2C%20plafond%20125%20%E2%82%AC%20livraison%20comprise%2C%20livraison%20lundi%20%C3%A0%20mon%20adresse%20habituelle.%20Donne-moi%20ensuite%20le%20lien%20direct%20du%20panier.">Remplir mon panier Carrefour</a></nav>
 
 <script>
-var FEES = 4, CAP = 125, MONTH_CAP = 500;
-var base = {
-  "Protéines": [["oeufs","36 œufs (2 boîtes de 18)",11.98],["fb","Fromage blanc 0 % 1 kg ×3",8.67],["skyr","Skyr ×2 (nature ou soja)",6.98],["poulet","Filets de poulet ×2",13.30],["steak","Steaks hachés 5 % ×1",5.99],["thon","Thon ×3",13.17]],
-  "Base": [["lait","Lait demi-écrémé ×4",5.76],["riz","Riz long ×2",3.98],["pain","Pain complet ×4 (~)",10.00],["bananes","Bananes ×6 (~)",2.50],["patate","Patate douce ×2",3.98]],
-  "Légumes": [["courg","Courgettes ×2",5.98],["brocoli","Brocoli bimi ×2",6.38],["tomates","Tomates cerises ×2",4.50],["butter","Butternut",3.44],["poivrons","Poivrons ×3",2.60]],
-  "Fruits": [["avocats","Avocats ×4",5.96],["mandarines","Mandarines 1 kg",5.19]]
+var DN = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+var DS = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+var CL = {"Matin":"matin","Midi":"midi","Collation":"coll","Soir":"soir","Avant de dormir":"dodo"};
+var ART = {
+ matin:'<svg viewBox="0 0 120 96" aria-hidden="true"><circle cx="92" cy="100" r="54"/></svg>',
+ midi:'<svg viewBox="0 0 120 96" aria-hidden="true"><circle cx="86" cy="48" r="38"/><circle cx="86" cy="48" r="20" fill="none" stroke="currentColor" stroke-width="5"/></svg>',
+ coll:'<svg viewBox="0 0 120 96" aria-hidden="true"><rect x="52" y="14" width="30" height="30" rx="9"/><rect x="86" y="30" width="30" height="30" rx="9"/><rect x="60" y="52" width="30" height="30" rx="9"/></svg>',
+ soir:'<svg viewBox="0 0 120 96" aria-hidden="true"><path d="M84 10a40 40 0 1 0 28 66A34 34 0 0 1 84 10z"/></svg>',
+ dodo:'<svg viewBox="0 0 120 96" aria-hidden="true"><circle cx="70" cy="26" r="7"/><circle cx="96" cy="58" r="11"/><circle cx="62" cy="70" r="5"/><circle cx="108" cy="22" r="4"/></svg>'
 };
-var weeks = [
-  {n:"S1", d:"3 nov", rm:[], add:[]},
-  {n:"S2", d:"10 nov", rm:["thon","steak"], add:[["Protéines","saumon","Saumon barquette 500 g",14.99]]},
-  {n:"S3", d:"17 nov", rm:["poivrons"], add:[["Base","parm","Parmesan râpé",3.99]]},
-  {n:"S4", d:"24 nov", rm:["tomates","poivrons"], add:[["Base","cajou","Noix de cajou 350 g",6.99]]}
-];
-var have = {}, cur = 0;
-try { have = JSON.parse(localStorage.getItem("courses-nov") || "{}") || {}; } catch(e) { have = {}; }
-function save(){ try { localStorage.setItem("courses-nov", JSON.stringify(have)); } catch(e) {} }
-function build(i){
-  var w = weeks[i], out = {};
-  Object.keys(base).forEach(function(s){
-    out[s] = base[s].filter(function(it){ return w.rm.indexOf(it[0]) < 0; }).map(function(it){ return {id:it[0],l:it[1],p:it[2],c:false}; });
-  });
-  w.add.forEach(function(a){ out[a[0]].push({id:a[1],l:a[2],p:a[3],c:true}); });
-  return out;
-}
-function sum(i){
-  var o = build(i), t = 0;
-  Object.keys(o).forEach(function(s){ o[s].forEach(function(it){ if(!have[i+":"+it.id]) t += it.p; }); });
-  return t;
-}
-function eur(n){ return n.toFixed(2).replace(".", ",") + " €"; }
-function render(){
-  var tabs = document.getElementById("tabs");
-  tabs.innerHTML = "";
-  weeks.forEach(function(w,i){
-    var b = document.createElement("button");
-    b.className = "st"; b.setAttribute("role","tab"); b.setAttribute("aria-selected", i===cur);
-    b.innerHTML = '<div class="ring"><span>'+w.n+'</span></div><small>'+w.d+'</small>';
-    b.onclick = function(){ cur = i; render(); };
-    tabs.appendChild(b);
-  });
-  var t = sum(cur), all = t + FEES;
-  document.getElementById("tot").textContent = all.toFixed(0);
-  document.getElementById("sub").textContent = "Courses " + eur(t) + " + frais " + eur(FEES) + " · plafond " + CAP + " €";
-  var bar = document.getElementById("bar");
-  bar.firstElementChild.style.width = Math.min(100, all / CAP * 100) + "%";
-  bar.className = "bar" + (all > CAP ? " over" : "");
-  var m = 0; weeks.forEach(function(w,i){ m += sum(i) + FEES; });
-  var mon = document.getElementById("mon");
-  mon.textContent = eur(m) + " / " + MONTH_CAP + " €";
-  mon.style.color = m > MONTH_CAP ? "var(--warn)" : "var(--fg)";
-  var list = document.getElementById("list"), o = build(cur);
-  list.innerHTML = "";
-  Object.keys(o).forEach(function(s){
-    var h = document.createElement("h2"); h.textContent = s; list.appendChild(h);
-    o[s].forEach(function(it){
-      var k = cur + ":" + it.id;
-      var r = document.createElement("button");
-      r.className = "row" + (have[k] ? " has" : "");
-      r.innerHTML = '<span class="dot">✓</span><span class="lab">'+it.l+(it.c?'<span class="chg">nouveau</span>':'')+'</span><span class="px">'+it.p.toFixed(2).replace(".",",")+'</span>';
-      r.onclick = function(){ if(have[k]) delete have[k]; else have[k] = 1; save(); render(); };
-      list.appendChild(r);
-    });
-  });
-}
-var mode = "c";
-var DN = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
-var di = (new Date().getDay() + 6) % 7;
 var D = [
  [ ["Matin","Tartines banane, fromage blanc",590,34,["3 tranches de pain complet","200 g de fromage blanc 0 %","1 banane","250 ml de lait"],"Pain toasté. Fromage blanc étalé dessus, banane en rondelles. Lait à côté."],
    ["Midi","Bowl poulet, riz, brocoli",885,49,["150 g de filet de poulet","170 g de riz cru","½ brocoli","½ avocat"],"Riz 10 min. Poulet en dés à la poêle 8 min, brocoli vapeur ou micro-ondes 5 min. Avocat sur le dessus."],
@@ -193,54 +162,104 @@ var D = [
    ["Soir","Œufs brouillés tomates, patate douce",475,28,["3 œufs","8 tomates cerises","200 g de patate douce","1 tranche de pain complet"],"Patate douce 8 min au micro-ondes. Tomates 3 min à la poêle, œufs brouillés dessus 3 min. Pain toasté."],
    ["Avant de dormir","Fromage blanc et lait",245,28,["250 g de fromage blanc 0 %","250 ml de lait"],"Fromage blanc dans un bol, lait tiède à côté."] ]
 ];
-function tot(i){ var k = 0, p = 0; D[i].forEach(function(m){ k += m[2]; p += m[3]; }); return [k, p]; }
-function recHTML(){
-  var t = tot(di);
-  var h = '<div class="day">≈ ' + t[0] + ' kcal · ' + t[1] + ' g de protéines ce jour-là. Objectif : 2 800 kcal.</div>';
-  D[di].forEach(function(m){
-    h += '<details class="rc"><summary>' + m[1] + '<span class="k">' + m[0] + ' · ≈ ' + m[2] + ' kcal · ' + m[3] + ' g P</span></summary><ul>' + m[4].map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul><p>' + m[5] + '</p></details>';
+var di = (new Date().getDay() + 6) % 7, view = "j", eaten = {};
+try { eaten = JSON.parse(localStorage.getItem("menu-eaten") || "{}") || {}; } catch(e) { eaten = {}; }
+function save(){ try { localStorage.setItem("menu-eaten", JSON.stringify(eaten)); } catch(e) {} }
+function k(d,i){ return d + ":" + i; }
+function tot(d){ var a = 0, p = 0, e = 0, n = 0; D[d].forEach(function(m,i){ a += m[2]; p += m[3]; if(eaten[k(d,i)]){ e += m[2]; n++; } }); return {kcal:a, prot:p, eaten:e, n:n}; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function renderDays(){
+  var box = document.getElementById("days"); box.innerHTML = "";
+  DS.forEach(function(n,i){
+    var t = tot(i), b = document.createElement("button");
+    b.className = "d"; b.setAttribute("role","tab"); b.setAttribute("aria-selected", i === di);
+    b.innerHTML = '<div class="ring" style="--p:' + (t.n / D[i].length * 100) + '"><span>' + n + '</span></div><small>' + t.kcal + '</small>';
+    b.onclick = function(){ di = i; view = "j"; render(); window.scrollTo(0,0); };
+    box.appendChild(b);
   });
-  return h;
 }
-var baseRender = render;
-render = function(){
-  baseRender();
-  var c = mode === "c";
-  document.getElementById("hero").hidden = !c;
-  document.getElementById("list").hidden = !c;
-  document.getElementById("hint").hidden = !c;
-  document.getElementById("tabs").hidden = !c;
-  var dt = document.getElementById("dtabs");
-  dt.hidden = c;
-  var rec = document.getElementById("rec");
-  rec.hidden = c;
-  if(!c){
-    dt.innerHTML = "";
-    DN.forEach(function(n, i){
-      var b = document.createElement("button");
-      b.className = "st"; b.setAttribute("role", "tab"); b.setAttribute("aria-selected", i === di);
-      b.innerHTML = '<div class="ring"><span>' + n + '</span></div><small>' + tot(i)[0] + '</small>';
-      b.onclick = function(){ di = i; render(); };
-      dt.appendChild(b);
+function renderDay(){
+  var t = tot(di);
+  document.getElementById("dn").textContent = DN[di];
+  document.getElementById("kc").innerHTML = '<b>' + t.eaten + '</b> sur ' + t.kcal + ' kcal · ' + t.prot + ' g de protéines au total';
+  document.getElementById("pb").style.width = (t.kcal ? t.eaten / t.kcal * 100 : 0) + "%";
+  var feed = document.getElementById("feed"); feed.innerHTML = "";
+  D[di].forEach(function(m,i){
+    var c = CL[m[0]], on = !!eaten[k(di,i)];
+    var a = document.createElement("article");
+    a.className = "m s-" + c + (on ? " done" : "");
+    a.innerHTML = '<div class="art">' + ART[c] + '<span class="slot">' + esc(m[0]) + '</span><button class="chk" aria-pressed="' + on + '" aria-label="Marquer comme mangé">' + (on ? "✓" : "") + '</button></div>' +
+      '<div class="body"><h3>' + esc(m[1]) + '</h3><div class="chips"><span class="chip">' + m[2] + ' kcal</span><span class="chip">' + m[3] + ' g protéines</span></div></div>' +
+      '<details><summary>Recette</summary><ul class="ing">' + m[4].map(function(x){ return '<li>' + esc(x) + '</li>'; }).join("") + '</ul><p class="how">' + esc(m[5]) + '</p></details>';
+    a.querySelector(".chk").onclick = function(){ if(eaten[k(di,i)]) delete eaten[k(di,i)]; else eaten[k(di,i)] = 1; save(); render(); };
+    feed.appendChild(a);
+  });
+}
+function renderWeek(){
+  var w = document.getElementById("week"); w.innerHTML = "";
+  var today = (new Date().getDay() + 6) % 7;
+  D.forEach(function(d,i){
+    var b = document.createElement("button"); b.className = "wd" + (i === today ? " today" : "");
+    b.innerHTML = '<header><h2>' + DN[i] + '</h2><span>' + tot(i).kcal + ' kcal</span></header><ul>' +
+      d.map(function(m){ return '<li class="s-' + CL[m[0]] + '"><i></i><span>' + esc(m[1]) + '</span></li>'; }).join("") + '</ul>';
+    b.onclick = function(){ di = i; view = "j"; render(); window.scrollTo(0,0); };
+    w.appendChild(b);
+  });
+}
+var START = "c";
+var FEE = 4.90, CAP = 125;
+var SH = [
+ ["Protéines",[["oeufs","Œufs plein air, boîte de 12 ×3",9.75],["fb","Fromage blanc 0 %, 1 kg ×4",7.84],["skyr","Skyr 0 %, 850 g",3.02],["poulet","Filets de poulet, 1 kg",11.19],["steak","Steaks hachés 5 %, 6 × 100 g",11.79],["thon","Thon au naturel, 2 boîtes ×2",9.26]]],
+ ["Féculents",[["lait","Lait demi-écrémé bio, 6 L",7.26],["riz","Riz long, 1 kg",1.85],["pain","Pain complet tranché ×4",10.52],["pd","Patates douces, 1 kg ×2",4.98]]],
+ ["Légumes",[["courg","Courgette, 1 kg",2.39],["brocoli","Brocoli en fleurettes, 900 g",2.15],["tomates","Tomates cerises, 250 g ×3",2.97],["butter","Butternut",2.29],["poivrons","Poivrons rouges, 500 g ×2",5.28]]],
+ ["Fruits",[["avocats","Avocat Hass bio ×4",5.00],["bananes","Bananes bio, 5 fruits",1.99],["clem","Clémentines, 1 kg",4.59]]]
+];
+var have = {};
+try { have = JSON.parse(localStorage.getItem("shop-have") || "{}") || {}; } catch(e) { have = {}; }
+function saveHave(){ try { localStorage.setItem("shop-have", JSON.stringify(have)); } catch(e) {} }
+function eur(n){ return n.toFixed(2).replace(".", ",") + " €"; }
+function renderShop(){
+  var t = 0;
+  SH.forEach(function(g){ g[1].forEach(function(it){ if(!have[it[0]]) t += it[2]; }); });
+  var all = t + FEE;
+  var n = new Date(), d = n.getDay(), h = n.getHours();
+  var days = (7 - d) % 7; if(days === 0 && h >= 18) days = 7;
+  var urgent = days <= 1;
+  var nt = days === 0 ? "Commande ce soir avant 18 h" : days === 1 ? "Commande demain avant 18 h" : "Prochaine commande dans " + days + " jours";
+  var ns = days === 0 ? "Livraison lundi. Choisis ton créneau maintenant." : "Chaque dimanche, livraison le lundi. Une alerte te prévient.";
+  var o = '<section class="sh-hero"><div class="sh-big">' + all.toFixed(2).replace(".", ",") + '<em>€ avec la livraison</em></div>' +
+    '<div class="sh-sub">Courses ' + eur(t) + ' + livraison ' + eur(FEE) + ' · plafond ' + CAP + ' €</div>' +
+    '<div class="bar' + (all > CAP ? ' over' : '') + '"><i style="width:' + Math.min(100, all / CAP * 100) + '%"></i></div>' +
+    '<div class="nx' + (urgent ? ' urgent' : '') + '"><b>' + nt + '</b><span>' + ns + '</span></div></section>';
+  SH.forEach(function(g){
+    o += '<div class="sh-g">' + g[0] + '</div>';
+    g[1].forEach(function(it){
+      o += '<button class="srow' + (have[it[0]] ? ' has' : '') + '" data-id="' + it[0] + '"><span class="dot">✓</span><span class="lb">' + it[1] + '</span><span class="pr">' + it[2].toFixed(2).replace(".", ",") + '</span></button>';
     });
-    rec.innerHTML = recHTML();
-  }
+  });
+  o += '<p class="note">Touche un article que tu as déjà : il est retiré du total. Prix du panier Carrefour de la semaine 1.</p>';
+  var box = document.getElementById("shop");
+  box.innerHTML = o;
+  Array.prototype.forEach.call(box.querySelectorAll(".srow"), function(b){
+    b.onclick = function(){ var id = b.getAttribute("data-id"); if(have[id]) delete have[id]; else have[id] = 1; saveHave(); renderShop(); };
+  });
+}
+function render(){
+  var j = view === "j", s2 = view === "s", c = view === "c";
+  document.getElementById("day").hidden = !j;
+  document.getElementById("week").hidden = !s2;
+  document.getElementById("shop").hidden = !c;
+  document.getElementById("days").hidden = !j;
+  document.getElementById("vj").setAttribute("aria-pressed", j);
+  document.getElementById("vs").setAttribute("aria-pressed", s2);
   document.getElementById("vc").setAttribute("aria-pressed", c);
-  document.getElementById("vr").setAttribute("aria-pressed", !c);
-};
-document.getElementById("vc").onclick = function(){ mode = "c"; render(); };
-document.getElementById("vr").onclick = function(){ mode = "r"; render(); };
+  renderDays();
+  if(j) renderDay(); else if(s2) renderWeek(); else renderShop();
+}
+document.getElementById("vj").onclick = function(){ view = "j"; render(); };
+document.getElementById("vs").onclick = function(){ view = "s"; render(); };
+document.getElementById("vc").onclick = function(){ view = "c"; render(); };
+view = (START === "c" || location.hash === "#courses") ? "c" : "j";
 render();
-(function(){
-  var n=new Date(), d=n.getDay(), h=n.getHours();
-  var days=(7-d)%7; if(days===0 && h>=18) days=7;
-  var el=document.getElementById("next");
-  var urgent=days<=1;
-  el.className="next"+(urgent?" urgent":"");
-  var t = days===0 ? "Commande ce soir avant 18 h" : days===1 ? "Commande demain avant 18 h" : "Prochaine commande dans "+days+" jours";
-  var sub = days===0 ? "Livraison lundi. Choisis ton créneau maintenant." : "Chaque dimanche, livraison le lundi. Alerte sur ton téléphone ce jour-là.";
-  el.innerHTML='<b>'+t+'</b><span>'+sub+'</span><a href="https://claude.ai/new?q=Remplis%20mon%20panier%20Carrefour%20pour%20la%20semaine%20%3A%20mes%20objectifs%20%28prendre%20du%20muscle%20et%20rester%20sec%29%2C%20les%207%20jours%20de%20recettes%20de%20mon%20menu%2C%20sans%20four%20ni%20flocons%20d%27avoine%2C%20plafond%20125%20%E2%82%AC%20livraison%20comprise%2C%20livraison%20lundi%20%C3%A0%20mon%20adresse%20habituelle.%20Donne-moi%20ensuite%20le%20lien%20direct%20du%20panier.">Remplir mon panier Carrefour</a>';
-})();
 </script>
-</body>
-</html>
+</body></html>

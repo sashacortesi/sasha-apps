@@ -79,10 +79,29 @@ details[open] summary::after{content:" −"}
 .dock .p{flex:1 1 auto;background:var(--fg);color:var(--bg)}
 .dock .q{flex:0 0 auto;background:var(--card);color:var(--fg);border:1px solid var(--line)}
 body{padding-bottom:110px!important}
+
+:root{--warn:#C4391D}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--warn:#FF7A5C}}
+:root[data-theme="dark"]{--warn:#FF7A5C}
+.bar.over i{background:var(--warn)}
+.sh-hero{padding:18px 0 6px}
+.sh-big{font-family:var(--display);font-weight:700;font-size:40px;letter-spacing:-.03em;line-height:1}
+.sh-big em{font-style:normal;font-size:15px;color:var(--mute);font-family:var(--body);font-weight:700;margin-left:8px;letter-spacing:0}
+.sh-sub{color:var(--mute);font-size:14px;margin-top:8px;font-variant-numeric:tabular-nums}
+.nx{margin-top:14px;padding:14px;border-radius:18px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.nx b{font-size:17px}.nx span{font-size:14px;color:var(--mute)}
+.nx.urgent{background:var(--warn);color:#fff;border-color:transparent}.nx.urgent span{color:#fff}
+.sh-g{margin:24px 0 4px;font-family:var(--display);font-weight:500;font-size:14px;letter-spacing:.02em}
+.srow{display:flex;align-items:center;gap:12px;width:100%;padding:13px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left}
+.srow .dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:13px;color:transparent}
+.srow.has .dot{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.srow.has .lb,.srow.has .pr{text-decoration:line-through;color:var(--mute)}
+.lb{flex:1;min-width:0;font-size:16px}
+.pr{font-variant-numeric:tabular-nums;color:var(--mute);font-size:15px}
 </style></head><body>
 <main>
   <div class="top">
-    <div class="seg" role="group" aria-label="Affichage"><button id="vj" aria-pressed="true">Jour</button><button id="vs" aria-pressed="false">Semaine</button></div>
+    <div class="seg" role="group" aria-label="Affichage"><button id="vj" aria-pressed="true">Jour</button><button id="vs" aria-pressed="false">Semaine</button><button id="vc" aria-pressed="false">Courses</button></div>
     <div class="days" id="days" role="tablist"></div>
   </div>
   <div id="day">
@@ -90,9 +109,10 @@ body{padding-bottom:110px!important}
     <div class="feed" id="feed"></div>
   </div>
   <div id="week" class="wk" hidden></div>
+  <div id="shop" hidden></div>
     <p class="note">Estimations de calories et de protéines. Aucune cuisson au four.</p>
 </main>
-<nav class="dock"><a class="p" href="https://claude.ai/new?q=Remplis%20mon%20panier%20Carrefour%20pour%20la%20semaine%20%3A%20mes%20objectifs%20%28prendre%20du%20muscle%20et%20rester%20sec%29%2C%20les%207%20jours%20de%20recettes%20de%20mon%20menu%2C%20sans%20four%20ni%20flocons%20d%27avoine%2C%20plafond%20125%20%E2%82%AC%20livraison%20comprise%2C%20livraison%20lundi%20%C3%A0%20mon%20adresse%20habituelle.%20Donne-moi%20ensuite%20le%20lien%20direct%20du%20panier.">Remplir mon panier Carrefour</a><a class="q" href="../courses/">Courses</a></nav>
+<nav class="dock"><a class="p" href="https://claude.ai/new?q=Remplis%20mon%20panier%20Carrefour%20pour%20la%20semaine%20%3A%20mes%20objectifs%20%28prendre%20du%20muscle%20et%20rester%20sec%29%2C%20les%207%20jours%20de%20recettes%20de%20mon%20menu%2C%20sans%20four%20ni%20flocons%20d%27avoine%2C%20plafond%20125%20%E2%82%AC%20livraison%20comprise%2C%20livraison%20lundi%20%C3%A0%20mon%20adresse%20habituelle.%20Donne-moi%20ensuite%20le%20lien%20direct%20du%20panier.">Remplir mon panier Carrefour</a></nav>
 
 <script>
 var DN = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
@@ -186,19 +206,60 @@ function renderWeek(){
     w.appendChild(b);
   });
 }
+var START = "j";
+var FEE = 4.90, CAP = 125;
+var SH = [
+ ["Protéines",[["oeufs","Œufs plein air, boîte de 12 ×3",9.75],["fb","Fromage blanc 0 %, 1 kg ×4",7.84],["skyr","Skyr 0 %, 850 g",3.02],["poulet","Filets de poulet, 1 kg",11.19],["steak","Steaks hachés 5 %, 6 × 100 g",11.79],["thon","Thon au naturel, 2 boîtes ×2",9.26]]],
+ ["Féculents",[["lait","Lait demi-écrémé bio, 6 L",7.26],["riz","Riz long, 1 kg",1.85],["pain","Pain complet tranché ×4",10.52],["pd","Patates douces, 1 kg ×2",4.98]]],
+ ["Légumes",[["courg","Courgette, 1 kg",2.39],["brocoli","Brocoli en fleurettes, 900 g",2.15],["tomates","Tomates cerises, 250 g ×3",2.97],["butter","Butternut",2.29],["poivrons","Poivrons rouges, 500 g ×2",5.28]]],
+ ["Fruits",[["avocats","Avocat Hass bio ×4",5.00],["bananes","Bananes bio, 5 fruits",1.99],["clem","Clémentines, 1 kg",4.59]]]
+];
+var have = {};
+try { have = JSON.parse(localStorage.getItem("shop-have") || "{}") || {}; } catch(e) { have = {}; }
+function saveHave(){ try { localStorage.setItem("shop-have", JSON.stringify(have)); } catch(e) {} }
+function eur(n){ return n.toFixed(2).replace(".", ",") + " €"; }
+function renderShop(){
+  var t = 0;
+  SH.forEach(function(g){ g[1].forEach(function(it){ if(!have[it[0]]) t += it[2]; }); });
+  var all = t + FEE;
+  var n = new Date(), d = n.getDay(), h = n.getHours();
+  var days = (7 - d) % 7; if(days === 0 && h >= 18) days = 7;
+  var urgent = days <= 1;
+  var nt = days === 0 ? "Commande ce soir avant 18 h" : days === 1 ? "Commande demain avant 18 h" : "Prochaine commande dans " + days + " jours";
+  var ns = days === 0 ? "Livraison lundi. Choisis ton créneau maintenant." : "Chaque dimanche, livraison le lundi. Une alerte te prévient.";
+  var o = '<section class="sh-hero"><div class="sh-big">' + all.toFixed(2).replace(".", ",") + '<em>€ avec la livraison</em></div>' +
+    '<div class="sh-sub">Courses ' + eur(t) + ' + livraison ' + eur(FEE) + ' · plafond ' + CAP + ' €</div>' +
+    '<div class="bar' + (all > CAP ? ' over' : '') + '"><i style="width:' + Math.min(100, all / CAP * 100) + '%"></i></div>' +
+    '<div class="nx' + (urgent ? ' urgent' : '') + '"><b>' + nt + '</b><span>' + ns + '</span></div></section>';
+  SH.forEach(function(g){
+    o += '<div class="sh-g">' + g[0] + '</div>';
+    g[1].forEach(function(it){
+      o += '<button class="srow' + (have[it[0]] ? ' has' : '') + '" data-id="' + it[0] + '"><span class="dot">✓</span><span class="lb">' + it[1] + '</span><span class="pr">' + it[2].toFixed(2).replace(".", ",") + '</span></button>';
+    });
+  });
+  o += '<p class="note">Touche un article que tu as déjà : il est retiré du total. Prix du panier Carrefour de la semaine 1.</p>';
+  var box = document.getElementById("shop");
+  box.innerHTML = o;
+  Array.prototype.forEach.call(box.querySelectorAll(".srow"), function(b){
+    b.onclick = function(){ var id = b.getAttribute("data-id"); if(have[id]) delete have[id]; else have[id] = 1; saveHave(); renderShop(); };
+  });
+}
 function render(){
-  var j = view === "j";
+  var j = view === "j", s2 = view === "s", c = view === "c";
   document.getElementById("day").hidden = !j;
-  document.getElementById("week").hidden = j;
+  document.getElementById("week").hidden = !s2;
+  document.getElementById("shop").hidden = !c;
   document.getElementById("days").hidden = !j;
   document.getElementById("vj").setAttribute("aria-pressed", j);
-  document.getElementById("vs").setAttribute("aria-pressed", !j);
+  document.getElementById("vs").setAttribute("aria-pressed", s2);
+  document.getElementById("vc").setAttribute("aria-pressed", c);
   renderDays();
-  if(j) renderDay(); else renderWeek();
+  if(j) renderDay(); else if(s2) renderWeek(); else renderShop();
 }
 document.getElementById("vj").onclick = function(){ view = "j"; render(); };
 document.getElementById("vs").onclick = function(){ view = "s"; render(); };
+document.getElementById("vc").onclick = function(){ view = "c"; render(); };
+view = (START === "c" || location.hash === "#courses") ? "c" : "j";
 render();
 </script>
-
 </body></html>
