@@ -55,10 +55,16 @@ details.rc summary::-webkit-details-marker{display:none}
 .wk b{font-weight:800}
 .day{margin-top:14px;padding:12px 14px;border-radius:16px;background:var(--card);font-size:14px;line-height:1.45}
 [hidden]{display:none!important}
+.next{margin-top:14px;padding:14px;border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:6px}
+.next b{font-size:17px}.next span{font-size:14px;color:var(--mute)}
+.next.urgent{background:var(--warn);color:#fff}.next.urgent span{color:#fff}
+.next a{margin-top:6px;display:block;text-align:center;padding:12px;border-radius:12px;background:var(--fg);color:var(--bg);font-weight:800;text-decoration:none}
+.next.urgent a{background:#fff;color:#111}
 </style>
 </head>
 <body>
 <main>
+  <div class="next" id="next"></div>
   <div class="seg"><button id="vc" aria-pressed="true">Courses</button><button id="vr" aria-pressed="false">Recettes</button></div>
   <div class="stories" id="tabs" role="tablist"></div>
   <div class="stories" id="dtabs" role="tablist" hidden></div>
@@ -218,6 +224,16 @@ render = function(){
 document.getElementById("vc").onclick = function(){ mode = "c"; render(); };
 document.getElementById("vr").onclick = function(){ mode = "r"; render(); };
 render();
+(function(){
+  var n=new Date(), d=n.getDay(), h=n.getHours();
+  var days=(7-d)%7; if(days===0 && h>=18) days=7;
+  var el=document.getElementById("next");
+  var urgent=days<=1;
+  el.className="next"+(urgent?" urgent":"");
+  var t = days===0 ? "Commande ce soir avant 18 h" : days===1 ? "Commande demain avant 18 h" : "Prochaine commande dans "+days+" jours";
+  var sub = days===0 ? "Livraison lundi. Choisis ton créneau maintenant." : "Chaque dimanche, livraison le lundi. Alerte sur ton téléphone ce jour-là.";
+  el.innerHTML='<b>'+t+'</b><span>'+sub+'</span><a href="https://www.carrefour.fr">Commander sur Carrefour</a>';
+})();
 </script>
 </body>
 </html>
