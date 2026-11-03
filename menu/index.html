@@ -1,0 +1,201 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="Menu">
+<meta name="theme-color" content="#12141A"><meta name="robots" content="noindex,nofollow">
+<title>Menu de la semaine</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: day stories on top, one tall card per meal, a week view as a second tab. */
+:root{--bg:#F3F4F7;--card:#FFFFFF;--fg:#12141A;--mute:#6B7080;--line:#E3E5EB;
+--c-matin:#FFB020;--c-midi:#34C47A;--c-coll:#FF6B96;--c-soir:#4C45E6;--c-dodo:#12A3B0;
+--on-matin:#14161B;--on-midi:#14161B;--on-coll:#14161B;--on-soir:#FFFFFF;--on-dodo:#14161B;
+--display:"Unbounded","Arial Black",system-ui,sans-serif;--body:"Figtree",system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1014;--card:#181B21;--fg:#F2F3F6;--mute:#9AA0AE;--line:#272B34;
+--c-matin:#FFC04D;--c-midi:#4BD18B;--c-coll:#FF86A8;--c-soir:#8A83FF;--c-dodo:#3CC4CF;--on-soir:#0E1014;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1014;--card:#181B21;--fg:#F2F3F6;--mute:#9AA0AE;--line:#272B34;
+--c-matin:#FFC04D;--c-midi:#4BD18B;--c-coll:#FF86A8;--c-soir:#8A83FF;--c-dodo:#3CC4CF;--on-soir:#0E1014;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.4;-webkit-tap-highlight-color:transparent;
+padding-block:0 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+main{max-width:520px;margin:0 auto}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--fg);outline-offset:3px;border-radius:10px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:14px 0 10px}
+.seg{display:flex;gap:4px;padding:4px;border-radius:99px;background:var(--card);border:1px solid var(--line)}
+.seg button{flex:1;border:0;border-radius:99px;padding:10px;background:none;font-weight:700;color:var(--mute)}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.days{display:flex;justify-content:space-between;gap:6px;margin-top:14px}
+.d{flex:1;min-width:0;border:0;background:none;text-align:center;padding:0}
+.ring{width:100%;max-width:56px;aspect-ratio:1;margin:0 auto 5px;border-radius:50%;padding:3px;display:grid;place-items:center;background:conic-gradient(var(--fg) calc(var(--p)*1%),var(--line) 0)}
+.ring span{width:100%;height:100%;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-family:var(--display);font-size:11px;font-weight:700}
+.d[aria-selected="true"] .ring span{background:var(--fg);color:var(--bg)}
+.d small{font-size:11px;color:var(--mute);font-weight:500}
+.hero{padding:18px 0 6px}
+.hero h1{margin:0;font-family:var(--display);font-weight:700;font-size:34px;letter-spacing:-.03em;line-height:1.05;text-wrap:balance}
+.kc{margin-top:8px;font-size:15px;color:var(--mute);font-variant-numeric:tabular-nums}
+.kc b{color:var(--fg)}
+.bar{height:8px;border-radius:99px;background:var(--line);margin-top:12px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--fg);border-radius:99px;transition:width .3s}
+.feed{display:flex;flex-direction:column;gap:16px;margin-top:18px}
+.m{background:var(--card);border-radius:22px;overflow:hidden;border:1px solid var(--line)}
+.art{position:relative;height:96px;background:var(--c);color:var(--on);display:flex;align-items:flex-end;padding:12px 16px}
+.art svg{position:absolute;right:0;top:0;height:100%;width:auto;fill:currentColor;opacity:.28}
+.slot{position:relative;font-family:var(--display);font-weight:500;font-size:12px;letter-spacing:.04em}
+.chk{position:absolute;right:12px;bottom:10px;width:40px;height:40px;border-radius:50%;border:2px solid var(--on);background:transparent;color:var(--on);display:grid;place-items:center;font-size:18px;line-height:1}
+.chk[aria-pressed="true"]{background:var(--on);color:var(--c)}
+.body{padding:14px 16px 6px}
+.body h3{margin:0;font-family:var(--display);font-weight:500;font-size:18px;line-height:1.25;letter-spacing:-.01em;text-wrap:balance}
+.chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.chip{padding:5px 10px;border-radius:99px;background:var(--bg);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+details{padding:4px 16px 14px}
+summary{cursor:pointer;list-style:none;font-weight:700;font-size:14px;padding:10px 0;color:var(--mute)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:" +"}
+details[open] summary::after{content:" −"}
+.ing{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.ing li{padding:6px 10px;border-radius:12px;background:var(--bg);font-size:14px}
+.how{margin:12px 0 0;font-size:15px;line-height:1.5}
+.m.done .body h3{text-decoration:line-through;text-decoration-thickness:2px;opacity:.6}
+.s-matin{--c:var(--c-matin);--on:var(--on-matin)}.s-midi{--c:var(--c-midi);--on:var(--on-midi)}
+.s-coll{--c:var(--c-coll);--on:var(--on-coll)}.s-soir{--c:var(--c-soir);--on:var(--on-soir)}.s-dodo{--c:var(--c-dodo);--on:var(--on-dodo)}
+.wk{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+.wd{width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px}
+.wd header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.wd h2{margin:0;font-family:var(--display);font-size:18px;font-weight:700}
+.wd header span{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.wd ul{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.wd li{display:flex;gap:10px;align-items:center;font-size:15px;min-width:0}
+.wd li i{flex:none;width:12px;height:12px;border-radius:50%;background:var(--c)}
+.wd li span{min-width:0}
+.wd.today{border-color:var(--fg);border-width:2px}
+.links{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+.links a{display:block;text-align:center;padding:14px;border-radius:16px;background:var(--fg);color:var(--bg);font-weight:700;text-decoration:none}
+.note{margin:18px 0 0;font-size:13px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style></head><body>
+<main>
+  <div class="top">
+    <div class="seg" role="group" aria-label="Affichage"><button id="vj" aria-pressed="true">Jour</button><button id="vs" aria-pressed="false">Semaine</button></div>
+    <div class="days" id="days" role="tablist"></div>
+  </div>
+  <div id="day">
+    <section class="hero"><h1 id="dn"></h1><div class="kc" id="kc"></div><div class="bar"><i id="pb"></i></div></section>
+    <div class="feed" id="feed"></div>
+  </div>
+  <div id="week" class="wk" hidden></div>
+  <div class="links">
+    <a href="../courses/">Liste de courses</a>
+    <a href="https://www.carrefour.fr">Carrefour</a>
+  </div>
+  <p class="note">Estimations de calories et de protéines. Aucune cuisson au four.</p>
+</main>
+<script>
+var DN = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+var DS = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+var CL = {"Matin":"matin","Midi":"midi","Collation":"coll","Soir":"soir","Avant de dormir":"dodo"};
+var ART = {
+ matin:'<svg viewBox="0 0 120 96" aria-hidden="true"><circle cx="92" cy="100" r="54"/></svg>',
+ midi:'<svg viewBox="0 0 120 96" aria-hidden="true"><circle cx="86" cy="48" r="38"/><circle cx="86" cy="48" r="20" fill="none" stroke="currentColor" stroke-width="5"/></svg>',
+ coll:'<svg viewBox="0 0 120 96" aria-hidden="true"><rect x="52" y="14" width="30" height="30" rx="9"/><rect x="86" y="30" width="30" height="30" rx="9"/><rect x="60" y="52" width="30" height="30" rx="9"/></svg>',
+ soir:'<svg viewBox="0 0 120 96" aria-hidden="true"><path d="M84 10a40 40 0 1 0 28 66A34 34 0 0 1 84 10z"/></svg>',
+ dodo:'<svg viewBox="0 0 120 96" aria-hidden="true"><circle cx="70" cy="26" r="7"/><circle cx="96" cy="58" r="11"/><circle cx="62" cy="70" r="5"/><circle cx="108" cy="22" r="4"/></svg>'
+};
+var D = [
+ [ ["Matin","Tartines banane, fromage blanc",590,34,["3 tranches de pain complet","200 g de fromage blanc 0 %","1 banane","250 ml de lait"],"Pain toasté. Fromage blanc étalé dessus, banane en rondelles. Lait à côté."],
+   ["Midi","Bowl poulet, riz, brocoli",885,49,["150 g de filet de poulet","170 g de riz cru","½ brocoli","½ avocat"],"Riz 10 min. Poulet en dés à la poêle 8 min, brocoli vapeur ou micro-ondes 5 min. Avocat sur le dessus."],
+   ["Collation","Tartines œuf dur, fromage blanc",315,29,["2 œufs","1 tranche de pain complet","150 g de fromage blanc 0 %","1 mandarine"],"Œufs 10 min dans l’eau bouillante. Pain toasté, fromage blanc dessus, œufs en rondelles."],
+   ["Soir","Omelette courgette-poivron, patate douce",580,30,["4 œufs","½ courgette","½ poivron","300 g de patate douce"],"Patate douce en cubes, 8 à 10 min au micro-ondes. Légumes à la poêle 4 min, œufs battus dessus 3 min."],
+   ["Avant de dormir","Fromage blanc et lait",245,28,["250 g de fromage blanc 0 %","250 ml de lait"],"Fromage blanc dans un bol, lait tiède à côté."] ],
+ [ ["Matin","Œufs brouillés, tartines avocat",660,42,["3 œufs","3 tranches de pain complet","½ avocat","250 ml de lait"],"Œufs brouillés 3 min à feu doux. Pain toasté, avocat écrasé dessus. Lait à côté."],
+   ["Midi","Riz thon, tomates, avocat",885,52,["1 boîte de thon","170 g de riz cru","8 tomates cerises","½ avocat"],"Riz cuit, thon égoutté, tomates coupées en deux, avocat en tranches."],
+   ["Collation","Skyr, pain, mandarine",305,33,["200 g de skyr","100 g de fromage blanc 0 %","1 tranche de pain complet","1 mandarine"],"Skyr et fromage blanc mélangés dans un bol. Mandarine en quartiers, pain à côté."],
+   ["Soir","Steak haché, butternut poêlé",540,59,["250 g de steak haché 5 %","300 g de butternut","1 tranche de pain complet"],"Butternut en cubes, 8 min au micro-ondes puis 3 min à la poêle pour dorer. Steak 3 min par face."],
+   ["Avant de dormir","Fromage blanc et lait",245,28,["250 g de fromage blanc 0 %","250 ml de lait"],"Fromage blanc dans un bol, lait tiède à côté."] ],
+ [ ["Matin","Bol skyr, banane, pain",560,44,["200 g de skyr","1 banane","3 tranches de pain complet","250 ml de lait"],"Skyr et banane en rondelles dans un bol. Pain toasté et lait à côté."],
+   ["Midi","Poulet courgette, riz",905,48,["150 g de filet de poulet","½ courgette","170 g de riz cru","½ avocat"],"Riz 10 min. Poulet en dés 6 min, courgette en rondelles ajoutée 4 min. Avocat sur le dessus."],
+   ["Collation","Tartines œuf dur, tomates",305,29,["2 œufs","1 tranche de pain complet","6 tomates cerises","150 g de fromage blanc 0 %"],"Œufs 10 min dans l’eau bouillante. Pain toasté, tomates coupées, œufs écrasés dessus. Fromage blanc à côté."],
+   ["Soir","Shakshuka express",530,24,["3 œufs","10 tomates cerises","½ poivron","300 g de patate douce"],"Tomates et poivron 8 min à couvert, à écraser. Creuse 3 trous, casse les œufs, couvre 4 min. Patate douce en cubes, 8 à 10 min au micro-ondes."],
+   ["Avant de dormir","Fromage blanc et lait",245,28,["250 g de fromage blanc 0 %","250 ml de lait"],"Fromage blanc dans un bol, lait tiède à côté."] ],
+ [ ["Matin","Bol fromage blanc, croûtons, mandarine",420,43,["300 g de fromage blanc 0 %","2 tranches de pain complet","1 mandarine","250 ml de lait"],"Pain toasté coupé en dés. Fromage blanc dans un bol, croûtons et mandarine dessus. Lait à côté."],
+   ["Midi","Thon, patate douce, tomates",595,43,["1 boîte de thon","250 g de patate douce","8 tomates cerises","½ poivron","½ avocat","1 tranche de pain complet"],"Patate douce en cubes, 8 à 10 min au micro-ondes. Thon égoutté, légumes coupés, avocat dessus. Pain à côté."],
+   ["Collation","Skyr, mandarine, tartine",305,33,["200 g de skyr","100 g de fromage blanc 0 %","1 tranche de pain complet","1 mandarine"],"Fromage blanc sur le pain toasté, skyr à la cuillère, mandarine à côté."],
+   ["Soir","Frittata courgette-brocoli",540,43,["4 œufs","½ courgette","½ brocoli","100 g de fromage blanc 0 %","200 g de butternut","1 tranche de pain complet"],"Butternut en cubes, 8 min au micro-ondes. Courgette et brocoli en petits morceaux 5 min à la poêle, œufs battus avec le fromage blanc dessus, couvre 5 min. Pain à côté."],
+   ["Avant de dormir","Fromage blanc et lait",245,28,["250 g de fromage blanc 0 %","250 ml de lait"],"Fromage blanc dans un bol, lait tiède à côté."] ],
+ [ ["Matin","Œufs au plat, tartines avocat",590,36,["2 œufs","3 tranches de pain complet","½ avocat","250 ml de lait"],"Œufs au plat 3 min à couvert. Pain toasté, avocat écrasé dessus, œufs par-dessus."],
+   ["Midi","Poulet poivron, riz",895,49,["150 g de filet de poulet","½ poivron","170 g de riz cru","½ avocat"],"Riz 10 min. Poulet en lamelles 6 min, poivron ajouté 4 min. Avocat sur le dessus."],
+   ["Collation","Tartines fromage blanc, mandarine",225,25,["250 g de fromage blanc 0 %","1 tranche de pain complet","1 mandarine"],"Pain toasté, fromage blanc dessus, mandarine à côté."],
+   ["Soir","Œufs au plat, butternut poêlé",435,34,["3 œufs","190 g de butternut","½ poivron","100 g de fromage blanc 0 %","1 tranche de pain complet"],"Butternut en cubes, 8 min au micro-ondes puis 3 min à la poêle. Poivron 3 min, œufs au plat 3 min. Fromage blanc à côté."],
+   ["Avant de dormir","Fromage blanc et lait",245,28,["250 g de fromage blanc 0 %","250 ml de lait"],"Fromage blanc dans un bol, lait tiède à côté."] ],
+ [ ["Matin","Riz au lait, banane",600,31,["80 g de riz cru","250 ml de lait","200 g de fromage blanc 0 %","1 banane"],"Riz 12 min dans le lait à feu doux, en remuant. Hors du feu, fromage blanc et banane en rondelles."],
+   ["Midi","Riz thon, œufs durs",905,57,["1 boîte de thon","170 g de riz cru","2 œufs","6 tomates cerises"],"Riz cuit, œufs durs 10 min, thon égoutté, tomates coupées."],
+   ["Collation","Skyr et tartines",375,36,["200 g de skyr","100 g de fromage blanc 0 %","2 tranches de pain complet","1 mandarine"],"Pain toasté, skyr et fromage blanc dans un bol, mandarine à côté."],
+   ["Soir","Omelette brocoli, patate douce",620,41,["4 œufs","½ brocoli","100 g de fromage blanc 0 %","300 g de patate douce"],"Patate douce en cubes, 8 à 10 min au micro-ondes. Brocoli vapeur 5 min, puis à la poêle avec les œufs battus et le fromage blanc 3 min."],
+   ["Avant de dormir","Fromage blanc et lait",245,28,["250 g de fromage blanc 0 %","250 ml de lait"],"Fromage blanc dans un bol, lait tiède à côté."] ],
+ [ ["Matin","Crêpes banane-œufs",600,46,["2 œufs","1 banane","200 g de fromage blanc 0 %","2 tranches de pain complet","250 ml de lait"],"Écrase la banane, mélange avec les œufs. Fines crêpes à la poêle, 2 min par face. Fromage blanc dessus, pain et lait à côté."],
+   ["Midi","Poulet brocoli, patate douce",615,47,["150 g de filet de poulet","½ brocoli","250 g de patate douce","1 tranche de pain complet"],"Patate douce en cubes, 8 à 10 min au micro-ondes. Poulet en dés 8 min, brocoli vapeur 5 min. Pain à côté."],
+   ["Collation","Œufs durs, pain, mandarine",315,29,["2 œufs","1 tranche de pain complet","150 g de fromage blanc 0 %","1 mandarine"],"Œufs 10 min dans l’eau bouillante, pain toasté, fromage blanc et mandarine à côté."],
+   ["Soir","Œufs brouillés tomates, patate douce",475,28,["3 œufs","8 tomates cerises","200 g de patate douce","1 tranche de pain complet"],"Patate douce 8 min au micro-ondes. Tomates 3 min à la poêle, œufs brouillés dessus 3 min. Pain toasté."],
+   ["Avant de dormir","Fromage blanc et lait",245,28,["250 g de fromage blanc 0 %","250 ml de lait"],"Fromage blanc dans un bol, lait tiède à côté."] ]
+];
+var di = (new Date().getDay() + 6) % 7, view = "j", eaten = {};
+try { eaten = JSON.parse(localStorage.getItem("menu-eaten") || "{}") || {}; } catch(e) { eaten = {}; }
+function save(){ try { localStorage.setItem("menu-eaten", JSON.stringify(eaten)); } catch(e) {} }
+function k(d,i){ return d + ":" + i; }
+function tot(d){ var a = 0, p = 0, e = 0, n = 0; D[d].forEach(function(m,i){ a += m[2]; p += m[3]; if(eaten[k(d,i)]){ e += m[2]; n++; } }); return {kcal:a, prot:p, eaten:e, n:n}; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function renderDays(){
+  var box = document.getElementById("days"); box.innerHTML = "";
+  DS.forEach(function(n,i){
+    var t = tot(i), b = document.createElement("button");
+    b.className = "d"; b.setAttribute("role","tab"); b.setAttribute("aria-selected", i === di);
+    b.innerHTML = '<div class="ring" style="--p:' + (t.n / D[i].length * 100) + '"><span>' + n + '</span></div><small>' + t.kcal + '</small>';
+    b.onclick = function(){ di = i; view = "j"; render(); window.scrollTo(0,0); };
+    box.appendChild(b);
+  });
+}
+function renderDay(){
+  var t = tot(di);
+  document.getElementById("dn").textContent = DN[di];
+  document.getElementById("kc").innerHTML = '<b>' + t.eaten + '</b> sur ' + t.kcal + ' kcal · ' + t.prot + ' g de protéines au total';
+  document.getElementById("pb").style.width = (t.kcal ? t.eaten / t.kcal * 100 : 0) + "%";
+  var feed = document.getElementById("feed"); feed.innerHTML = "";
+  D[di].forEach(function(m,i){
+    var c = CL[m[0]], on = !!eaten[k(di,i)];
+    var a = document.createElement("article");
+    a.className = "m s-" + c + (on ? " done" : "");
+    a.innerHTML = '<div class="art">' + ART[c] + '<span class="slot">' + esc(m[0]) + '</span><button class="chk" aria-pressed="' + on + '" aria-label="Marquer comme mangé">' + (on ? "✓" : "") + '</button></div>' +
+      '<div class="body"><h3>' + esc(m[1]) + '</h3><div class="chips"><span class="chip">' + m[2] + ' kcal</span><span class="chip">' + m[3] + ' g protéines</span></div></div>' +
+      '<details><summary>Recette</summary><ul class="ing">' + m[4].map(function(x){ return '<li>' + esc(x) + '</li>'; }).join("") + '</ul><p class="how">' + esc(m[5]) + '</p></details>';
+    a.querySelector(".chk").onclick = function(){ if(eaten[k(di,i)]) delete eaten[k(di,i)]; else eaten[k(di,i)] = 1; save(); render(); };
+    feed.appendChild(a);
+  });
+}
+function renderWeek(){
+  var w = document.getElementById("week"); w.innerHTML = "";
+  var today = (new Date().getDay() + 6) % 7;
+  D.forEach(function(d,i){
+    var b = document.createElement("button"); b.className = "wd" + (i === today ? " today" : "");
+    b.innerHTML = '<header><h2>' + DN[i] + '</h2><span>' + tot(i).kcal + ' kcal</span></header><ul>' +
+      d.map(function(m){ return '<li class="s-' + CL[m[0]] + '"><i></i><span>' + esc(m[1]) + '</span></li>'; }).join("") + '</ul>';
+    b.onclick = function(){ di = i; view = "j"; render(); window.scrollTo(0,0); };
+    w.appendChild(b);
+  });
+}
+function render(){
+  var j = view === "j";
+  document.getElementById("day").hidden = !j;
+  document.getElementById("week").hidden = j;
+  document.getElementById("days").hidden = !j;
+  document.getElementById("vj").setAttribute("aria-pressed", j);
+  document.getElementById("vs").setAttribute("aria-pressed", !j);
+  renderDays();
+  if(j) renderDay(); else renderWeek();
+}
+document.getElementById("vj").onclick = function(){ view = "j"; render(); };
+document.getElementById("vs").onclick = function(){ view = "s"; render(); };
+render();
+</script>
+
+</body></html>
