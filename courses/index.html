@@ -104,6 +104,11 @@ body{padding-bottom:110px!important}
 .swl button span{color:var(--mute);text-align:right;min-width:0}
 .swl p{font-size:12px;color:var(--mute);margin:2px 0 0}
 .swr{display:block;margin:16px auto;background:none;border:0;color:var(--mute);text-decoration:underline;font:14px var(--body)}
+.nx.fr{background:var(--card)}
+.lv{display:block;height:5px;border-radius:3px;background:var(--line);margin-top:7px;overflow:hidden}
+.lv i{display:block;height:100%;background:var(--fg);border-radius:3px}
+.lv.lo i{background:var(--warn)}
+.lt{display:block;font-size:12px;color:var(--mute);margin-top:3px}
 </style></head><body>
 <main>
   <div class="top">
@@ -236,7 +241,17 @@ var have = {};
 try { have = JSON.parse(localStorage.getItem("shop-have") || "{}") || {}; } catch(e) { have = {}; }
 function saveHave(){ try { localStorage.setItem("shop-have", JSON.stringify(have)); } catch(e) {} }
 function eur(n){ return n.toFixed(2).replace(".", ",") + " €"; }
+var KEYS = [["pain complet","pain"],["fromage blanc","fb"],["lait","lait"],["banane","bananes"],["poulet","poulet"],["riz","riz"],["brocoli","brocoli"],["avocat","avocats"],["œuf","oeufs"],["courgette","courg"],["poivron","poivrons"],["patate douce","pd"],["thon","thon"],["tomates","tomates"],["skyr","skyr"],["steak","steak"],["butternut","butter"],["mandarine","clem"]];
+function levels(){
+  var tt = {}, ee = {};
+  D.forEach(function(day,d){ day.forEach(function(m,i){ m[4].forEach(function(x){ var lx = x.toLowerCase();
+    KEYS.forEach(function(kk){ if(lx.indexOf(kk[0]) > -1){ tt[kk[1]] = (tt[kk[1]]||0) + 1; if(eaten[k(d,i)]) ee[kk[1]] = (ee[kk[1]]||0) + 1; } }); }); }); });
+  var r = {}; Object.keys(tt).forEach(function(id){ r[id] = Math.max(0, Math.round((1 - (ee[id]||0) / tt[id]) * 100)); });
+  return r;
+}
 function renderShop(){
+  var LV = levels(), low = [];
+  SH.forEach(function(g){ g[1].forEach(function(it){ if(LV[it[0]] !== undefined && LV[it[0]] <= 25 && !have[it[0]]) low.push(it[1].split(",")[0]); }); });
   var t = 0;
   SH.forEach(function(g){ g[1].forEach(function(it){ if(!have[it[0]]) t += it[2]; }); });
   var all = t + FEE;
@@ -248,16 +263,17 @@ function renderShop(){
   var o = '<section class="sh-hero"><div class="sh-big">' + all.toFixed(2).replace(".", ",") + '<em>€ avec la livraison</em></div>' +
     '<div class="sh-sub">Courses ' + eur(t) + ' + livraison ' + eur(FEE) + ' · plafond ' + CAP + ' €</div>' +
     '<div class="bar' + (all > CAP ? ' over' : '') + '"><i style="width:' + Math.min(100, all / CAP * 100) + '%"></i></div>' +
-    '<div class="nx' + (urgent ? ' urgent' : '') + '"><b>' + nt + '</b><span>' + ns + '</span></div></section>';
+    '<div class="nx fr"><b>' + (low.length ? 'À racheter bientôt (' + low.length + ')' : 'Frigo : rien d’urgent') + '</b><span>' + (low.length ? low.join(" · ") : 'Coche tes repas dans Jour, la liste suit ce que tu as mangé.') + '</span></div><div class="nx' + (urgent ? ' urgent' : '') + '"><b>' + nt + '</b><span>' + ns + '</span></div></section>';
   SH.forEach(function(g){
     o += '<div class="sh-g">' + g[0] + '</div>';
     g[1].forEach(function(it){
-      o += '<button class="srow' + (have[it[0]] ? ' has' : '') + '" data-id="' + it[0] + '"><span class="dot">✓</span><span class="lb">' + it[1] + '</span><span class="pr">' + it[2].toFixed(2).replace(".", ",") + '</span></button>';
+      o += '<button class="srow' + (have[it[0]] ? ' has' : '') + '" data-id="' + it[0] + '"><span class="dot">✓</span><span class="lb">' + it[1] + (LV[it[0]] !== undefined ? '<span class="lv' + (LV[it[0]] <= 25 ? ' lo' : '') + '"><i style="width:' + LV[it[0]] + '%"></i></span><small class="lt">reste ≈ ' + LV[it[0]] + ' %</small>' : '') + '</span><span class="pr">' + it[2].toFixed(2).replace(".", ",") + '</span></button>';
     });
   });
-  o += '<p class="note">Touche un article que tu as déjà : il est retiré du total. Prix du panier Carrefour de la semaine 1.</p>';
+  o += '<button class="swr" id="nw">' + (window._nw ? 'Confirmer : tout remettre à zéro' : 'Nouvelle semaine : décocher tous les repas') + '</button><p class="note">Touche un article que tu as déjà : il est retiré du total. Prix du panier Carrefour de la semaine 1.</p>';
   var box = document.getElementById("shop");
   box.innerHTML = o;
+  document.getElementById("nw").onclick = function(){ if(!window._nw){ window._nw = 1; renderShop(); return; } window._nw = 0; eaten = {}; save(); render(); };
   Array.prototype.forEach.call(box.querySelectorAll(".srow"), function(b){
     b.onclick = function(){ var id = b.getAttribute("data-id"); if(have[id]) delete have[id]; else have[id] = 1; saveHave(); renderShop(); };
   });
