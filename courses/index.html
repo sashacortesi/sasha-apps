@@ -11,15 +11,16 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101110;--fg:#f2f2ef;--mute:#9a9a96;--line:#262826;--card:#1a1c1a;--accent:#6fcf8f;--warn:#ff7a5c}}
 :root[data-theme="dark"]{--bg:#101110;--fg:#f2f2ef;--mute:#9a9a96;--line:#262826;--card:#1a1c1a;--accent:#6fcf8f;--warn:#ff7a5c}
 *{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-tap-highlight-color:transparent}
 main{max-width:520px;margin:0 auto;padding:0 16px 40px}
-.stories{display:flex;gap:14px;padding:16px 0 12px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
-.st{flex:1;border:0;background:none;color:var(--fg);font:inherit;text-align:center;cursor:pointer;padding:0}
-.ring{width:62px;height:62px;margin:0 auto 6px;border-radius:50%;padding:3px;background:var(--line);display:grid;place-items:center;transition:background .2s}
+.stories{display:flex;gap:6px;padding:16px 0 12px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+.st{flex:1;min-width:0;border:0;background:none;color:var(--fg);font:inherit;text-align:center;cursor:pointer;padding:0}
+.ring{width:100%;max-width:62px;aspect-ratio:1;margin:0 auto 6px;border-radius:50%;padding:3px;background:var(--line);display:grid;place-items:center;transition:background .2s}
 .st[aria-selected="true"] .ring{background:conic-gradient(var(--accent),#e8b04a,var(--accent))}
-.ring span{width:100%;height:100%;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-weight:800;font-size:18px;border:3px solid var(--bg)}
-.st small{font-size:12px;color:var(--mute)}
+.ring span{width:100%;height:100%;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-weight:800;font-size:clamp(11px,3.6vw,18px);border:3px solid var(--bg)}
+.st small{font-size:11px;white-space:nowrap;color:var(--mute)}
 .st[aria-selected="true"] small{color:var(--fg);font-weight:600}
 .hero{padding:8px 0 4px}
 .big{font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1}
@@ -218,7 +219,7 @@ render = function(){
     DN.forEach(function(n, i){
       var b = document.createElement("button");
       b.className = "st"; b.setAttribute("role", "tab"); b.setAttribute("aria-selected", i === di);
-      b.innerHTML = '<div class="ring"><span>' + n + '</span></div><small>' + tot(i)[0] + ' kcal</small>';
+      b.innerHTML = '<div class="ring"><span>' + n + '</span></div><small>' + tot(i)[0] + '</small>';
       b.onclick = function(){ di = i; render(); };
       dt.appendChild(b);
     });
