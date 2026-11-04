@@ -138,6 +138,19 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .tabbar a{flex:1;max-width:130px;display:grid;justify-items:center;gap:3px;padding:8px 0 6px;color:var(--muted);text-decoration:none;font-size:10.5px;font-weight:600}
 .tabbar svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .tabbar a[aria-current="page"]{color:var(--ink)}.tabbar a[aria-current="page"] svg{stroke:var(--a1);stroke-width:2.3}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:0;border-radius:999px;padding:8px 14px;font-weight:700;font-size:14px;background:var(--soft);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.gsum{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:18px;padding:14px 16px;box-shadow:0 1px 0 var(--line)}
+.gsum b{font-size:26px;font-weight:800;color:var(--good)}.gsum span{font-size:13.5px;color:var(--muted);font-weight:600}
+.exl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ex{border:0;text-align:left;border-radius:18px;padding:14px;display:grid;gap:6px;color:#fff;background:linear-gradient(140deg,var(--c1),var(--c2));min-height:118px;align-content:space-between}
+.ex b{font-size:15.5px;line-height:1.2}.ex small{font-size:12.5px;opacity:.88;line-height:1.3}.ex i{font-style:normal;font-size:11.5px;font-weight:800;background:rgba(255,255,255,.22);border-radius:999px;padding:3px 8px;justify-self:start}
+.exq{display:flex;gap:6px;flex-wrap:wrap}.exq button{border:0;border-radius:999px;padding:9px 13px;font-weight:700;font-size:14px;background:rgba(255,255,255,.12);color:#fff}
+.eprog{height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}.eprog i{display:block;height:100%;width:0;background:#7DE8D8;transition:width .3s}
+.estep{margin:0;text-align:center;font-size:19px;font-weight:700;line-height:1.35;min-height:52px}
+.enext{margin:0;text-align:center;font-size:13px;color:rgba(255,255,255,.55)}
+#eOrb{transition-property:transform;transition-timing-function:ease-in-out}#eOrb.mid{transform:scale(1)}
 .sos{width:100%;border:0;border-radius:18px;padding:16px;font-weight:800;font-size:17px;color:#fff;background:linear-gradient(120deg,#5B5BF0,#13B5A0);box-shadow:0 6px 18px rgba(91,91,240,.25)}
 .ov{position:fixed;inset:0;z-index:60;background:#0E1020;color:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .ovin{max-width:520px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:grid;gap:16px;position:relative}
@@ -230,6 +243,13 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
   <main class="pane" data-p="place" hidden>
     <div class="jar" id="jar"></div>
     <button type="button" class="sos" data-sos>J’ai envie de fumer</button>
+    <h2>Ce que tu gagnes</h2>
+    <div class="gsum" id="gSum"></div>
+    <div class="chips" id="gChips"></div>
+    <div class="card"><div class="tl" id="gList"></div></div>
+    <h2>Exercices</h2>
+    <p class="tip" id="exTip">Guidés avec un minuteur. Fais-en un dès que l’envie monte, ou chaque jour pour être plus fort.</p>
+    <div class="exl" id="exList"></div>
     <h2>Ton corps</h2>
     <div class="body2" id="bodyTabs"></div>
     <div class="card"><div class="tl" id="timeline"></div></div>
@@ -245,6 +265,18 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
   </main>
 </div>
 
+<div class="ov" id="exo" hidden role="dialog" aria-modal="true" aria-label="Exercice">
+  <div class="ovin">
+    <button type="button" class="ovx" id="eX" aria-label="Fermer">×</button>
+    <p class="ovk" id="eName"></p>
+    <div class="eprog"><i id="eBar"></i></div>
+    <div class="breath"><div class="orb" id="eOrb"></div><span id="eCount"></span></div>
+    <p class="estep" id="eStep"></p>
+    <p class="enext" id="eNext"></p>
+    <div class="ovact" id="eAct"><button type="button" class="won" id="ePause">Pause</button><button type="button" class="lost" id="eSkip">Passer</button></div>
+  </div>
+</div>
+
 <div class="ov" id="ov" hidden role="dialog" aria-modal="true" aria-label="J'ai envie de fumer">
   <div class="ovin">
     <button type="button" class="ovx" id="ovX" aria-label="Fermer">×</button>
@@ -253,6 +285,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
     <p class="ovt" id="ovTimer">L’envie passe en général en quelques minutes. Tiens 3 minutes.</p>
     <div class="ovcard reason"><span class="ovk" id="rKind"></span><b id="rTxt"></b><button type="button" class="rnext" id="rNext">Une autre raison</button></div>
     <div class="ovcard" id="ovMine"></div>
+    <div class="ovcard"><span class="ovk">Ou fais un exercice maintenant</span><div class="exq" id="exQuick"></div></div>
     <div class="ovstats" id="ovStats"></div>
     <div class="ovact"><button type="button" class="won" id="won">J’ai tenu</button><button type="button" class="lost" id="lost">J’ai craqué</button></div>
     <p class="ovhelp">Besoin de parler maintenant : Drogues Info Service <span class="num">0 800 23 13 13</span> · Tabac Info Service <span class="num">39 89</span></p>
@@ -491,7 +524,57 @@ $('#won').onclick=()=>{S.crav.push({t:Date.now(),w:1});save();closeSOS();toast('
 $('#lost').onclick=()=>{S.crav.push({t:Date.now(),w:0});const d=dayOf(today);d.j=(d.j||0)+1;save();closeSOS();toast('Noté. Ce n’est pas grave, la prochaine fois.');refresh()};
 
 /* ---------- Liens entre onglets ---------- */
-function refresh(){renderSuivi();renderBudget();renderConso();renderJar();renderBody()}
+/* ---------- Ce que tu gagnes ---------- */
+const GAINS=[
+ ['tete','Tête',[[1,'Tu as prouvé que tu peux tenir une journée. C’est la base de tout le reste.'],[3,'Le pic du manque est passé. À partir de maintenant, chaque envie est moins forte que la précédente.'],[7,'Moins de brouillard au réveil. Tu réfléchis plus vite, tu trouves tes mots.'],[14,'Ton humeur se stabilise : moins d’irritabilité, moins de hauts et de bas.'],[30,'Ta mémoire et ta concentration remontent nettement. Apprendre, bosser, suivre une conversation : tout devient plus facile.'],[90,'Moins d’anxiété de fond. Après l’arrêt, le stress et le moral s’améliorent en moyenne, contrairement à ce qu’on croit.'],[180,'Tu sais te calmer sans fumer. Tu as de vrais réflexes à toi, et ça, personne ne te le reprend.']]],
+ ['sommeil','Sommeil et énergie',[[2,'Ton cœur bat moins vite au repos, ton corps se pose mieux le soir.'],[7,'Tes rêves reviennent : c’est le signe que ton sommeil profond se répare.'],[14,'Tu t’endors plus naturellement et tu te réveilles plus reposé.'],[30,'Une énergie plus stable toute la journée, moins de coups de barre.'],[90,'Un vrai rythme de sommeil. Tu n’as plus besoin de rien pour dormir.']]],
+ ['look','Look',[[1,'Plus d’yeux rouges ni de regard fatigué.'],[3,'L’odeur de tabac quitte tes vêtements, tes cheveux, ton appart et ton haleine.'],[14,'Tes gencives se réparent, tes dents jaunissent moins.'],[30,'Ta peau est mieux oxygénée : teint plus clair, moins de cernes.'],[90,'Tu manges mieux et tu bouges plus : ça se voit sur ta silhouette et ton visage.']]],
+ ['sport','Sport',[[3,'Ton souffle commence à revenir. Les escaliers font moins mal.'],[14,'Tu récupères plus vite après l’effort, tes muscles sont mieux oxygénés.'],[30,'Tu cours, nages ou joues plus longtemps sans être à bout.'],[90,'Ta capacité pulmonaire a nettement progressé. Le sport devient un plaisir, pas une épreuve.']]],
+ ['liberte','Liberté',[[1,'Plus besoin de penser à ton stock, ton briquet, ta prochaine pause.'],[7,'Tu ne dépends plus d’un dealer ni de l’heure du tabac.'],[14,'Tes soirées, tes potes, ton temps : c’est toi qui choisis, pas l’envie.'],[30,'Tu es plus présent avec les gens. Ils le remarquent.'],[90,'Tu as repris le contrôle. Et l’argent économisé est là, dans ta tirelire.']]]];
+let gCur='tete';
+function renderGains(){const n=Math.max(streak('j'),streak('c'));const all=GAINS.flatMap(g=>g[2]);const got=all.filter(([d])=>n>=d).length;
+  $('#gSum').innerHTML=`<b>${got}/${all.length}</b><span>${got?'bienfaits déjà débloqués.':'bienfaits à débloquer.'} Le premier arrive après 1 jour sans fumer.</span>`;
+  $('#gChips').innerHTML=GAINS.map(([k,n2])=>`<button type="button" class="chip" data-g2="${k}" aria-pressed="${gCur===k}">${n2}</button>`).join('');
+  $$('[data-g2]').forEach(b=>b.onclick=()=>{gCur=b.dataset.g2;buzz();renderGains()});
+  const g=GAINS.find(x=>x[0]===gCur);let nextSet=false;
+  $('#gList').innerHTML=g[2].map(([d,t])=>{const ok=n>=d;let cls=ok?'ok':'';if(!ok&&!nextSet){cls='next';nextSet=true}const w=d<7?d+' jour'+(d>1?'s':''):d<30?(d/7)+' semaine'+(d>7?'s':''):d<365?(d/30)+' mois':'1 an';
+    return `<div class="ms ${cls}"><span class="mk">${ok?'✓':''}</span><span><span class="when">${w}${cls==='next'?` · encore ${d-n} j`:''}</span><b>${t}</b></span></div>`}).join('')}
+
+/* ---------- Exercices guidés ---------- */
+const B=(n,a,h,o)=>{const r=[];for(let i=0;i<n;i++){r.push(['in','Inspire par le nez',a]);if(h)r.push(['hold','Bloque',h]);r.push(['out','Expire doucement par la bouche',o])}return r};
+const T=(t,x)=>['t',t,x];
+const EX=[
+ ['coh','Cohérence cardiaque','Calme le stress et l’envie','5 min','#5B5BF0','#13B5A0',[T('Assieds-toi, dos droit, pieds au sol.',8),...B(29,5,0,5)]],
+ ['surf','Surfer la vague','Regarde l’envie passer','3 min','#0E9F6E','#3FD8C2',[T('Ferme les yeux. Où sens-tu l’envie dans ton corps ? Gorge, ventre, mains ?',25),T('Donne-lui une note de 1 à 10.',15),T('Observe-la comme une vague. Elle monte, elle va redescendre. Tu ne fais rien, tu regardes.',45),T('Respire lentement vers cette zone. Laisse-la être là.',40),T('Elle bouge ? Elle change de forme ? Continue juste d’observer.',35),T('Re-note l’envie de 1 à 10. Elle a baissé : tu viens de la surfer.',20)]],
+ ['sport','Défi 7 minutes','Brûle l’envie avec ton corps','7 min','#E0703A','#D63B3B',[T('Jumping jacks, à fond',40),T('Repos, respire',15),T('Squats',40),T('Repos',15),T('Pompes, sur les genoux si besoin',40),T('Repos',15),T('Gainage planche',40),T('Repos',15),T('Fentes, en alternant',40),T('Repos',15),T('Mountain climbers',40),T('Étire-toi, bras au ciel, puis touche tes pieds',60)]],
+ ['ancre','Ancrage 5-4-3-2-1','Sors de ta tête en 2 min','2 min','#8B5CF6','#5B5BF0',[T('Nomme 5 choses que tu vois autour de toi.',30),T('Touche 4 choses. Sens leur texture.',25),T('Écoute 3 sons différents.',25),T('Repère 2 odeurs.',20),T('Concentre-toi sur 1 goût dans ta bouche.',15),T('Tu es ici, maintenant. L’envie est plus loin.',10)]],
+ ['478','Respiration 4-7-8','Pour t’endormir sans joint','2 min','#1E3A8A','#6366F1',[T('Allonge-toi. Pose la langue derrière tes dents du haut.',8),...B(6,4,7,8)]],
+ ['detente','Détente musculaire','Relâche toute la tension','4 min','#0F766E','#65A30D',[T('Serre tes poings très fort.',7),T('Relâche d’un coup. Sens la chaleur.',15),T('Monte tes épaules vers tes oreilles.',7),T('Relâche.',15),T('Crispe tout ton visage.',7),T('Relâche, mâchoire comprise.',15),T('Contracte ton ventre.',7),T('Relâche, respire dans le ventre.',15),T('Tends tes jambes, pointes de pieds vers toi.',7),T('Relâche tout.',15),T('Reste immobile. Ton corps entier est lourd et calme.',30)]]];
+const exDone=()=>(S.ex=S.ex||{},Object.values(S.ex).reduce((a,b)=>a+b,0));
+function renderEx(){$('#exList').innerHTML=EX.map(([id,n,sub,d,c1,c2])=>`<button type="button" class="ex" data-ex="${id}" style="--c1:${c1};--c2:${c2}"><i>${d}${S.ex&&S.ex[id]?' · fait '+S.ex[id]+'×':''}</i><span><b>${n}</b><br><small>${sub}</small></span></button>`).join('');
+  $('#exQuick').innerHTML=EX.filter(e=>['coh','surf','sport','ancre'].includes(e[0])).map(([id,n])=>`<button type="button" data-ex="${id}">${n}</button>`).join('');
+  const k=exDone();$('#exTip').textContent=k?`${k} exercice${k>1?'s':''} fait${k>1?'s':''}. Chaque fois, ton cerveau apprend à gérer l’envie sans fumer.`:'Guidés avec un minuteur. Fais-en un dès que l’envie monte, ou chaque jour pour être plus fort.';
+  $$('[data-ex]').forEach(b=>b.onclick=()=>{if(!$('#ov').hidden)closeSOS();startEx(b.dataset.ex)})}
+let eT=null,eI=0,eL=0,eP=false,eCur=null,eTot=0,eEl=0;
+const LBL={in:'Inspire',out:'Expire',hold:'Bloque'};
+function eShow(){const st=eCur[6][eI],o=$('#eOrb');const [m,t,x]=st;
+  o.style.transitionDuration=(m==='t'?.6:x)+'s';o.classList.remove('big','mid');if(m==='in')o.classList.add('big');else if(m==='hold')o.classList.add('big');else if(m==='t')o.classList.add('mid');
+  $('#eStep').textContent=t;const nx=eCur[6][eI+1];$('#eNext').textContent=nx&&nx[0]==='t'?'Ensuite : '+nx[1]:'';eTick()}
+function eTick(){const [m]=eCur[6][eI];$('#eCount').textContent=(m==='t'?'':LBL[m]+' ')+eL;$('#eBar').style.width=(eEl/eTot*100)+'%'}
+function startEx(id){eCur=EX.find(e=>e[0]===id);eI=0;eEl=0;eP=false;eTot=eCur[6].reduce((a,s)=>a+s[2],0);eL=eCur[6][0][2];
+  $('#eName').textContent=eCur[1];$('#ePause').textContent='Pause';$('#eSkip').textContent='Passer';$('#eSkip').hidden=false;
+  $('#exo').hidden=false;document.body.style.overflow='hidden';buzz();eShow();clearInterval(eT);
+  eT=setInterval(()=>{if(eP)return;eL--;eEl++;if(eL<=0){eI++;if(eI>=eCur[6].length)return eEnd();eL=eCur[6][eI][2];if(eCur[6][eI][0]==='t'&&navigator.vibrate)navigator.vibrate(15);eShow()}else eTick()},1000)}
+function eEnd(){clearInterval(eT);S.ex=S.ex||{};S.ex[eCur[0]]=(S.ex[eCur[0]]||0)+1;S.crav=S.crav||[];save();
+  $('#eBar').style.width='100%';$('#eOrb').classList.remove('big');$('#eOrb').classList.add('mid');$('#eCount').textContent='✓';
+  $('#eStep').textContent='Bravo. Exercice terminé.';$('#eNext').textContent='L’envie a baissé ? Si elle revient, recommence ou touche « J’ai envie de fumer ».';
+  $('#ePause').textContent='Terminer';$('#eSkip').hidden=true;if(navigator.vibrate)navigator.vibrate([20,60,20]);renderEx()}
+function closeEx(){clearInterval(eT);$('#exo').hidden=true;document.body.style.overflow=''}
+$('#eX').onclick=closeEx;
+$('#ePause').onclick=()=>{if($('#ePause').textContent==='Terminer')return closeEx();eP=!eP;$('#ePause').textContent=eP?'Reprendre':'Pause'};
+$('#eSkip').onclick=()=>{eEl+=eL;eI++;if(eI>=eCur[6].length)return eEnd();eL=eCur[6][eI][2];eShow()};
+
+function refresh(){renderSuivi();renderBudget();renderConso();renderJar();renderBody();renderGains();renderEx()}
 const TT={budget:'Budget',conso:'Conso',suivi:'Suivi',place:'Bien-être'};
 function go(){let h=location.hash.slice(1);if(!TT[h]){try{h=localStorage.getItem('libreTab')||'suivi'}catch(e){h='suivi'}if(!TT[h])h='suivi'}
   $$('.pane').forEach(p=>p.hidden=p.dataset.p!==h);$$('#tabs a').forEach(a=>a.dataset.t===h?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
