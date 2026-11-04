@@ -515,9 +515,7 @@ function renderConso(){const mk=monthKeys(),vm=VICE.reduce((s,c)=>s+sumE(mk,c),0
 
 /* ---------- BIEN-ÊTRE ---------- */
 const ALTS=[
- ['sport','Salle de sport','Un mois en illimité, à toi de jouer',40,'/mois','<path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/>'],
- ['sneakers','Des sneakers neuves','La paire que tu regardes depuis longtemps',150,'','<path d="M3 16v-3l4-1 3-4 3 2 3 1c3 .5 5 1.5 5 4v1zM3 16h18v2H3z"/>'],
- ['weekend','Un week-end entre potes','Deux jours ailleurs, sans compter',300,'','<path d="M2 16l20-6-2-2-7 2-5-5-2 1 3 5-5 1.5-2-1.5-1 1z"/><path d="M3 20h18"/>']];
+ ['sport','Salle de sport','Un mois en illimité, à toi de jouer',120,'/mois','<path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/>']];
 const STAR='<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>';
 const goals=()=>[...ALTS,...(S.cg||[]).map(c=>[c.id,c.n,'Mon objectif',c.p,'',STAR,1])];
 const curGoal=()=>goals().find(a=>a[0]===S.goal)||ALTS[0];
