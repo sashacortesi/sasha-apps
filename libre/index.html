@@ -177,7 +177,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
     <div class="card" id="missions"></div>
     <button type="button" class="bigbtn" id="addMission">+ Ajouter une mission payée</button>
     <h2>Charges fixes, tous les mois</h2>
-    <p class="tip">Les chiffres gris sont des exemples. Tape les tiens par-dessus.</p>
+    <p class="tip">Tape tes montants. Rien n’est prérempli.</p>
     <div class="card" id="fix"></div>
     <h2>Dépensé ce mois</h2>
     <p class="tip">Rempli tout seul avec ce que tu notes dans Suivi.</p>
@@ -269,7 +269,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 <script>
 (()=>{
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const K='budgetLibre:v1';
+const K='budgetLibre:v2';
 const eur=n=>Math.round(n).toLocaleString('fr-FR')+' €';
 const eur2=n=>(Math.round(n*100)/100).toLocaleString('fr-FR',{maximumFractionDigits:2})+' €';
 const num=v=>{const x=parseFloat(String(v).replace(/[\s €]/g,'').replace(',','.'));return isNaN(x)?null:x};
@@ -282,7 +282,7 @@ const W=4.33;
 const HPH={shit:30,beuh:20,clopes:30,malb:40,jpd:2,cpd:10};
 let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!S||typeof S!=='object')S={};
-S.fix=Array.isArray(S.fix)?S.fix.filter(r=>r.ph!=='Courses'):[{id:'f1',ph:'Loyer',pv:550},{id:'f3',ph:'Téléphone et internet',pv:30},{id:'f4',ph:'Transports',pv:75},{id:'f5',ph:'Abonnements',pv:25}].map(r=>({...r,n:'',v:null}));
+S.fix=Array.isArray(S.fix)?S.fix.filter(r=>r.ph!=='Courses'):[{id:'f1',ph:'Loyer',pv:null},{id:'f3',ph:'Téléphone et internet',pv:null},{id:'f4',ph:'Transports',pv:null},{id:'f5',ph:'Abonnements',pv:null}].map(r=>({...r,n:'',v:null}));
 S.habit=S.habit||S.conso||{};for(const k in HPH)if(!(k in S.habit))S.habit[k]=null;delete S.conso;
 S.days=S.days&&typeof S.days==='object'?S.days:{};
 S.inc=Array.isArray(S.inc)?S.inc:[];
@@ -291,7 +291,7 @@ if(!S.start)S.start=today;
 if(!S.body)S.body='tabac';
 for(const k in S.days){const d=S.days[k];d.e=Array.isArray(d.e)?d.e:[];d.meals=d.meals||{}}
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
-const hv=k=>S.habit[k]!=null?S.habit[k]:HPH[k];
+const hv=k=>S.habit[k]!=null?S.habit[k]:0;
 const dayOf=k=>S.days[k]=S.days[k]||{e:[],meals:{}};
 
 /* ---------- Catégories ---------- */
@@ -400,7 +400,7 @@ function renderBudgetTop(){const inc=incMonth(),fx=fixTotal(),spent=sumE(monthKe
 
 /* ---------- CONSO ---------- */
 const HF=[['shit','Shit','€ / sem.'],['beuh','Beuh','€ / sem.'],['clopes','Clopes','€ / sem.'],['malb','Malbouffe','€ / sem.'],['jpd','Joints par jour',''],['cpd','Clopes par jour','']];
-function renderHabit(){$('#habit').innerHTML=HF.map(([k,n,u])=>`<div class="row"><span class="n"><span>${n}</span></span><span class="in"><input inputmode="decimal" data-h="${k}" value="${S.habit[k]!=null?String(S.habit[k]).replace('.',','):''}" placeholder="${HPH[k]}" aria-label="${n}"> ${u}</span></div>`).join('');
+function renderHabit(){$('#habit').innerHTML=HF.map(([k,n,u])=>`<div class="row"><span class="n"><span>${n}</span></span><span class="in"><input inputmode="decimal" data-h="${k}" value="${S.habit[k]!=null?String(S.habit[k]).replace('.',','):''}" placeholder="0" aria-label="${n}"> ${u}</span></div>`).join('');
   $$('[data-h]').forEach(i=>i.oninput=()=>{S.habit[i.dataset.h]=i.value.trim()===''?null:num(i.value);save();renderConso();renderJar()})}
 function renderConso(){const mk=monthKeys(),vm=VICE.reduce((s,c)=>s+sumE(mk,c),0);
   const tracked=daysIn(k=>k>=S.start&&k<=today);const span=daysSince(S.start);const vAll=VICE.reduce((s,c)=>s+sumE(tracked,c),0);
