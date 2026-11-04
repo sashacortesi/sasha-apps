@@ -74,6 +74,9 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .cat svg{width:19px;height:19px;fill:none;stroke:var(--c);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .cat em{position:absolute;top:4px;right:4px;font-style:normal;font-size:10px;font-weight:800;background:var(--c);color:#fff;border-radius:999px;padding:1px 5px}
 .cat.on{box-shadow:inset 0 0 0 2px var(--c);background:var(--card)}
+.cats.c3{grid-template-columns:repeat(3,1fr)}#cats{grid-template-columns:repeat(3,1fr)}
+.fold{background:var(--soft);border-radius:16px;padding:12px;display:grid;gap:12px}.fold .cat{background:var(--card)}.fold .ah .x{background:var(--card)}
+.cat .fb{position:absolute;bottom:3px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--c)}
 .amt{background:var(--soft);border-radius:16px;padding:12px;display:grid;gap:10px}
 .ah{display:flex;justify-content:space-between;align-items:center;gap:8px}.ah b{font-size:16px}
 .ah .x{background:var(--card)}
@@ -301,10 +304,12 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
     <div class="focus" id="focusT"></div>
     <div class="box swipe" id="dayBox">
       <div class="dh"><button type="button" class="nav" id="dPrev" aria-label="Jour précédent">‹</button><b id="dLabel">Aujourd'hui</b><button type="button" class="nav" id="dNext" aria-label="Jour suivant">›</button></div>
-      <div class="step"><span>Joints<small id="jHint"></small></span><span class="ctl"><button type="button" data-s="j" data-d="-1" aria-label="Moins de joints">−</button><output id="oj">–</output><button type="button" data-s="j" data-d="1" aria-label="Plus de joints">+</button></span></div>
-      <div class="step"><span>Clopes<small id="cHint"></small></span><span class="ctl"><button type="button" data-s="c" data-d="-1" aria-label="Moins de clopes">−</button><output id="oc">–</output><button type="button" data-s="c" data-d="1" aria-label="Plus de clopes">+</button></span></div>
       <span class="sl">J’ai dépensé</span>
       <div class="cats" id="cats"></div>
+      <div class="fold" id="fold" hidden><div class="ah"><b>Fumette</b><button type="button" class="x" id="fX" aria-label="Fermer le dossier">×</button></div>
+      <div class="step"><span>Joints<small id="jHint"></small></span><span class="ctl"><button type="button" data-s="j" data-d="-1" aria-label="Moins de joints">−</button><output id="oj">–</output><button type="button" data-s="j" data-d="1" aria-label="Plus de joints">+</button></span></div>
+      <div class="step"><span>Clopes<small id="cHint"></small></span><span class="ctl"><button type="button" data-s="c" data-d="-1" aria-label="Moins de clopes">−</button><output id="oc">–</output><button type="button" data-s="c" data-d="1" aria-label="Plus de clopes">+</button></span></div>
+        <div class="cats c3" id="fcats"></div></div>
       <div class="amt" id="amt" hidden><div class="ah"><b id="aCat"></b><button type="button" class="x" id="aX" aria-label="Fermer">×</button></div>
         <div class="qp" id="qp"></div>
         <form class="af" id="af"><input id="aV" inputmode="decimal" placeholder="Autre montant" aria-label="Montant" autocomplete="off"><button type="submit">Ajouter</button></form></div>
@@ -464,6 +469,8 @@ const CATS=[
  ['clopes','Clopes','#C27803','<path d="M3 14h14v4H3zM17 14h4v4h-4M18 11c0-2 2-2 2-4M15 11c0-2 2-2 2-4"/>',[13,26,39]],
  ['autre','Autre','#6E7380','<circle cx="6" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/>',[5,10,20,50]]];
 const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));
+const FOLD=['shit','beuh','clopes'];
+const FOLDTILE=['fume','Fumette','#8A5CF6','<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'];
 const VICE=['shit','beuh','clopes','malb'];
 const MEALS=[['pdj','Petit-déj'],['dej','Déjeuner'],['din','Dîner'],['snk','Grignotage']];
 const MOPT=[['maison','Maison'],['dehors','Resto'],['ff','Fast-food'],['rien','Rien']];
@@ -487,7 +494,7 @@ function toast(t){let el=$('#toast');if(!el){el=document.createElement('div');el
 const buzz=()=>{if(navigator.vibrate)navigator.vibrate(8)};
 
 /* ---------- SUIVI ---------- */
-let cur=today,openCat=null,openMeal=null;
+let cur=today,openCat=null,openMeal=null,openFold=false;
 function addE(cat,v,extra){const d=dayOf(cur);const e={id:uid(),cat,v:Math.round(v*100)/100,...(extra||{})};d.e.push(e);save();buzz();return e}
 function renderSuivi(){const d=S.days[cur]||{e:[],meals:{}};const dt=new Date(cur+'T12:00');
   $('#dLabel').textContent=cur===today?'Aujourd’hui':dt.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'});$('#dNext').disabled=cur===today;
@@ -505,7 +512,12 @@ function renderSuivi(){const d=S.days[cur]||{e:[],meals:{}};const dt=new Date(cu
       dd.meals[openMeal]={t:b.dataset.mo};save();buzz();if(b.dataset.mo==='maison'||b.dataset.mo==='rien'){openMeal=null}refresh()});
     $$('[data-mq]').forEach(b=>b.onclick=()=>{const dd=dayOf(cur);const m=dd.meals[openMeal];const e=addE(m.t==='ff'?'malb':'repas',+b.dataset.mq,{meal:openMeal});m.eid=e.id;m.v=+b.dataset.mq;save();toast(MLAB[m.t]+' '+b.dataset.mq+' €');openMeal=null;refresh()})}
   /* dépenses */
-  $('#cats').innerHTML=CATS.map(([id,n,col,ic])=>{const s=d.e.filter(x=>x.cat===id).reduce((a,x)=>a+x.v,0);return `<button type="button" class="cat ${openCat===id?'on':''}" data-cat="${id}" style="--c:${col}"><span class="ci"><svg viewBox="0 0 24 24">${ic}</svg></span><span>${n}</span>${s?`<em>${Math.round(s)}</em>`:''}</button>`}).join('');
+  const tile=([id,n,col,ic],on)=>{const s=d.e.filter(x=>x.cat===id).reduce((a,x)=>a+x.v,0);return `<button type="button" class="cat ${on?'on':''}" data-cat="${id}" style="--c:${col}"><span class="ci"><svg viewBox="0 0 24 24">${ic}</svg></span><span>${n}</span>${s?`<em>${Math.round(s)}</em>`:''}</button>`};
+  const fs=d.e.filter(x=>FOLD.includes(x.cat)).reduce((a,x)=>a+x.v,0),fnoted=d.j!=null||d.c!=null;
+  $('#cats').innerHTML=CATS.filter(c=>!FOLD.includes(c[0])).map(c=>c[0]==='autre'?`<button type="button" class="cat ${openFold?'on':''}" id="fTile" style="--c:${FOLDTILE[2]}" aria-expanded="${openFold}"><span class="ci"><svg viewBox="0 0 24 24">${FOLDTILE[3]}</svg></span><span>${FOLDTILE[1]}</span>${fs?`<em>${Math.round(fs)}</em>`:''}${fnoted&&!fs?'<i class="fb"></i>':''}</button>`+tile(c,openCat===c[0]):tile(c,openCat===c[0])).join('');
+  $('#fold').hidden=!openFold;
+  $('#fcats').innerHTML=FOLD.map(id=>tile(CN[id],openCat===id)).join('');
+  $('#fTile').onclick=()=>{openFold=!openFold;if(!openFold&&FOLD.includes(openCat))openCat=null;openMeal=null;renderSuivi()};
   $$('[data-cat]').forEach(b=>b.onclick=()=>{openCat=openCat===b.dataset.cat?null:b.dataset.cat;openMeal=null;renderSuivi()});
   $('#amt').hidden=!openCat;
   if(openCat){const c=CN[openCat];$('#aCat').textContent=c[1];$('#qp').innerHTML=c[4].map(v=>`<button type="button" data-q="${v}">${v} €</button>`).join('');
@@ -525,10 +537,10 @@ function renderSuivi(){const d=S.days[cur]||{e:[],meals:{}};const dt=new Date(cu
     wk.push(`<button type="button" class="wd ${k===cur?'sel':''}" data-day="${k}"><i class="${has?'on':''}">${x.getDate()}</i>${['D','L','M','M','J','V','S'][x.getDay()]}</button>`)}
   $('#week').innerHTML=wk.join('');$$('[data-day]').forEach(b=>b.onclick=()=>{cur=b.dataset.day;openCat=openMeal=null;renderSuivi();window.scrollTo({top:0,behavior:'smooth'})})}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-$('#aX').onclick=()=>{openCat=null;renderSuivi()};$('#mealX').onclick=()=>{openMeal=null;renderSuivi()};
+$('#aX').onclick=()=>{openCat=null;renderSuivi()};$('#fX').onclick=()=>{openFold=false;if(FOLD.includes(openCat))openCat=null;renderSuivi()};$('#mealX').onclick=()=>{openMeal=null;renderSuivi()};
 $('#af').onsubmit=e=>{e.preventDefault();const v=num($('#aV').value);if(!(v>0)||!openCat)return;addE(openCat,v);toast(CN[openCat][1]+' '+eur2(v));$('#aV').value='';openCat=null;refresh()};
-$('#dPrev').onclick=()=>{const x=new Date(cur+'T12:00');x.setDate(x.getDate()-1);cur=iso(x);openCat=openMeal=null;renderSuivi()};
-$('#dNext').onclick=()=>{if(cur===today)return;const x=new Date(cur+'T12:00');x.setDate(x.getDate()+1);cur=iso(x);openCat=openMeal=null;renderSuivi()};
+$('#dPrev').onclick=()=>{const x=new Date(cur+'T12:00');x.setDate(x.getDate()-1);cur=iso(x);openCat=openMeal=null;openFold=false;renderSuivi()};
+$('#dNext').onclick=()=>{if(cur===today)return;const x=new Date(cur+'T12:00');x.setDate(x.getDate()+1);cur=iso(x);openCat=openMeal=null;openFold=false;renderSuivi()};
 $$('[data-s]').forEach(b=>b.onclick=()=>{const d=dayOf(cur);const k=b.dataset.s;d[k]=Math.max(0,(d[k]==null?0:d[k])+(d[k]==null&&+b.dataset.d<0?0:+b.dataset.d));buzz();save();refresh()});
 
 /* missions */
