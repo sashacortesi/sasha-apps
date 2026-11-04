@@ -655,7 +655,7 @@ function renderAgenda(){setTimeout(renderFocus,0);$('#agHero').hidden=agDay===to
   const m=pd(agDay);const off=(m.getDay()+6)%7;const mon=addD(agDay,-off);
   $('#wDays').innerHTML=[0,1,2,3,4,5,6].map(i=>{const k=addD(mon,i),x=pd(k);return `<button type="button" class="ad ${k===today?'tod':''}" data-wd="${k}" aria-pressed="${k===agDay}"><small>${JN[x.getDay()]}</small><b>${x.getDate()}</b><i class="${itemsOn(k).length?'on':''}"></i></button>`}).join('');
   $$('[data-wd]').forEach(b=>b.onclick=()=>{agDay=b.dataset.wd;buzz();renderAgenda()});
-  agRows(agDay,$('#agList'))}
+  agRows(agDay,$('#agList'),true);const ad=$('#agAdd');if(ad)ad.hidden=!itemsOn(agDay).length}
 $('#wPrev').onclick=()=>{agDay=addD(agDay,-7);renderAgenda()};$('#wNext').onclick=()=>{agDay=addD(agDay,7);renderAgenda()};
 $('#agAdd').onclick=()=>agSheet(null);
 function agSheet(id){const e=id?S.ag.find(x=>x.id===id):{t:'',h:'',c:'perso',r:''};let f={...e};
@@ -690,10 +690,10 @@ function ics(f){const d=(f.d||agDay).replace(/-/g,''),h=f.h.replace(':','')+'00'
   const txt=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Budget Libre//FR','BEGIN:VEVENT','UID:'+uid()+'@libre','DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z','DTSTART:'+d+'T'+h,'DTEND:'+d+'T'+end,'SUMMARY:'+f.t.replace(/[,;]/g,' '),rr,'BEGIN:VALARM','TRIGGER:-PT15M','ACTION:DISPLAY','DESCRIPTION:'+f.t.replace(/[,;]/g,' '),'END:VALARM','END:VEVENT','END:VCALENDAR'].filter(Boolean).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/calendar'}));a.download=(f.t||'agenda').slice(0,30)+'.ics';document.body.appendChild(a);a.click();a.remove()}
 
-function agRows(k,el){const its=itemsOn(k);let nowSet=false;
+function agRows(k,el,bare){const its=itemsOn(k);let nowSet=false;
   el.innerHTML=its.length?its.map(e=>{const c=catOf(e.c),ok=e.done&&e.done[k];let now='';if(k===today&&!ok&&!nowSet){now=' now';nowSet=true}
     return `<div class="it${ok?' done':''}${now}" style="--c:${c[2]}"><button type="button" class="ck" data-ck="${e.id}" aria-label="Fait">${ok?'✓':''}</button><button type="button" class="tx" data-ed="${e.id}"><span class="tt">${esc(e.t)}</span><span class="mt">${c[1]}${e.r?' · '+AR.find(r=>r[0]===e.r)[1].toLowerCase():''}${now?' · à suivre':''}</span></button><span class="hr">${e.h||''}<small style="display:block;font-size:11px;font-weight:700;text-align:right">${dl(e.dur||30)}</small></span>${k===today&&!ok?`<button type="button" class="pl" data-go="${e.id}" aria-label="Lancer le minuteur">${S.run&&S.run.id===e.id?'⏸':'▶'}</button>`:'<span></span>'}</div>`}).join('')
-   :`<button type="button" class="agempty" data-new style="border:0;width:100%">Rien de prévu. <b style="color:var(--a1)">+ Prévoir ma journée</b></button>`;
+   :bare?'':`<button type="button" class="agempty" data-new style="border:0;width:100%">Rien de prévu. <b style="color:var(--a1)">+ Prévoir ma journée</b></button>`;
   el.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const e=S.ag.find(x=>x.id===b.dataset.ck);e.done=e.done||{};if(e.done[k])delete e.done[k];else{e.done[k]=1;if(navigator.vibrate)navigator.vibrate([10,40,10])}save();renderAgenda();renderTodayAg();
     const r=itemsOn(k);if(r.length&&r.every(x=>x.done&&x.done[k]))toast('Journée bouclée. Bien joué.')});
   el.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>{agDay=k;agSheet(b.dataset.ed)});
