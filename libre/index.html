@@ -120,6 +120,9 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .glist{display:grid;gap:8px}
 .gopt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:2px solid transparent;border-radius:18px;padding:12px 14px;box-shadow:0 1px 0 var(--line)}
 .gopt.on{border-color:var(--a2)}
+.gwrap{position:relative}.gdel{position:absolute;top:-6px;right:-6px;width:26px;height:26px;border-radius:50%;border:0;background:var(--soft);color:var(--muted);font-size:17px;line-height:1;box-shadow:0 1px 0 var(--line)}
+.gadd{display:flex;gap:8px}.glist>*{min-width:0}.gadd input{flex:1;min-width:0;width:0;border:2px dashed var(--line);background:transparent;color:var(--ink);border-radius:16px;padding:12px;font:inherit;font-size:15px}.gadd input#gP{flex:0 0 92px}
+.gadd button{flex:0 0 48px;border:0;border-radius:16px;background:var(--a2);color:#fff;font-size:24px;font-weight:700}
 .gopt .e{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:0 0 auto;background:var(--soft)}
 .gopt.on .e{background:var(--a2)}.gopt.on .e svg{stroke:#fff}
 .gopt .e svg,.idea .e svg{width:22px;height:22px;fill:none;stroke:var(--a2);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -307,7 +310,8 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
   <!-- MOI -->
   <main class="pane" data-p="place" hidden>
     <div class="jar" id="jar"></div>
-    <details class="set"><summary>Changer d’objectif</summary><div><div class="glist" id="alts"></div></div></details>
+    <h2>Mon objectif</h2>
+    <div class="glist" id="alts"></div>
     <h2>Ce que tu gagnes</h2>
     <div class="gsum" id="gSum"></div>
     <div class="chips" id="gChips"></div>
@@ -511,22 +515,24 @@ function renderConso(){const mk=monthKeys(),vm=VICE.reduce((s,c)=>s+sumE(mk,c),0
 
 /* ---------- BIEN-ÊTRE ---------- */
 const ALTS=[
- ['sport','Salle de sport','Abonnement, en illimité',120,'/mois','<path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/>'],
- ['psy','Séance chez un psy','Pour parler de tout, sans jugement',50,'','<path d="M4 5h16v11H8l-4 4z"/><path d="M9 10h6"/>'],
- ['yoga','Cours de yoga','Un mois de cours collectifs',60,'/mois','<circle cx="12" cy="5" r="2"/><path d="M12 7v6M6 10l6 3 6-3M8 21l4-8 4 8"/>'],
- ['osteo','Séance d’ostéo','Dos, nuque, tensions',65,'','<path d="M12 3v18M8 7c0 2 8 2 8 0M8 12c0 2 8 2 8 0M8 17c0 2 8 2 8 0"/>'],
- ['massage','Massage','Une heure pour souffler',70,'','<path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.4 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.4 0 5.8 3.3 4.3 6.8C19.5 16.4 12 21 12 21z"/>'],
- ['panier','Panier fruits et légumes','Livré chaque semaine, pendant un mois',100,'/mois','<path d="M4 9h16l-2 11H6zM9 9l3-6 3 6"/>'],
- ['piscine','Piscine','Abonnement municipal',30,'/mois','<path d="M3 17c2 0 2-1.5 4.5-1.5S9.5 17 12 17s2-1.5 4.5-1.5S18.5 17 21 17M7 14V5a2 2 0 0 1 4 0M15 14V5a2 2 0 0 1 4 0M7 9h8"/>'],
- ['sommeil','Bien dormir','Nouvel oreiller et linge de lit',90,'','<path d="M3 18V8M3 14h18v4M21 18v-4a3 3 0 0 0-3-3h-7v3M7 11a1.5 1.5 0 1 0 0-.01"/>']];
-function renderJar(){const g=ALTS.find(a=>a[0]===S.goal)||ALTS[0],have=piggy(),pct=Math.min(1,have/g[3]),done=pct>=1;
+ ['sport','Salle de sport','Un mois en illimité, à toi de jouer',40,'/mois','<path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/>'],
+ ['sneakers','Des sneakers neuves','La paire que tu regardes depuis longtemps',150,'','<path d="M3 16v-3l4-1 3-4 3 2 3 1c3 .5 5 1.5 5 4v1zM3 16h18v2H3z"/>'],
+ ['weekend','Un week-end entre potes','Deux jours ailleurs, sans compter',300,'','<path d="M2 16l20-6-2-2-7 2-5-5-2 1 3 5-5 1.5-2-1.5-1 1z"/><path d="M3 20h18"/>']];
+const STAR='<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>';
+const goals=()=>[...ALTS,...(S.cg||[]).map(c=>[c.id,c.n,'Mon objectif',c.p,'',STAR,1])];
+const curGoal=()=>goals().find(a=>a[0]===S.goal)||ALTS[0];
+function renderJar(){const g=curGoal(),have=piggy(),pct=Math.min(1,have/g[3]),done=pct>=1;
   const days=daysSince(S.start);
   $('#jar').innerHTML=`<div class="jt"><div class="ring" style="--p:${pct*360}deg"><span>${Math.round(pct*100)}%</span></div><div class="jx"><small>Ma tirelire</small><b>${eur(have)}</b><span>${done?'Objectif atteint, offre-toi :':'Pour :'} <strong>${g[1]}</strong> · ${g[3]} €</span></div></div>
    <div class="jtoday">Ce que tu n’as pas dépensé en shit, beuh, clopes et malbouffe depuis ${days} jour${days>1?'s':''}, par rapport à avant.</div>
    ${done?`<button type="button" class="treat" id="treat">Je me l’offre</button>`:''}`;
   const t=$('#treat');if(t)t.onclick=()=>{S.spent=(S.spent||0)+g[3];save();toast('Profite bien');renderJar()}}
-function renderGoals(){$('#alts').innerHTML=ALTS.map(([id,n,s,p,u,ic])=>`<button type="button" class="gopt ${S.goal===id?'on':''}" data-g="${id}"><span class="e"><svg viewBox="0 0 24 24">${ic}</svg></span><span class="gt"><b>${n}</b><small>${s}</small></span><span class="gp">${p} €<small>${u}</small></span></button>`).join('');
-  $$('[data-g]').forEach(b=>b.onclick=()=>{S.goal=b.dataset.g;save();buzz();renderGoals();renderJar()})}
+function renderGoals(){$('#alts').innerHTML=goals().map(([id,n,sub,p,u,ic,mine])=>`<div class="gwrap"><button type="button" class="gopt ${S.goal===id?'on':''}" data-g="${id}"><span class="e"><svg viewBox="0 0 24 24">${ic}</svg></span><span class="gt"><b>${esc(n)}</b><small>${sub}</small></span><span class="gp">${eur(p)}<small>${u}</small></span></button>${mine?`<button type="button" class="gdel" data-gdel="${id}" aria-label="Supprimer">×</button>`:''}</div>`).join('')+
+  `<form class="gadd" id="gAdd"><input id="gN" placeholder="Ton objectif (PS5, permis…)" maxlength="40" required><input id="gP" inputmode="decimal" placeholder="Prix €" required><button type="submit">+</button></form>`;
+  $$('[data-g]').forEach(b=>b.onclick=()=>{S.goal=b.dataset.g;save();buzz();renderGoals();renderJar()});
+  $$('[data-gdel]').forEach(b=>b.onclick=()=>{S.cg=S.cg.filter(c=>c.id!==b.dataset.gdel);if(S.goal===b.dataset.gdel)S.goal='sport';save();renderGoals();renderJar()});
+  $('#gAdd').onsubmit=e=>{e.preventDefault();const n=$('#gN').value.trim(),pr=num($('#gP').value);if(!n||!(pr>0))return toast('Mets un nom et un prix');
+    S.cg=S.cg||[];const id='c'+Date.now();S.cg.push({id,n,p:pr});S.goal=id;save();buzz();toast('Nouvel objectif : '+n);renderGoals();renderJar()}}
 const BODY={
  tabac:[[1,'1 jour','Le monoxyde de carbone a quitté ton sang. Ton cœur et tes muscles reçoivent plus d’oxygène.'],
   [2,'2 jours','Le goût et l’odorat commencent à revenir.'],
@@ -571,7 +577,7 @@ if(!Array.isArray(S.mine))S.mine=[];if(!Array.isArray(S.crav))S.crav=[];
 function showReason(){const [k,t]=REASONS[rI%REASONS.length];$('#rKind').textContent=k==='Toi'?'À te rappeler':'Pourquoi ne pas fumer · '+k;$('#rTxt').textContent=t}
 function renderMine(){const box=$('#ovMine');box.innerHTML=`<span class="ovk">Mes raisons d’arrêter</span>${S.mine.length?`<ul>${S.mine.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:'<b style="font-size:15px;font-weight:600;color:rgba(255,255,255,.8)">Écris pourquoi tu veux arrêter. Tu les reverras à chaque envie.</b>'}<form id="mineF"><input id="mineI" placeholder="Ex. être en forme, mieux dormir…" maxlength="80" aria-label="Ajouter une raison"><button type="submit">OK</button></form>`;
   $('#mineF').onsubmit=e=>{e.preventDefault();const v=$('#mineI').value.trim();if(!v)return;S.mine.push(v);save();renderMine()}}
-function renderOvStats(){const g=ALTS.find(a=>a[0]===S.goal)||ALTS[0];const cj=(hv('shit')+hv('beuh'))/Math.max(.1,hv('jpd')*7);const won=S.crav.filter(c=>c.w).length;
+function renderOvStats(){const g=curGoal();const cj=(hv('shit')+hv('beuh'))/Math.max(.1,hv('jpd')*7);const won=S.crav.filter(c=>c.w).length;
   $('#ovStats').innerHTML=`<div><b>${streak('j')} j</b><span>sans joint</span></div><div><b>${streak('c')} j</b><span>sans clope</span></div><div><b>${eur(piggy())}</b><span>dans ta tirelire pour ${esc(g[1].toLowerCase())}</span></div><div><b>${won}</b><span>envie${won>1?'s':''} déjà battue${won>1?'s':''}</span></div>`+
    `<div style="grid-column:1/-1"><span>Un joint, c’est environ</span><b>${cj.toFixed(2).replace('.',',')} €</b><span>${Math.round(cj/g[3]*100)} % de ${esc(g[1].toLowerCase())}</span></div>`}
 function breathe(){const o=$('#orb'),t=$('#bTxt');let inh=true;const step=()=>{o.classList.toggle('big',inh);t.textContent=inh?'Inspire':'Expire';inh=!inh};step();bT=setInterval(step,4000);
