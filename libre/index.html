@@ -21,7 +21,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--a1);outline-offset:2px}
-.app{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+.app{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .head{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding-block:14px 10px;display:grid;gap:6px}
 .title{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1}
 .saved{justify-self:start;font-size:12px;font-weight:700;color:var(--good);background:var(--good-soft);border-radius:999px;padding:4px 10px}
@@ -132,7 +132,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .help{background:var(--card);border-radius:20px;padding:16px;display:grid;gap:8px;box-shadow:0 1px 0 var(--line)}
 .help b{font-size:15px}.help p{margin:0;font-size:14px;color:var(--muted)}
 .num{font-weight:800;color:var(--ink);user-select:all;white-space:nowrap}
-.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:40;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:calc(140px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:40;white-space:nowrap}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:25;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
 .tabbar a{flex:1;max-width:130px;display:grid;justify-items:center;gap:3px;padding:8px 0 6px;color:var(--muted);text-decoration:none;font-size:10.5px;font-weight:600}
@@ -152,11 +152,11 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .enext{margin:0;text-align:center;font-size:13px;color:rgba(255,255,255,.55)}
 #eOrb{transition-property:transform;transition-timing-function:ease-in-out}#eOrb.mid{transform:scale(1)}
 .wk{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center}
-.wdays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.wd{border:0;background:var(--soft);border-radius:14px;padding:8px 0 6px;display:grid;justify-items:center;gap:1px;color:var(--ink);position:relative}
-.wd small{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase}.wd b{font-size:17px;font-weight:800}
-.wd i{width:5px;height:5px;border-radius:50%;background:transparent}.wd i.on{background:var(--a1)}
-.wd.tod b{color:var(--a1)}.wd[aria-pressed="true"]{background:var(--ink)}.wd[aria-pressed="true"] b,.wd[aria-pressed="true"] small{color:var(--bg)}.wd[aria-pressed="true"] i.on{background:var(--a2)}
+.adays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.ad{border:0;background:var(--soft);border-radius:14px;padding:8px 0 6px;display:grid;justify-items:center;gap:1px;color:var(--ink);position:relative}
+.ad small{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase}.ad b{font-size:17px;font-weight:800}
+.ad i{width:5px;height:5px;border-radius:50%;background:transparent}.ad i.on{background:var(--a1)}
+.ad.tod b{color:var(--a1)}.ad[aria-pressed="true"]{background:var(--ink)}.ad[aria-pressed="true"] b,.ad[aria-pressed="true"] small{color:var(--bg)}.ad[aria-pressed="true"] i.on{background:var(--a2)}
 .ag{display:grid;gap:8px}
 .it{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--card);border-radius:16px;padding:12px 14px;box-shadow:0 1px 0 var(--line);border-left:4px solid var(--c)}
 .it .ck{width:28px;height:28px;border-radius:50%;border:2px solid var(--c);background:none;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;padding:0}
@@ -177,6 +177,17 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .wrap .chip[data-cc][aria-pressed="true"]{background:var(--c);color:#fff}
 .tm{display:flex;gap:8px;align-items:center}.tm input{border:0;border-radius:12px;background:var(--card);padding:10px 12px;font-size:17px;font-weight:700;color:var(--ink);box-shadow:0 1px 0 var(--line)}
 .sbtns{display:grid;gap:8px}.ghost{border:0;background:var(--soft);color:var(--ink);border-radius:14px;padding:13px;font-weight:700;font-size:15px}.ghost.red{color:var(--bad)}
+.kpis{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:8px}
+.kpi{background:var(--card);border-radius:18px;padding:12px;display:grid;gap:0;text-decoration:none;color:var(--ink);box-shadow:0 1px 0 var(--line);min-width:0}
+.kpi b{font-size:24px;font-weight:800;letter-spacing:-.02em}.kpi span{font-size:12px;color:var(--muted);font-weight:600}
+.kpi.g{color:#fff;background:#15172A;background-image:radial-gradient(120% 120% at 100% 0%,rgba(91,91,240,.7),transparent 60%),radial-gradient(100% 100% at 0% 100%,rgba(19,181,160,.6),transparent 60%)}.kpi.g span{color:rgba(255,255,255,.8)}
+.h2r{display:flex;justify-content:space-between;align-items:baseline}.h2r a,.h2r span{font-size:14px;font-weight:700;color:var(--a1);text-decoration:none;letter-spacing:0}.h2r span{color:var(--muted)}
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:26;border:0;border-radius:999px;padding:14px 20px;font-weight:800;font-size:15.5px;color:#fff;background:linear-gradient(120deg,#5B5BF0,#13B5A0);box-shadow:0 8px 24px rgba(91,91,240,.35)}
+.set{background:var(--card);border-radius:18px;box-shadow:0 1px 0 var(--line);padding:0 16px}
+.set summary{list-style:none;cursor:pointer;padding:15px 0;font-weight:700;display:flex;justify-content:space-between}.set summary::-webkit-details-marker{display:none}
+.set summary::after{content:"›";color:var(--muted);transform:rotate(90deg);transition:.2s}.set[open] summary::after{transform:rotate(-90deg)}
+.set>div{padding-bottom:14px;display:grid;gap:10px}.set .card{box-shadow:none;padding:0;background:none}
+.swipe{touch-action:pan-y}
 .sos{width:100%;border:0;border-radius:18px;padding:16px;font-weight:800;font-size:17px;color:#fff;background:linear-gradient(120deg,#5B5BF0,#13B5A0);box-shadow:0 6px 18px rgba(91,91,240,.25)}
 .ov{position:fixed;inset:0;z-index:60;background:#0E1020;color:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .ovin{max-width:520px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:grid;gap:16px;position:relative}
@@ -207,98 +218,79 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 </head>
 <body>
 <div class="app">
-  <header class="head"><span class="title" id="title">Suivi</span><span class="saved">✓ Enregistré sur ton téléphone</span></header>
+  <header class="head"><span class="title" id="title">Aujourd’hui</span><span class="saved">✓ Enregistré sur ton téléphone</span></header>
 
-  <!-- BUDGET -->
-  <main class="pane" data-p="budget" hidden>
-    <div class="hero"><small id="hLab">Il te reste ce mois-ci</small><b id="hReste">—</b><span class="sub2" id="hSub"></span></div>
-    <h2>Ce qui rentre ce mois</h2>
-    <div class="card" id="missions"></div>
-    <button type="button" class="bigbtn" id="addMission">+ Ajouter une mission payée</button>
-    <h2>Charges fixes, tous les mois</h2>
-    <p class="tip">Tape tes montants. Rien n’est prérempli.</p>
-    <div class="card" id="fix"></div>
-    <h2>Dépensé ce mois</h2>
-    <p class="tip">Rempli tout seul avec ce que tu notes dans Suivi.</p>
-    <div class="card"><div class="bars" id="mBars"></div></div>
-  </main>
-
-  <!-- CONSO -->
-  <main class="pane" data-p="conso" hidden>
-    <div class="hero warm"><small id="cLab">Shit, beuh, clopes et malbouffe ce mois</small><b id="cMonth">—</b><span class="sub2" id="cSub"></span></div>
-    <div class="big3"><div><span>Avant, par mois</span><b id="cBefore">—</b></div><div><span>À ce rythme</span><b id="cNow">—</b></div><div><span>Différence</span><b id="cDiff">—</b></div></div>
-    <div class="card"><div class="bars" id="cBars"></div></div>
-    <h2>Joints et clopes, 7 jours</h2>
-    <div class="card"><div class="bars" id="jcBars"></div></div>
-    <h2>Avant de commencer</h2>
-    <p class="tip">Ce que tu dépensais à peu près <b>par semaine</b>. Ça sert à calculer ta tirelire.</p>
-    <div class="card" id="habit"></div>
-  </main>
-
-  <!-- SUIVI -->
+  <!-- AUJOURD'HUI -->
   <main class="pane" data-p="suivi">
-    <button type="button" class="sos" data-sos>J’ai envie de fumer</button>
-    <div class="box">
+    <div class="kpis">
+      <a href="#place" class="kpi"><b id="kJ">0 j</b><span>sans joint</span></a>
+      <a href="#place" class="kpi"><b id="kC">0 j</b><span>sans clope</span></a>
+      <a href="#place" class="kpi g"><b id="kP">0 €</b><span>dans ta tirelire</span></a>
+    </div>
+    <div class="box swipe" id="dayBox">
       <div class="dh"><button type="button" class="nav" id="dPrev" aria-label="Jour précédent">‹</button><b id="dLabel">Aujourd'hui</b><button type="button" class="nav" id="dNext" aria-label="Jour suivant">›</button></div>
-      <div class="dtot"><div><span>Dépensé</span><b id="dOut">0 €</b></div><div class="in2"><span>Gagné</span><b id="dIn">0 €</b></div></div>
-
-      <span class="sl">Repas</span>
-      <div class="meals" id="meals"></div>
-      <div class="amt" id="mealBox" hidden><div class="ah"><b id="mealT"></b><button type="button" class="x" id="mealX" aria-label="Fermer">×</button></div>
-        <div class="opts" id="mealOpts"></div>
-        <div id="mealAmt" hidden><div class="qp" id="mealQp"></div></div></div>
-
-      <span class="sl">Dépenses</span>
+      <div class="step"><span>Joints<small id="jHint"></small></span><span class="ctl"><button type="button" data-s="j" data-d="-1" aria-label="Moins de joints">−</button><output id="oj">–</output><button type="button" data-s="j" data-d="1" aria-label="Plus de joints">+</button></span></div>
+      <div class="step"><span>Clopes<small id="cHint"></small></span><span class="ctl"><button type="button" data-s="c" data-d="-1" aria-label="Moins de clopes">−</button><output id="oc">–</output><button type="button" data-s="c" data-d="1" aria-label="Plus de clopes">+</button></span></div>
+      <span class="sl">J’ai dépensé</span>
       <div class="cats" id="cats"></div>
       <div class="amt" id="amt" hidden><div class="ah"><b id="aCat"></b><button type="button" class="x" id="aX" aria-label="Fermer">×</button></div>
         <div class="qp" id="qp"></div>
         <form class="af" id="af"><input id="aV" inputmode="decimal" placeholder="Autre montant" aria-label="Montant" autocomplete="off"><button type="submit">Ajouter</button></form></div>
-
-      <button type="button" class="bigbtn" id="addMission2">+ Mission payée</button>
+      <div class="dtot"><div><span>Dépensé</span><b id="dOut">0 €</b></div><div class="in2"><span>Gagné</span><b id="dIn">0 €</b></div></div>
       <div class="elist" id="elist"></div>
-
-      <span class="sl">Conso du jour</span>
-      <div class="step"><span>Joints<small id="jHint"></small></span><span class="ctl"><button type="button" data-s="j" data-d="-1" aria-label="Moins de joints">−</button><output id="oj">–</output><button type="button" data-s="j" data-d="1" aria-label="Plus de joints">+</button></span></div>
-      <div class="step"><span>Clopes<small id="cHint"></small></span><span class="ctl"><button type="button" data-s="c" data-d="-1" aria-label="Moins de clopes">−</button><output id="oc">–</output><button type="button" data-s="c" data-d="1" aria-label="Plus de clopes">+</button></span></div>
     </div>
-    <h2>Les 7 derniers jours</h2>
-    <div class="card" style="padding:14px 16px"><div class="streak" id="week"></div></div>
+    <h2 class="h2r">Ma journée <a href="#agenda">Agenda ›</a></h2>
+    <div class="ag" id="todayAg"></div>
+    <div hidden><div class="meals" id="meals"></div><div id="mealBox"><b id="mealT"></b><button id="mealX"></button><div id="mealOpts"></div><div id="mealAmt"><div id="mealQp"></div></div></div><button id="addMission2"></button><div id="week"></div></div>
   </main>
 
   <!-- AGENDA -->
   <main class="pane" data-p="agenda" hidden>
     <div class="hero" id="agHero"></div>
-    <div class="wk"><button type="button" class="nav" id="wPrev" aria-label="Semaine précédente">‹</button><div class="wdays" id="wDays"></div><button type="button" class="nav" id="wNext" aria-label="Semaine suivante">›</button></div>
-    <div class="ag" id="agList"></div>
+    <div class="wk"><button type="button" class="nav" id="wPrev" aria-label="Semaine précédente">‹</button><div class="adays" id="wDays"></div><button type="button" class="nav" id="wNext" aria-label="Semaine suivante">›</button></div>
+    <div class="ag swipe" id="agList"></div>
     <button type="button" class="bigbtn" id="agAdd" style="background:var(--a1)">+ Ajouter</button>
-    <p class="tip">Touche un élément pour le modifier, le répéter ou l’ajouter à ton calendrier.</p>
+    <p class="tip">Glisse pour changer de jour. Touche un élément pour le modifier.</p>
   </main>
 
-  <!-- BIEN-ÊTRE -->
+  <!-- ARGENT -->
+  <main class="pane" data-p="budget" hidden>
+    <div class="hero"><small id="hLab">Il te reste ce mois-ci</small><b id="hReste">—</b><span class="sub2" id="hSub"></span></div>
+    <h2>Ce qui rentre</h2>
+    <div class="card" id="missions"></div>
+    <button type="button" class="bigbtn" id="addMission">+ Mission payée</button>
+    <h2>Charges fixes</h2>
+    <div class="card" id="fix"></div>
+    <h2>Dépensé ce mois</h2>
+    <div class="card"><div class="bars" id="mBars"></div></div>
+    <h2>Ce que te coûte la conso</h2>
+    <div class="hero warm"><small id="cLab">Shit, beuh, clopes et malbouffe ce mois</small><b id="cMonth">—</b><span class="sub2" id="cSub"></span></div>
+    <div class="big3"><div><span>Avant, par mois</span><b id="cBefore">—</b></div><div><span>À ce rythme</span><b id="cNow">—</b></div><div><span>Différence</span><b id="cDiff">—</b></div></div>
+    <div class="card"><div class="bars" id="jcBars"></div></div>
+    <details class="set"><summary>Ce que je dépensais avant, par semaine</summary><div><p class="tip">Sert à calculer ta tirelire. À remplir une seule fois.</p><div class="card" id="habit"></div></div></details>
+    <div hidden><div id="cBars"></div></div>
+  </main>
+
+  <!-- MOI -->
   <main class="pane" data-p="place" hidden>
     <div class="jar" id="jar"></div>
-    <button type="button" class="sos" data-sos>J’ai envie de fumer</button>
+    <details class="set"><summary>Changer d’objectif</summary><div><div class="glist" id="alts"></div></div></details>
     <h2>Ce que tu gagnes</h2>
     <div class="gsum" id="gSum"></div>
     <div class="chips" id="gChips"></div>
     <div class="card"><div class="tl" id="gList"></div></div>
     <h2>Exercices</h2>
-    <p class="tip" id="exTip">Guidés avec un minuteur. Fais-en un dès que l’envie monte, ou chaque jour pour être plus fort.</p>
+    <p class="tip" id="exTip"></p>
     <div class="exl" id="exList"></div>
-    <h2>Ton corps</h2>
-    <div class="body2" id="bodyTabs"></div>
-    <div class="card"><div class="tl" id="timeline"></div></div>
-    <h2>Ton objectif</h2>
-    <p class="tip">Touche ce que tu veux t'offrir avec l'argent de ta tirelire.</p>
-    <div class="glist" id="alts"></div>
-    <h2>Quand l'envie arrive</h2>
-    <div class="ideas" id="ideas"></div>
-    <div class="help"><b>Besoin d'en parler ?</b>
-      <p>Drogues Info Service, gratuit et anonyme, 7j/7 : <span class="num">0 800 23 13 13</span></p>
-      <p>Tabac Info Service, avec un coach gratuit : <span class="num">39 89</span></p>
-      <p>Ton médecin peut aussi prescrire des substituts nicotiniques remboursés.</p></div>
+    <div class="help"><b>Besoin d’en parler ?</b>
+      <p>Drogues Info Service, gratuit et anonyme, 7j/7 : <a class="num" href="tel:0800231313">0 800 23 13 13</a></p>
+      <p>Tabac Info Service, coach gratuit : <a class="num" href="tel:3989">39 89</a></p>
+      <p>Ton médecin peut prescrire des substituts nicotiniques remboursés.</p></div>
+    <div hidden><div id="bodyTabs"></div><div id="timeline"></div><div id="ideas"></div></div>
   </main>
 </div>
+
+<button type="button" class="fab" data-sos>Envie de fumer ?</button>
 
 <div class="ov" id="exo" hidden role="dialog" aria-modal="true" aria-label="Exercice">
   <div class="ovin">
@@ -328,11 +320,10 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 </div>
 
 <nav class="tabbar" id="tabs">
-  <a href="#budget" data-t="budget"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M7 15h4"/></svg>Budget</a>
-  <a href="#conso" data-t="conso"><svg viewBox="0 0 24 24"><path d="M12 21c-4 0-7-2.7-7-6.5 0-3 2-5 3.5-6.5.3 2 1.5 3 2.5 3 0-3 1-6 4-8 0 3 1.5 4.5 3 6.5 1 1.3 1.5 3 1.5 5C19.5 18.3 16 21 12 21z"/></svg>Conso</a>
-  <a href="#suivi" data-t="suivi"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="4"/><path d="M8 3v4M16 3v4M3 10h18M8 15l2.5 2.5L16 13"/></svg>Suivi</a>
-  <a href="#agenda" data-t="agenda"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>Agenda</a>
-  <a href="#place" data-t="place"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.4 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.4 0 5.8 3.3 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg>Bien-être</a>
+  <a href="#suivi" data-t="suivi"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Aujourd’hui</a>
+  <a href="#agenda" data-t="agenda"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="4"/><path d="M8 3v4M16 3v4M3 10h18M8 15l2.5 2.5L16 13"/></svg>Agenda</a>
+  <a href="#budget" data-t="budget"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M7 15h4"/></svg>Argent</a>
+  <a href="#place" data-t="place"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.4 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.4 0 5.8 3.3 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg>Moi</a>
 </nav>
 
 <script>
@@ -428,8 +419,8 @@ function renderSuivi(){const d=S.days[cur]||{e:[],meals:{}};const dt=new Date(cu
   $$('[data-rmi]').forEach(b=>b.onclick=()=>{S.inc=S.inc.filter(m=>m.id!==b.dataset.rmi);save();refresh()});
   /* conso */
   $('#oj').textContent=d.j!=null?d.j:'–';$('#oc').textContent=d.c!=null?d.c:'–';
-  $('#jHint').textContent=d.j==null?'Touche + ou − pour noter, même 0':'D’habitude : '+hv('jpd')+' par jour';
-  $('#cHint').textContent=d.c==null?'Touche + ou − pour noter, même 0':'D’habitude : '+hv('cpd')+' par jour';
+  $('#jHint').textContent=d.j==null?'Touche + ou − pour noter, même 0':hv('jpd')?'D’habitude : '+hv('jpd')+' par jour':'';
+  $('#cHint').textContent=d.c==null?'Touche + ou − pour noter, même 0':hv('cpd')?'D’habitude : '+hv('cpd')+' par jour':'';
   /* semaine */
   const wk=[];for(let i=6;i>=0;i--){const x=new Date();x.setDate(x.getDate()-i);const k=iso(x),v=S.days[k];const has=v&&(v.e.length||Object.keys(v.meals).length||v.j!=null||v.c!=null)||S.inc.some(m=>m.d===k);
     wk.push(`<button type="button" class="wd ${k===cur?'sel':''}" data-day="${k}"><i class="${has?'on':''}">${x.getDate()}</i>${['D','L','M','M','J','V','S'][x.getDay()]}</button>`)}
@@ -567,14 +558,15 @@ const GAINS=[
  ['look','Look',[[1,'Plus d’yeux rouges ni de regard fatigué.'],[3,'L’odeur de tabac quitte tes vêtements, tes cheveux, ton appart et ton haleine.'],[14,'Tes gencives se réparent, tes dents jaunissent moins.'],[30,'Ta peau est mieux oxygénée : teint plus clair, moins de cernes.'],[90,'Tu manges mieux et tu bouges plus : ça se voit sur ta silhouette et ton visage.']]],
  ['sport','Sport',[[3,'Ton souffle commence à revenir. Les escaliers font moins mal.'],[14,'Tu récupères plus vite après l’effort, tes muscles sont mieux oxygénés.'],[30,'Tu cours, nages ou joues plus longtemps sans être à bout.'],[90,'Ta capacité pulmonaire a nettement progressé. Le sport devient un plaisir, pas une épreuve.']]],
  ['liberte','Liberté',[[1,'Plus besoin de penser à ton stock, ton briquet, ta prochaine pause.'],[7,'Tu ne dépends plus d’un dealer ni de l’heure du tabac.'],[14,'Tes soirées, tes potes, ton temps : c’est toi qui choisis, pas l’envie.'],[30,'Tu es plus présent avec les gens. Ils le remarquent.'],[90,'Tu as repris le contrôle. Et l’argent économisé est là, dans ta tirelire.']]]];
-let gCur='tete';
-function renderGains(){const n=Math.max(streak('j'),streak('c'));const all=GAINS.flatMap(g=>g[2]);const got=all.filter(([d])=>n>=d).length;
-  $('#gSum').innerHTML=`<b>${got}/${all.length}</b><span>${got?'bienfaits déjà débloqués.':'bienfaits à débloquer.'} Le premier arrive après 1 jour sans fumer.</span>`;
+const CORPS=[...BODY.tabac.map(([d,w,t])=>[d,t,'c']),...BODY.cannabis.map(([d,w,t])=>[d,t,'j'])].sort((a,b)=>a[0]-b[0]);GAINS.unshift(['corps','Corps',CORPS]);
+let gCur='corps',gAll=false;
+function renderGains(){const n=Math.max(streak('j'),streak('c'));const nn=it=>it[2]?streak(it[2]):n;const all=GAINS.flatMap(g=>g[2]);const got=all.filter(it=>nn(it)>=it[0]).length;
+  $('#gSum').innerHTML=`<b>${got}/${all.length}</b><span>${got?'bienfaits déjà débloqués. Chaque jour sans fumer en ajoute.':'bienfaits à débloquer. Le premier arrive après 1 jour sans fumer.'}</span>`;
   $('#gChips').innerHTML=GAINS.map(([k,n2])=>`<button type="button" class="chip" data-g2="${k}" aria-pressed="${gCur===k}">${n2}</button>`).join('');
-  $$('[data-g2]').forEach(b=>b.onclick=()=>{gCur=b.dataset.g2;buzz();renderGains()});
-  const g=GAINS.find(x=>x[0]===gCur);let nextSet=false;
-  $('#gList').innerHTML=g[2].map(([d,t])=>{const ok=n>=d;let cls=ok?'ok':'';if(!ok&&!nextSet){cls='next';nextSet=true}const w=d<7?d+' jour'+(d>1?'s':''):d<30?(d/7)+' semaine'+(d>7?'s':''):d<365?(d/30)+' mois':'1 an';
-    return `<div class="ms ${cls}"><span class="mk">${ok?'✓':''}</span><span><span class="when">${w}${cls==='next'?` · encore ${d-n} j`:''}</span><b>${t}</b></span></div>`}).join('')}
+  $$('[data-g2]').forEach(b=>b.onclick=()=>{gCur=b.dataset.g2;gAll=false;buzz();renderGains()});
+  const g=GAINS.find(x=>x[0]===gCur);let nextSet=false,shown=0,hid=0;
+  $('#gList').innerHTML=g[2].map(([d,t,ky])=>{const n=ky?streak(ky):Math.max(streak('j'),streak('c'));const ok=n>=d;let cls=ok?'ok':'';if(!ok&&!nextSet){cls='next';nextSet=true}if(!ok&&!gAll){if(shown>=2){hid++;return ''}shown++}const w=d<7?d+' jour'+(d>1?'s':''):d<30?(d/7)+' semaine'+(d>7?'s':''):d<365?(d/30)+' mois':'1 an';
+    return `<div class="ms ${cls}"><span class="mk">${ok?'✓':''}</span><span><span class="when">${w}${ky?(ky==='c'?' sans clope':' sans joint'):''}${cls==='next'?` · encore ${d-n} j`:''}</span><b>${t}</b></span></div>`}).join('')+(hid||gAll?`<button type="button" class="addrow" id="gMore">${gAll?'Voir moins':'Voir les '+hid+' suivants'}</button>`:'');const gm=$('#gMore');if(gm)gm.onclick=()=>{gAll=!gAll;renderGains()}}
 
 /* ---------- Exercices guidés ---------- */
 const B=(n,a,h,o)=>{const r=[];for(let i=0;i<n;i++){r.push(['in','Inspire par le nez',a]);if(h)r.push(['hold','Bloque',h]);r.push(['out','Expire doucement par la bouche',o])}return r};
@@ -589,7 +581,7 @@ const EX=[
 const exDone=()=>(S.ex=S.ex||{},Object.values(S.ex).reduce((a,b)=>a+b,0));
 function renderEx(){$('#exList').innerHTML=EX.map(([id,n,sub,d,c1,c2])=>`<button type="button" class="ex" data-ex="${id}" style="--c1:${c1};--c2:${c2}"><i>${d}${S.ex&&S.ex[id]?' · fait '+S.ex[id]+'×':''}</i><span><b>${n}</b><br><small>${sub}</small></span></button>`).join('');
   $('#exQuick').innerHTML=EX.filter(e=>['coh','surf','sport','ancre'].includes(e[0])).map(([id,n])=>`<button type="button" data-ex="${id}">${n}</button>`).join('');
-  const k=exDone();$('#exTip').textContent=k?`${k} exercice${k>1?'s':''} fait${k>1?'s':''}. Chaque fois, ton cerveau apprend à gérer l’envie sans fumer.`:'Guidés avec un minuteur. Fais-en un dès que l’envie monte, ou chaque jour pour être plus fort.';
+  const k=exDone();$('#exTip').textContent=k?`${k} exercice${k>1?'s':''} fait${k>1?'s':''}. Chaque fois, ton cerveau apprend à gérer l’envie sans fumer.`:'Guidés avec un minuteur. Un dès que l’envie monte, ou un par jour.';
   $$('[data-ex]').forEach(b=>b.onclick=()=>{if(!$('#ov').hidden)closeSOS();startEx(b.dataset.ex)})}
 let eT=null,eI=0,eL=0,eP=false,eCur=null,eTot=0,eEl=0;
 const LBL={in:'Inspire',out:'Expire',hold:'Bloque'};
@@ -628,15 +620,9 @@ function renderAgenda(){
   const lab=agDay===today?'Aujourd’hui':agDay===addD(today,1)?'Demain':agDay===addD(today,-1)?'Hier':JN[d.getDay()].replace(/^./,c=>c.toUpperCase())+'.';
   $('#agHero').innerHTML=`<small>${lab} · ${JN[d.getDay()]} ${d.getDate()} ${MN[d.getMonth()]}</small><b>${its.length?dn+'/'+its.length:'Libre'}</b><span class="sub2">${!its.length?'Rien de prévu pour l’instant.':dn===its.length?'Tout est fait. Bravo, journée gagnée.':`${its.length-dn} chose${its.length-dn>1?'s':''} à faire.`}</span>`;
   const m=pd(agDay);const off=(m.getDay()+6)%7;const mon=addD(agDay,-off);
-  $('#wDays').innerHTML=[0,1,2,3,4,5,6].map(i=>{const k=addD(mon,i),x=pd(k);return `<button type="button" class="wd ${k===today?'tod':''}" data-wd="${k}" aria-pressed="${k===agDay}"><small>${JN[x.getDay()]}</small><b>${x.getDate()}</b><i class="${itemsOn(k).length?'on':''}"></i></button>`}).join('');
+  $('#wDays').innerHTML=[0,1,2,3,4,5,6].map(i=>{const k=addD(mon,i),x=pd(k);return `<button type="button" class="ad ${k===today?'tod':''}" data-wd="${k}" aria-pressed="${k===agDay}"><small>${JN[x.getDay()]}</small><b>${x.getDate()}</b><i class="${itemsOn(k).length?'on':''}"></i></button>`}).join('');
   $$('[data-wd]').forEach(b=>b.onclick=()=>{agDay=b.dataset.wd;buzz();renderAgenda()});
-  const nowH=new Date().toTimeString().slice(0,5);let nowSet=false;
-  $('#agList').innerHTML=its.length?its.map(e=>{const c=catOf(e.c),ok=e.done&&e.done[agDay];let now='';if(agDay===today&&!ok&&!nowSet&&true){now=' now';nowSet=true}
-    return `<div class="it${ok?' done':''}${now}" style="--c:${c[2]}"><button type="button" class="ck" data-ck="${e.id}" aria-label="Fait">${ok?'✓':''}</button><button type="button" class="tx" data-ed="${e.id}"><span class="tt">${esc(e.t)}</span><span class="mt">${c[1]}${e.r?' · '+AR.find(r=>r[0]===e.r)[1].toLowerCase():''}${now?' · à suivre':''}</span></button><span class="hr">${e.h||''}</span></div>`}).join('')
-   :`<div class="agempty">Rien de prévu ce jour-là.<br>Commence par 3 choses simples : un repas, un peu de sport, une heure de coucher.</div>`;
-  $$('[data-ck]').forEach(b=>b.onclick=()=>{const e=S.ag.find(x=>x.id===b.dataset.ck);e.done=e.done||{};if(e.done[agDay])delete e.done[agDay];else{e.done[agDay]=1;if(navigator.vibrate)navigator.vibrate([10,40,10])}save();renderAgenda();
-    const r=itemsOn(agDay);if(r.length&&r.every(x=>x.done&&x.done[agDay]))toast('Journée bouclée. Bien joué.')});
-  $$('[data-ed]').forEach(b=>b.onclick=()=>agSheet(b.dataset.ed))}
+  agRows(agDay,$('#agList'))}
 $('#wPrev').onclick=()=>{agDay=addD(agDay,-7);renderAgenda()};$('#wNext').onclick=()=>{agDay=addD(agDay,7);renderAgenda()};
 $('#agAdd').onclick=()=>agSheet(null);
 function agSheet(id){const e=id?S.ag.find(x=>x.id===id):{t:'',h:'',c:'perso',r:''};let f={...e};
@@ -658,10 +644,10 @@ function agSheet(id){const e=id?S.ag.find(x=>x.id===id):{t:'',h:'',c:'perso',r:'
    bg.querySelectorAll('[data-cc]').forEach(b=>b.onclick=()=>{f.c=b.dataset.cc;buzz();draw()});
    bg.querySelectorAll('[data-rr]').forEach(b=>b.onclick=()=>{f.r=b.dataset.rr;buzz();draw()});
    bg.querySelector('#fOk').onclick=()=>{f.t=T.value.trim();if(!f.t){T.focus();return}
-     if(id)Object.assign(e,{t:f.t,h:f.h,c:f.c,r:f.r});else S.ag.push({id:uid(),t:f.t,h:f.h,c:f.c,r:f.r,d:agDay,done:{}});save();close();renderAgenda();toast(id?'Modifié':'Ajouté')};
+     if(id)Object.assign(e,{t:f.t,h:f.h,c:f.c,r:f.r});else S.ag.push({id:uid(),t:f.t,h:f.h,c:f.c,r:f.r,d:agDay,done:{}});save();close();renderAgenda();renderTodayAg();toast(id?'Modifié':'Ajouté')};
    const ic=bg.querySelector('#fIcs');if(ic)ic.onclick=()=>ics({...f,t:T.value.trim()||f.t});
-   const d1=bg.querySelector('#fDel1');if(d1)d1.onclick=()=>{e.skip=e.skip||{};e.skip[agDay]=1;save();close();renderAgenda()};
-   const da=bg.querySelector('#fDelA');if(da)da.onclick=()=>{S.ag=S.ag.filter(x=>x.id!==id);save();close();renderAgenda()};
+   const d1=bg.querySelector('#fDel1');if(d1)d1.onclick=()=>{e.skip=e.skip||{};e.skip[agDay]=1;save();close();renderAgenda();renderTodayAg()};
+   const da=bg.querySelector('#fDelA');if(da)da.onclick=()=>{S.ag=S.ag.filter(x=>x.id!==id);save();close();renderAgenda();renderTodayAg()};
    bg.querySelector('#fX').onclick=close;first=false};
   bg.onclick=ev=>{if(ev.target===bg)close()};draw();document.body.appendChild(bg);document.body.style.overflow='hidden';if(!id)setTimeout(()=>bg.querySelector('#fT').focus(),250)}
 function ics(f){const d=(f.d||agDay).replace(/-/g,''),h=f.h.replace(':','')+'00';const end=String(Math.min(23,+f.h.slice(0,2)+1)).padStart(2,'0')+f.h.slice(3,5)+'00';
@@ -669,8 +655,23 @@ function ics(f){const d=(f.d||agDay).replace(/-/g,''),h=f.h.replace(':','')+'00'
   const txt=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Budget Libre//FR','BEGIN:VEVENT','UID:'+uid()+'@libre','DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z','DTSTART:'+d+'T'+h,'DTEND:'+d+'T'+end,'SUMMARY:'+f.t.replace(/[,;]/g,' '),rr,'BEGIN:VALARM','TRIGGER:-PT15M','ACTION:DISPLAY','DESCRIPTION:'+f.t.replace(/[,;]/g,' '),'END:VALARM','END:VEVENT','END:VCALENDAR'].filter(Boolean).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/calendar'}));a.download=(f.t||'agenda').slice(0,30)+'.ics';document.body.appendChild(a);a.click();a.remove()}
 
-function refresh(){renderSuivi();renderBudget();renderConso();renderJar();renderBody();renderGains();renderEx();renderAgenda()}
-const TT={budget:'Budget',conso:'Conso',suivi:'Suivi',agenda:'Agenda',place:'Bien-être'};
+function agRows(k,el){const its=itemsOn(k);let nowSet=false;
+  el.innerHTML=its.length?its.map(e=>{const c=catOf(e.c),ok=e.done&&e.done[k];let now='';if(k===today&&!ok&&!nowSet){now=' now';nowSet=true}
+    return `<div class="it${ok?' done':''}${now}" style="--c:${c[2]}"><button type="button" class="ck" data-ck="${e.id}" aria-label="Fait">${ok?'✓':''}</button><button type="button" class="tx" data-ed="${e.id}"><span class="tt">${esc(e.t)}</span><span class="mt">${c[1]}${e.r?' · '+AR.find(r=>r[0]===e.r)[1].toLowerCase():''}${now?' · à suivre':''}</span></button><span class="hr">${e.h||''}</span></div>`}).join('')
+   :`<button type="button" class="agempty" data-new style="border:0;width:100%">Rien de prévu. <b style="color:var(--a1)">+ Prévoir ma journée</b></button>`;
+  el.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const e=S.ag.find(x=>x.id===b.dataset.ck);e.done=e.done||{};if(e.done[k])delete e.done[k];else{e.done[k]=1;if(navigator.vibrate)navigator.vibrate([10,40,10])}save();renderAgenda();renderTodayAg();
+    const r=itemsOn(k);if(r.length&&r.every(x=>x.done&&x.done[k]))toast('Journée bouclée. Bien joué.')});
+  el.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>{agDay=k;agSheet(b.dataset.ed)});
+  el.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>{agDay=k;agSheet(null)})}
+function renderTodayAg(){agRows(today,$('#todayAg'))}
+function renderKpi(){$('#kJ').textContent=streak('j')+' j';$('#kC').textContent=streak('c')+' j';$('#kP').textContent=eur(piggy())}
+function swipe(el,next,prev){let x0=null,y0=0;el.addEventListener('touchstart',e=>{if(e.target.closest('input,form'))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  el.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){(dx<0?next:prev)();buzz()}},{passive:true})}
+swipe($('#dayBox'),()=>{if(!$('#dNext').disabled)$('#dNext').click()},()=>$('#dPrev').click());
+swipe($('#agList'),()=>{agDay=addD(agDay,1);renderAgenda()},()=>{agDay=addD(agDay,-1);renderAgenda()});
+
+function refresh(){renderSuivi();renderBudget();renderConso();renderJar();renderBody();renderGains();renderEx();renderAgenda();renderTodayAg();renderKpi()}
+const TT={suivi:'Aujourd’hui',agenda:'Agenda',budget:'Argent',place:'Moi'};
 function go(){let h=location.hash.slice(1);if(!TT[h]){try{h=localStorage.getItem('libreTab')||'suivi'}catch(e){h='suivi'}if(!TT[h])h='suivi'}
   $$('.pane').forEach(p=>p.hidden=p.dataset.p!==h);$$('#tabs a').forEach(a=>a.dataset.t===h?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
   $('#title').textContent=TT[h];try{localStorage.setItem('libreTab',h)}catch(e){}window.scrollTo(0,0)}
