@@ -137,6 +137,18 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .num{font-weight:800;color:var(--ink);user-select:all;white-space:nowrap}
 .toast{position:fixed;left:50%;bottom:calc(140px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:40;white-space:nowrap}
 .toast.on{opacity:1;transform:translate(-50%,0)}
+.bk{display:grid;grid-template-columns:1fr 1fr;gap:8px}.bkr{display:block;text-align:center;background:var(--soft);color:var(--ink);cursor:pointer}
+.onb{z-index:70;background:#15172A;background-image:radial-gradient(120% 70% at 100% 0%,rgba(91,91,240,.55),transparent 60%),radial-gradient(90% 60% at 0% 100%,rgba(19,181,160,.45),transparent 60%)}
+.onb .ovin{min-height:100%;align-content:start;gap:18px}
+.odots{display:flex;gap:6px}.odots i{height:5px;flex:1;border-radius:3px;background:rgba(255,255,255,.15)}.odots i.on{background:#3DD598}
+.oh{margin:0;font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.01em}.op{margin:8px 0 0;color:rgba(255,255,255,.72);font-size:15.5px;line-height:1.45}
+.onb section{display:grid;gap:14px;align-content:start}
+.oin{width:100%;border:0;border-radius:16px;padding:16px;font:inherit;font-size:20px;font-weight:700;background:rgba(255,255,255,.1);color:#fff}.oin::placeholder{color:rgba(255,255,255,.4)}
+.ogrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ogrid label{display:grid;gap:6px;background:rgba(255,255,255,.08);border-radius:16px;padding:12px;font-size:13px;font-weight:700;color:rgba(255,255,255,.7)}
+.ogrid input{width:100%;min-width:0;border:0;background:transparent;color:#fff;font:inherit;font-size:22px;font-weight:800;padding:0}.ogrid input::placeholder{color:rgba(255,255,255,.3)}
+.ogoals{display:grid;gap:8px}.og{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:2px solid transparent;border-radius:18px;padding:14px;background:rgba(255,255,255,.08);color:#fff;font:inherit}
+.og.on{border-color:#3DD598;background:rgba(61,213,152,.14)}.og b{flex:1;font-size:17px}.og span{font-weight:800}
+.ocus{display:flex;gap:8px}.ocus input{flex:1;min-width:0;width:0;border:0;border-radius:14px;padding:13px;font:inherit;font-size:16px;background:rgba(255,255,255,.1);color:#fff}.ocus input#oGP{flex:0 0 90px}.ocus input::placeholder{color:rgba(255,255,255,.4)}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:25;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
 .tabbar a{flex:1;max-width:130px;display:grid;justify-items:center;gap:3px;padding:8px 0 6px;color:var(--muted);text-decoration:none;font-size:10.5px;font-weight:600}
 .tabbar svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
@@ -259,7 +271,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
       <a href="#place" class="kpi"><b id="kC">0 j</b><span>sans clope</span></a>
       <a href="#place" class="kpi g"><b id="kP">0 €</b><span>dans ta tirelire</span></a>
     </div>
-    <div class="bank" id="bank"></div>
+    <div class="focus" id="focusT"></div>
     <div class="box swipe" id="dayBox">
       <div class="dh"><button type="button" class="nav" id="dPrev" aria-label="Jour précédent">‹</button><b id="dLabel">Aujourd'hui</b><button type="button" class="nav" id="dNext" aria-label="Jour suivant">›</button></div>
       <div class="step"><span>Joints<small id="jHint"></small></span><span class="ctl"><button type="button" data-s="j" data-d="-1" aria-label="Moins de joints">−</button><output id="oj">–</output><button type="button" data-s="j" data-d="1" aria-label="Plus de joints">+</button></span></div>
@@ -272,7 +284,6 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
       <div class="dtot"><div><span>Dépensé</span><b id="dOut">0 €</b></div><div class="in2"><span>Gagné</span><b id="dIn">0 €</b></div></div>
       <div class="elist" id="elist"></div>
     </div>
-    <div class="focus" id="focusT"></div>
     <h2 class="h2r">Ma journée <a href="#agenda">Agenda ›</a></h2>
     <div class="ag" id="todayAg"></div>
     <div hidden><div class="meals" id="meals"></div><div id="mealBox"><b id="mealT"></b><button id="mealX"></button><div id="mealOpts"></div><div id="mealAmt"><div id="mealQp"></div></div></div><button id="addMission2"></button><div id="week"></div></div>
@@ -291,7 +302,8 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
   <!-- ARGENT -->
   <main class="pane" data-p="budget" hidden>
     <div class="hero"><small id="hLab">Il te reste ce mois-ci</small><b id="hReste">—</b><span class="sub2" id="hSub"></span></div>
-    <a href="#suivi" class="gsum" id="hBank" style="text-decoration:none;color:var(--ink)" hidden></a>
+    <a href="#budget" class="gsum" id="hBank" style="text-decoration:none;color:var(--ink);display:none" hidden></a>
+    <div class="bank" id="bank"></div>
     <h2>Ce qui rentre</h2>
     <div class="card" id="missions"></div>
     <button type="button" class="bigbtn" id="addMission">+ Mission payée</button>
@@ -323,8 +335,23 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
       <p>Drogues Info Service, gratuit et anonyme, 7j/7 : <a class="num" href="tel:0800231313">0 800 23 13 13</a></p>
       <p>Tabac Info Service, coach gratuit : <a class="num" href="tel:3989">39 89</a></p>
       <p>Ton médecin peut prescrire des substituts nicotiniques remboursés.</p></div>
+    <details class="set"><summary>Sauvegarde</summary><div><p class="tip">Garde un fichier de secours (dans tes mails ou Fichiers). Si tu changes de téléphone, tu récupères tout.</p>
+      <div class="bk"><button type="button" class="bigbtn" id="bkSave" style="background:var(--a1)">Sauvegarder</button><label class="bigbtn bkr">Restaurer<input type="file" id="bkLoad" accept=".json,application/json" hidden></label></div></div></details>
     <div hidden><div id="bodyTabs"></div><div id="timeline"></div><div id="ideas"></div></div>
   </main>
+</div>
+
+<div class="ov onb" id="onb" hidden role="dialog" aria-modal="true" aria-label="Bienvenue">
+  <div class="ovin">
+    <div class="odots"><i></i><i></i><i></i></div>
+    <section data-o="0"><p class="ovk">Bienvenue</p><h1 class="oh">Salut ! Comment tu t’appelles ?</h1><p class="op">3 questions et ton app est prête. Tout reste privé sur ton téléphone.</p>
+      <input class="oin" id="oName" placeholder="Ton prénom" autocomplete="given-name" maxlength="24"></section>
+    <section data-o="1" hidden><p class="ovk">Avant</p><h1 class="oh">Combien tu dépensais par semaine ?</h1><p class="op">C’est ce qui remplit ta tirelire : chaque jour où tu consommes moins, l’argent est pour toi. Laisse vide si ça ne te concerne pas.</p>
+      <div class="ogrid" id="oHab"></div></section>
+    <section data-o="2" hidden><p class="ovk">Ton objectif</p><h1 class="oh">Tu te fais plaisir avec quoi ?</h1><p class="op">Ta tirelire va se remplir pour ça.</p>
+      <div class="ogoals" id="oGoals"></div></section>
+    <div class="ovact"><button type="button" class="won" id="oNext">Suivant</button><button type="button" class="lost" id="oBack">Retour</button></div>
+  </div>
 </div>
 
 <button type="button" class="fab" data-sos>Envie de fumer ?</button>
@@ -521,7 +548,7 @@ const goals=()=>[...ALTS,...(S.cg||[]).map(c=>[c.id,c.n,'Mon objectif',c.p,'',ST
 const curGoal=()=>goals().find(a=>a[0]===S.goal)||ALTS[0];
 function renderJar(){const g=curGoal(),have=piggy(),pct=Math.min(1,have/g[3]),done=pct>=1;
   const days=daysSince(S.start);
-  $('#jar').innerHTML=`<div class="jt"><div class="ring" style="--p:${pct*360}deg"><span>${Math.round(pct*100)}%</span></div><div class="jx"><small>Ma tirelire</small><b>${eur(have)}</b><span>${done?'Objectif atteint, offre-toi :':'Pour :'} <strong>${g[1]}</strong> · ${g[3]} €</span></div></div>
+  $('#jar').innerHTML=`<div class="jt"><div class="ring" style="--p:${pct*360}deg"><span>${Math.round(pct*100)}%</span></div><div class="jx"><small>${S.name?'La tirelire de '+esc(S.name):'Ma tirelire'}</small><b>${eur(have)}</b><span>${done?'Objectif atteint, offre-toi :':'Pour :'} <strong>${g[1]}</strong> · ${g[3]} €</span></div></div>
    <div class="jtoday">Ce que tu n’as pas dépensé en shit, beuh, clopes et malbouffe depuis ${days} jour${days>1?'s':''}, par rapport à avant.</div>
    ${done?`<button type="button" class="treat" id="treat">Je me l’offre</button>`:''}`;
   const t=$('#treat');if(t)t.onclick=()=>{S.spent=(S.spent||0)+g[3];save();toast('Profite bien');renderJar()}}
@@ -794,6 +821,36 @@ function go(){let h=location.hash.slice(1);if(!TT[h]){try{h=localStorage.getItem
 addEventListener('hashchange',go);
 document.addEventListener('focusin',e=>{const i=e.target;if(i.matches&&i.matches('input[inputmode=decimal]')&&i.value)setTimeout(()=>{try{i.setSelectionRange(0,i.value.length)}catch(_){}},60)});
 renderHabit();renderGoals();refresh();go();save();
+
+/* ---------- Bienvenue ---------- */
+const OH=[['shit','Shit','€ / semaine'],['beuh','Beuh','€ / semaine'],['clopes','Clopes','€ / semaine'],['malb','Malbouffe','€ / semaine'],['jpd','Joints','par jour'],['cpd','Clopes','par jour']];
+let oS=0,oG=null;
+function oShow(){$$('#onb section').forEach(x=>x.hidden=+x.dataset.o!==oS);$$('.odots i').forEach((d,i)=>d.classList.toggle('on',i<=oS));
+  $('#oBack').hidden=!oS;$('#onb .ovact').style.gridTemplateColumns=oS?'':'1fr';$('#oNext').textContent=oS===2?'C’est parti':'Suivant';$('#onb').scrollTop=0}
+function oGoals(){$('#oGoals').innerHTML=goals().map(([id,n,,p,u])=>`<button type="button" class="og${oG===id?' on':''}" data-og="${id}"><b>${esc(n)}</b><span>${eur(p)}${u}</span></button>`).join('')+
+  `<div class="ocus"><input id="oGN" placeholder="Autre : PS5, permis…" maxlength="40"><input id="oGP" inputmode="decimal" placeholder="Prix €"></div>`;
+  $$('[data-og]').forEach(b=>b.onclick=()=>{oG=b.dataset.og;buzz();oGoals()});
+  $('#oGN').oninput=()=>{if($('#oGN').value.trim()&&oG){oG=null;$$('.og').forEach(x=>x.classList.remove('on'))}}}
+function openOnb(){oS=0;oG=S.goal;$('#oName').value=S.name||'';
+  $('#oHab').innerHTML=OH.map(([k,n,u])=>`<label>${n} <small style="font-weight:600">${u}</small><input inputmode="decimal" data-oh="${k}" placeholder="0" value="${S.habit[k]!=null?String(S.habit[k]).replace('.',','):''}"></label>`).join('');
+  oGoals();$('#onb').hidden=false;document.body.style.overflow='hidden';oShow()}
+$('#oBack').onclick=()=>{if(oS){oS--;oShow()}};
+$('#oNext').onclick=()=>{
+  if(oS===0){const n=$('#oName').value.trim();if(!n)return toast('Écris ton prénom');S.name=n}
+  if(oS===1)$$('[data-oh]').forEach(i=>{S.habit[i.dataset.oh]=i.value.trim()===''?null:num(i.value)});
+  if(oS===2){const gn=$('#oGN').value.trim(),gp=num($('#oGP').value);
+    if(gn){if(!(gp>0))return toast('Mets le prix de ton objectif');S.cg=S.cg||[];const id='c'+Date.now();S.cg.push({id,n:gn,p:gp});S.goal=id}
+    else S.goal=oG||'sport';
+    S.onb=1;save();$('#onb').hidden=true;document.body.style.overflow='';renderHabit();renderGoals();refresh();toast('C’est parti '+S.name+' 💪');return}
+  buzz();oS++;oShow()};
+if(!S.onb)openOnb();
+
+/* ---------- Sauvegarde ---------- */
+$('#bkSave').onclick=async()=>{const f=new File([JSON.stringify(S)],'budget-libre-'+today+'.json',{type:'application/json'});
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Sauvegarde Budget Libre'});return}}catch(e){if(e&&e.name==='AbortError')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();a.remove();toast('Fichier de secours créé')};
+$('#bkLoad').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||typeof d!=='object'||!d.days)throw 0;
+  if(!confirm('Remplacer tout ce qu’il y a dans l’app par cette sauvegarde ?'))return;localStorage.setItem(K,JSON.stringify(d));location.reload()}catch(err){toast('Ce fichier n’est pas une sauvegarde Budget Libre')}};r.readAsText(f)};
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 })();
 </script>
