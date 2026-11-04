@@ -188,6 +188,14 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .set summary::after{content:"›";color:var(--muted);transform:rotate(90deg);transition:.2s}.set[open] summary::after{transform:rotate(-90deg)}
 .set>div{padding-bottom:14px;display:grid;gap:10px}.set .card{box-shadow:none;padding:0;background:none}
 .swipe{touch-action:pan-y}
+.bank{background:var(--card);border-radius:18px;padding:14px 16px;box-shadow:0 1px 0 var(--line);display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center}
+.bank small{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.bank b{font-size:28px;font-weight:800;letter-spacing:-.02em}.bank b.neg{color:var(--bad)}
+.bank p{grid-column:1/-1;margin:0;font-size:12.5px;color:var(--muted)}.bank p.old{color:var(--warn);font-weight:700}
+.bank .up{border:0;border-radius:12px;background:var(--a1);color:#fff;font-weight:800;padding:11px 14px;font-size:14.5px}
+.bank form{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;gap:6px}
+.bank form input{border:1.5px solid var(--a1);border-radius:12px;background:var(--soft);padding:11px 12px;font-size:20px;font-weight:800;color:var(--ink);min-width:0}
+.bank form button{border:0;border-radius:12px;background:var(--a1);color:#fff;font-weight:800;padding:0 18px}
 .sos{width:100%;border:0;border-radius:18px;padding:16px;font-weight:800;font-size:17px;color:#fff;background:linear-gradient(120deg,#5B5BF0,#13B5A0);box-shadow:0 6px 18px rgba(91,91,240,.25)}
 .ov{position:fixed;inset:0;z-index:60;background:#0E1020;color:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .ovin{max-width:520px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:grid;gap:16px;position:relative}
@@ -227,6 +235,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
       <a href="#place" class="kpi"><b id="kC">0 j</b><span>sans clope</span></a>
       <a href="#place" class="kpi g"><b id="kP">0 €</b><span>dans ta tirelire</span></a>
     </div>
+    <div class="bank" id="bank"></div>
     <div class="box swipe" id="dayBox">
       <div class="dh"><button type="button" class="nav" id="dPrev" aria-label="Jour précédent">‹</button><b id="dLabel">Aujourd'hui</b><button type="button" class="nav" id="dNext" aria-label="Jour suivant">›</button></div>
       <div class="step"><span>Joints<small id="jHint"></small></span><span class="ctl"><button type="button" data-s="j" data-d="-1" aria-label="Moins de joints">−</button><output id="oj">–</output><button type="button" data-s="j" data-d="1" aria-label="Plus de joints">+</button></span></div>
@@ -670,7 +679,22 @@ function swipe(el,next,prev){let x0=null,y0=0;el.addEventListener('touchstart',e
 swipe($('#dayBox'),()=>{if(!$('#dNext').disabled)$('#dNext').click()},()=>$('#dPrev').click());
 swipe($('#agList'),()=>{agDay=addD(agDay,1);renderAgenda()},()=>{agDay=addD(agDay,-1);renderAgenda()});
 
-function refresh(){renderSuivi();renderBudget();renderConso();renderJar();renderBody();renderGains();renderEx();renderAgenda();renderTodayAg();renderKpi()}
+/* ---------- Solde du compte ---------- */
+const tOf=id=>{const n=parseInt(String(id).slice(0,-3),36);return isNaN(n)?0:n};
+function bankEst(){const b=S.bank;if(!b)return null;let v=b.v;
+  for(const k in S.days)for(const e of S.days[k].e)if(tOf(e.id)>b.t)v-=e.v;
+  for(const m of S.inc)if(tOf(m.id)>b.t)v+=m.v;return Math.round(v*100)/100}
+function ago(t){const m=Math.round((Date.now()-t)/60000);return m<1?'à l’instant':m<60?`il y a ${m} min`:m<1440?`il y a ${Math.round(m/60)} h`:`il y a ${Math.round(m/1440)} j`}
+let bankEdit=false;
+function renderBank(){const el=$('#bank'),b=S.bank,est=bankEst();
+  if(bankEdit||!b){el.innerHTML=`<small>Sur mon compte</small><span></span><p>Ouvre ton appli bancaire et tape le solde affiché.</p><form id="bF"><input id="bV" inputmode="decimal" placeholder="Ex. 312,40" aria-label="Solde du compte" autocomplete="off"><button type="submit">OK</button></form>`;
+    $('#bF').onsubmit=e=>{e.preventDefault();const x=num($('#bV').value);if(x==null){$('#bV').focus();return}S.bank={v:x,t:Date.now()};bankEdit=false;save();buzz();toast('Solde à jour');renderBank()};
+    if(bankEdit)setTimeout(()=>{const i=$('#bV');if(i)i.focus()},50);return}
+  const old=Date.now()-b.t>3*864e5,diff=Math.round((est-b.v)*100)/100;
+  el.innerHTML=`<small>Sur mon compte</small><button type="button" class="up" id="bUp">Actualiser</button><b class="${est<0?'neg':''}">${est.toLocaleString('fr-FR',{minimumFractionDigits:est%1?2:0,maximumFractionDigits:2})} €</b><span></span>
+   <p class="${old?'old':''}">${old?'Pas mis à jour depuis '+ago(b.t).replace('il y a ','')+'. Vérifie ton appli bancaire.':'Solde vérifié '+ago(b.t)}${diff?` · ${diff<0?'':'+'}${eur2(diff)} notés depuis`:''}</p>`;
+  $('#bUp').onclick=()=>{bankEdit=true;renderBank()}}
+function refresh(){renderBank();renderSuivi();renderBudget();renderConso();renderJar();renderBody();renderGains();renderEx();renderAgenda();renderTodayAg();renderKpi()}
 const TT={suivi:'Aujourd’hui',agenda:'Agenda',budget:'Argent',place:'Moi'};
 function go(){let h=location.hash.slice(1);if(!TT[h]){try{h=localStorage.getItem('libreTab')||'suivi'}catch(e){h='suivi'}if(!TT[h])h='suivi'}
   $$('.pane').forEach(p=>p.hidden=p.dataset.p!==h);$$('#tabs a').forEach(a=>a.dataset.t===h?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
