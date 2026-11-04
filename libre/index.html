@@ -719,7 +719,7 @@ function renderBank(){const el=$('#bank');const bs=S.banks;
     const del=$('#bDel');if(del)del.onclick=()=>{S.banks=S.banks.filter(y=>y.id!==bEd);bEd=null;save();renderBank()};
     $('#bCx').onclick=()=>{bEd=null;renderBank()};
     setTimeout(()=>{const i=$('#bV');if(i)i.focus()},60)}}
-function bankArgent(tot,n){const h=$('#hBank');if(!n){h.hidden=true;return}h.hidden=false;h.innerHTML=`<b style="color:${tot<0?'var(--bad)':'var(--good)'}">${fmt(tot)}</b><span>${tot<0?'Tes comptes sont dans le rouge. Chaque dépense compte double ce mois-ci.':'Sur tes comptes en ce moment'}${n>1?' ('+n+' comptes)':''}.</span>`}
+function bankArgent(tot,n){const h=$('#hBank');if(!n){h.hidden=true;return}h.hidden=false;h.innerHTML=`<b style="color:${tot<0?'var(--bad)':'var(--good)'}">${fmt(tot)}</b><span>${tot<0?'Tes comptes sont dans le rouge : remonte d’abord à 0 avant toute dépense plaisir':'Sur tes comptes en ce moment'}${n>1?' ('+n+' comptes)':''}.</span>`}
 function editRow(x){return `<form class="bedit" id="bF" data-neg="${x.v!=null&&x.v<0?1:0}"><input id="bN" placeholder="Nom (ex. Boursorama, Revolut…)" value="${esc(x.n)}" maxlength="30" autocomplete="off">
   <div class="bamt"><button type="button" class="sg" id="bSg" aria-label="Positif ou négatif">+</button><input id="bV" inputmode="decimal" placeholder="Solde affiché" value="${x.v!=null?String(Math.abs(x.v)).replace('.',','):''}" autocomplete="off" aria-label="Solde"><button type="submit">OK</button></div>
   <p class="tip" style="margin:0">Touche + pour passer en − si ton compte est dans le rouge.</p>
