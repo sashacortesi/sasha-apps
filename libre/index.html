@@ -206,6 +206,17 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .bact{display:grid;grid-auto-flow:column;gap:6px}
 .bank form input{border:1.5px solid var(--a1);border-radius:12px;background:var(--soft);padding:11px 12px;font-size:20px;font-weight:800;color:var(--ink);min-width:0}
 .bank form button{border:0;border-radius:12px;background:var(--a1);color:#fff;font-weight:800;padding:0 18px}
+.focus{border-radius:22px;padding:18px;color:#fff;display:grid;gap:12px;background:#15172A;background-image:radial-gradient(120% 90% at 100% 0%,var(--fc,rgba(91,91,240,.65)),transparent 62%),radial-gradient(90% 80% at 0% 100%,rgba(19,181,160,.45),transparent 60%)}
+.fk{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.fm{display:flex;gap:14px;align-items:center}
+.fring{--p:0deg;width:74px;height:74px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#7DE8D8 var(--p),rgba(255,255,255,.14) 0)}
+.fring span{width:60px;height:60px;border-radius:50%;background:#15172A;display:grid;place-items:center;text-align:center;font-weight:800;font-size:17px;line-height:1.05}.fring small{display:block;font-size:10.5px;font-weight:700;color:rgba(255,255,255,.65)}
+.ft b{font-size:21px;font-weight:800;line-height:1.2;display:block}.ft span{font-size:13.5px;color:rgba(255,255,255,.8)}
+.ftip{font-size:13.5px;background:rgba(255,255,255,.1);border-radius:12px;padding:9px 12px;color:rgba(255,255,255,.92)}
+.fbtn{display:grid;grid-auto-flow:column;gap:8px}.fbtn button{border:0;border-radius:14px;padding:13px;font-weight:800;font-size:15px;background:rgba(255,255,255,.14);color:#fff}.fbtn .go{background:#3DD598;color:#062B1C}
+.fnext{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;color:rgba(255,255,255,.75);border-top:1px solid rgba(255,255,255,.12);padding-top:10px}.fnext b{color:#fff}
+.it .pl{width:34px;height:34px;border-radius:50%;border:0;background:var(--soft);color:var(--ink);font-size:13px;display:grid;place-items:center;padding:0}
+.it{grid-template-columns:auto 1fr auto auto}
 .sos{width:100%;border:0;border-radius:18px;padding:16px;font-weight:800;font-size:17px;color:#fff;background:linear-gradient(120deg,#5B5BF0,#13B5A0);box-shadow:0 6px 18px rgba(91,91,240,.25)}
 .ov{position:fixed;inset:0;z-index:60;background:#0E1020;color:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .ovin{max-width:520px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:grid;gap:16px;position:relative}
@@ -258,6 +269,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
       <div class="dtot"><div><span>Dépensé</span><b id="dOut">0 €</b></div><div class="in2"><span>Gagné</span><b id="dIn">0 €</b></div></div>
       <div class="elist" id="elist"></div>
     </div>
+    <div class="focus" id="focusT"></div>
     <h2 class="h2r">Ma journée <a href="#agenda">Agenda ›</a></h2>
     <div class="ag" id="todayAg"></div>
     <div hidden><div class="meals" id="meals"></div><div id="mealBox"><b id="mealT"></b><button id="mealX"></button><div id="mealOpts"></div><div id="mealAmt"><div id="mealQp"></div></div></div><button id="addMission2"></button><div id="week"></div></div>
@@ -267,6 +279,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
   <main class="pane" data-p="agenda" hidden>
     <div class="hero" id="agHero"></div>
     <div class="wk"><button type="button" class="nav" id="wPrev" aria-label="Semaine précédente">‹</button><div class="adays" id="wDays"></div><button type="button" class="nav" id="wNext" aria-label="Semaine suivante">›</button></div>
+    <div class="focus" id="focusA"></div>
     <div class="ag swipe" id="agList"></div>
     <button type="button" class="bigbtn" id="agAdd" style="background:var(--a1)">+ Ajouter</button>
     <p class="tip">Glisse pour changer de jour. Touche un élément pour le modifier.</p>
@@ -635,7 +648,7 @@ function occ(e,k){if(e.skip&&e.skip[k])return false;if(!e.r)return e.d===k;if(k<
   return e.r==='day'||(e.r==='wd'&&w>0&&w<6)||(e.r==='week'&&w===pd(e.d).getDay())}
 const itemsOn=k=>S.ag.filter(e=>occ(e,k)).sort((a,b)=>(a.h||'99')<(b.h||'99')?-1:(a.h||'99')>(b.h||'99')?1:0);
 const catOf=c=>AC.find(x=>x[0]===c)||AC[0];
-function renderAgenda(){
+function renderAgenda(){setTimeout(renderFocus,0);$('#agHero').hidden=agDay===today;
   const its=itemsOn(agDay),dn=its.filter(e=>e.done&&e.done[agDay]).length,d=pd(agDay);
   const lab=agDay===today?'Aujourd’hui':agDay===addD(today,1)?'Demain':agDay===addD(today,-1)?'Hier':JN[d.getDay()].replace(/^./,c=>c.toUpperCase())+'.';
   $('#agHero').innerHTML=`<small>${lab} · ${JN[d.getDay()]} ${d.getDate()} ${MN[d.getMonth()]}</small><b>${its.length?dn+'/'+its.length:'Libre'}</b><span class="sub2">${!its.length?'Rien de prévu pour l’instant.':dn===its.length?'Tout est fait. Bravo, journée gagnée.':`${its.length-dn} chose${its.length-dn>1?'s':''} à faire.`}</span>`;
@@ -652,6 +665,7 @@ function agSheet(id){const e=id?S.ag.find(x=>x.id===id):{t:'',h:'',c:'perso',r:'
    <input class="ti" id="fT" placeholder="Qu’est-ce que tu prévois ?" maxlength="80" value="${esc(f.t)}">
    ${id?'':`<div class="chips">${AS.map(([t,c])=>`<button type="button" class="chip" data-as="${esc(t)}" data-c="${c}">${t}</button>`).join('')}</div>`}
    <p class="sl2">Heure</p><div class="tm"><input type="time" id="fH" value="${f.h||''}" aria-label="Heure"><button type="button" class="chip" id="fNoH" aria-pressed="${!f.h}">Sans heure</button></div>
+   <p class="sl2">Ça prend</p><div class="wrap">${DUR.map(([m,n])=>`<button type="button" class="chip" data-du="${m}" aria-pressed="${(f.dur||30)===m}">${n}</button>`).join('')}</div>
    <p class="sl2">Type</p><div class="wrap">${AC.map(([k,n,c])=>`<button type="button" class="chip" data-cc="${k}" style="--c:${c}" aria-pressed="${f.c===k}">${n}</button>`).join('')}</div>
    <p class="sl2">Répéter</p><div class="wrap">${AR.map(([k,n])=>`<button type="button" class="chip" data-rr="${k}" aria-pressed="${f.r===k}">${n}</button>`).join('')}</div>
    <div class="sbtns"><button type="button" class="bigbtn" id="fOk" style="background:var(--a1)">${id?'Enregistrer':'Ajouter'}</button>
@@ -659,12 +673,13 @@ function agSheet(id){const e=id?S.ag.find(x=>x.id===id):{t:'',h:'',c:'perso',r:'
    ${id?(e.r?'<button type="button" class="ghost red" id="fDel1">Supprimer ce jour seulement</button><button type="button" class="ghost red" id="fDelA">Supprimer tous les jours</button>':'<button type="button" class="ghost red" id="fDelA">Supprimer</button>'):''}
    <button type="button" class="ghost" id="fX">Annuler</button></div></div>`;
    const T=bg.querySelector('#fT');T.oninput=()=>f.t=T.value;
-   bg.querySelectorAll('[data-as]').forEach(b=>b.onclick=()=>{f.t=b.dataset.as;f.c=b.dataset.c;buzz();draw()});
+   bg.querySelectorAll('[data-as]').forEach(b=>b.onclick=()=>{f.t=b.dataset.as;f.c=b.dataset.c;f.ct=1;buzz();draw()});
    bg.querySelector('#fH').onchange=ev=>{f.h=ev.target.value;draw()};bg.querySelector('#fNoH').onclick=()=>{f.h='';draw()};
-   bg.querySelectorAll('[data-cc]').forEach(b=>b.onclick=()=>{f.c=b.dataset.cc;buzz();draw()});
+   bg.querySelectorAll('[data-cc]').forEach(b=>b.onclick=()=>{f.c=b.dataset.cc;f.ct=1;buzz();draw()});
+   bg.querySelectorAll('[data-du]').forEach(b=>b.onclick=()=>{f.dur=+b.dataset.du;buzz();draw()});
    bg.querySelectorAll('[data-rr]').forEach(b=>b.onclick=()=>{f.r=b.dataset.rr;buzz();draw()});
-   bg.querySelector('#fOk').onclick=()=>{f.t=T.value.trim();if(!f.t){T.focus();return}
-     if(id)Object.assign(e,{t:f.t,h:f.h,c:f.c,r:f.r});else S.ag.push({id:uid(),t:f.t,h:f.h,c:f.c,r:f.r,d:agDay,done:{}});save();close();renderAgenda();renderTodayAg();toast(id?'Modifié':'Ajouté')};
+   bg.querySelector('#fOk').onclick=()=>{f.t=T.value.trim();if(!f.t){T.focus();return}if(!id&&!f.ct)f.c=guessCat(f.t);
+     if(id)Object.assign(e,{t:f.t,h:f.h,c:f.c,r:f.r,dur:f.dur||30});else S.ag.push({id:uid(),t:f.t,h:f.h,c:f.c,r:f.r,dur:f.dur||30,d:agDay,done:{}});save();close();renderAgenda();renderTodayAg();toast(id?'Modifié':'Ajouté')};
    const ic=bg.querySelector('#fIcs');if(ic)ic.onclick=()=>ics({...f,t:T.value.trim()||f.t});
    const d1=bg.querySelector('#fDel1');if(d1)d1.onclick=()=>{e.skip=e.skip||{};e.skip[agDay]=1;save();close();renderAgenda();renderTodayAg()};
    const da=bg.querySelector('#fDelA');if(da)da.onclick=()=>{S.ag=S.ag.filter(x=>x.id!==id);save();close();renderAgenda();renderTodayAg()};
@@ -677,13 +692,56 @@ function ics(f){const d=(f.d||agDay).replace(/-/g,''),h=f.h.replace(':','')+'00'
 
 function agRows(k,el){const its=itemsOn(k);let nowSet=false;
   el.innerHTML=its.length?its.map(e=>{const c=catOf(e.c),ok=e.done&&e.done[k];let now='';if(k===today&&!ok&&!nowSet){now=' now';nowSet=true}
-    return `<div class="it${ok?' done':''}${now}" style="--c:${c[2]}"><button type="button" class="ck" data-ck="${e.id}" aria-label="Fait">${ok?'✓':''}</button><button type="button" class="tx" data-ed="${e.id}"><span class="tt">${esc(e.t)}</span><span class="mt">${c[1]}${e.r?' · '+AR.find(r=>r[0]===e.r)[1].toLowerCase():''}${now?' · à suivre':''}</span></button><span class="hr">${e.h||''}</span></div>`}).join('')
+    return `<div class="it${ok?' done':''}${now}" style="--c:${c[2]}"><button type="button" class="ck" data-ck="${e.id}" aria-label="Fait">${ok?'✓':''}</button><button type="button" class="tx" data-ed="${e.id}"><span class="tt">${esc(e.t)}</span><span class="mt">${c[1]}${e.r?' · '+AR.find(r=>r[0]===e.r)[1].toLowerCase():''}${now?' · à suivre':''}</span></button><span class="hr">${e.h||''}<small style="display:block;font-size:11px;font-weight:700;text-align:right">${dl(e.dur||30)}</small></span>${k===today&&!ok?`<button type="button" class="pl" data-go="${e.id}" aria-label="Lancer le minuteur">${S.run&&S.run.id===e.id?'⏸':'▶'}</button>`:'<span></span>'}</div>`}).join('')
    :`<button type="button" class="agempty" data-new style="border:0;width:100%">Rien de prévu. <b style="color:var(--a1)">+ Prévoir ma journée</b></button>`;
   el.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const e=S.ag.find(x=>x.id===b.dataset.ck);e.done=e.done||{};if(e.done[k])delete e.done[k];else{e.done[k]=1;if(navigator.vibrate)navigator.vibrate([10,40,10])}save();renderAgenda();renderTodayAg();
     const r=itemsOn(k);if(r.length&&r.every(x=>x.done&&x.done[k]))toast('Journée bouclée. Bien joué.')});
   el.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>{agDay=k;agSheet(b.dataset.ed)});
+  el.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{if(S.run&&S.run.id===b.dataset.go)stopRun();else startRun(b.dataset.go)});
   el.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>{agDay=k;agSheet(null)})}
-function renderTodayAg(){agRows(today,$('#todayAg'))}
+function renderTodayAg(){agRows(today,$('#todayAg'));renderFocus()}
+const guessCat=t=>{t=t.toLowerCase();return /sport|salle|muscu|foot|courir|course à pied|footing|basket|boxe|nage|piscine|marche/.test(t)?'sport':/rdv|rendez|médecin|medecin|dentiste|appel|appeler|entretien|banque|rencontre/.test(t)?'rdv':/travail|taf|boulot|bosser|dossier|caf|pôle|pole|cv|candidature|mission|formation|papiers/.test(t)?'taf':/respir|exercice|médit|medit|dormir|lit |coucher|détente/.test(t)?'zen':/courses|ménage|menage|ranger|lessive|vaisselle|payer|acheter/.test(t)?'todo':'perso'};
+const DUR=[[15,'15 min'],[30,'30 min'],[45,'45 min'],[60,'1 h'],[90,'1 h 30'],[120,'2 h']];
+const dl=m=>m<60?m+' min':Math.floor(m/60)+' h'+(m%60?' '+String(m%60).padStart(2,'0'):'');
+const TIPS={sport:'Prépare ton sac et une gourde maintenant, pour ne pas trouver d’excuse.',rdv:'Vérifie l’adresse et le trajet. Pars 10 min plus tôt.',taf:'Prépare ce dont tu as besoin et coupe les notifications.',todo:'Note ce qu’il te faut pour le faire d’un coup.',zen:'Trouve un coin calme pour ce moment.',perso:'Bloque ce moment, c’est pour toi.'};
+const tipOf=e=>/appel|appeler|téléphone|tel /i.test(e.t)?'Prépare tes papiers, ton numéro de dossier et de quoi noter. Mets-toi au calme.':TIPS[e.c]||TIPS.perso;
+const mins=h=>{const [a,b]=h.split(':').map(Number);return a*60+b};
+const nowM=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
+const inTxt=m=>m<1?'maintenant':m<60?`dans ${m} min`:`dans ${dl(m)}`;
+function startRun(id){const e=S.ag.find(x=>x.id===id);S.run={id,k:today,s:Date.now(),dur:e.dur||30,end:0};save();buzz();toast('C’est parti : '+e.t);renderTodayAg();renderAgenda()}
+function stopRun(){S.run=null;save();renderTodayAg();renderAgenda()}
+function doneRun(id){const e=S.ag.find(x=>x.id===id);if(e){e.done=e.done||{};e.done[today]=1}if(S.run&&S.run.id===id)S.run=null;save();if(navigator.vibrate)navigator.vibrate([10,40,10]);toast('Fait. Bien joué.');renderAgenda();renderTodayAg()}
+function focusHTML(){const its=itemsOn(today),left=its.filter(e=>!(e.done&&e.done[today])),n=nowM();
+  if(S.run&&S.run.k!==today)S.run=null;
+  const nextOf=ex=>left.filter(e=>e!==ex&&e.h&&mins(e.h)>=n).sort((a,b)=>mins(a.h)-mins(b.h))[0];
+  const nxLine=ex=>{const x=nextOf(ex);if(!x)return'';const m=mins(x.h)-n;return `<div class="fnext"><span>Ensuite · ${x.h}</span><b>${esc(x.t)} · ${inTxt(m)}</b></div>`};
+  const run=S.run&&S.ag.find(x=>x.id===S.run.id);
+  if(run){const tot=S.run.dur,el=Math.floor((Date.now()-S.run.s)/60000),rem=tot-el;const over=rem<=0;
+    if(over&&!S.run.end){S.run.end=1;save();if(navigator.vibrate)navigator.vibrate([30,80,30,80,30]);toast('Temps écoulé : '+run.t)}
+    return `<span class="fk">${over?'Temps écoulé':'En ce moment'}</span><div class="fm"><div class="fring" style="--p:${Math.min(1,el/tot)*360}deg"><span>${over?'✓':rem}<small>${over?'':'min'}</small></span></div><div class="ft"><b>${esc(run.t)}</b><span>${over?'Tu as tenu tout le temps prévu.':`encore ${dl(Math.max(1,rem))} sur ${dl(tot)}`}</span></div></div>
+     <div class="fbtn"><button type="button" class="go" data-fdone="${run.id}">C’est fait</button>${over?`<button type="button" data-fmore>+10 min</button>`:`<button type="button" data-fstop>Pause</button>`}</div>${nxLine(run)}`}
+  const cur=left.find(e=>e.h&&mins(e.h)<=n&&n<mins(e.h)+(e.dur||30));
+  if(cur){const rem=mins(cur.h)+(cur.dur||30)-n;return `<span class="fk">C’est l’heure · ${cur.h}</span><div class="ft"><b>${esc(cur.t)}</b><span>Prévu jusqu’à ${String(Math.floor((mins(cur.h)+(cur.dur||30))/60)%24).padStart(2,'0')}:${String((mins(cur.h)+(cur.dur||30))%60).padStart(2,'0')}, encore ${dl(rem)}.</span></div>
+     <div class="fbtn"><button type="button" class="go" data-fgo="${cur.id}">Lancer le minuteur</button><button type="button" data-fdone="${cur.id}">C’est fait</button></div>${nxLine(cur)}`}
+  const nx=nextOf(null);
+  if(nx){const m=mins(nx.h)-n,soon=m<=30;const free=left.find(e=>!e.h);
+    return `<span class="fk">${soon?'C’est bientôt':'Prochaine étape'} · ${nx.h}</span><div class="ft"><b>${esc(nx.t)}</b><span>${inTxt(m).replace(/^./,c=>c.toUpperCase())} · ${dl(nx.dur||30)}</span></div>
+     <div class="ftip">${soon?tipOf(nx):free&&m>=(free.dur||30)?`Tu as ${dl(m)} devant toi : parfait pour « ${esc(free.t)} ».`:tipOf(nx)}</div>
+     ${free&&m>=(free.dur||30)&&!soon?`<div class="fbtn"><button type="button" class="go" data-fgo="${free.id}">Faire « ${esc(free.t)} » maintenant</button></div>`:''}`}
+  const free=left[0];
+  if(free)return `<span class="fk">À faire aujourd’hui</span><div class="ft"><b>${esc(free.t)}</b><span>${dl(free.dur||30)}${left.length>1?` · puis ${left.length-1} autre${left.length>2?'s':''} chose${left.length>2?'s':''}`:''}</span></div><div class="fbtn"><button type="button" class="go" data-fgo="${free.id}">Commencer maintenant</button></div>`;
+  const tm=itemsOn(addD(today,1));
+  if(its.length)return `<span class="fk">Journée bouclée</span><div class="ft"><b>Tout est fait. Bravo.</b><span>${tm.length?`Demain : ${tm.length} chose${tm.length>1?'s':''}${tm[0].h?', la 1re à '+tm[0].h:''}.`:'Rien de prévu demain. Prends 2 min pour le préparer.'}</span></div>${tm.length?'':'<div class="fbtn"><button type="button" data-ftom>Préparer demain</button></div>'}`;
+  return `<span class="fk">Ta journée</span><div class="ft"><b>Rien de prévu pour l’instant.</b><span>Prévois 3 choses simples : un repas, un peu de sport, ton heure de coucher.</span></div><div class="fbtn"><button type="button" class="go" data-fnew>Prévoir ma journée</button></div>`}
+function renderFocus(){const its=itemsOn(today),dn=its.filter(e=>e.done&&e.done[today]).length;const h=focusHTML().replace('</span>',its.length?` · ${dn}/${its.length} faits</span>`:'</span>');for(const id of ['#focusT','#focusA']){const el=$(id);if(!el)continue;if(id==='#focusA'&&agDay!==today){el.hidden=true;continue}el.hidden=false;el.innerHTML=h;
+  el.querySelectorAll('[data-fgo]').forEach(b=>b.onclick=()=>startRun(b.dataset.fgo));
+  el.querySelectorAll('[data-fdone]').forEach(b=>b.onclick=()=>doneRun(b.dataset.fdone));
+  el.querySelectorAll('[data-fstop]').forEach(b=>b.onclick=stopRun);
+  el.querySelectorAll('[data-fmore]').forEach(b=>b.onclick=()=>{S.run.dur+=10;S.run.end=0;save();renderFocus()});
+  el.querySelectorAll('[data-fnew]').forEach(b=>b.onclick=()=>{agDay=today;agSheet(null)});
+  el.querySelectorAll('[data-ftom]').forEach(b=>b.onclick=()=>{agDay=addD(today,1);location.hash='agenda';renderAgenda();agSheet(null)})}}
+setInterval(()=>{if(!document.hidden)renderFocus()},20000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderFocus()});
 function renderKpi(){$('#kJ').textContent=streak('j')+' j';$('#kC').textContent=streak('c')+' j';$('#kP').textContent=eur(piggy())}
 function swipe(el,next,prev){let x0=null,y0=0;el.addEventListener('touchstart',e=>{if(e.target.closest('input,form'))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
   el.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){(dx<0?next:prev)();buzz()}},{passive:true})}
