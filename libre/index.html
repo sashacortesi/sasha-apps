@@ -193,7 +193,17 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
 .bank b{font-size:28px;font-weight:800;letter-spacing:-.02em}.bank b.neg{color:var(--bad)}
 .bank p{grid-column:1/-1;margin:0;font-size:12.5px;color:var(--muted)}.bank p.old{color:var(--warn);font-weight:700}
 .bank .up{border:0;border-radius:12px;background:var(--a1);color:#fff;font-weight:800;padding:11px 14px;font-size:14.5px}
-.bank form{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;gap:6px}
+.blist{grid-column:1/-1;display:grid;border-top:1px solid var(--line);margin-top:6px}
+.brow{border:0;background:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);text-align:left;color:var(--ink)}
+.brow b{font-size:15px;display:block}.bank .brow small{font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:600}.bv{font-weight:800;font-size:16px}.bv.neg{color:var(--bad)}
+.bank .wide{grid-column:1/-1}
+.bedit{display:grid;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.bedit #bN{border:0;border-radius:12px;background:var(--soft);padding:11px 12px;font-size:16px;font-weight:600;color:var(--ink)}
+.bamt{display:grid;grid-template-columns:48px 1fr auto;gap:6px}
+.bamt input{border:1.5px solid var(--a1);border-radius:12px;background:var(--soft);padding:11px 12px;font-size:20px;font-weight:800;color:var(--ink);min-width:0}
+.bamt button[type=submit]{border:0;border-radius:12px;background:var(--a1);color:#fff;font-weight:800;padding:0 18px}
+.sg{border:0;border-radius:12px;background:var(--soft);font-size:24px;font-weight:800;color:var(--good)}.sg.on{background:var(--bad);color:#fff}
+.bact{display:grid;grid-auto-flow:column;gap:6px}
 .bank form input{border:1.5px solid var(--a1);border-radius:12px;background:var(--soft);padding:11px 12px;font-size:20px;font-weight:800;color:var(--ink);min-width:0}
 .bank form button{border:0;border-radius:12px;background:var(--a1);color:#fff;font-weight:800;padding:0 18px}
 .sos{width:100%;border:0;border-radius:18px;padding:16px;font-weight:800;font-size:17px;color:#fff;background:linear-gradient(120deg,#5B5BF0,#13B5A0);box-shadow:0 6px 18px rgba(91,91,240,.25)}
@@ -265,6 +275,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
   <!-- ARGENT -->
   <main class="pane" data-p="budget" hidden>
     <div class="hero"><small id="hLab">Il te reste ce mois-ci</small><b id="hReste">—</b><span class="sub2" id="hSub"></span></div>
+    <a href="#suivi" class="gsum" id="hBank" style="text-decoration:none;color:var(--ink)" hidden></a>
     <h2>Ce qui rentre</h2>
     <div class="card" id="missions"></div>
     <button type="button" class="bigbtn" id="addMission">+ Mission payée</button>
@@ -679,21 +690,40 @@ function swipe(el,next,prev){let x0=null,y0=0;el.addEventListener('touchstart',e
 swipe($('#dayBox'),()=>{if(!$('#dNext').disabled)$('#dNext').click()},()=>$('#dPrev').click());
 swipe($('#agList'),()=>{agDay=addD(agDay,1);renderAgenda()},()=>{agDay=addD(agDay,-1);renderAgenda()});
 
-/* ---------- Solde du compte ---------- */
+/* ---------- Comptes bancaires ---------- */
 const tOf=id=>{const n=parseInt(String(id).slice(0,-3),36);return isNaN(n)?0:n};
-function bankEst(){const b=S.bank;if(!b)return null;let v=b.v;
-  for(const k in S.days)for(const e of S.days[k].e)if(tOf(e.id)>b.t)v-=e.v;
-  for(const m of S.inc)if(tOf(m.id)>b.t)v+=m.v;return Math.round(v*100)/100}
+if(!Array.isArray(S.banks)){S.banks=S.bank?[{id:uid(),n:'Compte principal',v:S.bank.v,t:S.bank.t}]:[]}delete S.bank;
+const lastUp=()=>S.banks.reduce((m,x)=>Math.max(m,x.t),0);
+function noted(){const t=lastUp();let v=0;for(const k in S.days)for(const e of S.days[k].e)if(tOf(e.id)>t)v-=e.v;for(const m of S.inc)if(tOf(m.id)>t)v+=m.v;return Math.round(v*100)/100}
+const fmt=v=>v.toLocaleString('fr-FR',{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2})+' €';
 function ago(t){const m=Math.round((Date.now()-t)/60000);return m<1?'à l’instant':m<60?`il y a ${m} min`:m<1440?`il y a ${Math.round(m/60)} h`:`il y a ${Math.round(m/1440)} j`}
-let bankEdit=false;
-function renderBank(){const el=$('#bank'),b=S.bank,est=bankEst();
-  if(bankEdit||!b){el.innerHTML=`<small>Sur mon compte</small><span></span><p>Ouvre ton appli bancaire et tape le solde affiché.</p><form id="bF"><input id="bV" inputmode="decimal" placeholder="Ex. 312,40" aria-label="Solde du compte" autocomplete="off"><button type="submit">OK</button></form>`;
-    $('#bF').onsubmit=e=>{e.preventDefault();const x=num($('#bV').value);if(x==null){$('#bV').focus();return}S.bank={v:x,t:Date.now()};bankEdit=false;save();buzz();toast('Solde à jour');renderBank()};
-    if(bankEdit)setTimeout(()=>{const i=$('#bV');if(i)i.focus()},50);return}
-  const old=Date.now()-b.t>3*864e5,diff=Math.round((est-b.v)*100)/100;
-  el.innerHTML=`<small>Sur mon compte</small><button type="button" class="up" id="bUp">Actualiser</button><b class="${est<0?'neg':''}">${est.toLocaleString('fr-FR',{minimumFractionDigits:est%1?2:0,maximumFractionDigits:2})} €</b><span></span>
-   <p class="${old?'old':''}">${old?'Pas mis à jour depuis '+ago(b.t).replace('il y a ','')+'. Vérifie ton appli bancaire.':'Solde vérifié '+ago(b.t)}${diff?` · ${diff<0?'':'+'}${eur2(diff)} notés depuis`:''}</p>`;
-  $('#bUp').onclick=()=>{bankEdit=true;renderBank()}}
+let bEd=null;
+function renderBank(){const el=$('#bank');const bs=S.banks;
+  const sum=Math.round(bs.reduce((a,x)=>a+x.v,0)*100)/100,nt=noted(),tot=Math.round((sum+nt)*100)/100;
+  bankArgent(tot,bs.length);const old=bs.length&&Date.now()-Math.min(...bs.map(x=>x.t))>3*864e5;
+  const row=x=>bEd===x.id?editRow(x):`<button type="button" class="brow" data-bk="${x.id}"><span><b>${esc(x.n)}</b><small>${ago(x.t)}</small></span><span class="bv ${x.v<0?'neg':''}">${fmt(x.v)}</span></button>`;
+  el.innerHTML=!bs.length&&bEd!=='new'?`<small>Mes comptes</small><span></span><p>Ajoute chaque compte (banque, néobanque, livret…) avec son solde, même s’il est dans le rouge.</p><button type="button" class="up wide" id="bAdd">+ Ajouter un compte</button>`
+   :`<small>${bs.length>1?'Total de mes '+bs.length+' comptes':'Sur mon compte'}</small><span></span><b class="${tot<0?'neg':''}">${fmt(tot)}</b><span></span>
+    <p class="${old?'old':''}">${tot<0?`Dans le rouge : il manque ${fmt(-tot)} pour revenir à 0.`:''}${tot<0&&(old||nt)?' ':''}${nt?`${nt<0?'':'+'}${fmt(nt)} notés depuis ta dernière mise à jour.`:''}${old?' Un compte n’a pas été vérifié depuis plus de 3 jours.':''}</p>
+    <div class="blist">${bs.map(row).join('')}${bEd==='new'?editRow({id:'new',n:'',v:null}):''}</div>
+    ${bEd?'':`<button type="button" class="addrow" id="bAdd" style="grid-column:1/-1;padding:8px 0 0">+ Ajouter un compte</button>`}`;
+  $$('[data-bk]').forEach(b=>b.onclick=()=>{bEd=b.dataset.bk;renderBank()});
+  const ad=$('#bAdd');if(ad)ad.onclick=()=>{bEd='new';renderBank()};
+  const f=$('#bF');if(f){let neg=f.dataset.neg==='1';const sg=$('#bSg'),V=$('#bV');
+    const paint=()=>{sg.textContent=neg?'−':'+';sg.classList.toggle('on',neg)};paint();
+    sg.onclick=()=>{neg=!neg;paint();buzz();V.focus()};
+    f.onsubmit=e=>{e.preventDefault();let x=num(V.value);if(x==null){V.focus();return}x=Math.abs(x)*(neg||V.value.trim().startsWith('-')?-1:1);
+      const n=$('#bN').value.trim()||'Compte '+(S.banks.length+1);
+      if(bEd==='new')S.banks.push({id:uid(),n,v:x,t:Date.now()});else Object.assign(S.banks.find(y=>y.id===bEd),{n,v:x,t:Date.now()});
+      bEd=null;save();buzz();toast('Solde à jour');renderBank()};
+    const del=$('#bDel');if(del)del.onclick=()=>{S.banks=S.banks.filter(y=>y.id!==bEd);bEd=null;save();renderBank()};
+    $('#bCx').onclick=()=>{bEd=null;renderBank()};
+    setTimeout(()=>{const i=$('#bV');if(i)i.focus()},60)}}
+function bankArgent(tot,n){const h=$('#hBank');if(!n){h.hidden=true;return}h.hidden=false;h.innerHTML=`<b style="color:${tot<0?'var(--bad)':'var(--good)'}">${fmt(tot)}</b><span>${tot<0?'Tes comptes sont dans le rouge. Chaque dépense compte double ce mois-ci.':'Sur tes comptes en ce moment'}${n>1?' ('+n+' comptes)':''}.</span>`}
+function editRow(x){return `<form class="bedit" id="bF" data-neg="${x.v!=null&&x.v<0?1:0}"><input id="bN" placeholder="Nom (ex. Boursorama, Revolut…)" value="${esc(x.n)}" maxlength="30" autocomplete="off">
+  <div class="bamt"><button type="button" class="sg" id="bSg" aria-label="Positif ou négatif">+</button><input id="bV" inputmode="decimal" placeholder="Solde affiché" value="${x.v!=null?String(Math.abs(x.v)).replace('.',','):''}" autocomplete="off" aria-label="Solde"><button type="submit">OK</button></div>
+  <p class="tip" style="margin:0">Touche + pour passer en − si ton compte est dans le rouge.</p>
+  <div class="bact">${x.id!=='new'?'<button type="button" class="ghost red" id="bDel">Supprimer</button>':''}<button type="button" class="ghost" id="bCx">Annuler</button></div></form>`}
 function refresh(){renderBank();renderSuivi();renderBudget();renderConso();renderJar();renderBody();renderGains();renderEx();renderAgenda();renderTodayAg();renderKpi()}
 const TT={suivi:'Aujourd’hui',agenda:'Agenda',budget:'Argent',place:'Moi'};
 function go(){let h=location.hash.slice(1);if(!TT[h]){try{h=localStorage.getItem('libreTab')||'suivi'}catch(e){h='suivi'}if(!TT[h])h='suivi'}
