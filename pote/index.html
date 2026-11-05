@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="10">
+<html lang="fr" data-build="11">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -346,7 +346,7 @@ function draw(){const st=FL.steps[FL.i],n=FL.steps.filter(s=>!(s.skip&&s.skip(FL
   let f=$('.fl');if(f)f.remove();f=document.createElement('div');f.className='fl';document.body.style.overflow='hidden';
   const q=typeof st.q==='function'?st.q(FL.v):st.q;
   f.innerHTML=`<div class="ft"><button class="back" aria-label="Retour">${ic('back')}</button><div class="prog"><i style="width:${pos/n*100}%"></i></div><span></span></div><div class="fb"><h1 class="q">${q}</h1>${st.sub?`<p class="qs">${typeof st.sub==='function'?st.sub(FL.v):st.sub}</p>`:''}<div class="body"></div></div><div class="fbtm"></div>`;
-  document.body.appendChild(f);f.querySelector('.back').onclick=()=>{buzz();prevStep()};
+  document.body.appendChild(f);f.querySelector('.back').onclick=()=>{buzz();prevStep()};if(st.k==='hi')f.querySelector('.back').style.visibility='hidden';
   const body=f.querySelector('.body'),btm=f.querySelector('.fbtm');
   if(st.type==='amount')amountUI(st,body,btm);
   else if(st.type==='tiles')tilesUI(st,body);
@@ -599,14 +599,15 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
 
 /* ---------- Premier lancement ---------- */
 function onbApply(v){S.name=v.n;fxSave(v.fx);accSave(v.acc);S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}}
-function onboard(){flow([
-  {k:'n',q:'Comment tu t’appelles ?',sub:'Quelques questions et c’est prêt. Tes données restent sur ton téléphone.',type:'text',ph:'Ton prénom'},
-  {k:'fx',q:'Tes charges fixes',sub:'Ajoute ce que tu paies chaque mois, avec tes propres noms. Le jour du prélèvement, si tu le connais.',type:'fixes'},
-  {k:'acc',q:'Combien tu as sur tes comptes ?',sub:'Une ligne par compte (banque, Revolut, Lydia…). L’app fait le total et le tiendra à jour toute seule.',type:'accounts'},
-  {k:'vice',q:'Tu fumes quoi ?',sub:'L’app t’aide à réduire, sans jugement.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
-  {k:'wk',q:'Combien tu dépenses par semaine pour ça ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice},
-  {k:'nt',q:'Dernière étape : les rappels',sub:'L’app te prévient la veille de chaque prélèvement, et le soir pour noter ta journée. Tu peux les couper quand tu veux.',type:'tiles',opts:[{i:'bell',l:'Activer les rappels',one:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}]}
- ],v=>{onbApply(v);return['Bienvenue, '+v.n,'']})}
+function onboard(){const N=v=>esc(v.n||'');flow([
+  {k:'hi',q:'Salut. On met de l’ordre ensemble ?',sub:'5 petites questions, 2 minutes. Pas de jugement, pas de bonne ou de mauvaise réponse. Et tout reste sur ton téléphone, personne d’autre ne le voit.',type:'tiles',opts:[{v:1,i:'next',l:'On y va',one:1}]},
+  {k:'n',q:'Comment tu t’appelles ?',sub:'Juste ton prénom.',type:'text',ph:'Ton prénom'},
+  {k:'fx',q:v=>`Enchanté ${N(v)}. Qu’est-ce qui sort de ton compte chaque mois ?`,sub:'Forfait, abonnements, assurance… Mets seulement ce que tu as vraiment, avec tes mots. Le jour du prélèvement, si tu le connais.',type:'fixes'},
+  {k:'acc',q:v=>`Et là, tu as combien sur tes comptes, ${N(v)} ?`,sub:'Une ligne par compte. Même si c’est dans le rouge, ce n’est qu’un point de départ. L’app fait le total pour toi.',type:'accounts'},
+  {k:'vice',q:'Tu fumes ?',sub:'Personne ne te demande d’arrêter. L’app te montre juste ce que ça coûte, et ce que tu gagnes les jours où tu lèves le pied.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
+  {k:'wk',q:'Ça te coûte combien par semaine, à peu près ?',sub:'Pas besoin d’être précis. Ça sert à calculer ce que tu mets de côté.',type:'amount',skip:v=>!v.vice},
+  {k:'nt',q:v=>`Dernière chose, ${N(v)} : je te préviens quand il faut ?`,sub:'La veille d’un prélèvement, et le soir pour noter ta journée en 10 secondes. Rien de plus, et tu coupes quand tu veux.',type:'tiles',opts:[{i:'bell',l:'Oui, préviens-moi',one:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}]}
+ ],v=>{onbApply(v);return['C’est prêt, '+v.n,S.bal?eur(S.bal.v)+' sur tes comptes · '+eur0(upSum())+' à payer ce mois':'']})}
 
 home();if(!S.name)onboard();else setTimeout(showTodo,700);
 </script>
