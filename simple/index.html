@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="5">
+<html lang="fr" data-build="6">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -144,6 +144,17 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .exbar{height:2px;background:var(--card2);border-radius:1px;overflow:hidden}.exbar i{display:block;height:100%;background:var(--ink);transition:width 1s linear}
 .exs{text-align:center;font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.3;min-height:58px}
 .exn{text-align:center;color:var(--muted);font-size:14px;min-height:20px}
+[hidden]{display:none!important}
+.big.tap{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.big .upd{font-size:12px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:4px}.big .upd svg{width:13px;height:13px}
+.big .aft{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);margin-top:10px;padding-top:12px;font-size:14px;color:var(--muted);font-weight:500}.big .aft b{font-size:20px;color:var(--ink);letter-spacing:-.02em}.big .aft b.neg{color:var(--bad)}
+.big .cta{margin-top:8px;border-radius:12px;background:var(--ink);color:var(--bg);padding:12px 14px;font-size:15px;font-weight:600;text-align:center}
+.li .ck.pv{border-color:var(--ink)}
+.li.paid .t,.li.paid .r{color:var(--muted)}.li.paid .ck{background:var(--card2);border-color:var(--card2);color:var(--muted)}
+.li .r b{color:var(--ink);font-weight:600}
+.fxr .fd{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--muted);font-weight:500;margin-top:3px}
+.fxr .fd input{width:30px;border:0;border-bottom:1px solid var(--line);background:none;font:inherit;color:var(--ink);padding:1px 0;text-align:center}.fxr .fd input:focus{outline:none;border-color:var(--ink)}
+.sgn{display:flex;justify-content:center;margin-top:-4px}
 .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}
 </style>
 </head>
@@ -185,6 +196,20 @@ const pcol=n=>{let h=0;for(const c of pk(n))h=(h*31+c.charCodeAt(0))>>>0;return 
 const incM=()=>S.inc.filter(x=>x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);
 const spentM=()=>S.e.filter(x=>x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);
 const debtDue=()=>S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM).reduce((a,x)=>a+x.v,0);
+const crT=id=>{const t=parseInt(String(id).slice(0,-4),36);return isFinite(t)?t:0};
+const lastDay=(y,m)=>new Date(y,m+1,0).getDate();
+const fxDate=(x,ym)=>{const y=+ym.slice(0,4),m=+ym.slice(5,7)-1;return ym+'-'+String(Math.min(x.d,lastDay(y,m))).padStart(2,'0')};
+const fxDated=()=>(S.fx||[]).filter(x=>x.d>=1&&x.d<=31);
+const fxThisMonth=()=>fxDated().map(x=>({...x,dt:fxDate(x,YM)})).sort((a,b)=>a.dt.localeCompare(b.dt));
+const fxUpcoming=()=>fxThisMonth().filter(x=>x.dt>today);
+function liveBal(){const b=S.bal;if(!b)return null;let v=b.v;
+  for(const x of S.inc)if(crT(x.id)>b.ts)v+=x.v;
+  for(const x of S.e)if(crT(x.id)>b.ts)v-=x.v;
+  let ym=b.d.slice(0,7);for(let k=0;k<36&&ym<=YM;k++){for(const x of fxDated()){const dt=fxDate(x,ym);if(dt>b.d&&dt<=today)v-=x.v}
+    const y=+ym.slice(0,4),m=+ym.slice(5,7);ym=m===12?(y+1)+'-01':y+'-'+String(m+1).padStart(2,'0')}
+  return Math.round(v*100)/100}
+const upSum=()=>fxUpcoming().reduce((a,x)=>a+x.v,0)+debtDue();
+const flowBal=()=>flow([{k:'b',q:'Combien tu as sur ton compte ?',sub:'Regarde ton appli bancaire. Ensuite l’app le tient à jour toute seule avec tes dépenses et tes prélèvements.',type:'amount',neg:1}],v=>{S.bal={v:v.b,d:today,ts:Date.now()};return['Solde à jour',eur(v.b)]});
 const reste=()=>incM()-(S.fixe||0)-spentM()-debtDue();
 const people=()=>{const m=new Map();for(const x of S.debts)if(!m.has(pk(x.p)))m.set(pk(x.p),x.p);for(const p of (S.ppl||[]))if(!m.has(pk(p)))m.set(pk(p),p);return [...m.values()]};
 
@@ -196,23 +221,42 @@ function home(){const r=reste(),now=new Date(),left=new Date(now.getFullYear(),n
   const dn=its.filter(a=>a.done).length;
   $('#app').innerHTML=`
   <div class="hi"><span><small>${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,c=>c.toUpperCase())}</small><b>${new Date().getHours()<18?'Bonjour':'Bonsoir'}${S.name?', '+esc(S.name):''}</b></span><button class="gear" id="set" aria-label="Réglages">${ic('gear')}</button></div>
-  <div class="big"><small>Reste ce mois-ci</small><strong class="${r<0?'neg':''}">${eur0(r)}</strong><span>${r>0?eur0(r/left)+' par jour jusqu’au '+new Date(now.getFullYear(),now.getMonth()+1,0).getDate()+' '+MN[now.getMonth()]:r<0?'Dans le rouge ce mois-ci':'Ajoute ce que tu gagnes pour commencer'}</span>${incM()>0?`<div class="mbar"><i style="width:${Math.max(0,Math.min(100,(1-r/Math.max(1,incM()))*100))}%"></i></div>`:''}</div>
+  ${balCard()}
+  <div class="big" ${S.bal?'hidden':''}><small>Reste ce mois-ci</small><strong class="${r<0?'neg':''}">${eur0(r)}</strong><span>${r>0?eur0(r/left)+' par jour jusqu’au '+new Date(now.getFullYear(),now.getMonth()+1,0).getDate()+' '+MN[now.getMonth()]:r<0?'Dans le rouge ce mois-ci':'Ajoute ce que tu gagnes pour commencer'}</span>${incM()>0?`<div class="mbar"><i style="width:${Math.max(0,Math.min(100,(1-r/Math.max(1,incM()))*100))}%"></i></div>`:''}</div>
   <div class="acts">
    <button class="act" data-a="dep"><span class="ib">${ic('out')}</span><span><b>J’ai dépensé</b><small>${eur0(spentM())} ce mois</small></span></button>
    <button class="act" data-a="inc"><span class="ib">${ic('in')}</span><span><b>J’ai reçu</b><small>${eur0(incM())} ce mois</small></span></button>
    <button class="act" data-a="ag"><span class="ib">${ic('cal')}</span><span><b>Je prévois</b><small>${its.length?dn+'/'+its.length+' faits aujourd’hui':'Rien aujourd’hui'}</small></span></button>
    <button class="act" data-a="debts"><span class="ib">${ic('users')}</span><span><b>Dettes</b><small>${me||th?(me?'Tu dois '+eur0(me):'')+(me&&th?' · ':'')+(th?'On te doit '+eur0(th):''):'Aucune'}</small></span></button>
   </div>
+  ${payCard()}
   ${smokeCard()}
   <div class="sec"><h2>Aujourd’hui</h2><small>${its.length?dn+' / '+its.length:''}</small></div>
   <div class="list">${its.length?its.map(a=>`<button class="li ${a.done?'done':''}" data-ck="${a.id}"><span class="ck">${ic('check')}</span><span class="t">${esc(a.t)}</span><span class="r">${a.h||''}</span></button>`).join(''):`<div class="empty">Rien de prévu aujourd’hui.</div>`}</div>
   ${next.length?`<div class="sec"><h2>À venir</h2></div><div class="list">${next.map(a=>`<button class="li" data-ed="${a.id}"><span class="ck" style="border-style:dashed"></span><span class="t">${esc(a.t)}<small>${dLab(a.d)}</small></span><span class="r">${a.h||''}</span></button>`).join('')}</div>`:''}
   <p class="foot">Données privées, stockées sur ce téléphone.</p>`;
-  $('#set').onclick=settings;
+  $('#set').onclick=settings;const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
   document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();({dep:flowDep,inc:flowInc,ag:flowAg,debts:debtList,sos:openSOS,gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr})[b.dataset.a]()});
   document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const a=S.ag.find(x=>x.id===b.dataset.ck);a.done=!a.done;save();buzz(a.done?[10,40,10]:8);home()});
   document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>agItem(b.dataset.ed));
 }
+
+function balCard(){if(!S.bal)return `<button class="big tap" id="balc"><small>Ton compte</small><span>Note ce que tu as sur ton compte : l’app suit ton solde au jour le jour.</span><div class="cta">Ajouter mon solde</div></button>`;
+  const L=liveBal(),up=upSum(),af=Math.round((L-up)*100)/100,now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1;
+  const ud=pd(S.bal.d),upd=S.bal.d===today?'aujourd’hui':'le '+ud.getDate()+' '+MN[ud.getMonth()];
+  return `<button class="big tap" id="balc"><small>Sur ton compte</small><strong class="${L<0?'neg':''}">${eur(L)}</strong><span class="upd">${ic('undo')} Solde noté ${upd} · toucher pour mettre à jour</span>
+   ${up?`<div class="aft"><span>Après les ${eur0(up)} à payer ce mois</span><b class="${af<0?'neg':''}">${eur(af)}</b></div>`:''}
+   <span style="margin-top:6px">${af>0?'Soit '+eur0(af/left)+' par jour jusqu’au '+ld+' '+MN[now.getMonth()]:'Attention, tu risques d’être à découvert ce mois-ci'}</span></button>`}
+function payCard(){const rows=fxThisMonth(),dd=S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM),nod=(S.fx||[]).filter(x=>!x.d);
+  if(!rows.length&&!dd.length&&!nod.length)return '';
+  const inD=dt=>{const n=Math.round((pd(dt)-pd(today))/864e5);return n===0?'aujourd’hui':n===1?'demain':'dans '+n+' j'};
+  const paid=rows.filter(x=>x.dt<=today),up=rows.filter(x=>x.dt>today);
+  return `<div class="sec"><h2>À payer ce mois</h2><small>${eur0(upSum())} restants</small></div><div class="list">
+   ${up.map(x=>`<div class="li"><span class="ck pv"></span><span class="t">${esc(x.n)}<small>Le ${pd(x.dt).getDate()} ${MN[pd(x.dt).getMonth()]} · ${inD(x.dt)}</small></span><span class="r"><b>${eur(x.v)}</b></span></div>`).join('')}
+   ${dd.map(x=>`<div class="li"><span class="ck pv"></span><span class="t">Rembourser ${esc(x.p)}<small>Dette prévue ce mois</small></span><span class="r"><b>${eur(x.v)}</b></span></div>`).join('')}
+   ${paid.map(x=>`<div class="li paid"><span class="ck">${ic('check')}</span><span class="t">${esc(x.n)}<small>Prélevé le ${pd(x.dt).getDate()}</small></span><span class="r">${eur(x.v)}</span></div>`).join('')}
+   ${nod.length?`<div class="li"><span class="ck" style="border-style:dashed"></span><span class="t">${nod.map(x=>esc(x.n)).join(', ')}<small>Sans date de prélèvement · ajoute-la dans Réglages</small></span><span class="r">${eur(nod.reduce((a,x)=>a+x.v,0))}</span></div>`:''}
+  </div>`}
 
 /* ---------- Moteur : un écran = une action ---------- */
 let FL=null;
@@ -234,10 +278,13 @@ function draw(){const st=FL.steps[FL.i],n=FL.steps.filter(s=>!(s.skip&&s.skip(FL
   else if(st.type==='fixes')fixesUI(st,body,btm)}
 function amountUI(st,body,btm){let s=FL.v[st.k]!=null?String(FL.v[st.k]).replace('.',','):'';
   body.innerHTML=`<div class="amt" id="amt"></div><div class="pad">${['1','2','3','4','5','6','7','8','9',',','0','⌫'].map(k=>`<button data-k="${k}" ${k==='⌫'?'aria-label="Effacer"':''}>${k==='⌫'?ic('del'):k}</button>`).join('')}</div>`;
+  let ng=st.neg&&FL.v[st.k]<0;if(ng)s=s.replace('-','');
+  if(st.neg)body.insertAdjacentHTML('beforeend',`<div class="sgn"><button class="chip" id="sg" aria-pressed="${ng}">Je suis à découvert</button></div>`);
   btm.innerHTML=`<button class="go" id="go">Suivant</button>`;
-  const show=()=>{body.querySelector('#amt').innerHTML=s?esc(s)+' <span>€</span>':'<span>0 €</span>';btm.querySelector('#go').disabled=!(parseFloat(s.replace(',','.'))>0)};show();
+  const show=()=>{body.querySelector('#amt').innerHTML=s?(ng?'−':'')+esc(s)+' <span>€</span>':'<span>0 €</span>';btm.querySelector('#go').disabled=st.neg?!s:!(parseFloat(s.replace(',','.'))>0)};show();
+  if(st.neg)body.querySelector('#sg').onclick=e=>{ng=!ng;e.currentTarget.setAttribute('aria-pressed',ng);buzz();show()};
   body.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{buzz(5);const k=b.dataset.k;if(k==='⌫')s=s.slice(0,-1);else if(k===','){if(!s.includes(','))s=(s||'0')+','}else{if(s.includes(',')&&s.split(',')[1].length>=2)return;if(s.replace(',','').length>=7)return;s=s==='0'?k:s+k}show()});
-  btm.querySelector('#go').onclick=()=>{FL.v[st.k]=parseFloat(s.replace(',','.'));buzz();nextStep()}}
+  btm.querySelector('#go').onclick=()=>{const v=parseFloat(s.replace(',','.'))||0;FL.v[st.k]=st.neg&&ng?-v:v;buzz();nextStep()}}
 function tilesUI(st,body){const opts=typeof st.opts==='function'?st.opts(FL.v):st.opts;
   body.innerHTML=`<div class="tiles">${opts.map((o,i)=>`<button class="tile${o.one?' one':''}${o.i?'':' noi'}" data-i="${i}">${o.i?`<span class="ib">${ic(o.i)}</span>`:''}<span><b>${o.dot?`<span class="dot" style="background:${o.dot}"></span>`:''}${esc(o.l)}</b>${o.s?`<br><small>${esc(o.s)}</small>`:''}</span></button>`).join('')}</div>`;
   body.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];buzz();if(o.go){o.go(FL.v);return}FL.v[st.k]=o.v;nextStep()})}
@@ -253,23 +300,23 @@ function dateUI(st,body){const o=[[today,'sun','Aujourd’hui'],[addD(today,1),'
 const FXS=['Téléphone','Internet','Abonnement','Assurance','Transport','Mutuelle','Sport','Crédit','Loyer'];
 const FXI=[[/t[ée]l[ée]phone|forfait|mobile|portable/i,'phone'],[/internet|box|fibre|wifi/i,'zap'],[/abonn|netflix|spotify|deezer|canal|prime|disney|apple|youtube/i,'spark'],[/assur|mutuelle/i,'bank'],[/transport|navigo|essence|voiture|bus|m[ée]tro|train/i,'train'],[/sport|salle|gym|fitness/i,'gym'],[/cr[ée]dit|pr[eê]t|banque/i,'card'],[/loyer|logement|appart/i,'home'],[/[ée]lec|gaz|eau|edf|engie/i,'zap']];
 const fxIc=n=>{for(const [r,i] of FXI)if(r.test(n||''))return i;return 'dots'};
-const fxSeed=()=>{const L=Array.isArray(S.fx)&&S.fx.length?S.fx:(S.fixe?[{n:'Charges fixes',v:S.fixe}]:[]);return L.map(x=>({n:x.n,v:x.v}))};
+const fxSeed=()=>{const L=Array.isArray(S.fx)&&S.fx.length?S.fx:(S.fixe?[{n:'Charges fixes',v:S.fixe}]:[]);return L.map(x=>({n:x.n,v:x.v,d:x.d||null}))};
 const fxSum=a=>a.reduce((t,x)=>t+(x.v>0?x.v:0),0);
 function fixesUI(st,body,btm){if(!FL.v[st.k])FL.v[st.k]=fxSeed();const R=FL.v[st.k];
   const tot=()=>{const t=fxSum(R);btm.querySelector('#fxt').innerHTML=R.length?`<span>Total par mois</span><b>${eur(t)}</b>`:'';btm.querySelector('#go').textContent=t?'Suivant':'Je n’en ai pas'};
-  const row=(x,j)=>`<div class="fxr${x.v>0?' on':''}" data-j="${j}"><span class="ib">${ic(fxIc(x.n))}</span><span class="nm"><input class="fnm" maxlength="40" placeholder="Nom (ex. Forfait)" value="${esc(x.n||'')}"></span><label class="fv"><input inputmode="decimal" placeholder="0" value="${x.v>0?String(x.v).replace('.',','):''}" aria-label="Montant"> €</label><button class="fxx" aria-label="Supprimer">${ic('x')}</button></div>`;
+  const row=(x,j)=>`<div class="fxr${x.v>0?' on':''}" data-j="${j}"><span class="ib">${ic(fxIc(x.n))}</span><span class="nm"><input class="fnm" maxlength="40" placeholder="Nom (ex. Forfait)" value="${esc(x.n||'')}"><span class="fd">Prélevé le <input class="fdi" inputmode="numeric" maxlength="2" placeholder="—" value="${x.d||''}" aria-label="Jour du prélèvement"> <span>${x.d?'du mois':'(si tu sais)'}</span></span></span><label class="fv"><input inputmode="decimal" placeholder="0" value="${x.v>0?String(x.v).replace('.',','):''}" aria-label="Montant"> €</label><button class="fxx" aria-label="Supprimer">${ic('x')}</button></div>`;
   const add=(n,focusAmt)=>{buzz();R.push({n:n||'',v:null});render();const r=body.querySelectorAll('.fxr'),last=r[r.length-1];(focusAmt?last.querySelector('.fv input'):last.querySelector('.fnm')).focus()};
   const render=()=>{const used=new Set(R.map(x=>pk(x.n||'')));const sug=FXS.filter(n=>!used.has(pk(n)));
     body.innerHTML=`<div class="fxl">${R.length?R.map(row).join(''):`<p class="fxe">Aucune charge pour l’instant.</p>`}<button class="fxadd" id="fxadd">${ic('plus')} Ajouter une charge</button>${sug.length?`<div class="fxs"><small>Idées</small>${sug.map(n=>`<button class="chip" data-s="${esc(n)}">${esc(n)}</button>`).join('')}</div>`:''}</div>`;
     body.querySelectorAll('.fxr').forEach(el=>{const j=+el.dataset.j,x=R[j],vi=el.querySelector('.fv input'),ni=el.querySelector('.fnm');
       vi.oninput=()=>{const v=parseFloat(vi.value.replace(/\s/g,'').replace(',','.'));x.v=v>0?Math.round(v*100)/100:null;el.classList.toggle('on',x.v>0);tot()};
-      ni.oninput=()=>{x.n=ni.value.trim();el.querySelector('.ib').innerHTML=ic(fxIc(x.n))};
+      const di=el.querySelector('.fdi');di.oninput=()=>{const d=parseInt(di.value,10);x.d=d>=1&&d<=31?d:null;di.nextElementSibling.textContent=x.d?'du mois':'(si tu sais)'};ni.oninput=()=>{x.n=ni.value.trim();el.querySelector('.ib').innerHTML=ic(fxIc(x.n))};
       el.querySelector('.fxx').onclick=()=>{buzz();R.splice(j,1);render();tot()}});
     body.querySelector('#fxadd').onclick=()=>add('',false);
     body.querySelectorAll('[data-s]').forEach(c=>c.onclick=()=>add(c.dataset.s,true))};
   btm.innerHTML=`<div class="fxt" id="fxt"></div><button class="go" id="go">Suivant</button>`;render();tot();
   btm.querySelector('#go').onclick=()=>{buzz();nextStep()}}
-const fxSave=R=>{S.fx=R.filter(x=>x.v>0).map(x=>({n:x.n||'Autre',v:x.v}));S.fixe=Math.round(fxSum(S.fx)*100)/100};
+const fxSave=R=>{S.fx=R.filter(x=>x.v>0).map(x=>{const o={n:x.n||'Autre',v:x.v};if(x.d)o.d=x.d;return o});S.fixe=Math.round(fxSum(S.fx)*100)/100};
 const fxSub=()=>Array.isArray(S.fx)&&S.fx.length?eur0(S.fixe)+' par mois · '+S.fx.length+' charge'+(S.fx.length>1?'s':''):S.fixe!=null?eur0(S.fixe)+' par mois':'Loyer, téléphone, abonnements…';
 
 /* ---------- Les parcours ---------- */
@@ -452,6 +499,7 @@ function gainsScr(){const G=GAINS.map(([k,n,l])=>[k,n,l.filter(it=>!it[2]||has(i
 /* ---------- Réglages ---------- */
 function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
   {i:'home',l:'Mes charges fixes',s:fxSub(),one:1,go:()=>flow([{k:'fx',q:'Tes charges fixes',sub:'Ajoute, renomme ou supprime ce que tu paies chaque mois.',type:'fixes'}],v=>{fxSave(v.fx);return['Enregistré',eur0(S.fixe)+' par mois']})},
+  {i:'bank',l:'Mon solde',s:S.bal?eur(liveBal())+' · mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'Pas encore renseigné',one:1,go:()=>flowBal()},
   {i:'user',l:'Mon prénom',s:S.name||'',one:1,go:()=>flow([{k:'n',q:'Ton prénom ?',type:'text',ph:'Prénom'}],v=>{S.name=v.n;return['Enregistré',v.n]})},
   {i:'smoke',l:'Ma conso',s:S.vice?({c:'Clopes',j:'Joints',cj:'Clopes et joints'}[S.vice]+(S.wk?' · '+eur0(S.wk)+' par semaine avant':'')):'Pas suivie',one:1,go:()=>flowVice()},
   {i:'trash',l:'Tout effacer',s:'Repartir de zéro',one:1,go:()=>flow([{k:'x',q:'Tout effacer ?',sub:'Tes dépenses, dettes et ton agenda seront supprimés.',type:'tiles',opts:[{i:'trash',l:'Oui, tout effacer',one:1,go:()=>{try{localStorage.removeItem(K)}catch(e){}location.reload()}},{i:'undo',l:'Non, garder',one:1,go:()=>closeFl()}]}],()=>['',''])},
@@ -460,10 +508,11 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
 /* ---------- Premier lancement ---------- */
 function onboard(){flow([
   {k:'n',q:'Comment tu t’appelles ?',sub:'Quelques questions et c’est prêt. Tes données restent sur ton téléphone.',type:'text',ph:'Ton prénom'},
-  {k:'fx',q:'Tes charges fixes',sub:'Ajoute ce que tu paies chaque mois, avec tes propres noms.',type:'fixes'},
+  {k:'fx',q:'Tes charges fixes',sub:'Ajoute ce que tu paies chaque mois, avec tes propres noms. Le jour du prélèvement, si tu le connais.',type:'fixes'},
+  {k:'b',q:'Combien tu as sur ton compte ?',sub:'Regarde ton appli bancaire. L’app le tiendra à jour toute seule.',type:'amount',neg:1},
   {k:'vice',q:'Tu fumes quoi ?',sub:'L’app t’aide à réduire, sans jugement.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
   {k:'wk',q:'Combien tu dépenses par semaine pour ça ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice}
- ],v=>{S.name=v.n;fxSave(v.fx);S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}return['Bienvenue, '+v.n,'']})}
+ ],v=>{S.name=v.n;fxSave(v.fx);S.bal={v:v.b,d:today,ts:Date.now()};S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}return['Bienvenue, '+v.n,'']})}
 
 home();if(!S.name)onboard();
 </script>
