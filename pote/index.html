@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="27">
+<html lang="fr" data-build="27x">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -130,6 +130,10 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 #agb{touch-action:pan-y}
 .agfab{position:fixed;right:20px;bottom:calc(24px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:29px;border:0;background:var(--ink);color:var(--bg);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.35);z-index:31}.agfab svg{width:24px;height:24px}
 @keyframes in{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+.keep{animation:none!important}
+.fb.sl,.fbtm.sl{animation:sl .32s cubic-bezier(.2,.8,.2,1) both}.fb.slb,.fbtm.slb{animation:slb .32s cubic-bezier(.2,.8,.2,1) both}
+@keyframes sl{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}@keyframes slb{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fb.sl,.fbtm.sl,.fb.slb,.fbtm.slb{animation-duration:.01s}}
 .ft{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:12px}
 .back{border:1px solid var(--line);background:none;width:40px;height:40px;border-radius:20px;display:grid;place-items:center;color:var(--ink)}
 .back svg{width:18px;height:18px}
@@ -609,9 +613,11 @@ function progScr(){const st=okStreak(),best=okBest(),tr=balTrend(60),sv=S.vice?s
 let FL=null;
 function flow(steps,onDone){FL={steps,i:0,v:{},onDone};while(FL.steps[FL.i]&&FL.steps[FL.i].skip&&FL.steps[FL.i].skip(FL.v))FL.i++;draw()}
 function closeFl(){const f=$('.fl');if(f)f.remove();FL=null;document.body.style.overflow='';home()}
-function nextStep(){FL.i++;let st;while((st=FL.steps[FL.i])&&st.skip&&st.skip(FL.v))FL.i++;if(FL.i>=FL.steps.length){const r=FL.onDone(FL.v);done(r);return}draw()}
-function prevStep(){if(FL.i===0)return closeFl();FL.i--;let st;while(FL.i>0&&(st=FL.steps[FL.i])&&st.skip&&st.skip(FL.v))FL.i--;draw()}
+function nextStep(){FL.dir=1;FL.i++;let st;while((st=FL.steps[FL.i])&&st.skip&&st.skip(FL.v))FL.i++;if(FL.i>=FL.steps.length){const r=FL.onDone(FL.v);done(r);return}draw()}
+function prevStep(){if(FL.i===0)return closeFl();FL.dir=-1;FL.i--;let st;while(FL.i>0&&(st=FL.steps[FL.i])&&st.skip&&st.skip(FL.v))FL.i--;draw()}
 let tPrev=null;
+const OVS=['fl','scr','shb','ok'],isOv=n=>n.nodeType===1&&OVS.some(c=>n.classList.contains(c));
+new MutationObserver(rs=>{let gone=false;const add=[];rs.forEach(r=>{r.removedNodes.forEach(n=>{if(isOv(n))gone=true});r.addedNodes.forEach(n=>{if(isOv(n))add.push(n)})});if(!add.length)return;add.forEach(n=>{const other=[...document.body.children].some(x=>x!==n&&isOv(x)&&!x.classList.contains('out')&&!add.includes(x));if(gone||other)n.classList.add('keep')})}).observe(document.body,{childList:true});
 function done([t,s]){const f=$('.fl');if(f)f.remove();FL=null;save();
   if(!t){home();return}
   let n=0;try{n=S.name?tasks().length:0}catch(e){}const all=tPrev>0&&n===0;tPrev=n;
@@ -624,10 +630,11 @@ function done([t,s]){const f=$('.fl');if(f)f.remove();FL=null;save();
   setTimeout(()=>o.classList.add('out'),all?1900:1350);setTimeout(()=>o.remove(),all?2250:1700);
   o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
 function draw(){const st=FL.steps[FL.i],n=FL.steps.filter(s=>!(s.skip&&s.skip(FL.v))).length,pos=FL.steps.slice(0,FL.i+1).filter(s=>!(s.skip&&s.skip(FL.v))).length;
-  let f=$('.fl');if(f)f.remove();f=document.createElement('div');f.className='fl';document.body.style.overflow='hidden';
+  let f=$('.fl');const had=!!f,pw=had&&f.querySelector('.prog i')?f.querySelector('.prog i').style.width:'';if(!had){f=document.createElement('div');f.className='fl'}document.body.style.overflow='hidden';
   const q=typeof st.q==='function'?st.q(FL.v):st.q;
-  f.innerHTML=`<div class="ft"><button class="back" aria-label="Retour">${ic('back')}</button><div class="prog"><i style="width:${pos/n*100}%"></i></div><span></span></div><div class="fb"><h1 class="q">${q}</h1>${st.sub?`<p class="qs">${typeof st.sub==='function'?st.sub(FL.v):st.sub}</p>`:''}<div class="body"></div></div><div class="fbtm"></div>`;
-  document.body.appendChild(f);bindCopy(f);f.querySelector('.back').onclick=()=>{buzz();prevStep()};if(st.k==='n'&&!S.name)f.querySelector('.back').style.visibility='hidden';
+  f.innerHTML=`<div class="ft"><button class="back" aria-label="Retour">${ic('back')}</button><div class="prog"><i style="width:${had&&pw?pw:pos/n*100+'%'}"></i></div><span></span></div><div class="fb"><h1 class="q">${q}</h1>${st.sub?`<p class="qs">${typeof st.sub==='function'?st.sub(FL.v):st.sub}</p>`:''}<div class="body"></div></div><div class="fbtm"></div>`;
+  if(had){const c=FL.dir<0?'slb':'sl';f.querySelector('.fb').classList.add(c);f.querySelector('.fbtm').classList.add(c);const pi=f.querySelector('.prog i');void pi.offsetWidth;pi.style.width=pos/n*100+'%'}FL.dir=0;
+  if(!had)document.body.appendChild(f);bindCopy(f);f.querySelector('.back').onclick=()=>{buzz();prevStep()};if(st.k==='n'&&!S.name)f.querySelector('.back').style.visibility='hidden';
   const body=f.querySelector('.body'),btm=f.querySelector('.fbtm');
   if(st.type==='amount')amountUI(st,body,btm);
   else if(st.type==='tiles')tilesUI(st,body);
