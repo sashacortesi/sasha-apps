@@ -349,8 +349,8 @@ const fxDated=()=>(S.fx||[]).filter(x=>x.d>=1&&x.d<=31);
 const fxThisMonth=()=>fxDated().map(x=>({...x,dt:fxDate(x,YM)})).sort((a,b)=>a.dt.localeCompare(b.dt));
 const fxUpcoming=()=>fxThisMonth().filter(x=>x.dt>today);
 function liveBal(){const b=S.bal;if(!b)return null;let v=b.v;
-  for(const x of S.inc)if(crT(x.id)>b.ts)v+=x.v;
-  for(const x of S.e)if(crT(x.id)>b.ts)v-=x.v;
+  for(const x of S.inc)if(!x.nb&&crT(x.id)>b.ts)v+=x.v;
+  for(const x of S.e)if(!x.nb&&crT(x.id)>b.ts)v-=x.v;
   let ym=b.d.slice(0,7);for(let k=0;k<36&&ym<=YM;k++){for(const x of fxDated()){const dt=fxDate(x,ym);if(dt>b.d&&dt<=today)v-=x.v}
     const y=+ym.slice(0,4),m=+ym.slice(5,7);ym=m===12?(y+1)+'-01':y+'-'+String(m+1).padStart(2,'0')}
   return Math.round(v*100)/100}
@@ -763,8 +763,21 @@ function debtList(){const g=new Map();for(const x of S.debts){const k=pk(x.p);if
   flow([{k:'x',q:'Tes dettes',sub:grp.length?'Touche une personne quand c’est réglé.':'Aucune dette en cours.',type:'tiles',opts:[
     ...grp.map(o=>({i:'user',dot:o.net<0?'var(--bad)':'var(--good)',l:o.n,s:(o.net<0?'Tu lui dois ':'Te doit ')+eur(Math.abs(o.net))+(o.l.some(x=>x.pm===nYM)?' · mois prochain':''),one:1,go:()=>person(o)})),
     {i:'plus',l:'Nouvelle dette',one:1,go:()=>flowDebt()}]}],()=>['',''])}
-function person(o){const owe=o.net<0,abs=Math.abs(o.net);flow([{k:'x',q:owe?`Tu dois ${eur(abs)} à ${esc(o.n)}`:`${esc(o.n)} te doit ${eur(abs)}`,sub:o.l.map(x=>x.t?esc(x.t):'').filter(Boolean).join(' · '),type:'tiles',opts:[
-   {i:'check',l:'C’est réglé',s:'On l’enlève',one:1,go:()=>{if(owe)S.e.push({id:uid(),d:today,v:Math.round(abs*100)/100,c:'dette'});S.debts=S.debts.filter(x=>pk(x.p)!==pk(o.n));done(['Réglé',`${o.n} · ${eur(abs)}`])}},
+/* Remboursement (total ou partiel) : met à jour la dette et, au choix, le solde */
+function payDebt(o,amt,nb){const owe=o.net<0,abs=Math.abs(o.net),a=Math.round(Math.min(amt,abs)*100)/100;if(!(a>0))return['',''];
+  if(owe)S.e.push({id:uid(),d:today,v:a,c:'dette',p:o.n,...(nb?{nb:1}:{})});else S.inc.push({id:uid(),d:today,v:a,n:'Remboursement de '+o.n,...(nb?{nb:1}:{})});
+  const dir=owe?'me':'them';let r=a;for(const x of o.l.filter(x=>x.w===dir).sort((p,q)=>(p.d||'').localeCompare(q.d||''))){if(r<=0)break;const t=Math.min(r,x.v);if(x.v0==null)x.v0=x.v;x.v=Math.round((x.v-t)*100)/100;x.pd=Math.round(((x.pd||0)+t)*100)/100;r-=t}
+  S.debts=S.debts.filter(x=>pk(x.p)!==pk(o.n)||x.v>0.004);const left=Math.round((abs-a)*100)/100;
+  return left>0?[owe?'Bien noté':'Bien reçu',(owe?'Tu lui dois encore ':o.n+' te doit encore ')+eur(left)]:['Réglé',`${o.n} · ${eur(a)}`]}
+function flowPay(o,full){const owe=o.net<0,abs=Math.abs(o.net);if(full&&!S.bal){done(payDebt(o,abs,0));return}flow([
+  {k:'v',q:owe?`Tu as envoyé combien à ${esc(o.n)} ?`:`Tu as reçu combien de ${esc(o.n)} ?`,sub:`Sur ${eur(abs)}`,type:'amount',skip:()=>full},
+  {k:'nb',q:'Et ton solde ?',sub:owe?'Cet argent est déjà sorti de tes comptes dans le solde affiché, ou pas encore ?':'Cet argent est déjà dans le solde affiché, ou pas encore ?',type:'tiles',skip:()=>!S.bal,opts:[
+    {v:'n',i:'bank',l:owe?'Enlève-le de mon solde':'Ajoute-le à mon solde',s:'Envoyé après ma dernière mise à jour'},
+    {v:'y',i:'check',l:'Il est déjà compté',s:'Envoyé avant ma dernière mise à jour'}]}
+ ],v=>payDebt(o,full?abs:v.v,v.nb==='y'))}
+function person(o){const owe=o.net<0,abs=Math.abs(o.net),d0=o.l.map(x=>x.d||'').sort()[0]||'',pd=(owe?S.e.filter(x=>x.c==='dette'&&x.p&&pk(x.p)===pk(o.n)):S.inc.filter(x=>x.n&&pk(x.n)===pk('Remboursement de '+o.n))).filter(x=>x.d>=d0).reduce((a,x)=>a+x.v,0);flow([{k:'x',q:owe?`Tu dois ${eur(abs)} à ${esc(o.n)}`:`${esc(o.n)} te doit ${eur(abs)}`,sub:[pd>0?(owe?'Déjà remboursé ':'Déjà reçu ')+eur(pd):'',...o.l.map(x=>x.t?esc(x.t):'')].filter(Boolean).join(' · '),type:'tiles',opts:[
+   {i:'check',l:'C’est réglé',s:'Tout est remboursé',one:1,go:()=>flowPay(o,1)},
+   {i:'pen',l:owe?'J’ai remboursé une partie':'J’ai reçu une partie',s:'Ex. 100 € sur '+eur(abs),one:1,go:()=>flowPay(o,0)},
    {i:'next',l:'Le mois prochain',s:owe?'Je le rembourse en '+new Date(nYM+'-01T12:00').toLocaleDateString('fr-FR',{month:'long'}):'Il me le rend plus tard',one:1,go:()=>{o.l.forEach(x=>x.pm=nYM);done(['Décalé','Au mois prochain'])}},
    {i:'undo',l:'Retour',one:1,go:()=>debtList()}]}],()=>['',''])}
 function flowDebt(){flow([
@@ -952,6 +965,7 @@ const HELP=[
   ['Je dois de l’argent à quelqu’un','<b>Dettes → Nouvelle dette</b> : à qui, combien, et quand tu comptes rembourser.','Nouvelle dette','debtnew','dette dois emprunt prêt'],
   ['Quelqu’un me doit de l’argent','Même chose : <b>Nouvelle dette</b>, en choisissant « On me doit ».','Nouvelle dette','debtnew','doit rendre prêté'],
   ['J’ai remboursé, ou on m’a remboursé','<b>Dettes</b> → la personne → <b>C’est réglé</b>. Elle disparaît de la liste.','Mes dettes','debts','remboursé réglé payé'],
+  ['J’ai remboursé seulement une partie','<b>Dettes</b> → la personne → <b>J’ai remboursé une partie</b> (ou <b>J’ai reçu une partie</b>) → le montant, par ex. 100 € sur 500 €. L’app garde le reste à payer. Elle te demande aussi si ton solde affiché compte déjà cet argent, pour ne pas le compter deux fois.','Mes dettes','debts','partie partiel acompte morceau reste reçu envoyé virement'],
   ['Je ne peux pas rembourser ce mois-ci','<b>Dettes</b> → la personne → <b>Le mois prochain</b>. Ça sort du calcul de ce mois.','Mes dettes','debts','pas les moyens reporter mois prochain'],
  ]],
  ['Fumer',[
