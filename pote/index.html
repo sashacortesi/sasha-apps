@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="8">
+<html lang="fr" data-build="9">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -145,6 +145,11 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .exs{text-align:center;font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.3;min-height:58px}
 .exn{text-align:center;color:var(--muted);font-size:14px;min-height:20px}
 [hidden]{display:none!important}
+.shb{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;animation:in .15s ease-out}
+.sh{width:100%;max-width:520px;background:var(--bg);border:1px solid var(--line);border-bottom:0;border-radius:26px 26px 0 0;padding:20px 16px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:12px;max-height:85dvh;overflow-y:auto}
+.sh h3{margin:0 4px;font-size:26px;font-weight:700;letter-spacing:-.03em}.sh p{margin:-8px 4px 2px;color:var(--muted);font-size:15px;font-weight:500}
+.sh .later{border:0;background:none;color:var(--muted);font-size:15px;font-weight:600;padding:10px}
+.li.td{cursor:pointer}.li.td .ck{border-style:dashed}.li .r svg{width:16px;height:16px}
 .act.pc{min-height:0;grid-template-columns:auto 1fr;align-items:center;width:100%}
 .big.tap{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
 .big .upd{font-size:12px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:4px}.big .upd svg{width:13px;height:13px}
@@ -230,14 +235,14 @@ function home(){const r=reste(),now=new Date(),left=new Date(now.getFullYear(),n
    <button class="act" data-a="ag"><span class="ib">${ic('cal')}</span><span><b>Je prévois</b><small>${its.length?dn+'/'+its.length+' faits aujourd’hui':'Rien aujourd’hui'}</small></span></button>
    <button class="act" data-a="debts"><span class="ib">${ic('users')}</span><span><b>Dettes</b><small>${me||th?(me?'Tu dois '+eur0(me):'')+(me&&th?' · ':'')+(th?'On te doit '+eur0(th):''):'Aucune'}</small></span></button>
   </div>
-  ${pushCard()}
+  ${todoSec()}
   ${payCard()}
   ${smokeCard()}
   <div class="sec"><h2>Aujourd’hui</h2><small>${its.length?dn+' / '+its.length:''}</small></div>
   <div class="list">${its.length?its.map(a=>`<button class="li ${a.done?'done':''}" data-ck="${a.id}"><span class="ck">${ic('check')}</span><span class="t">${esc(a.t)}</span><span class="r">${a.h||''}</span></button>`).join(''):`<div class="empty">Rien de prévu aujourd’hui.</div>`}</div>
   ${next.length?`<div class="sec"><h2>À venir</h2></div><div class="list">${next.map(a=>`<button class="li" data-ed="${a.id}"><span class="ck" style="border-style:dashed"></span><span class="t">${esc(a.t)}<small>${dLab(a.d)}</small></span><span class="r">${a.h||''}</span></button>`).join('')}</div>`:''}
   <p class="foot">Données privées, stockées sur ce téléphone.</p>`;
-  $('#set').onclick=settings;const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
+  $('#set').onclick=settings;{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
   document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();({push:pushEnable,dep:flowDep,inc:flowInc,ag:flowAg,debts:debtList,sos:openSOS,gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr})[b.dataset.a]()});
   document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const a=S.ag.find(x=>x.id===b.dataset.ck);a.done=!a.done;save();buzz(a.done?[10,40,10]:8);home()});
   document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>agItem(b.dataset.ed));
@@ -273,8 +278,10 @@ function pushItems(){const now=Date.now(),out=[],add=(t,title,body,tag)=>{if(t>n
   for(const ym of [YM,nm])for(const x of fxDated()){const dt=fxDate(x,ym);add(at(addD(dt,-1),19),'Demain : '+x.n,eur(x.v)+' vont être prélevés. Ton solde est à jour dans l’app.','fx')}
   const dd=S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM);
   if(dd.length){const t=dd.reduce((a,x)=>a+x.v,0);add(at(YM+'-25',18),'Remboursements du mois',dd.length===1?'Pense à rembourser '+dd[0].p+' ('+eur(dd[0].v)+') avant la fin du mois.':'Il te reste '+eur(t)+' à rembourser ce mois-ci.','debt')}
-  const logged=S.e.some(x=>x.d===today)||S.inc.some(x=>x.d===today);
-  for(let i=logged?1:0;i<14;i++)add(at(addD(today,i),21),'Ta journée en 5 secondes','Tu as dépensé quelque chose aujourd’hui ? Note-le pour garder ton solde juste.','day');
+  const okT=(S.e.some(x=>x.d===today)||(S.nos||{})[today])&&(!S.vice||S.log[today]);
+  for(let i=okT?1:0;i<14;i++)add(at(addD(today,i),21),'Ton point du soir',S.vice?'Note ta conso et tes dépenses du jour. 10 secondes, et tout reste juste.':'Tu as dépensé quelque chose aujourd’hui ? Note-le pour garder ton solde juste.','day');
+  if(S.vice&&!S.log[today])add(at(addD(today,1),10),'Tu as oublié hier','Note ta conso d’hier pour garder ton compteur juste.','miss');
+  if(S.bal)add(at(addD(S.bal.d,3),12),'Ton solde est toujours juste ?','Vérifie-le en 5 secondes dans l’app.','bal');
   try{if(S.vice)for(const k of keys()){const n=streak(k);let c=0;for(const m of [1,2,3,7,14,21,30,60,90,180,365])if(m>n&&c<2){c++;add(at(addD(today,m-n),10),m+' jour'+(m>1?'s':'')+' '+KN[k],m<7?'Chaque jour compte. Ouvre l’app pour voir ce que tu gagnes.':'Énorme. Regarde ce que ton corps et ton compte y gagnent.','smoke')}}}catch(e){}
   return out.sort((a,b)=>a.at-b.at).slice(0,120)}
 var pT=null;function pushSoon(ms=2000){if(!S.push)return;clearTimeout(pT);pT=setTimeout(pushSync,ms)}
@@ -292,6 +299,38 @@ async function pushOff(){S.push=0;save();try{await fetch(PUSH+'/unsub',{method:'
 function iosInstall(){flow([{k:'x',q:'D’abord, installe l’app',sub:'Sur iPhone, Apple n’envoie les notifications qu’aux apps posées sur l’écran d’accueil.<br><br>1. Touche <b>Partager</b> en bas de Safari<br>2. Touche <b>« Sur l’écran d’accueil »</b><br>3. Ouvre l’app depuis ton écran d’accueil et reviens ici.',type:'tiles',opts:[{i:'check',l:'Compris',one:1,go:()=>closeFl()}]}],()=>['',''])}
 function pushCard(){if(pushOn()||S.pushHide)return '';return `<button class="act pc" data-a="push"><span class="ib">${ic('bell')}</span><span><b>Activer les rappels</b><small>Prévenu la veille de chaque prélèvement</small></span></button>`}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pushSoon(500)});
+
+/* ---------- À faire (pour que tout reste juste) ---------- */
+function tasks(){const T=[],h=new Date().getHours(),yd=addD(today,-1);if(!S.name)return T;
+  if(S.vice&&keys().length){const st=S.vstart||S.start||today;
+    if(!S.log[yd]&&st<=yd)T.push({i:'smoke',t:'Ta conso d’hier',s:'Pas encore notée',go:()=>flowConso(yd)});
+    if(!S.log[today]&&h>=17)T.push({i:'smoke',t:'Ta conso d’aujourd’hui',s:'10 secondes pour garder ton compteur juste',go:()=>flowConso(today)})}
+  if(h>=17&&!S.e.some(x=>x.d===today)&&!(S.nos||{})[today])T.push({i:'out',t:'Tes dépenses du jour',s:'Tu as dépensé quelque chose aujourd’hui ?',go:flowDay});
+  if(S.bal){const age=Math.round((pd(today)-pd(S.bal.d))/864e5),passed=fxThisMonth().some(x=>x.dt>S.bal.d&&x.dt<=today);
+    if(age>=3||(passed&&age>=1))T.push({i:'bank',t:'Vérifie ton solde',s:'L’app pense que tu as '+eur(liveBal()),go:flowCheckBal})}
+  else T.push({i:'bank',t:'Ajoute ton solde',s:'Pour voir ce qu’il te reste vraiment',go:flowBal});
+  if(new Date().getDate()>=20)for(const x of S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM))T.push({i:'users',t:'Rembourser '+x.p,s:eur(x.v)+' prévu ce mois-ci',go:()=>flowDebtQ(x)});
+  if(!pushOn()&&(pushCan()||(isIOS&&!isApp)))T.push({i:'bell',t:'Active les rappels',s:'Pour ne rien oublier',go:pushEnable});
+  return T}
+const tdRow=(x,j)=>`<div class="li td" data-td="${j}"><span class="ck"></span><span class="t">${esc(x.t)}<small>${esc(x.s)}</small></span><span class="r">${ic('next')}</span></div>`;
+function todoSec(){const T=tasks();if(!T.length)return '';return `<div class="sec"><h2>À faire</h2><small>${T.length}</small></div><div class="list" id="tdl">${T.map(tdRow).join('')}</div>`}
+function bindTodo(root,T,close){root.querySelectorAll('[data-td]').forEach(el=>el.onclick=()=>{buzz();if(close)close();T[+el.dataset.td].go()})}
+let tdLast=0;
+function showTodo(){if(FL||$('.scr')||$('.shb'))return;const T=tasks();if(!T.length)return;tdLast=Date.now();
+  const o=document.createElement('div');o.className='shb';o.innerHTML=`<div class="sh"><h3>${T.length>1?T.length+' choses à faire':'1 chose à faire'}</h3><p>Pour que ton solde et tes compteurs restent justes.</p><div class="list">${T.map(tdRow).join('')}</div><button class="later">Plus tard</button></div>`;
+  document.body.appendChild(o);const close=()=>o.remove();o.querySelector('.later').onclick=close;o.onclick=e=>{if(e.target===o)close()};bindTodo(o,T,close)}
+function flowConso(dk){const lab=dk===today?'aujourd’hui':'hier';flow([
+  {k:'w',q:`Tu as fumé ${lab} ?`,sub:'Sois honnête, personne d’autre ne le voit.',type:'tiles',opts:[{v:'0',i:'check',l:'Non, rien',one:1},{v:'1',i:'smoke',l:'Oui',one:1}]},
+  {k:'c',q:'Combien de clopes ?',type:'tiles',skip:v=>v.w!=='1'||!has('c'),opts:[{v:1,l:'1'},{v:3,l:'2 à 5'},{v:7,l:'5 à 10'},{v:12,l:'Plus de 10'},{v:0,l:'Aucune',one:1}]},
+  {k:'j',q:'Combien de joints ?',type:'tiles',skip:v=>v.w!=='1'||!has('j'),opts:[{v:1,l:'1'},{v:2,l:'2'},{v:3,l:'3'},{v:5,l:'4 ou plus'},{v:0,l:'Aucun',one:1}]}
+ ],v=>{const o={};keys().forEach(k=>o[k]=v.w==='1'?+(v[k]||0):0);S.log[dk]=o;return keys().every(k=>!o[k])?['Noté',best()+' jour'+(best()>1?'s':'')+' sans fumer']:['Noté','Ce n’est pas grave. On repart.']})}
+function flowDay(){flow([{k:'x',q:'Tu as dépensé quelque chose aujourd’hui ?',type:'tiles',opts:[{i:'out',l:'Oui, je note',one:1,go:()=>flowDep()},{i:'check',l:'Non, rien aujourd’hui',one:1,go:()=>{S.nos=S.nos||{};S.nos[today]=1;done(['Noté','Journée sans dépense'])}}]}],()=>['',''])}
+function flowCheckBal(){const L=liveBal();flow([{k:'x',q:'Tu as '+eur(L)+' sur ton compte ?',sub:'Vérifie dans ton appli bancaire.',type:'tiles',opts:[{i:'check',l:'Oui, c’est juste',one:1,go:()=>{S.bal={v:L,d:today,ts:Date.now()};done(['Solde confirmé',eur(L)])}},{i:'pen',l:'Non, je corrige',one:1,go:()=>flowBal()}]}],()=>['',''])}
+function flowDebtQ(x){flow([{k:'x',q:'Tu as remboursé '+esc(x.p)+' ?',sub:eur(x.v)+' prévu ce mois-ci.',type:'tiles',opts:[
+  {i:'check',l:'Oui, c’est réglé',one:1,go:()=>{S.e.push({id:uid(),d:today,v:x.v,c:'dette'});S.debts=S.debts.filter(y=>y!==x);done(['Réglé',esc(x.p)])}},
+  {i:'later',l:'Le mois prochain',one:1,go:()=>{x.pm=nYM;done(['Décalé','au mois prochain'])}},
+  {i:'undo',l:'Pas encore',one:1,go:()=>closeFl()}]}],()=>['',''])}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&Date.now()-tdLast>20*60e3)setTimeout(showTodo,400)});
 
 /* ---------- Moteur : un écran = une action ---------- */
 let FL=null;
@@ -542,15 +581,17 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
   {i:'undo',l:'Retour',one:1,go:()=>closeFl()}]}],()=>['',''])}
 
 /* ---------- Premier lancement ---------- */
+function onbApply(v){S.name=v.n;fxSave(v.fx);S.bal={v:v.b,d:today,ts:Date.now()};S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}}
 function onboard(){flow([
   {k:'n',q:'Comment tu t’appelles ?',sub:'Quelques questions et c’est prêt. Tes données restent sur ton téléphone.',type:'text',ph:'Ton prénom'},
   {k:'fx',q:'Tes charges fixes',sub:'Ajoute ce que tu paies chaque mois, avec tes propres noms. Le jour du prélèvement, si tu le connais.',type:'fixes'},
   {k:'b',q:'Combien tu as sur ton compte ?',sub:'Regarde ton appli bancaire. L’app le tiendra à jour toute seule.',type:'amount',neg:1},
   {k:'vice',q:'Tu fumes quoi ?',sub:'L’app t’aide à réduire, sans jugement.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
-  {k:'wk',q:'Combien tu dépenses par semaine pour ça ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice}
- ],v=>{S.name=v.n;fxSave(v.fx);S.bal={v:v.b,d:today,ts:Date.now()};S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}return['Bienvenue, '+v.n,'']})}
+  {k:'wk',q:'Combien tu dépenses par semaine pour ça ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice},
+  {k:'nt',q:'Dernière étape : les rappels',sub:'L’app te prévient la veille de chaque prélèvement, et le soir pour noter ta journée. Tu peux les couper quand tu veux.',type:'tiles',opts:[{i:'bell',l:'Activer les rappels',one:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}]}
+ ],v=>{onbApply(v);return['Bienvenue, '+v.n,'']})}
 
-home();if(!S.name)onboard();
+home();if(!S.name)onboard();else setTimeout(showTodo,700);
 </script>
 <script>
 (()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;
