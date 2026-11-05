@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="9">
+<html lang="fr" data-build="10">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -86,6 +86,9 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .fxr .fv input{width:76px;text-align:right;border:0;border-bottom:1.5px solid var(--line);background:none;font:inherit;color:var(--ink);padding:4px 0}
 .fxr .fv input:focus{outline:none;border-color:var(--ink)}
 .fxr.on .fv{color:var(--ink)}
+.fsg{border:1px solid var(--line);background:none;color:var(--muted);border-radius:8px;width:26px;height:26px;font-size:17px;font-weight:700;line-height:1;padding:0}.fsg[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:#fff}
+.fxr.neg .fv input{color:var(--bad)}
+.big .accs{font-size:13px;color:var(--muted);font-weight:500;margin-top:2px}
 .fxx{border:0;background:none;color:var(--muted);padding:4px;display:grid;place-items:center}.fxx svg{width:16px;height:16px}
 .fxe{margin:4px 2px 6px;color:var(--muted);font-size:15px}
 .fxs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding-top:6px}.fxs small{width:100%;color:var(--muted);font-size:13px;font-weight:600;padding:0 2px 2px}
@@ -215,7 +218,7 @@ function liveBal(){const b=S.bal;if(!b)return null;let v=b.v;
     const y=+ym.slice(0,4),m=+ym.slice(5,7);ym=m===12?(y+1)+'-01':y+'-'+String(m+1).padStart(2,'0')}
   return Math.round(v*100)/100}
 const upSum=()=>fxUpcoming().reduce((a,x)=>a+x.v,0)+debtDue();
-const flowBal=()=>flow([{k:'b',q:'Combien tu as sur ton compte ?',sub:'Regarde ton appli bancaire. Ensuite l’app le tient à jour toute seule avec tes dépenses et tes prélèvements.',type:'amount',neg:1}],v=>{S.bal={v:v.b,d:today,ts:Date.now()};return['Solde à jour',eur(v.b)]});
+const flowBal=()=>flow([{k:'acc',q:'Combien tu as sur tes comptes ?',sub:'Une ligne par compte (banque, Revolut, Lydia…). L’app fait le total et le tient à jour toute seule.',type:'accounts'}],v=>{accSave(v.acc);return['Solde à jour',eur(S.bal.v)]});
 const reste=()=>incM()-(S.fixe||0)-spentM()-debtDue();
 const people=()=>{const m=new Map();for(const x of S.debts)if(!m.has(pk(x.p)))m.set(pk(x.p),x.p);for(const p of (S.ppl||[]))if(!m.has(pk(p)))m.set(pk(p),p);return [...m.values()]};
 
@@ -251,7 +254,7 @@ function home(){const r=reste(),now=new Date(),left=new Date(now.getFullYear(),n
 function balCard(){if(!S.bal)return `<button class="big tap" id="balc"><small>Ton compte</small><span>Note ce que tu as sur ton compte : l’app suit ton solde au jour le jour.</span><div class="cta">Ajouter mon solde</div></button>`;
   const L=liveBal(),up=upSum(),af=Math.round((L-up)*100)/100,now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1;
   const ud=pd(S.bal.d),upd=S.bal.d===today?'aujourd’hui':'le '+ud.getDate()+' '+MN[ud.getMonth()];
-  return `<button class="big tap" id="balc"><small>Sur ton compte</small><strong class="${L<0?'neg':''}">${eur(L)}</strong><span class="upd">${ic('undo')} Solde noté ${upd} · toucher pour mettre à jour</span>
+  return `<button class="big tap" id="balc"><small>${(S.bal.acc||[]).length>1?'Sur tes comptes':'Sur ton compte'}</small><strong class="${L<0?'neg':''}">${eur(L)}</strong>${(S.bal.acc||[]).length>1?`<span class="accs">${S.bal.acc.map(a=>esc(a.n)+' '+eur(a.v)).join(' · ')}</span>`:''}<span class="upd">${ic('undo')} Solde noté ${upd} · toucher pour mettre à jour</span>
    ${up?`<div class="aft"><span>Après les ${eur0(up)} à payer ce mois</span><b class="${af<0?'neg':''}">${eur(af)}</b></div>`:''}
    <span style="margin-top:6px">${af>0?'Soit '+eur0(af/left)+' par jour jusqu’au '+ld+' '+MN[now.getMonth()]:'Attention, tu risques d’être à découvert ce mois-ci'}</span></button>`}
 function payCard(){const rows=fxThisMonth(),dd=S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM),nod=(S.fx||[]).filter(x=>!x.d);
@@ -325,7 +328,7 @@ function flowConso(dk){const lab=dk===today?'aujourd’hui':'hier';flow([
   {k:'j',q:'Combien de joints ?',type:'tiles',skip:v=>v.w!=='1'||!has('j'),opts:[{v:1,l:'1'},{v:2,l:'2'},{v:3,l:'3'},{v:5,l:'4 ou plus'},{v:0,l:'Aucun',one:1}]}
  ],v=>{const o={};keys().forEach(k=>o[k]=v.w==='1'?+(v[k]||0):0);S.log[dk]=o;return keys().every(k=>!o[k])?['Noté',best()+' jour'+(best()>1?'s':'')+' sans fumer']:['Noté','Ce n’est pas grave. On repart.']})}
 function flowDay(){flow([{k:'x',q:'Tu as dépensé quelque chose aujourd’hui ?',type:'tiles',opts:[{i:'out',l:'Oui, je note',one:1,go:()=>flowDep()},{i:'check',l:'Non, rien aujourd’hui',one:1,go:()=>{S.nos=S.nos||{};S.nos[today]=1;done(['Noté','Journée sans dépense'])}}]}],()=>['',''])}
-function flowCheckBal(){const L=liveBal();flow([{k:'x',q:'Tu as '+eur(L)+' sur ton compte ?',sub:'Vérifie dans ton appli bancaire.',type:'tiles',opts:[{i:'check',l:'Oui, c’est juste',one:1,go:()=>{S.bal={v:L,d:today,ts:Date.now()};done(['Solde confirmé',eur(L)])}},{i:'pen',l:'Non, je corrige',one:1,go:()=>flowBal()}]}],()=>['',''])}
+function flowCheckBal(){const L=liveBal();flow([{k:'x',q:'Tu as '+eur(L)+((S.bal.acc||[]).length>1?' sur tes comptes ?':' sur ton compte ?'),sub:'Vérifie dans ton appli bancaire.',type:'tiles',opts:[{i:'check',l:'Oui, c’est juste',one:1,go:()=>{S.bal={v:L,d:today,ts:Date.now()};done(['Solde confirmé',eur(L)])}},{i:'pen',l:'Non, je corrige',one:1,go:()=>flowBal()}]}],()=>['',''])}
 function flowDebtQ(x){flow([{k:'x',q:'Tu as remboursé '+esc(x.p)+' ?',sub:eur(x.v)+' prévu ce mois-ci.',type:'tiles',opts:[
   {i:'check',l:'Oui, c’est réglé',one:1,go:()=>{S.e.push({id:uid(),d:today,v:x.v,c:'dette'});S.debts=S.debts.filter(y=>y!==x);done(['Réglé',esc(x.p)])}},
   {i:'later',l:'Le mois prochain',one:1,go:()=>{x.pm=nYM;done(['Décalé','au mois prochain'])}},
@@ -349,7 +352,8 @@ function draw(){const st=FL.steps[FL.i],n=FL.steps.filter(s=>!(s.skip&&s.skip(FL
   else if(st.type==='tiles')tilesUI(st,body);
   else if(st.type==='text')textUI(st,body,btm);
   else if(st.type==='date')dateUI(st,body);
-  else if(st.type==='fixes')fixesUI(st,body,btm)}
+  else if(st.type==='fixes')fixesUI(st,body,btm);
+  else if(st.type==='accounts')accountsUI(st,body,btm)}
 function amountUI(st,body,btm){let s=FL.v[st.k]!=null?String(FL.v[st.k]).replace('.',','):'';
   body.innerHTML=`<div class="amt" id="amt"></div><div class="pad">${['1','2','3','4','5','6','7','8','9',',','0','⌫'].map(k=>`<button data-k="${k}" ${k==='⌫'?'aria-label="Effacer"':''}>${k==='⌫'?ic('del'):k}</button>`).join('')}</div>`;
   let ng=st.neg&&FL.v[st.k]<0;if(ng)s=s.replace('-','');
@@ -376,6 +380,19 @@ const FXI=[[/t[ée]l[ée]phone|forfait|mobile|portable/i,'phone'],[/internet|box
 const fxIc=n=>{for(const [r,i] of FXI)if(r.test(n||''))return i;return 'dots'};
 const fxSeed=()=>{const L=Array.isArray(S.fx)&&S.fx.length?S.fx:(S.fixe?[{n:'Charges fixes',v:S.fixe}]:[]);return L.map(x=>({n:x.n,v:x.v,d:x.d||null}))};
 const fxSum=a=>a.reduce((t,x)=>t+(x.v>0?x.v:0),0);
+function accSave(R){const acc=R.filter(x=>x.v!=null).map(x=>({n:x.n||'Compte',v:x.v}));const t=Math.round(acc.reduce((a,x)=>a+x.v,0)*100)/100;S.bal={v:t,d:today,ts:Date.now(),acc}}
+function accountsUI(st,body,btm){if(!FL.v[st.k])FL.v[st.k]=S.bal&&S.bal.acc&&S.bal.acc.length?S.bal.acc.map(x=>({n:x.n,v:null,neg:false,ph:x.v})):[{n:'',v:null,neg:false}];const R=FL.v[st.k];
+  const tot=()=>{const t=R.reduce((a,x)=>a+(x.v||0),0);btm.querySelector('#fxt').innerHTML=`<span>Total sur tes comptes</span><b style="${t<0?'color:var(--bad)':''}">${eur(t)}</b>`;btm.querySelector('#go').disabled=!R.some(x=>x.v!=null)};
+  const row=(x,j)=>`<div class="fxr${x.v<0?' neg':''}${x.v!=null?' on':''}" data-j="${j}"><span class="ib">${ic('bank')}</span><span class="nm"><input class="fnm" maxlength="30" placeholder="Banque (ex. Boursorama)" value="${esc(x.n||'')}"><span class="fd"><button class="fsg" aria-pressed="${!!x.neg}" aria-label="À découvert">−</button> ${x.neg?'à découvert':'en positif'}</span></span><label class="fv"><input inputmode="decimal" placeholder="${x.ph!=null?String(Math.abs(x.ph)).replace('.',','):'0'}" value="${x.v!=null?String(Math.abs(x.v)).replace('.',','):''}" aria-label="Montant"> €</label><button class="fxx" aria-label="Supprimer">${ic('x')}</button></div>`;
+  const render=()=>{body.innerHTML=`<div class="fxl">${R.map(row).join('')}<button class="fxadd" id="fxadd">${ic('plus')} Ajouter un compte</button></div>`;
+    body.querySelectorAll('.fxr').forEach(el=>{const j=+el.dataset.j,x=R[j],vi=el.querySelector('.fv input'),sg=el.querySelector('.fsg');
+      const upd=()=>{const v=parseFloat(vi.value.replace(/\s/g,'').replace(',','.'));x.v=isNaN(v)?null:Math.round(Math.abs(v)*100)/100*(x.neg?-1:1);el.classList.toggle('neg',x.v<0);el.classList.toggle('on',x.v!=null);tot()};
+      vi.oninput=upd;sg.onclick=e=>{e.preventDefault();buzz();x.neg=!x.neg;sg.setAttribute('aria-pressed',x.neg);sg.nextSibling.textContent=' '+(x.neg?'à découvert':'en positif');upd()};
+      el.querySelector('.fnm').oninput=e=>{x.n=e.target.value.trim()};
+      el.querySelector('.fxx').onclick=()=>{buzz();R.splice(j,1);if(!R.length)R.push({n:'',v:null,neg:false});render();tot()}});
+    body.querySelector('#fxadd').onclick=()=>{buzz();R.push({n:'',v:null,neg:false});render();tot();const n=body.querySelectorAll('.fnm');n[n.length-1].focus()}};
+  btm.innerHTML=`<div class="fxt" id="fxt"></div><button class="go" id="go">Suivant</button>`;render();tot();
+  btm.querySelector('#go').onclick=()=>{buzz();nextStep()}}
 function fixesUI(st,body,btm){if(!FL.v[st.k])FL.v[st.k]=fxSeed();const R=FL.v[st.k];
   const tot=()=>{const t=fxSum(R);btm.querySelector('#fxt').innerHTML=R.length?`<span>Total par mois</span><b>${eur(t)}</b>`:'';btm.querySelector('#go').textContent=t?'Suivant':'Je n’en ai pas'};
   const row=(x,j)=>`<div class="fxr${x.v>0?' on':''}" data-j="${j}"><span class="ib">${ic(fxIc(x.n))}</span><span class="nm"><input class="fnm" maxlength="40" placeholder="Nom (ex. Forfait)" value="${esc(x.n||'')}"><span class="fd">Prélevé le <input class="fdi" inputmode="numeric" maxlength="2" placeholder="—" value="${x.d||''}" aria-label="Jour du prélèvement"> <span>${x.d?'du mois':'(si tu sais)'}</span></span></span><label class="fv"><input inputmode="decimal" placeholder="0" value="${x.v>0?String(x.v).replace('.',','):''}" aria-label="Montant"> €</label><button class="fxx" aria-label="Supprimer">${ic('x')}</button></div>`;
@@ -581,11 +598,11 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
   {i:'undo',l:'Retour',one:1,go:()=>closeFl()}]}],()=>['',''])}
 
 /* ---------- Premier lancement ---------- */
-function onbApply(v){S.name=v.n;fxSave(v.fx);S.bal={v:v.b,d:today,ts:Date.now()};S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}}
+function onbApply(v){S.name=v.n;fxSave(v.fx);accSave(v.acc);S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}}
 function onboard(){flow([
   {k:'n',q:'Comment tu t’appelles ?',sub:'Quelques questions et c’est prêt. Tes données restent sur ton téléphone.',type:'text',ph:'Ton prénom'},
   {k:'fx',q:'Tes charges fixes',sub:'Ajoute ce que tu paies chaque mois, avec tes propres noms. Le jour du prélèvement, si tu le connais.',type:'fixes'},
-  {k:'b',q:'Combien tu as sur ton compte ?',sub:'Regarde ton appli bancaire. L’app le tiendra à jour toute seule.',type:'amount',neg:1},
+  {k:'acc',q:'Combien tu as sur tes comptes ?',sub:'Une ligne par compte (banque, Revolut, Lydia…). L’app fait le total et le tiendra à jour toute seule.',type:'accounts'},
   {k:'vice',q:'Tu fumes quoi ?',sub:'L’app t’aide à réduire, sans jugement.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
   {k:'wk',q:'Combien tu dépenses par semaine pour ça ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice},
   {k:'nt',q:'Dernière étape : les rappels',sub:'L’app te prévient la veille de chaque prélèvement, et le soir pour noter ta journée. Tu peux les couper quand tu veux.',type:'tiles',opts:[{i:'bell',l:'Activer les rappels',one:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}]}
