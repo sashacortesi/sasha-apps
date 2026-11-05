@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="6">
+<html lang="fr" data-build="7">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -190,7 +190,7 @@ const wkMon=(d=today)=>addD(d,-((pd(d).getDay()+6)%7));
 /* ---------- Données ---------- */
 let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!S||typeof S!=='object')S={};
-for(const k of['e','inc','fx','debts','crav'])if(!Array.isArray(S[k]))S[k]=[];
+for(const k of['e','inc','fx','debts','crav','ag'])if(!Array.isArray(S[k]))S[k]=[];
 for(const k of['use','aide'])if(!S[k]||typeof S[k]!=='object')S[k]={};
 if(!S.tab||typeof S.tab!=='object')S.tab={on:0,k:[],log:{},why:''};
 if(!S.nh)S.nh='22:30';
@@ -246,6 +246,7 @@ function pushItems(){const out=[],P=S.name?S.name.split(' ')[0]:'',lo=S.lo||toda
     else if(wd===0){title='Ton mois en 30 secondes';body='Ce qui a marché ces 4 dernières semaines.'}
     else{title=(P?P+', ton':'Ton')+' point du soir';body='Un tap pour noter ta journée. Même « rien », ça compte.'}
     out.push({at:t,title,body,tag:'soir-'+d})}
+  for(const a of S.ag.filter(a=>!a.done&&a.d>=today&&a.h)){const t=atH(a.d,a.h);if(t>now())out.push({at:t,title:a.t,body:'Ton rappel de '+a.h.replace(':','h')+'.',tag:'rap-'+a.id})}
   const rl=atH(addD(lo,5),'13:00');if(rl>now())out.push({at:rl,title:'Base est là quand tu veux',body:'Pas besoin de rattraper. Un tap pour recaler ton solde, et c’est reparti.',tag:'retour'});
   return out}
 let pT=null;function pushSoon(ms=2000){if(!S.push)return;clearTimeout(pT);pT=setTimeout(pushSync,ms)}
@@ -283,6 +284,7 @@ function draw(){const st=FL.steps[FL.i],tot=FL.steps.filter(s=>!(s.skip&&s.skip(
   else if(st.type==='text'){bd.innerHTML=`<input class="txt" type="text" autocomplete="off" placeholder="${esc(st.ph||'')}" value="${esc(FL.v[st.k]||'')}">`;bt.innerHTML=`<button class="go">Valider</button>`;
     const I=bd.querySelector('input'),G=bt.querySelector('.go');const upd=()=>G.disabled=!st.opt&&!I.value.trim();I.oninput=upd;upd();
     I.onkeydown=e=>{if(e.key==='Enter'&&!G.disabled)G.click()};G.onclick=()=>{buzz();FL.v[st.k]=I.value.trim();next()};setTimeout(()=>I.focus(),250)}
+  else if(st.type==='date'){bd.innerHTML=`<input class="txt" type="date" min="${today}" value="${esc(FL.v[st.k]||addD(today,2))}">`;bt.innerHTML=`<button class="go">Valider</button>`;const I=bd.querySelector('input');bt.querySelector('.go').onclick=()=>{FL.v[st.k]=I.value||addD(today,2);next()}}
   else if(st.type==='time'){bd.innerHTML=`<input class="txt" type="time" value="${esc(FL.v[st.k]||S.nh)}">`;bt.innerHTML=`<button class="go">Valider</button>`;const I=bd.querySelector('input');bt.querySelector('.go').onclick=()=>{FL.v[st.k]=I.value||S.nh;next()}}}
 function done(t,s,big){const o=document.createElement('div');o.className='ok';o.innerHTML=`<svg viewBox="0 0 104 104"><circle cx="52" cy="52" r="48"/><path d="M33 53l13 13 25-27"/></svg><b>${esc(t)}</b>${s?`<small>${esc(s)}</small>`:''}`;
   document.body.appendChild(o);save();render();if(big){buzz([12,60,18]);setTimeout(win,120)}else buzz(10);
@@ -305,6 +307,8 @@ function cards(){const C=[],h=new Date().getHours(),tm=addD(today,1),wd=pd(today
   if(S.tab.on&&S.tab.k.length&&!S.tab.log[today]&&h>=18)C.push({i:'leaf',t:'Et aujourd’hui, combien ?',s:'Une fourchette suffit.',a:RG.map(r=>({l:r.l,go:()=>conso(today,r.v)}))});
   const age=Math.round((pd(today)-pd(S.bal.d))/864e5);if(age>=6&&!seen('bal'))C.push({i:'bank',t:'Ton compte dit toujours '+eur0(liveBal())+' ?',s:'Jette un œil à ton appli de banque. Si c’est différent, on recale, sans souci.',a:[{l:'Oui, c’est ça',p:1,go:()=>{S.bal={v:liveBal(),d:today,ts:now()};see('bal');save();adv()}},{l:'Recaler',go:()=>flowBal()}]});
   const k=keptWeek();if(k>=5&&!seen('kept')&&wd!==1)C.push({i:'spark',t:'Cette semaine, t’as gardé '+eur0(k),s:'C’est ce que tu pouvais dépenser et que t’as pas dépensé. Il est toujours sur ton compte.',a:[{l:'Nice',p:1,go:()=>{see('kept');win();adv()}}]});
+  const AG=[];for(const a of S.ag.filter(a=>!a.done&&a.d<=today).sort((x,y)=>(x.d+(x.h||'99')).localeCompare(y.d+(y.h||'99'))))AG.push({i:'bell',t:esc(a.t),s:a.d<today?'C’était prévu '+dLab(a.d)+'. Pas grave.':a.h?'Aujourd’hui à '+a.h.replace(':','h')+'.':'Prévu aujourd’hui.',a:[{l:'C’est fait',p:1,go:()=>{a.done=1;done('Fait',a.t,1)}},{l:'Demain',go:()=>{a.d=addD(today,1);done('Décalé','À demain.')}}]});
+  C.splice(f.length&&!seen('fx')?1:0,0,...AG);
   if(!pushOn()&&!S.pushAsk&&S.start&&S.start<today)C.push({i:'bell',t:'Un petit rappel le soir ?',s:'Une seule notif par jour, à '+S.nh.replace(':','h')+'. Si t’ouvres plus Base pendant 3 jours, elle se tait.',a:[{l:'Oui',p:1,go:()=>{S.pushAsk=1;save();pushEnable()}},{l:'Non merci',go:()=>{S.pushAsk=1;save();render()}}]});
   return C}
 function adv(){save();render()}
@@ -343,6 +347,8 @@ function toutView(){const L=liveBal(),fl=fxLeft(),dd=debtsDue(),g=new Map();for(
   if(G.length)h+=`<div class="sec"><h2>Dettes</h2></div><div class="list">${G.map((o,i)=>row('data-g="'+i+'"','user',esc(o.n),(o.net<0?'Tu lui dois':'Te doit')+(o.l.some(x=>x.dd)?' · en plusieurs fois':''),eur(Math.abs(o.net)))).join('')}</div>`;
   if(T.on&&T.k.length)h+=`<div class="sec"><h2>Fumer moins</h2></div><div class="list">${T.k.map(k=>{const tr=tabTrend(k),n=tabDays(k);return row('data-tb="1"',k==='tabac'?'smoke':'leaf',n+' jour'+(n>1?'s':'')+' sans '+(k==='tabac'?'clope':'joint'),tr==='moins'?'Moins que la semaine d’avant':tr==='plus'?'Semaine plus chargée, ça arrive':'Ce chiffre ne redescend jamais','')}).join('')}</div>`;
   if(S.imp&&S.imp.on)h+=`<div class="sec"><h2>Imprévus</h2></div><div class="list">${row('id="timp"','safe','Réserve imprévus','Pas comptée dans ton chiffre du jour',eur0(impV()))}</div>`;
+  const ag=S.ag.filter(a=>!a.done&&a.d>=today).sort((x,y)=>(x.d+(x.h||'99')).localeCompare(y.d+(y.h||'99'))).slice(0,6);
+  if(ag.length)h+=`<div class="sec"><h2>Rappels</h2></div><div class="list">${ag.map(a=>row('data-ag="'+a.id+'"','bell',esc(a.t),dLab(a.d).replace(/^./,c=>c.toUpperCase())+(a.h?' · '+a.h.replace(':','h'):''),'')).join('')}</div>`;
   if(showMois)h+=`<div class="sec"><h2>Ton mois</h2></div><div class="list">${row('id="tmo"','week','Les 4 dernières semaines','Ce qui a marché',ic('next'))}</div>`;
   if(mv.length)h+=`<div class="sec"><h2>Cette semaine</h2></div><div class="list">${mv.map(x=>row('data-mv="'+x.k+':'+x.id+'"',x.k==='i'?'in':(CN[x.c]||CN.autre)[1],esc(x.k==='i'?x.n:(CN[x.c]||CN.autre)[2]+(x.p?' · '+x.p:'')),dLab(x.d).replace(/^./,c=>c.toUpperCase()),`<span class="${x.k==='i'?'':'m'}">${x.k==='i'?'+':'−'}${eur(x.v)}</span>`)).join('')}</div>`;
   h+=`<div class="foot2"><button class="lnk" id="tadd">${ic('plus')}Ajouter</button><button class="lnk" id="tset">${ic('gear')}Réglages et aide</button></div>`;
@@ -351,12 +357,42 @@ function toutView(){const L=liveBal(),fl=fxLeft(),dd=debtsDue(),g=new Map();for(
   on('trc',()=>flowBal());on('tmo',bilan);on('timp',flowImp);on('tset',()=>sub('',moi));on('tadd',addMenu);
   document.querySelectorAll('#sub [data-g]').forEach(b=>b.onclick=()=>{buzz();person(G[+b.dataset.g])});
   document.querySelectorAll('#sub [data-pg]').forEach(b=>b.onclick=()=>{buzz();person(grpOf(b.dataset.pg))});
+  document.querySelectorAll('#sub [data-ag]').forEach(b=>b.onclick=()=>{buzz();agItem(S.ag.find(a=>a.id===b.dataset.ag))});
   document.querySelectorAll('#sub [data-tb]').forEach(b=>b.onclick=()=>{buzz();consoFlow()});
   document.querySelectorAll('#sub [data-fx]').forEach(b=>b.onclick=()=>{buzz();fxItem(S.fx.find(y=>y.id===b.dataset.fx))});
   document.querySelectorAll('#sub [data-mv]').forEach(b=>b.onclick=()=>{buzz();const[k,id]=b.dataset.mv.split(':'),A=k==='i'?S.inc:S.e,x=A.find(y=>y.id===id);flow([{k:'x',q:(k==='i'?'+':'−')+eur(x.v),sub:dLab(x.d).replace(/^./,c=>c.toUpperCase()),type:'tiles',opts:[{i:'trash',l:'Supprimer',s:'Une erreur de saisie',one:1,go:()=>{A.splice(A.indexOf(x),1);closeFl(1);done('Supprimé','')}}]}],()=>null)})}
 function fxItem(x){flow([{k:'x',q:esc(x.n),sub:eur(x.v)+' le '+x.d+' du mois',type:'tiles',opts:[{i:'trash',l:'Je ne l’ai plus',s:'On le retire',one:1,go:()=>{S.fx=S.fx.filter(y=>y!==x);closeFl(1);done('Retiré',x.n)}}]}],()=>null)}
 function consoFlow(){flow([{k:'d',q:'Quel jour ?',type:'tiles',opts:[0,1,2,3,4,5,6].map(i=>{const d=addD(today,-i);return{v:d,i:'cal',l:dLab(d).replace(/^./,c=>c.toUpperCase())}})},{k:'r',q:'Combien ?',sub:'Une fourchette suffit.',type:'tiles',opts:RG.map(r=>({v:r.v,i:r.v?'leaf':'check',l:r.l}))}],v=>{conso(v.d,v.r,1);return null})}
+/* ---------- Rappels (et calendrier de l’iPhone) ---------- */
+function flowAg(){track('ag');flow([
+  {k:'t',q:'Te rappeler de quoi ?',type:'text',ph:'Ex. appeler la CAF, payer Yanis'},
+  {k:'d',q:'Quand ?',type:'tiles',opts:[{v:today,i:'now',l:'Aujourd’hui'},{v:addD(today,1),i:'next',l:'Demain'},{v:addD(today,7),i:'cal',l:'Dans une semaine'},{v:'pick',i:'pen',l:'Choisir'}]},
+  {k:'d',q:'Quel jour ?',type:'date',skip:v=>v.d!=='pick'},
+  {k:'h',q:'À quelle heure ?',sub:'Avec une heure, ton téléphone sonne à ce moment-là.',type:'tiles',opts:[{v:'',i:'x',l:'Pas d’heure'},{v:'09:00',i:'sun',l:'9h'},{v:'12:00',i:'sun',l:'12h'},{v:'18:00',i:'moon',l:'18h'},{v:'pick',i:'pen',l:'Autre',one:1}]},
+  {k:'h',q:'À quelle heure ?',type:'time',skip:v=>v.h!=='pick'},
+  {k:'cal',q:'Aussi dans le calendrier de ton iPhone ?',sub:'Il s’ajoute à ton appli Calendrier, avec une alerte. Même sans ouvrir Base.',type:'tiles',opts:[{v:1,i:'cal',l:'Oui, ajoute-le'},{v:0,i:'x',l:'Non, juste ici'}]}
+ ],v=>{const a={id:uid(),t:v.t,d:v.d,h:v.h||'',done:0};S.ag.push(a);if(v.cal)setTimeout(()=>ics([evAg(a)],'rappel'),400);return['C’est noté',v.t+' · '+dLab(a.d)+(a.h?' à '+a.h.replace(':','h'):'')]})}
+function agItem(a){flow([{k:'x',q:esc(a.t),sub:dLab(a.d).replace(/^./,c=>c.toUpperCase())+(a.h?' à '+a.h.replace(':','h'):''),type:'tiles',opts:[
+  {i:'check',l:'C’est fait',one:1,go:()=>{a.done=1;closeFl(1);done('Fait',a.t,1)}},
+  {i:'cal',l:'Ajouter au calendrier de l’iPhone',one:1,go:()=>{closeFl(1);ics([evAg(a)],'rappel')}},
+  {i:'trash',l:'Supprimer',one:1,go:()=>{S.ag=S.ag.filter(x=>x!==a);closeFl(1);done('Supprimé','')}}]}],()=>null)}
+const icsD=(d,h)=>d.replace(/-/g,'')+(h?'T'+h.replace(':','')+'00':'');
+const icsT=s=>String(s).replace(/[\\;,]/g,m=>'\\'+m).replace(/\n/g,'\\n');
+function evAg(a){return{uid:a.id,t:a.t,d:a.d,h:a.h,alarm:a.h?0:9*60}}
+function ics(evs,name){const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Base//FR','CALSCALE:GREGORIAN'];
+  for(const e of evs){L.push('BEGIN:VEVENT','UID:'+e.uid+'@base','DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z','SUMMARY:'+icsT(e.t));
+    if(e.h){const end=new Date(pd(e.d));const[hh,mm]=e.h.split(':').map(Number);end.setHours(hh,mm+30);L.push('DTSTART:'+icsD(e.d,e.h),'DTEND:'+icsD(iso(end),String(end.getHours()).padStart(2,'0')+':'+String(end.getMinutes()).padStart(2,'0')))}
+    else L.push('DTSTART;VALUE=DATE:'+icsD(e.d),'DTEND;VALUE=DATE:'+icsD(addD(e.d,1)));
+    if(e.rr)L.push('RRULE:'+e.rr);
+    L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsT(e.t),'TRIGGER:'+(e.h?'-PT0M':(e.alarm<0?'-PT'+(-e.alarm):'PT'+e.alarm)+'M'),'END:VALARM','END:VEVENT')}
+  L.push('END:VCALENDAR');const b=new Blob([L.join('\r\n')],{type:'text/calendar'}),u=URL.createObjectURL(b),x=document.createElement('a');x.href=u;x.download='base-'+name+'.ics';document.body.appendChild(x);x.click();x.remove();setTimeout(()=>URL.revokeObjectURL(u),60000)}
+function calAll(){/* prélèvements (chaque mois) + remboursements prévus */const ev=[];
+  for(const x of S.fx){const ym=fxDate(x.d,YM)>=today?YM:addM(YM,1);ev.push({uid:'fx'+x.id,t:x.n+' · '+eur(x.v)+' prélevés',d:fxDate(x.d,ym),h:'',alarm:-15*60,rr:'FREQ=MONTHLY;BYMONTHDAY='+Math.min(x.d,28)})}
+  for(const x of S.debts.filter(x=>x.dd&&x.dd>=today))ev.push({uid:'db'+x.id,t:(x.w==='me'?'Rembourser '+x.p:x.p+' doit te rendre')+' · '+eur(x.v),d:x.dd,h:'',alarm:9*60});
+  for(const a of S.ag.filter(a=>!a.done&&a.d>=today))ev.push(evAg(a));
+  if(!ev.length)return done('Rien à ajouter','Ajoute un prélèvement, une dette ou un rappel d’abord.');ics(ev,'calendrier')}
 function addMenu(){flow([{k:'x',q:'Ajouter',type:'tiles',opts:[
+  {i:'bell',l:'Un rappel',s:'Ton téléphone te le rappelle',one:1,go:()=>flowAg()},
   {i:'users',l:'Une dette',s:'Je dois, ou on me doit',one:1,go:()=>flowDebt()},
   {i:'bank',l:'Un prélèvement',s:'Forfait, abonnement…',one:1,go:()=>flowFx()},
   ...(S.fx.length?[{i:'cal',l:'Mes prélèvements',s:S.fx.length+' chaque mois',one:1,go:()=>flow([{k:'x',q:'Chaque mois',sub:'Touche pour retirer.',type:'tiles',opts:S.fx.slice().sort((a,b)=>a.d-b.d).map(x=>({i:'bank',l:x.n,s:eur(x.v)+' · le '+x.d,one:1,go:()=>fxItem(x)}))}],()=>null)}]:[]),
@@ -447,6 +483,7 @@ function moi(){const T=S.tab,lab=['Tout ok','1 à 3','4+'];
   <div class="list">
    ${T.on&&T.k.length?`<button class="li" id="tset"><span class="ib">${ic('leaf')}</span><span class="t">Fumer moins<small>${T.k.map(k=>TK[k]).join(' et ')} · changer ou arrêter</small></span><span class="r m">${ic('next')}</span></button>`:''}
    <button class="li" id="nt"><span class="ib">${ic('bell')}</span><span class="t">Point du soir<small>${pushOn()?'Une notif par jour à '+S.nh.replace(':','h'):'Désactivé'}</small></span><span class="r m">${pushOn()?'Changer':'Activer'}</span></button>
+   <button class="li" id="cal"><span class="ib">${ic('cal')}</span><span class="t">Tout mettre dans mon calendrier<small>Prélèvements, remboursements et rappels, dans l’appli Calendrier de l’iPhone</small></span><span class="r m">${ic('next')}</span></button>
    <button class="li" id="im"><span class="ib">${ic('safe')}</span><span class="t">Réserve imprévus<small>${S.imp&&S.imp.on?'Activée':'Pour un pépin, en option'}</small></span><span class="r m">${S.imp&&S.imp.on?'Retirer':'Activer'}</span></button>
    <button class="li" id="sn"><span class="ib">${ic('spark')}</span><span class="t">Sons des réussites<small>Seulement quand tu réussis quelque chose</small></span><span class="r m">${S.snd===0?'Coupés':'Activés'}</span></button>
    <button class="li" id="bk"><span class="ib">${ic('folder')}</span><span class="t">Sauvegarder mes données<small>${S.bk?'Dernière : '+dLab(S.bk):'Jamais'} · un fichier rien qu’à toi</small></span><span class="r m">${ic('next')}</span></button>
@@ -466,7 +503,7 @@ function moi(){const T=S.tab,lab=['Tout ok','1 à 3','4+'];
   on('bil',bilan);on('ton',tabOn);on('tset',tabOn);on('env',envie);on('cons',()=>flow([{k:'d',q:'Quel jour ?',type:'tiles',opts:[0,1,2,3,4,5,6].map(i=>{const d=addD(today,-i);return{v:d,i:'cal',l:dLab(d).replace(/^./,c=>c.toUpperCase())}})},{k:'r',q:'Combien ?',sub:'Une fourchette suffit.',type:'tiles',opts:RG.map(r=>({v:r.v,i:r.v?'leaf':'check',l:r.l}))}],v=>{conso(v.d,v.r,1);return null}));
   on('nt',()=>pushOn()?flow([{k:'h',q:'À quelle heure ?',sub:'Une seule notif par jour. Si tu n’ouvres plus Base pendant 3 jours, elle se tait.',type:'time'}],v=>{S.nh=v.h;return['C’est noté','Ton point du soir à '+S.nh.replace(':','h')]}):pushEnable());
   on('im',()=>{if(S.imp&&S.imp.on){S.imp.on=0;done('Retirée','La réserve revient dans « pour aujourd’hui ».')}else{S.imp={on:1,v:(S.imp&&S.imp.v)||0};flowImp()}});
-  on('sn',()=>{S.snd=S.snd===0?1:0;save();render()});on('bk',backup);on('rs',restore);
+  on('cal',calAll);on('sn',()=>{S.snd=S.snd===0?1:0;save();render()});on('bk',backup);on('rs',restore);
   on('nm',()=>flow([{k:'n',q:'Ton prénom ?',type:'text',ph:'Prénom'}],v=>{S.name=v.n;return['C’est noté','']}));
   on('del',()=>flow([{k:'x',q:'Tout effacer ?',sub:'Tes dépenses, dettes et ta conso seront supprimées de ce téléphone.',type:'tiles',opts:[{i:'trash',l:'Oui, tout effacer',one:1,go:async()=>{try{if(S.pid)await fetch(PUSH+'/unsub',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:S.pid})})}catch(e){}localStorage.removeItem(K);location.reload()}},{i:'back',l:'Non, garder',one:1,go:()=>closeFl()}]}],()=>null))}
 
