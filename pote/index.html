@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="3">
+<html lang="fr" data-build="4">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -77,6 +77,18 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .dot{width:8px;height:8px;border-radius:4px;display:inline-block;margin-right:8px;vertical-align:2px}
 .txt{width:100%;border:0;border-bottom:1.5px solid var(--line);border-radius:0;background:none;padding:12px 0;font-size:24px;font-weight:600;color:var(--ink)}
 .txt:focus{outline:none;border-color:var(--ink)}
+.fxl{display:grid;gap:6px;padding-bottom:10px}
+.fxr{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:10px 12px 10px 10px}
+.fxr .ib{width:34px;height:34px;border-radius:10px;background:var(--card2);display:grid;place-items:center}.fxr .ib svg{width:18px;height:18px}
+.fxr .nm{font-size:16px;font-weight:600;letter-spacing:-.01em;min-width:0}
+.fxr input.fnm{width:100%;border:0;background:none;font:inherit;color:var(--ink);padding:0}.fxr input.fnm:focus{outline:none}
+.fxr .fv{display:flex;align-items:center;gap:4px;font-size:17px;font-weight:600;color:var(--muted)}
+.fxr .fv input{width:76px;text-align:right;border:0;border-bottom:1.5px solid var(--line);background:none;font:inherit;color:var(--ink);padding:4px 0}
+.fxr .fv input:focus{outline:none;border-color:var(--ink)}
+.fxr.on .fv{color:var(--ink)}
+.fxadd{border:1px dashed var(--line);border-radius:14px;background:none;padding:14px;font-size:15px;font-weight:600;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px}.fxadd svg{width:18px;height:18px}
+.fxt{display:flex;justify-content:space-between;align-items:baseline;padding:0 2px 12px;font-size:15px;color:var(--muted);font-weight:500}.fxt b{font-size:22px;color:var(--ink);letter-spacing:-.02em}
+.fb:has(.fxl){overflow-y:auto}
 .go{width:100%;border:0;border-radius:16px;padding:18px;font-size:17px;font-weight:600;color:var(--bg);background:var(--ink)}
 .go:disabled{opacity:.25}
 .ok{position:fixed;inset:0;z-index:40;background:var(--bg);display:grid;place-items:center;align-content:center;gap:14px;animation:in .15s ease-out}
@@ -215,7 +227,8 @@ function draw(){const st=FL.steps[FL.i],n=FL.steps.filter(s=>!(s.skip&&s.skip(FL
   if(st.type==='amount')amountUI(st,body,btm);
   else if(st.type==='tiles')tilesUI(st,body);
   else if(st.type==='text')textUI(st,body,btm);
-  else if(st.type==='date')dateUI(st,body)}
+  else if(st.type==='date')dateUI(st,body);
+  else if(st.type==='fixes')fixesUI(st,body,btm)}
 function amountUI(st,body,btm){let s=FL.v[st.k]!=null?String(FL.v[st.k]).replace('.',','):'';
   body.innerHTML=`<div class="amt" id="amt"></div><div class="pad">${['1','2','3','4','5','6','7','8','9',',','0','⌫'].map(k=>`<button data-k="${k}" ${k==='⌫'?'aria-label="Effacer"':''}>${k==='⌫'?ic('del'):k}</button>`).join('')}</div>`;
   btm.innerHTML=`<button class="go" id="go">Suivant</button>`;
@@ -233,6 +246,24 @@ function dateUI(st,body){const o=[[today,'sun','Aujourd’hui'],[addD(today,1),'
   body.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{buzz();FL.v[st.k]=b.dataset.d;nextStep()});
   const di=body.querySelector('#dd');body.querySelector('label.tile').onclick=e=>{if(e.target!==di){e.preventDefault();try{di.showPicker()}catch(_){di.focus();di.click()}}};
   di.onchange=()=>{if(di.value){FL.v[st.k]=di.value;nextStep()}}}
+
+const FXD=[['Loyer','home'],['Électricité, gaz','zap'],['Téléphone et internet','phone'],['Assurances','bank'],['Transport','train'],['Abonnements','spark'],['Crédit','card']];
+const fxSeed=()=>{const L=Array.isArray(S.fx)&&S.fx.length?S.fx:(S.fixe?[{n:'Charges fixes',v:S.fixe}]:[]);
+  const r=FXD.map(([n,i])=>{const f=L.find(x=>x.n===n);return{n,i,v:f?f.v:null,c:0}});
+  for(const x of L)if(!FXD.some(d=>d[0]===x.n))r.push({n:x.n,i:'dots',v:x.v,c:1});return r};
+const fxSum=a=>a.reduce((t,x)=>t+(x.v>0?x.v:0),0);
+function fixesUI(st,body,btm){if(!FL.v[st.k])FL.v[st.k]=fxSeed();const R=FL.v[st.k];
+  const tot=()=>{const t=fxSum(R);btm.querySelector('#fxt').innerHTML=`<span>Total par mois</span><b>${eur(t)}</b>`;btm.querySelector('#go').textContent=t?'Suivant':'Je n’en ai pas'};
+  const row=(x,j)=>`<div class="fxr${x.v>0?' on':''}" data-j="${j}"><span class="ib">${ic(x.i)}</span><span class="nm">${x.c?`<input class="fnm" maxlength="40" placeholder="Nom de la charge" value="${esc(x.n||'')}">`:esc(x.n)}</span><label class="fv"><input inputmode="decimal" placeholder="0" value="${x.v>0?String(x.v).replace('.',','):''}" aria-label="${esc(x.n||'Montant')}"> €</label></div>`;
+  const render=()=>{body.innerHTML=`<div class="fxl">${R.map(row).join('')}<button class="fxadd" id="fxadd">${ic('plus')} Ajouter une charge</button></div>`;
+    body.querySelectorAll('.fxr').forEach(el=>{const x=R[+el.dataset.j],vi=el.querySelector('.fv input'),ni=el.querySelector('.fnm');
+      vi.oninput=()=>{const v=parseFloat(vi.value.replace(/\s/g,'').replace(',','.'));x.v=v>0?Math.round(v*100)/100:null;el.classList.toggle('on',x.v>0);tot()};
+      if(ni)ni.oninput=()=>{x.n=ni.value.trim()}});
+    body.querySelector('#fxadd').onclick=()=>{buzz();R.push({n:'',i:'dots',v:null,c:1});render();const n=body.querySelectorAll('.fnm');n[n.length-1].focus()}};
+  btm.innerHTML=`<div class="fxt" id="fxt"></div><button class="go" id="go">Suivant</button>`;render();tot();
+  btm.querySelector('#go').onclick=()=>{buzz();nextStep()}}
+const fxSave=R=>{S.fx=R.filter(x=>x.v>0).map(x=>({n:x.n||'Autre',v:x.v}));S.fixe=fxSum(S.fx)};
+const fxSub=()=>Array.isArray(S.fx)&&S.fx.length?eur0(S.fixe)+' par mois · '+S.fx.length+' charge'+(S.fx.length>1?'s':''):S.fixe!=null?eur0(S.fixe)+' par mois':'Loyer, téléphone, abonnements…';
 
 /* ---------- Les parcours ---------- */
 function flowDep(){flow([
@@ -413,7 +444,7 @@ function gainsScr(){const G=GAINS.map(([k,n,l])=>[k,n,l.filter(it=>!it[2]||has(i
 
 /* ---------- Réglages ---------- */
 function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
-  {i:'home',l:'Mes charges fixes',s:S.fixe!=null?eur0(S.fixe)+' par mois':'Loyer, téléphone, abonnements…',one:1,go:()=>flow([{k:'f',q:'Tes charges fixes, par mois ?',sub:'Loyer + téléphone + abonnements + transport. Un seul total.',type:'amount'}],v=>{S.fixe=v.f;return['Enregistré',eur0(v.f)+' par mois']})},
+  {i:'home',l:'Mes charges fixes',s:fxSub(),one:1,go:()=>flow([{k:'fx',q:'Tes charges fixes',sub:'Ce qui tombe chaque mois. Laisse vide ce que tu n’as pas.',type:'fixes'}],v=>{fxSave(v.fx);return['Enregistré',eur0(S.fixe)+' par mois']})},
   {i:'user',l:'Mon prénom',s:S.name||'',one:1,go:()=>flow([{k:'n',q:'Ton prénom ?',type:'text',ph:'Prénom'}],v=>{S.name=v.n;return['Enregistré',v.n]})},
   {i:'smoke',l:'Ma conso',s:S.vice?({c:'Clopes',j:'Joints',cj:'Clopes et joints'}[S.vice]+(S.wk?' · '+eur0(S.wk)+' par semaine avant':'')):'Pas suivie',one:1,go:()=>flowVice()},
   {i:'trash',l:'Tout effacer',s:'Repartir de zéro',one:1,go:()=>flow([{k:'x',q:'Tout effacer ?',sub:'Tes dépenses, dettes et ton agenda seront supprimés.',type:'tiles',opts:[{i:'trash',l:'Oui, tout effacer',one:1,go:()=>{try{localStorage.removeItem(K)}catch(e){}location.reload()}},{i:'undo',l:'Non, garder',one:1,go:()=>closeFl()}]}],()=>['',''])},
@@ -422,10 +453,10 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
 /* ---------- Premier lancement ---------- */
 function onboard(){flow([
   {k:'n',q:'Comment tu t’appelles ?',sub:'Quelques questions et c’est prêt. Tes données restent sur ton téléphone.',type:'text',ph:'Ton prénom'},
-  {k:'f',q:'Tes charges fixes par mois ?',sub:'Loyer, téléphone, abonnements, transport. Un seul total, à peu près.',type:'amount'},
+  {k:'fx',q:'Tes charges fixes',sub:'Note chaque charge qui tombe tous les mois. Laisse vide ce que tu n’as pas.',type:'fixes'},
   {k:'vice',q:'Tu fumes quoi ?',sub:'L’app t’aide à réduire, sans jugement.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
   {k:'wk',q:'Combien tu dépenses par semaine pour ça ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice}
- ],v=>{S.name=v.n;S.fixe=v.f;S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}return['Bienvenue, '+v.n,'']})}
+ ],v=>{S.name=v.n;fxSave(v.fx);S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}return['Bienvenue, '+v.n,'']})}
 
 home();if(!S.name)onboard();
 </script>
