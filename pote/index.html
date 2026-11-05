@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="32">
+<html lang="fr" data-build="33">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -308,11 +308,7 @@ function tone(f,t,d,v,type='sine',bend=0){const a=ac();if(!a)return;const o=a.cr
 const pluck=(f,t,v=.07)=>{tone(f,t,.45,v,'triangle');tone(f*2,t,.18,v*.35,'sine');tone(f*4,t,.06,v*.12,'sine')};
 const N={C5:523.3,D5:587.3,E5:659.3,G5:784,A5:880,C6:1046.5,D6:1174.7,E6:1318.5,G6:1568};
 const SFX={
-  tick:()=>{pluck(N.G6,0,.022);tone(3200,0,.015,.006,'sine')},
-  open:()=>{pluck(N.E6,0,.03);pluck(N.G6,.06,.026)},
-  close:()=>{pluck(N.G6,0,.026);pluck(N.D6,.06,.022)},
-  check:()=>{pluck(N.E6,0,.04);pluck(N.A5*2,.07,.035)},
-  step:()=>pluck(N.D6,0,.03),
+  check:()=>{pluck(N.E6,0,.05);pluck(N.A5*2,.08,.045)},
   stamp:()=>pluck(N.G5,0,.05),
   ok:()=>{pluck(N.C6,0,.07);pluck(N.E6,.08,.07)},
   big:()=>{pluck(N.C6,0,.06);pluck(N.E6,.07,.06);pluck(N.G6,.14,.07);pluck(N.C6*2,.24,.05)},
@@ -322,7 +318,7 @@ let sfxT=0;function sfx(k){try{const n=Date.now();if(k==='tick'&&n-sfxT<90)retur
 function padStart(){}
 function padStop(){}
 let HP=null;
-const buzz=(p=8)=>{if(p===5||p===8)sfx('tick');else if(p===12)sfx('step');else if(Array.isArray(p)&&p[0]===10&&p[1]===40)sfx('check');try{if(navigator.vibrate){navigator.vibrate(p);return}
+const buzz=(p=8)=>{if(Array.isArray(p)&&p[0]===10&&p[1]===40)sfx('check');try{if(navigator.vibrate){navigator.vibrate(p);return}
   if(!HP){HP=document.createElement('label');HP.setAttribute('aria-hidden','true');HP.style.cssText='position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;overflow:hidden';const i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');i.tabIndex=-1;HP.appendChild(i);document.body.appendChild(HP)}
   HP.click();if(Array.isArray(p)&&p.length>2)setTimeout(()=>HP&&HP.click(),p[0]+p[1])}catch(e){}};
 const JN=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'],MN=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
@@ -633,8 +629,8 @@ function progScr(){const st=okStreak(),best=okBest(),tr=balTrend(60),sv=S.vice?s
 
 /* ---------- Moteur : un écran = une action ---------- */
 let FL=null;
-function flow(steps,onDone){if(!FL)setTimeout(()=>sfx('open'),20);FL={steps,i:0,v:{},onDone};while(FL.steps[FL.i]&&FL.steps[FL.i].skip&&FL.steps[FL.i].skip(FL.v))FL.i++;draw()}
-function closeFl(){sfx('close');const f=$('.fl');if(f)f.remove();FL=null;document.body.style.overflow='';home()}
+function flow(steps,onDone){FL={steps,i:0,v:{},onDone};while(FL.steps[FL.i]&&FL.steps[FL.i].skip&&FL.steps[FL.i].skip(FL.v))FL.i++;draw()}
+function closeFl(){const f=$('.fl');if(f)f.remove();FL=null;document.body.style.overflow='';home()}
 function nextStep(){FL.dir=1;FL.i++;let st;while((st=FL.steps[FL.i])&&st.skip&&st.skip(FL.v))FL.i++;if(FL.i>=FL.steps.length){const r=FL.onDone(FL.v);done(r);return}draw()}
 function prevStep(){if(FL.i===0)return closeFl();FL.dir=-1;FL.i--;let st;while(FL.i>0&&(st=FL.steps[FL.i])&&st.skip&&st.skip(FL.v))FL.i--;draw()}
 let tPrev=null;
