@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="8">
+<html lang="fr" data-build="9">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -166,6 +166,24 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .bub .lb{font-size:11px;font-weight:600;color:var(--muted);max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sbal{display:block;margin:26px auto 0;padding:9px 16px;border-radius:20px;border:1px solid var(--line);font-size:14px;color:var(--muted);font-weight:500}.sbal b{color:var(--ink);font-weight:650}
 .foot2{display:flex;justify-content:center;gap:26px;margin:30px 0 10px}
+
+.field{position:relative;width:100%;margin:0 0 4px}
+.bb2{position:absolute;border-radius:50%;display:grid;place-items:center;text-align:center;color:var(--ink);
+ background:radial-gradient(circle at 32% 26%,color-mix(in srgb,var(--ink) 7%,var(--card)) 0%,var(--card) 58%,color-mix(in srgb,var(--bg) 30%,var(--card)) 100%);
+ box-shadow:inset 0 0 0 1px var(--line),0 10px 24px -14px rgba(0,0,0,.45);
+ animation:grow .5s cubic-bezier(.3,1.5,.5,1) both,floaty var(--t) ease-in-out var(--d) infinite;transition:transform .18s cubic-bezier(.3,1.6,.5,1)}
+.bb2 .in3{display:grid;gap:1px;padding:0 6px;pointer-events:none}
+.bb2 b{font-size:13px;font-weight:650;line-height:1.1;max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bb2 small{font-size:12px;font-weight:600;color:var(--muted)}
+.bb2.hot{background:radial-gradient(circle at 32% 26%,color-mix(in srgb,var(--bg) 18%,var(--ink)) 0%,var(--ink) 62%);color:var(--bg);box-shadow:0 12px 26px -12px rgba(0,0,0,.55)}
+.bb2.hot small{color:color-mix(in srgb,var(--bg) 70%,var(--ink))}
+.bb2.add{background:none;box-shadow:none;border:1.5px dashed var(--line);animation:grow .5s cubic-bezier(.3,1.5,.5,1) both}.bb2.add b{font-size:22px;font-weight:400;color:var(--muted)}
+.bb2.tap{transform:scale(.88)!important}
+.bpop{position:absolute;border-radius:50%;border:1.5px solid var(--ink);animation:pop .6s ease-out forwards;pointer-events:none}
+@keyframes grow{from{transform:scale(.4);opacity:0}}
+@keyframes floaty{0%,100%{translate:0 0}50%{translate:var(--x) var(--y)}}
+@keyframes pop{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.5);opacity:0}}
+@media (prefers-reduced-motion:reduce){.bb2{animation:none}}
 </style>
 </head>
 <body>
@@ -322,14 +340,31 @@ function cards(){const C=[],h=new Date().getHours(),tm=addD(today,1),wd=pd(today
 function adv(){save();render()}
 /* bulles : chaque catégorie n’apparaît que quand elle sert, avec un anneau quand elle attend quelque chose aujourd’hui */
 function bubbles(){const B=[],tm=addD(today,1),g=new Map();for(const x of S.debts){const k=pk(x.p);if(!g.has(k))g.set(k,grpOf(x.p))}
-  const fl=fxLeft(),dd=debtsDue();if(fl.length||dd.length)B.push({k:'pay',i:'cal',l:'À payer',hot:fl.some(x=>x.dt===tm)||dd.some(x=>x.dd&&x.dd<=tm)});
-  const ag=S.ag.filter(a=>!a.done&&a.d>=today);if(ag.length||S.ag.some(a=>!a.done&&a.d<today))B.push({k:'ag',i:'bell',l:'Rappels',hot:S.ag.some(a=>!a.done&&a.d<=today),n:ag.length});
-  for(const o of g.values())B.push({k:'p:'+o.n,t:o.n.slice(0,1).toUpperCase(),l:o.n,hot:o.l.some(x=>x.pm&&x.pm<=YM&&(x.dd?x.dd<=tm:+today.slice(8)>=20))});
-  if(S.tab.on&&S.tab.k.length)B.push({k:'tab',i:'leaf',l:'Fumer',hot:!S.tab.log[addD(today,-1)]&&(S.tab.st||today)<today});
-  const age=Math.round((pd(today)-pd(S.start||today))/864e5),wd=pd(today).getDay();if(age>=6||wd===0||wd===1)B.push({k:'mois',i:'week',l:'Ton mois',hot:(wd===0||wd===1)&&!S.aide[wkMon(addD(today,-1))]});
-  if(S.imp&&S.imp.on)B.push({k:'imp',i:'safe',l:'Imprévus'});
-  if([...S.e,...S.inc].some(x=>x.d>=addD(today,-6)))B.push({k:'mv',i:'spark',l:'Semaine'});
-  B.push({k:'add',i:'plus',l:'Ajouter',dash:1});return B}
+  const fl=fxLeft(),dd=debtsDue();if(fl.length||dd.length)B.push({k:'pay',l:'À payer',v:eur0(toPay()),w:toPay(),hot:fl.some(x=>x.dt===tm)||dd.some(x=>x.dd&&x.dd<=tm)});
+  for(const o of g.values()){const a=Math.abs(o.net);B.push({k:'p:'+o.n,l:o.n,v:(o.net<0?'':'+')+eur0(a),w:a,hot:o.l.some(x=>x.pm&&x.pm<=YM&&(x.dd?x.dd<=tm:+today.slice(8)>=20))})}
+  const ag=S.ag.filter(a=>!a.done&&a.d>=today),late=S.ag.some(a=>!a.done&&a.d<=today);if(ag.length||late)B.push({k:'ag',l:'Rappels',v:String(S.ag.filter(a=>!a.done).length),w:30,hot:late});
+  if(S.tab.on&&S.tab.k.length){const n=Math.max(...S.tab.k.map(tabDays));B.push({k:'tab',l:'Fumer',v:n+' j sans',w:30,hot:!S.tab.log[addD(today,-1)]&&(S.tab.st||today)<today})}
+  const age=Math.round((pd(today)-pd(S.start||today))/864e5),wd=pd(today).getDay();if(age>=6||wd===0||wd===1)B.push({k:'mois',l:'Ton mois',w:15,hot:(wd===0||wd===1)&&!S.aide[wkMon(addD(today,-1))]});
+  if(S.imp&&S.imp.on)B.push({k:'imp',l:'Imprévus',v:eur0(impV()),w:20});
+  const wk=S.e.filter(x=>x.d>=addD(today,-6)&&x.c!=='dette').reduce((a,x)=>a+x.v,0);if([...S.e,...S.inc].some(x=>x.d>=addD(today,-6)))B.push({k:'mv',l:'Semaine',v:wk?'−'+eur0(wk):'',w:12});
+  B.push({k:'add',l:'+',w:0,add:1});
+  for(const b of B)b.r=b.add?23:Math.round(Math.min(56,34+Math.sqrt(b.w||0)*1.6+(b.hot?7:0)));return B}
+/* les bulles se rangent toutes seules, en grappe, sans se chevaucher */
+let BPOS={};
+function packB(B,W){const P=[],gap=7;let H=150;
+  for(let tries=0;tries<6;tries++){P.length=0;let ok=true;const cx=W/2,cy=H/2;
+    for(const b of B){let placed=null;
+      for(let r=0;r<Math.max(W,H)&&!placed;r+=4)for(let a=0;a<360&&!placed;a+=r?Math.max(6,360/(r/2)):360){const x=cx+r*Math.cos(a*Math.PI/180),y=cy+r*.72*Math.sin(a*Math.PI/180);
+        if(x<b.r+2||x>W-b.r-2||y<b.r+2||y>H-b.r-2)continue;if(P.every(p=>Math.hypot(p.x-x,p.y-y)>=p.r+b.r+gap))placed={x,y,r:b.r}}
+      if(!placed){ok=false;break}P.push(placed)}
+    if(ok)return{P,H};H+=50}
+  return{P:B.map((b,i)=>({x:b.r+(i%4)*(W/4),y:b.r+Math.floor(i/4)*120,r:b.r})),H:H}}
+function layB(){const f=$('.field');if(!f)return;const B=JSON.parse(f.dataset.bl||'[]'),W=f.clientWidth||350,{P,H}=packB(B,W);f.style.height=H+'px';
+  const now2={};f.querySelectorAll('.bb2').forEach((el,i)=>{const p=P[i];el.style.left=(p.x-p.r)+'px';el.style.top=(p.y-p.r)+'px';now2[el.dataset.b]={x:p.x,y:p.y,r:p.r}});
+  /* une bulle qui disparaît éclate doucement */
+  for(const k of Object.keys(BPOS))if(!now2[k]){const p=BPOS[k],g=document.createElement('span');g.className='bpop';g.style.cssText=`left:${p.x-p.r}px;top:${p.y-p.r}px;width:${p.r*2}px;height:${p.r*2}px`;f.appendChild(g);setTimeout(()=>g.remove(),700)}
+  BPOS=now2}
+window.addEventListener('resize',()=>{if($('.field'))layB()});
 function openB(k){track('b-'+k.split(':')[0]);if(k==='add')return addMenu();if(k==='mois')return bilan();if(k==='imp')return flowImp();if(k.startsWith('p:'))return person(grpOf(k.slice(2)));
   sub('',()=>toutView(k))}
 let Q=[];
@@ -342,7 +377,7 @@ function home(){Q=cards();if(CI>Q.length+1)CI=Q.length+1;
   let body;
   if(CI===0){const big=Math.max(0,Math.floor(D.left));
     body=`<div class="stage num" data-tap="1"><div><small>pour aujourd’hui</small><strong>${eur0(big)}</strong><span class="hint">${n?n+' chose'+(n>1?'s':'')+' pour aujourd’hui · touche':D.dispo<=0?'Fin de mois serrée. On fait au plus juste.':'Rien d’autre aujourd’hui.'}</span><button class="sbal" id="sbal">Sur ton compte · <b>${eur(D.L)}</b></button></div></div>
-    <div class="dock"><div class="bubs">${bubbles().map(b=>`<button class="bub${b.hot?' hot':''}${b.dash?' dash':''}" data-b="${esc(b.k)}"><span class="o">${b.t?`<span class="ini">${esc(b.t)}</span>`:ic(b.i)}${b.n?`<i>${b.n}</i>`:''}</span><span class="lb">${esc(b.l)}</span></button>`).join('')}</div>${S.tab.on?`<button class="envie" id="senv">${ic('wind')}J’ai envie de fumer</button>`:''}<div class="row"><button class="rnd" id="sdep" aria-label="J’ai dépensé">${ic('out')}<span>Dépensé</span></button><button class="rnd" id="stout" aria-label="Tout voir">${ic('dots')}<span>Tout</span></button><button class="rnd" id="srec" aria-label="J’ai reçu">${ic('in')}<span>Reçu</span></button></div></div>`}
+    <div class="dock">${(()=>{const B=bubbles();return `<div class="field" data-bl='${esc(JSON.stringify(B.map(b=>({r:b.r}))))}'>${B.map((b,i)=>`<button class="bb2${b.hot?' hot':''}${b.add?' add':''}" data-b="${esc(b.k)}" style="width:${b.r*2}px;height:${b.r*2}px;--d:${(i*1.7)%3}s;--t:${5+(i*1.3)%3}s;--x:${i%2?3:-3}px;--y:${i%3?-4:4}px"><span class="in3"><b>${esc(b.l)}</b>${b.v?`<small>${esc(b.v)}</small>`:''}</span></button>`).join('')}</div>`})()}${S.tab.on?`<button class="envie" id="senv">${ic('wind')}J’ai envie de fumer</button>`:''}<div class="row"><button class="rnd" id="sdep" aria-label="J’ai dépensé">${ic('out')}<span>Dépensé</span></button><button class="rnd" id="stout" aria-label="Tout voir">${ic('dots')}<span>Tout</span></button><button class="rnd" id="srec" aria-label="J’ai reçu">${ic('in')}<span>Reçu</span></button></div></div>`}
   else if(CI<=n){const c=Q[CI-1];
     body=`<div class="stage card" data-tap="1"><div><span class="cib">${ic(c.i)}</span><h1>${c.t}</h1>${c.s?`<p>${c.s}</p>`:''}</div></div>
     <div class="dock"><div class="cacts ${c.a.length>2?'three':''}">${c.a.map((a,i)=>`<button class="ca${a.p?' p':''}" data-c="${i}">${esc(a.l)}</button>`).join('')}</div><button class="skip" id="sskip">Passer</button></div>`}
@@ -350,7 +385,8 @@ function home(){Q=cards();if(CI>Q.length+1)CI=Q.length+1;
   $('#app').innerHTML=`<div class="story">${segs}${body}</div>`;
   const on=(id,f)=>{const b=$('#'+id);if(b)b.onclick=e=>{e.stopPropagation();buzz();f()}};
   on('sbal',()=>flowBal());on('sdep',flowDep);on('srec',flowInc);on('stout',tout);on('senv',envie);on('sskip',()=>{CI++;render()});on('shome',()=>{CI=0;render()});
-  document.querySelectorAll('[data-b]').forEach(b=>b.onclick=e=>{e.stopPropagation();buzz();openB(b.dataset.b)});
+  layB();
+  document.querySelectorAll('[data-b]').forEach(b=>b.onclick=e=>{e.stopPropagation();buzz(6);b.classList.add('tap');setTimeout(()=>openB(b.dataset.b),140)});
   document.querySelectorAll('[data-c]').forEach(b=>b.onclick=e=>{e.stopPropagation();buzz();Q[CI-1].a[+b.dataset.c].go()});
   const st=$('.stage');if(st)st.onclick=e=>{buzz(5);const x=e.clientX/window.innerWidth;if(CI===n+1){CI=0}else if(x<.3&&CI>0)CI--;else if(n)CI=Math.min(n+1,CI+1);render()}}
 /* glisser vers le haut sur le chiffre : tout le reste */
