@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="7">
+<html lang="fr" data-build="8">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -156,6 +156,14 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .tout{text-align:center;padding:10px 0 24px}.tout small{display:block;font-size:13px;color:var(--muted);font-weight:500}.tout b{display:block;font-size:40px;letter-spacing:-.04em;margin:4px 0 10px}
 .lnk{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);font-weight:600}.lnk svg{width:16px;height:16px}
 #sub .top{margin-top:0}
+.bubs{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding:7px 20px 6px;margin:0 -20px;scroll-padding-inline:20px}.bubs::before,.bubs::after{content:'';flex:1 0 6px}.bubs::-webkit-scrollbar{display:none}
+.bub{flex:none;display:grid;justify-items:center;gap:6px;width:66px}
+.bub .o{position:relative;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:var(--card);box-shadow:0 0 0 1.5px var(--line);color:var(--ink)}
+.bub.hot .o{box-shadow:0 0 0 2.5px var(--bg),0 0 0 4.5px var(--ink)}
+.bub.dash .o{background:none;box-shadow:none;border:1.5px dashed var(--line)}
+.bub .o svg{width:24px;height:24px}.bub .ini{font-size:24px;font-weight:650}
+.bub .o i{position:absolute;top:-2px;right:-2px;min-width:20px;height:20px;border-radius:10px;background:var(--ink);color:var(--bg);font-size:11px;font-weight:700;font-style:normal;display:grid;place-items:center;padding:0 5px}
+.bub .lb{font-size:11px;font-weight:600;color:var(--muted);max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sbal{display:block;margin:26px auto 0;padding:9px 16px;border-radius:20px;border:1px solid var(--line);font-size:14px;color:var(--muted);font-weight:500}.sbal b{color:var(--ink);font-weight:650}
 .foot2{display:flex;justify-content:center;gap:26px;margin:30px 0 10px}
 </style>
@@ -312,6 +320,18 @@ function cards(){const C=[],h=new Date().getHours(),tm=addD(today,1),wd=pd(today
   if(!pushOn()&&!S.pushAsk&&S.start&&S.start<today)C.push({i:'bell',t:'Un petit rappel le soir ?',s:'Une seule notif par jour, à '+S.nh.replace(':','h')+'. Si t’ouvres plus Base pendant 3 jours, elle se tait.',a:[{l:'Oui',p:1,go:()=>{S.pushAsk=1;save();pushEnable()}},{l:'Non merci',go:()=>{S.pushAsk=1;save();render()}}]});
   return C}
 function adv(){save();render()}
+/* bulles : chaque catégorie n’apparaît que quand elle sert, avec un anneau quand elle attend quelque chose aujourd’hui */
+function bubbles(){const B=[],tm=addD(today,1),g=new Map();for(const x of S.debts){const k=pk(x.p);if(!g.has(k))g.set(k,grpOf(x.p))}
+  const fl=fxLeft(),dd=debtsDue();if(fl.length||dd.length)B.push({k:'pay',i:'cal',l:'À payer',hot:fl.some(x=>x.dt===tm)||dd.some(x=>x.dd&&x.dd<=tm)});
+  const ag=S.ag.filter(a=>!a.done&&a.d>=today);if(ag.length||S.ag.some(a=>!a.done&&a.d<today))B.push({k:'ag',i:'bell',l:'Rappels',hot:S.ag.some(a=>!a.done&&a.d<=today),n:ag.length});
+  for(const o of g.values())B.push({k:'p:'+o.n,t:o.n.slice(0,1).toUpperCase(),l:o.n,hot:o.l.some(x=>x.pm&&x.pm<=YM&&(x.dd?x.dd<=tm:+today.slice(8)>=20))});
+  if(S.tab.on&&S.tab.k.length)B.push({k:'tab',i:'leaf',l:'Fumer',hot:!S.tab.log[addD(today,-1)]&&(S.tab.st||today)<today});
+  const age=Math.round((pd(today)-pd(S.start||today))/864e5),wd=pd(today).getDay();if(age>=6||wd===0||wd===1)B.push({k:'mois',i:'week',l:'Ton mois',hot:(wd===0||wd===1)&&!S.aide[wkMon(addD(today,-1))]});
+  if(S.imp&&S.imp.on)B.push({k:'imp',i:'safe',l:'Imprévus'});
+  if([...S.e,...S.inc].some(x=>x.d>=addD(today,-6)))B.push({k:'mv',i:'spark',l:'Semaine'});
+  B.push({k:'add',i:'plus',l:'Ajouter',dash:1});return B}
+function openB(k){track('b-'+k.split(':')[0]);if(k==='add')return addMenu();if(k==='mois')return bilan();if(k==='imp')return flowImp();if(k.startsWith('p:'))return person(grpOf(k.slice(2)));
+  sub('',()=>toutView(k))}
 let Q=[];
 function render(){today=iso(new Date());YM=today.slice(0,7);
   if(!S.name||!S.bal){$('#app').innerHTML='';if(!FL)onboard();return}
@@ -322,7 +342,7 @@ function home(){Q=cards();if(CI>Q.length+1)CI=Q.length+1;
   let body;
   if(CI===0){const big=Math.max(0,Math.floor(D.left));
     body=`<div class="stage num" data-tap="1"><div><small>pour aujourd’hui</small><strong>${eur0(big)}</strong><span class="hint">${n?n+' chose'+(n>1?'s':'')+' pour aujourd’hui · touche':D.dispo<=0?'Fin de mois serrée. On fait au plus juste.':'Rien d’autre aujourd’hui.'}</span><button class="sbal" id="sbal">Sur ton compte · <b>${eur(D.L)}</b></button></div></div>
-    <div class="dock">${S.tab.on?`<button class="envie" id="senv">${ic('wind')}J’ai envie de fumer</button>`:''}<div class="row"><button class="rnd" id="sdep" aria-label="J’ai dépensé">${ic('out')}<span>Dépensé</span></button><button class="rnd" id="stout" aria-label="Tout voir">${ic('dots')}<span>Tout</span></button><button class="rnd" id="srec" aria-label="J’ai reçu">${ic('in')}<span>Reçu</span></button></div></div>`}
+    <div class="dock"><div class="bubs">${bubbles().map(b=>`<button class="bub${b.hot?' hot':''}${b.dash?' dash':''}" data-b="${esc(b.k)}"><span class="o">${b.t?`<span class="ini">${esc(b.t)}</span>`:ic(b.i)}${b.n?`<i>${b.n}</i>`:''}</span><span class="lb">${esc(b.l)}</span></button>`).join('')}</div>${S.tab.on?`<button class="envie" id="senv">${ic('wind')}J’ai envie de fumer</button>`:''}<div class="row"><button class="rnd" id="sdep" aria-label="J’ai dépensé">${ic('out')}<span>Dépensé</span></button><button class="rnd" id="stout" aria-label="Tout voir">${ic('dots')}<span>Tout</span></button><button class="rnd" id="srec" aria-label="J’ai reçu">${ic('in')}<span>Reçu</span></button></div></div>`}
   else if(CI<=n){const c=Q[CI-1];
     body=`<div class="stage card" data-tap="1"><div><span class="cib">${ic(c.i)}</span><h1>${c.t}</h1>${c.s?`<p>${c.s}</p>`:''}</div></div>
     <div class="dock"><div class="cacts ${c.a.length>2?'three':''}">${c.a.map((a,i)=>`<button class="ca${a.p?' p':''}" data-c="${i}">${esc(a.l)}</button>`).join('')}</div><button class="skip" id="sskip">Passer</button></div>`}
@@ -330,6 +350,7 @@ function home(){Q=cards();if(CI>Q.length+1)CI=Q.length+1;
   $('#app').innerHTML=`<div class="story">${segs}${body}</div>`;
   const on=(id,f)=>{const b=$('#'+id);if(b)b.onclick=e=>{e.stopPropagation();buzz();f()}};
   on('sbal',()=>flowBal());on('sdep',flowDep);on('srec',flowInc);on('stout',tout);on('senv',envie);on('sskip',()=>{CI++;render()});on('shome',()=>{CI=0;render()});
+  document.querySelectorAll('[data-b]').forEach(b=>b.onclick=e=>{e.stopPropagation();buzz();openB(b.dataset.b)});
   document.querySelectorAll('[data-c]').forEach(b=>b.onclick=e=>{e.stopPropagation();buzz();Q[CI-1].a[+b.dataset.c].go()});
   const st=$('.stage');if(st)st.onclick=e=>{buzz(5);const x=e.clientX/window.innerWidth;if(CI===n+1){CI=0}else if(x<.3&&CI>0)CI--;else if(n)CI=Math.min(n+1,CI+1);render()}}
 /* glisser vers le haut sur le chiffre : tout le reste */
@@ -338,23 +359,25 @@ document.addEventListener('touchend',e=>{if(tY!=null&&tY-e.changedTouches[0].cli
 function sub(title,fn){const x=scr(title,'<div id="sub"></div>');SUB=fn;TGT=x.querySelector('#sub');fn();TGT=null}
 function tout(){track('tout');sub('',toutView)}
 /* « Tout » : chaque catégorie n’apparaît que quand elle sert, et disparaît quand c’est réglé */
-function toutView(){const L=liveBal(),fl=fxLeft(),dd=debtsDue(),g=new Map();for(const x of S.debts){const k=pk(x.p);if(!g.has(k))g.set(k,grpOf(x.p))}const G=[...g.values()];
+function toutView(only){const O=k=>!only||only===k;const L=liveBal(),fl=fxLeft(),dd=debtsDue(),g=new Map();for(const x of S.debts){const k=pk(x.p);if(!g.has(k))g.set(k,grpOf(x.p))}const G=[...g.values()];
   const wk=addD(today,-6),mv=[...S.e.map(x=>({...x,k:'e'})),...S.inc.map(x=>({...x,k:'i'}))].filter(x=>x.d>=wk).sort((a,b)=>b.t-a.t).slice(0,6);
   const age=Math.round((pd(today)-pd(S.start||today))/864e5),wd=pd(today).getDay(),showMois=age>=6||wd===0||wd===1;
   const T=S.tab,row=(a,i,t,s,r)=>`<button class="li" ${a}><span class="ib">${ic(i)}</span><span class="t">${t}${s?`<small>${s}</small>`:''}</span><span class="r">${r||''}</span></button>`;
-  let h=`<div class="tout"><small>Sur ton compte</small><b>${eur(L)}</b><button class="lnk" id="trc">${ic('undo')}Recaler mon solde</button></div>`;
-  if(fl.length||dd.length)h+=`<div class="sec"><h2>À payer d’ici le ${lastDay(YM)}</h2><small>${eur0(toPay())}</small></div><div class="list">${fl.map(x=>row('data-fx="'+x.id+'"','cal',esc(x.n),dLab(x.dt).replace(/^./,c=>c.toUpperCase()),eur(x.v))).join('')}${dd.map(x=>row('data-pg="'+esc(x.p)+'"','users','Rembourser '+esc(x.p),x.dd?esc(x.t)+' · '+dLab(x.dd):'Prévu ce mois-ci',eur(x.v))).join('')}</div>`;
-  if(G.length)h+=`<div class="sec"><h2>Dettes</h2></div><div class="list">${G.map((o,i)=>row('data-g="'+i+'"','user',esc(o.n),(o.net<0?'Tu lui dois':'Te doit')+(o.l.some(x=>x.dd)?' · en plusieurs fois':''),eur(Math.abs(o.net)))).join('')}</div>`;
-  if(T.on&&T.k.length)h+=`<div class="sec"><h2>Fumer moins</h2></div><div class="list">${T.k.map(k=>{const tr=tabTrend(k),n=tabDays(k);return row('data-tb="1"',k==='tabac'?'smoke':'leaf',n+' jour'+(n>1?'s':'')+' sans '+(k==='tabac'?'clope':'joint'),tr==='moins'?'Moins que la semaine d’avant':tr==='plus'?'Semaine plus chargée, ça arrive':'Ce chiffre ne redescend jamais','')}).join('')}</div>`;
-  if(S.imp&&S.imp.on)h+=`<div class="sec"><h2>Imprévus</h2></div><div class="list">${row('id="timp"','safe','Réserve imprévus','Pas comptée dans ton chiffre du jour',eur0(impV()))}</div>`;
+  let h=only?'':`<div class="tout"><small>Sur ton compte</small><b>${eur(L)}</b><button class="lnk" id="trc">${ic('undo')}Recaler mon solde</button></div>`;
+  if(O('pay')&&(fl.length||dd.length))h+=`<div class="sec"><h2>À payer d’ici le ${lastDay(YM)}</h2><small>${eur0(toPay())}</small></div><div class="list">${fl.map(x=>row('data-fx="'+x.id+'"','cal',esc(x.n),dLab(x.dt).replace(/^./,c=>c.toUpperCase()),eur(x.v))).join('')}${dd.map(x=>row('data-pg="'+esc(x.p)+'"','users','Rembourser '+esc(x.p),x.dd?esc(x.t)+' · '+dLab(x.dd):'Prévu ce mois-ci',eur(x.v))).join('')}</div>`;
+  if(O('debt')&&G.length)h+=`<div class="sec"><h2>Dettes</h2></div><div class="list">${G.map((o,i)=>row('data-g="'+i+'"','user',esc(o.n),(o.net<0?'Tu lui dois':'Te doit')+(o.l.some(x=>x.dd)?' · en plusieurs fois':''),eur(Math.abs(o.net)))).join('')}</div>`;
+  if(O('tab')&&T.on&&T.k.length)h+=`<div class="sec"><h2>Fumer moins</h2></div><div class="list">${T.k.map(k=>{const tr=tabTrend(k),n=tabDays(k);return row('data-tb="1"',k==='tabac'?'smoke':'leaf',n+' jour'+(n>1?'s':'')+' sans '+(k==='tabac'?'clope':'joint'),tr==='moins'?'Moins que la semaine d’avant':tr==='plus'?'Semaine plus chargée, ça arrive':'Ce chiffre ne redescend jamais','')}).join('')}</div>`;
+  if(O('imp')&&S.imp&&S.imp.on)h+=`<div class="sec"><h2>Imprévus</h2></div><div class="list">${row('id="timp"','safe','Réserve imprévus','Pas comptée dans ton chiffre du jour',eur0(impV()))}</div>`;
   const ag=S.ag.filter(a=>!a.done&&a.d>=today).sort((x,y)=>(x.d+(x.h||'99')).localeCompare(y.d+(y.h||'99'))).slice(0,6);
-  if(ag.length)h+=`<div class="sec"><h2>Rappels</h2></div><div class="list">${ag.map(a=>row('data-ag="'+a.id+'"','bell',esc(a.t),dLab(a.d).replace(/^./,c=>c.toUpperCase())+(a.h?' · '+a.h.replace(':','h'):''),'')).join('')}</div>`;
-  if(showMois)h+=`<div class="sec"><h2>Ton mois</h2></div><div class="list">${row('id="tmo"','week','Les 4 dernières semaines','Ce qui a marché',ic('next'))}</div>`;
-  if(mv.length)h+=`<div class="sec"><h2>Cette semaine</h2></div><div class="list">${mv.map(x=>row('data-mv="'+x.k+':'+x.id+'"',x.k==='i'?'in':(CN[x.c]||CN.autre)[1],esc(x.k==='i'?x.n:(CN[x.c]||CN.autre)[2]+(x.p?' · '+x.p:'')),dLab(x.d).replace(/^./,c=>c.toUpperCase()),`<span class="${x.k==='i'?'':'m'}">${x.k==='i'?'+':'−'}${eur(x.v)}</span>`)).join('')}</div>`;
-  h+=`<div class="foot2"><button class="lnk" id="tadd">${ic('plus')}Ajouter</button><button class="lnk" id="tset">${ic('gear')}Réglages et aide</button></div>`;
+  if(O('ag')&&ag.length)h+=`<div class="sec"><h2>Rappels</h2></div><div class="list">${ag.map(a=>row('data-ag="'+a.id+'"','bell',esc(a.t),dLab(a.d).replace(/^./,c=>c.toUpperCase())+(a.h?' · '+a.h.replace(':','h'):''),'')).join('')}</div>`;
+  if(!only&&showMois)h+=`<div class="sec"><h2>Ton mois</h2></div><div class="list">${row('id="tmo"','week','Les 4 dernières semaines','Ce qui a marché',ic('next'))}</div>`;
+  if(O('mv')&&mv.length)h+=`<div class="sec"><h2>Cette semaine</h2></div><div class="list">${mv.map(x=>row('data-mv="'+x.k+':'+x.id+'"',x.k==='i'?'in':(CN[x.c]||CN.autre)[1],esc(x.k==='i'?x.n:(CN[x.c]||CN.autre)[2]+(x.p?' · '+x.p:'')),dLab(x.d).replace(/^./,c=>c.toUpperCase()),`<span class="${x.k==='i'?'':'m'}">${x.k==='i'?'+':'−'}${eur(x.v)}</span>`)).join('')}</div>`;
+  if(only&&!h)h='<div class="empty" style="text-align:center">C’est réglé, il n’y a plus rien ici.</div>';
+  if(only==='tab')h+=`<button class="envie" id="tenv">${ic('wind')}J’ai envie de fumer</button><button class="envie" id="tcons">${ic('pen')}Noter une journée</button>`;
+  if(!only)h+=`<div class="foot2"><button class="lnk" id="tadd">${ic('plus')}Ajouter</button><button class="lnk" id="tset">${ic('gear')}Réglages et aide</button></div>`;
   OUT().innerHTML=h;
   const on=(id,f)=>{const b=$('#'+id);if(b)b.onclick=()=>{buzz();f()}};
-  on('trc',()=>flowBal());on('tmo',bilan);on('timp',flowImp);on('tset',()=>sub('',moi));on('tadd',addMenu);
+  on('trc',()=>flowBal());on('tenv',envie);on('tcons',consoFlow);on('tmo',bilan);on('timp',flowImp);on('tset',()=>sub('',moi));on('tadd',addMenu);
   document.querySelectorAll('#sub [data-g]').forEach(b=>b.onclick=()=>{buzz();person(G[+b.dataset.g])});
   document.querySelectorAll('#sub [data-pg]').forEach(b=>b.onclick=()=>{buzz();person(grpOf(b.dataset.pg))});
   document.querySelectorAll('#sub [data-ag]').forEach(b=>b.onclick=()=>{buzz();agItem(S.ag.find(a=>a.id===b.dataset.ag))});
