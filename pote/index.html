@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="fr" data-build="23">
+<html lang="fr" data-build="24">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Libre"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Base"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><link rel="icon" type="image/png" href="../icons/icon-192.png"><link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
-<title>Libre</title>
+<title>Base</title>
 <style>
 :root{--bg:#000;--card:#111214;--card2:#1C1D20;--ink:#F5F5F7;--muted:#8A8D93;--line:#232428;--good:#4ADE80;--bad:#FF6B6B;--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;color-scheme:dark}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#F7F7F8;--card:#FFFFFF;--card2:#EFEFF1;--ink:#0B0B0C;--muted:#71747A;--line:#E6E6E9;--good:#16A34A;--bad:#DC2626;color-scheme:light}}
@@ -381,13 +381,13 @@ function pushItems(){const now=Date.now(),out=[],add=(t,title,body,tag)=>{if(t>n
   const fxAll=[YM,nm].flatMap(ym=>fxDated().map(x=>({...x,dt:fxDate(x,ym)}))).filter(x=>x.dt>today).sort((a,b)=>a.dt.localeCompare(b.dt));
   let run=L;for(const x of fxAll){if(run!=null)run-=x.v;
     add(at(addD(x.dt,-1),19),x.n+' demain',eur(x.v)+' seront prélevés.'+(run!=null&&x.dt.startsWith(YM)?' Il te restera environ '+eur0(run)+'.':''),'fx')}
-  for(const x of (S.rin||[]).filter(x=>x.d)){const dt=fxDate(x,YM);if(dt>=today&&!(S.rok||{})[rinKey(x,YM)])add(at(dt,18),x.n+' est arrivé ?','Confirme-le dans Libre pour garder ton solde juste.','rin')}
+  for(const x of (S.rin||[]).filter(x=>x.d)){const dt=fxDate(x,YM);if(dt>=today&&!(S.rok||{})[rinKey(x,YM)])add(at(dt,18),x.n+' est arrivé ?','Confirme-le dans Base pour garder ton solde juste.','rin')}
   const dd=S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM);
   if(dd.length){const t=dd.reduce((a,x)=>a+x.v,0);add(at(YM+'-25',18),dd.length===1?dd[0].p+' attend ses '+eur(dd[0].v):eur(t)+' à rembourser ce mois-ci',dd.length===1?'Tu avais prévu de le rembourser ce mois-ci.':dd.map(x=>x.p).join(', ')+' attendent leur argent.','debt')}
   const okT=(S.e.some(x=>x.d===today)||(S.nos||{})[today])&&(!S.vice||S.log[today]);
   for(let i=okT?1:0;i<14;i++)add(at(addD(today,i),21),(P?P+', ton':'Ton')+' point du soir',S.vice?'Ta conso et tes dépenses du jour, en 10 secondes.':'Tes dépenses du jour, en 10 secondes.','day');
   if(S.vice&&!S.log[today])add(at(addD(today,1),10),'Il manque hier','Note ta conso d’hier pour garder ton compteur juste.','miss');
-  if(S.bal)add(at(addD(S.bal.d,3),12),'Ton solde est toujours juste ?','Libre pense que tu as '+eur0(L)+'. Vérifie en 5 secondes.','bal');
+  if(S.bal)add(at(addD(S.bal.d,3),12),'Ton solde est toujours juste ?','Base pense que tu as '+eur0(L)+'. Vérifie en 5 secondes.','bal');
   try{const same=keys().length===2&&streak('j')===streak('c');if(S.vice)for(const k of (same?['j']:keys())){const n=streak(k);let c=0;for(const m of [1,2,3,7,14,21,30,60,90,180,365])if(m>n&&c<2){c++;const sv=S.wk?Math.round(S.wk/7*m*(S.vice==='cj'?.5:1)):0;
     add(at(addD(today,m-n),11),m+' jour'+(m>1?'s':'')+' '+(same?'sans fumer':KN[k]),sv>=5?'À peu près '+eur0(sv)+' restés dans ta poche. Continue.':'Chaque jour compte. Continue.','smoke')}}}catch(e){}
   for(const a of S.ag.filter(a=>a.rem&&!a.done&&a.d&&a.d>=today)){let t;if(a.h){const[h,mi]=a.h.split(':').map(Number);const d=pd(a.d);d.setHours(h,mi,0,0);t=d.getTime()-15*60e3}else t=at(a.d,9);add(t,a.t,a.h?'À '+hl(a.h)+'.':'Prévu aujourd’hui.','ag')}
@@ -407,11 +407,11 @@ async function pushOff(){S.push=0;save();try{await fetch(PUSH+'/unsub',{method:'
 const APPURL=location.origin+location.pathname,inApp=/CriOS|FxiOS|EdgiOS|Instagram|FBAN|FBAV|WhatsApp|Snapchat|TikTok|musical_ly|Line\//i.test(navigator.userAgent);
 const needInstall=()=>isIOS&&!isApp;
 function instHTML(){const st=(n,t,d)=>`<div class="isr"><span class="isn">${n}</span><span><b>${t}</b>${d?`<small>${d}</small>`:''}</span></div>`;
-  return `<div class="list isl">${[['Copie le lien','<button class="icb" data-copy>Copier le lien</button>'],...(inApp?[['Ouvre Safari et colle-le','Dans la barre d’adresse']]:[['Colle-le dans Safari','Ou touche directement Partager si tu y es déjà']]),['Touche Partager','En bas de Safari, le carré avec la flèche'],['Touche « Sur l’écran d’accueil »','Fais défiler si tu ne le vois pas'],['Ouvre Libre depuis ton écran d’accueil','Tout commence là']].map(([t,d],i)=>st(i+1,t,d)).join('')}</div>`}
+  return `<div class="list isl">${[['Copie le lien','<button class="icb" data-copy>Copier le lien</button>'],...(inApp?[['Ouvre Safari et colle-le','Dans la barre d’adresse']]:[['Colle-le dans Safari','Ou touche directement Partager si tu y es déjà']]),['Touche Partager','En bas de Safari, le carré avec la flèche'],['Touche « Sur l’écran d’accueil »','Fais défiler si tu ne le vois pas'],['Ouvre Base depuis ton écran d’accueil','Tout commence là']].map(([t,d],i)=>st(i+1,t,d)).join('')}</div>`}
 function bindCopy(root){root.querySelectorAll('[data-copy]').forEach(btn=>btn.onclick=async e=>{e.stopPropagation();buzz();try{await navigator.clipboard.writeText(APPURL)}catch(_){const t=document.createElement('textarea');t.value=APPURL;document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(__){}t.remove()}btn.textContent='Copié ✓';btn.classList.add('ok2');setTimeout(()=>{btn.textContent='Copier le lien';btn.classList.remove('ok2')},2200)})}
-function instGate(){const x=scr('Bienvenue',`<div class="ish"><h2>D’abord, mets Libre sur ton écran d’accueil</h2><p>C’est là qu’elle marche vraiment : tes rappels, tes notifications, et elle s’ouvre comme une vraie app.</p></div>${instHTML()}`);bindCopy(x);const bk=x.querySelector('.top .back');if(bk)bk.style.visibility='hidden';x.classList.add('gate')}
+function instGate(){const x=scr('Bienvenue',`<div class="ish"><h2>D’abord, mets Base sur ton écran d’accueil</h2><p>C’est là qu’elle marche vraiment : tes rappels, tes notifications, et elle s’ouvre comme une vraie app.</p></div>${instHTML()}`);bindCopy(x);const bk=x.querySelector('.top .back');if(bk)bk.style.visibility='hidden';x.classList.add('gate')}
 function iosInstall(){const x=scr('Notifications',`<div class="ish"><h2>Encore une étape</h2><p>Sur iPhone, les notifications marchent seulement quand l’app est sur ton écran d’accueil.</p></div>${instHTML()}`);bindCopy(x)}
-function instCard(){if(!needInstall()||S.instHide)return '';return `<div class="instc"><div class="ish"><h2 style="font-size:20px">Mets Libre sur ton écran d’accueil</h2><p>Pour recevoir tes rappels. Dans l’app installée, tu refais juste la présentation (2 min).</p></div>${instHTML()}<button class="later" data-a="ihide">Plus tard</button></div>`}
+function instCard(){if(!needInstall()||S.instHide)return '';return `<div class="instc"><div class="ish"><h2 style="font-size:20px">Mets Base sur ton écran d’accueil</h2><p>Pour recevoir tes rappels. Dans l’app installée, tu refais juste la présentation (2 min).</p></div>${instHTML()}<button class="later" data-a="ihide">Plus tard</button></div>`}
 function pushCard(){if(pushOn()||S.pushHide)return '';return `<button class="act pc" data-a="push"><span class="ib">${ic('bell')}</span><span><b>Activer les rappels</b><small>Prévenu la veille de chaque prélèvement</small></span></button>`}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pushSoon(500)});
 
@@ -462,9 +462,9 @@ function histScr(){const l=mvAll();const x=scr('Mouvements',l.length?`<div class
 
 /* ---------- Sauvegarde ---------- */
 async function backup(){const data=JSON.stringify({app:'libre',k:K,at:new Date().toISOString(),S});const name='libre-sauvegarde-'+today+'.json';
-  try{const f=new File([data],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Sauvegarde Libre'});S.bk=today;save();return done(['Sauvegarde prête','Garde-la dans Fichiers ou envoie-la-toi'])}}catch(e){if(e&&e.name==='AbortError')return}
+  try{const f=new File([data],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Sauvegarde Base'});S.bk=today;save();return done(['Sauvegarde prête','Garde-la dans Fichiers ou envoie-la-toi'])}}catch(e){if(e&&e.name==='AbortError')return}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();S.bk=today;save();done(['Sauvegarde téléchargée',name])}
-function restore(){const i=document.createElement('input');i.type='file';i.accept='application/json,.json';i.onchange=async()=>{try{const d=JSON.parse(await i.files[0].text());if(d.app!=='libre'||!d.S)throw 0;localStorage.setItem(K,JSON.stringify(d.S));location.reload()}catch(e){done(['Fichier invalide','Choisis une sauvegarde Libre'])}};i.click()}
+function restore(){const i=document.createElement('input');i.type='file';i.accept='application/json,.json';i.onchange=async()=>{try{const d=JSON.parse(await i.files[0].text());if(d.app!=='libre'||!d.S)throw 0;localStorage.setItem(K,JSON.stringify(d.S));location.reload()}catch(e){done(['Fichier invalide','Choisis une sauvegarde Base'])}};i.click()}
 
 /* ---------- Pastilles ---------- */
 const CAT={smoke:'fume',in:'inc',out:'dep',bank:'bal',users:'debts',folder:'set',bell:'set',cal:'ag'};
@@ -499,7 +499,7 @@ function agDay(){const L=evs(agD),od=agD===today?S.ag.filter(a=>!a.done&&a.d&&a.
   ${mine.length?`<div class="dpr"><i style="width:${Math.round(dn/mine.length*100)}%"></i></div>`:''}
   ${agD>=today?`<div class="qa"><input id="qai" placeholder="${agD===today?'Ajouter pour aujourd’hui…':'Ajouter pour ce jour…'}" maxlength="60" enterkeyhint="done"><button id="qab" aria-label="Ajouter">${ic('plus')}</button></div>
   <div class="qa2" id="qah">${[['','Sans heure'],['09:00','Matin'],['14:00','Après-midi'],['19:00','Soir']].map(([v,l],i)=>`<button data-h="${v}" aria-pressed="${i===0}">${l}</button>`).join('')}<button data-more style="border-style:dashed">${ic('bell')==''?'':''}Rappel, autre jour…</button></div>`:''}
-  ${T.length?`<div class="sec"><h2>Libre te demande</h2><small>${T.length}</small></div><div class="list" id="agtd">${T.map(tdRow).join('')}</div>`:''}
+  ${T.length?`<div class="sec"><h2>Base te demande</h2><small>${T.length}</small></div><div class="list" id="agtd">${T.map(tdRow).join('')}</div>`:''}
   ${od.length?`<div class="sec"><h2>En retard</h2><small>${od.length}</small></div><div class="list">${od.map(a=>evRow({k:'ag',a})).join('')}</div>`:''}
   ${groups.length?groups.map(G=>`<div class="sec"><h2>${G.g}</h2></div><div class="list">${G.l.map(evRow).join('')}</div>`).join(''):`<div class="list"><div class="empty">${agD<today?'Rien ce jour-là.':'Journée libre. Ajoute ce que tu veux faire juste au-dessus.'}</div></div>`}
   ${ls.length&&agD===today?`<div class="sec"><h2>Ma liste</h2><small>sans date</small></div><div class="list">${ls.map(a=>evRow({k:'ag',a})).join('')}</div>`:''}`}
@@ -544,7 +544,7 @@ async function icsExport(){const st=x=>x.replace(/-/g,''),esc2=t=>String(t).repl
   for(const x of fxDated()){const d=fxDate(x,YM);ev('fx-'+pk(x.n).replace(/\W/g,''),['DTSTART;VALUE=DATE:'+st(d),'RRULE:FREQ=MONTHLY;BYMONTHDAY='+x.d,'SUMMARY:'+esc2('Prélèvement '+x.n+' · '+eur(x.v)),'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc2('Demain : '+x.n),'TRIGGER:-PT5H','END:VALARM'])}
   for(const x of (S.rin||[]).filter(x=>x.d))ev('rin-'+pk(x.n).replace(/\W/g,''),['DTSTART;VALUE=DATE:'+st(fxDate(x,YM)),'RRULE:FREQ=MONTHLY;BYMONTHDAY='+x.d,'SUMMARY:'+esc2(x.n+' · +'+eur(x.v))]);
   if(!E.length)return done(['Rien à exporter','Ajoute un rappel ou un prélèvement daté']);
-  const data=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Libre//FR','CALSCALE:GREGORIAN',...E,'END:VCALENDAR'].join('\r\n');
+  const data=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Base//FR','CALSCALE:GREGORIAN',...E,'END:VCALENDAR'].join('\r\n');
   const f=new File([data],'libre.ics',{type:'text/calendar'});
   try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return}}catch(e){if(e&&e.name==='AbortError')return}
   const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download='libre.ics';document.body.appendChild(a);a.click();a.remove()}
@@ -888,7 +888,7 @@ function onboard(){const N=v=>esc(v.n||'');flow([
  ],v=>{onbApply(v);return['C’est prêt, '+v.n,S.bal?eur(S.bal.v)+' sur tes comptes · '+eur0(upSum())+' à payer'+(inSum()?' · '+eur0(inSum())+' à recevoir':'')+' ce mois':'']})}
 
 function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoir où.','g'],['Les clopes, les petits achats,','g'],['les prélèvements qu’on oublie.','g'],['À partir d’aujourd’hui,',''],['tu sais.','b']];
-  const o=document.createElement('div');o.id='intro';o.innerHTML=`<div class="glow"></div>${L.map(([t,c])=>`<div class="ln ${c}">${t}</div>`).join('')}<div class="fin"><div class="bar"></div><div class="logo">Libre</div><div class="tg">Ton argent, ta conso, tes journées.<br>Tout au même endroit, toujours à jour.</div></div><button class="st">Commencer</button><button class="sk">Passer</button>`;
+  const o=document.createElement('div');o.id='intro';o.innerHTML=`<div class="glow"></div>${L.map(([t,c])=>`<div class="ln ${c}">${t}</div>`).join('')}<div class="fin"><div class="bar"></div><div class="logo">Base</div><div class="tg">Ton argent, ta conso, tes journées.<br>Tout au même endroit, toujours à jour.</div></div><button class="st">Commencer</button><button class="sk">Passer</button>`;
   document.body.appendChild(o);const ls=[...o.querySelectorAll('.ln')];let ts=[],ended=false;
   const fin=()=>{if(ended)return;ended=true;ts.forEach(clearTimeout);ls.forEach(l=>l.style.display='none');o.classList.add('lit');o.querySelector('.fin').classList.add('on');o.querySelector('.sk').style.display='none';buzz([6,60,10])};
   ls.forEach((l,i)=>ts.push(setTimeout(()=>{l.classList.add('on');if(i===4)o.classList.add('lit')},300+i*1250)));
