@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="5">
+<html lang="fr" data-build="6">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -156,6 +156,7 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .tout{text-align:center;padding:10px 0 24px}.tout small{display:block;font-size:13px;color:var(--muted);font-weight:500}.tout b{display:block;font-size:40px;letter-spacing:-.04em;margin:4px 0 10px}
 .lnk{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);font-weight:600}.lnk svg{width:16px;height:16px}
 #sub .top{margin-top:0}
+.sbal{display:block;margin:26px auto 0;padding:9px 16px;border-radius:20px;border:1px solid var(--line);font-size:14px;color:var(--muted);font-weight:500}.sbal b{color:var(--ink);font-weight:650}
 .foot2{display:flex;justify-content:center;gap:26px;margin:30px 0 10px}
 </style>
 </head>
@@ -316,7 +317,7 @@ function home(){Q=cards();if(CI>Q.length+1)CI=Q.length+1;
   const D=day(),n=Q.length,segs=n?`<div class="segs">${Array.from({length:n+1},(_,i)=>`<i class="${i<CI?'f':i===CI?'f on':''}"></i>`).join('')}</div>`:'<div class="segs"></div>';
   let body;
   if(CI===0){const big=Math.max(0,Math.floor(D.left));
-    body=`<div class="stage num" data-tap="1"><div><small>pour aujourd’hui</small><strong>${eur0(big)}</strong><span class="hint">${n?n+' chose'+(n>1?'s':'')+' pour aujourd’hui · touche':D.dispo<=0?'Fin de mois serrée. On fait au plus juste.':'Rien d’autre aujourd’hui.'}</span></div></div>
+    body=`<div class="stage num" data-tap="1"><div><small>pour aujourd’hui</small><strong>${eur0(big)}</strong><span class="hint">${n?n+' chose'+(n>1?'s':'')+' pour aujourd’hui · touche':D.dispo<=0?'Fin de mois serrée. On fait au plus juste.':'Rien d’autre aujourd’hui.'}</span><button class="sbal" id="sbal">Sur ton compte · <b>${eur(D.L)}</b></button></div></div>
     <div class="dock">${S.tab.on?`<button class="envie" id="senv">${ic('wind')}J’ai envie de fumer</button>`:''}<div class="row"><button class="rnd" id="sdep" aria-label="J’ai dépensé">${ic('out')}<span>Dépensé</span></button><button class="rnd" id="stout" aria-label="Tout voir">${ic('dots')}<span>Tout</span></button><button class="rnd" id="srec" aria-label="J’ai reçu">${ic('in')}<span>Reçu</span></button></div></div>`}
   else if(CI<=n){const c=Q[CI-1];
     body=`<div class="stage card" data-tap="1"><div><span class="cib">${ic(c.i)}</span><h1>${c.t}</h1>${c.s?`<p>${c.s}</p>`:''}</div></div>
@@ -324,7 +325,7 @@ function home(){Q=cards();if(CI>Q.length+1)CI=Q.length+1;
   else body=`<div class="stage end" data-tap="1"><div><svg class="ck" viewBox="0 0 104 104"><circle cx="52" cy="52" r="48"/><path d="M33 53l13 13 25-27"/></svg><h1>C’est tout pour aujourd’hui.</h1><p>${eur0(Math.max(0,Math.floor(D.left)))} pour aujourd’hui.</p></div></div><div class="dock"><button class="skip" id="shome">Revenir</button></div>`;
   $('#app').innerHTML=`<div class="story">${segs}${body}</div>`;
   const on=(id,f)=>{const b=$('#'+id);if(b)b.onclick=e=>{e.stopPropagation();buzz();f()}};
-  on('sdep',flowDep);on('srec',flowInc);on('stout',tout);on('senv',envie);on('sskip',()=>{CI++;render()});on('shome',()=>{CI=0;render()});
+  on('sbal',()=>flowBal());on('sdep',flowDep);on('srec',flowInc);on('stout',tout);on('senv',envie);on('sskip',()=>{CI++;render()});on('shome',()=>{CI=0;render()});
   document.querySelectorAll('[data-c]').forEach(b=>b.onclick=e=>{e.stopPropagation();buzz();Q[CI-1].a[+b.dataset.c].go()});
   const st=$('.stage');if(st)st.onclick=e=>{buzz(5);const x=e.clientX/window.innerWidth;if(CI===n+1){CI=0}else if(x<.3&&CI>0)CI--;else if(n)CI=Math.min(n+1,CI+1);render()}}
 /* glisser vers le haut sur le chiffre : tout le reste */
