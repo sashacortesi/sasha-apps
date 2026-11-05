@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="29">
+<html lang="fr" data-build="30">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -33,7 +33,7 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .act{border:1px solid var(--line);border-radius:18px;padding:16px;min-height:112px;background:var(--card);display:grid;align-content:space-between;justify-items:start;text-align:left;gap:14px}
 .act .ib{width:36px;height:36px;border-radius:11px;background:var(--card2);display:grid;place-items:center}
-.act b{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.act b{font-size:19px;font-weight:700;letter-spacing:-.025em;line-height:1.15}
 .act small{display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:3px}
 .sec{display:flex;justify-content:space-between;align-items:baseline;margin:14px 2px 0}
 .sec h2{margin:0;font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
@@ -80,6 +80,21 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .big .aft em{display:block;font-style:normal;font-size:12px;margin-top:3px}.big .aft b{white-space:nowrap;margin-left:12px}.li .ck.ico svg{width:15px;height:15px}
 .sec button.lk{border:0;background:none;color:var(--muted);font-size:13px;font-weight:600;padding:0}
 .act,.vset,.gear,.big.tap{position:relative}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:8px}.quick.one{grid-template-columns:1fr}
+.qb{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:18px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:16px;font-weight:700;letter-spacing:-.02em;text-align:left}
+.qb .ib{width:32px;height:32px;border-radius:10px;background:var(--card2);display:grid;place-items:center;flex:none}.qb .ib svg{width:18px;height:18px}
+.qb.qsos{border-color:rgba(74,222,128,.35)}.qb.qsos .ib{background:rgba(74,222,128,.14);color:#4ADE80}
+.hs{position:sticky;top:0;z-index:2;background:var(--bg);padding:2px 0 6px}.hs input{width:100%;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);padding:14px 16px;font-size:16px;font-weight:500}
+.hg{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:10px 0 -6px}
+.hq{border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden}
+.hq>button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;border:0;background:none;color:var(--ink);font:inherit;font-size:16px;font-weight:600;letter-spacing:-.01em;text-align:left;padding:15px 16px}
+.hq>button i{flex:none;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translate(-2px,-2px);transition:transform .25s}
+.hq.on>button i{transform:rotate(-135deg)}
+.hq .ha{display:none;padding:0 16px 16px;gap:12px}.hq.on .ha{display:grid;animation:fu .25s ease}
+.hq .ha p{margin:0;color:var(--muted);font-size:15px;line-height:1.5;font-weight:500}.hq .ha p b{color:var(--ink);font-weight:600}
+.hq .hgo{justify-self:start;border:0;border-radius:14px;background:var(--ink);color:var(--bg);font:inherit;font-size:15px;font-weight:700;padding:11px 16px}
+.hq .ha a{color:var(--ink);font-weight:700}
+.hnone{text-align:center;color:var(--muted);font-size:15px;padding:24px 8px;line-height:1.5}
 .bdg{position:absolute;top:10px;right:10px;min-width:20px;height:20px;border-radius:10px;background:var(--ink);color:var(--bg);animation:pop .35s cubic-bezier(.3,1.6,.5,1);font-size:12px;font-weight:700;display:grid;place-items:center;padding:0 6px;font-style:normal;line-height:1;box-shadow:0 0 0 3px var(--bg)}
 .gear .bdg{top:-4px;right:-4px;min-width:12px;height:12px;padding:0}
 .vset .bdg{top:6px;left:38px;right:auto}
@@ -269,7 +284,7 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 <body>
 <div class="app" id="app"></div>
 <script>
-const ICO={bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/>',folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',hex:'<path d="M5 9l7-5 7 5v8l-7 4-7-4z"/>',leaf:'<path d="M12 21v-7M12 14c-5 0-8-4-8-9 4 0 8 3 8 9 0-6 4-9 8-9 0 5-3 9-8 9z"/>',wind:'<path d="M3 8h11a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h8"/>',x:'<path d="M6 6l12 12M18 6 6 18"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',cart:'<circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M3 4h2l2.4 11h11.2L21 8H6.2"/>',resto:'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 4-3 8h3"/>',fast:'<path d="M4 11h16M5 11a7 7 0 0 1 14 0M5 15h14l-1 4H6z"/>',glass:'<path d="M8 21h8M12 13v8M6 3h12l-6 10z"/>',train:'<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M8 21l1.5-4M16 21l-1.5-4"/>',smoke:'<path d="M3 14h14v4H3zM17 14h4v4h-4M18 11c0-2 2-2 2-4M15 11c0-2 2-2 2-4"/>',bag:'<path d="M5 8h14l-1 13H6zM9 8V6a3 3 0 0 1 6 0v2"/>',dots:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',out:'<path d="M7 17 17 7M9 7h8v8"/>',in:'<path d="M17 7 7 17M15 17H7V9"/>',cal:'<rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',calp:'<rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M12 13v5M9.5 15.5h5"/>',brief:'<rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',zap:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',bank:'<path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18"/>',gift:'<rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13M12 8c-1.5-3-5-4-5-1.5S10 8 12 8zM12 8c1.5-3 5-4 5-1.5S14 8 12 8z"/>',undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',gym:'<path d="M6 6v12M18 6v12M3 9v6M21 9v6M6 12h12"/>',pan:'<circle cx="10" cy="13" r="6"/><path d="M16 13h6"/>',home:'<path d="M3 11 12 4l9 7M5 10v10h14V10"/>',phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',card:'<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/>',bed:'<path d="M3 18V7M3 13h18v5M21 13a4 4 0 0 0-4-4h-7v4"/>',pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',check:'<path d="M5 12.5 10 17.5 19 7"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',plus:'<path d="M12 5v14M5 12h14"/>',next:'<path d="M5 12h14M13 6l6 6-6 6"/>',now:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>',later:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',split:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M12 4v16M7 9h1M16 9h1"/>',back:'<path d="M15 5l-7 7 7 7"/>',del:'<path d="M9 6h11v12H9l-6-6z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'};
+const ICO={help:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.5"/><path d="M12 16.8v.1"/>',bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/>',folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',hex:'<path d="M5 9l7-5 7 5v8l-7 4-7-4z"/>',leaf:'<path d="M12 21v-7M12 14c-5 0-8-4-8-9 4 0 8 3 8 9 0-6 4-9 8-9 0 5-3 9-8 9z"/>',wind:'<path d="M3 8h11a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h8"/>',x:'<path d="M6 6l12 12M18 6 6 18"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',cart:'<circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M3 4h2l2.4 11h11.2L21 8H6.2"/>',resto:'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 4-3 8h3"/>',fast:'<path d="M4 11h16M5 11a7 7 0 0 1 14 0M5 15h14l-1 4H6z"/>',glass:'<path d="M8 21h8M12 13v8M6 3h12l-6 10z"/>',train:'<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M8 21l1.5-4M16 21l-1.5-4"/>',smoke:'<path d="M3 14h14v4H3zM17 14h4v4h-4M18 11c0-2 2-2 2-4M15 11c0-2 2-2 2-4"/>',bag:'<path d="M5 8h14l-1 13H6zM9 8V6a3 3 0 0 1 6 0v2"/>',dots:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',out:'<path d="M7 17 17 7M9 7h8v8"/>',in:'<path d="M17 7 7 17M15 17H7V9"/>',cal:'<rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',calp:'<rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M12 13v5M9.5 15.5h5"/>',brief:'<rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',zap:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',bank:'<path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18"/>',gift:'<rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13M12 8c-1.5-3-5-4-5-1.5S10 8 12 8zM12 8c1.5-3 5-4 5-1.5S14 8 12 8z"/>',undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',gym:'<path d="M6 6v12M18 6v12M3 9v6M21 9v6M6 12h12"/>',pan:'<circle cx="10" cy="13" r="6"/><path d="M16 13h6"/>',home:'<path d="M3 11 12 4l9 7M5 10v10h14V10"/>',phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',card:'<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/>',bed:'<path d="M3 18V7M3 13h18v5M21 13a4 4 0 0 0-4-4h-7v4"/>',pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',check:'<path d="M5 12.5 10 17.5 19 7"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',plus:'<path d="M12 5v14M5 12h14"/>',next:'<path d="M5 12h14M13 6l6 6-6 6"/>',now:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>',later:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',split:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M12 4v16M7 9h1M16 9h1"/>',back:'<path d="M15 5l-7 7 7 7"/>',del:'<path d="M9 6h11v12H9l-6-6z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'};
 const ic=k=>ICO[k]?`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg>`:'';
 const ESSAI=new URLSearchParams(location.search).get('essai');const K='librePote:v1'+(ESSAI?':essai:'+ESSAI:'');
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
@@ -361,6 +376,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
    <button class="act" data-a="ag">${bd(B,'ag')}<span class="ib">${ic('cal')}</span><span><b>Agenda</b><small>${its.length?dn+'/'+its.length+' faits aujourd’hui':'Rappels, liste, mois'}</small></span></button>
    <button class="act" data-a="debts">${bd(B,'debts')}<span class="ib">${ic('users')}</span><span><b>Dettes</b><small>${me||th?(me?'Tu dois '+eur0(me):'')+(me&&th?' · ':'')+(th?'On te doit '+eur0(th):''):'Aucune'}</small></span></button>
   </div>
+  <div class="quick${S.name&&S.vice!==''?'':' one'}">${S.name&&S.vice!==''?`<button class="qb qsos" data-a="sos"><span class="ib">${ic('wind')}</span>Envie de fumer</button>`:''}<button class="qb" data-a="help"><span class="ib">${ic('help')}</span>Aide</button></div>
   ${todoSec()}
   ${payCard()}
   ${mvSec()}
@@ -371,7 +387,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   ${next.length?`<div class="sec"><h2>À venir</h2></div><div class="list">${next.map(a=>`<button class="li" data-ed="${a.id}"><span class="ck" style="border-style:dashed"></span><span class="t">${esc(a.t)}<small>${dLab(a.d)}</small></span><span class="r">${a.h||''}</span></button>`).join('')}</div>`:''}
   <p class="foot">Données privées, stockées sur ce téléphone.</p>`;
   $('#set').onclick=settings;bindCopy($('#app'));try{const n=S.name?tasks().length:0;if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}{const m=$('#mvl');if(m)bindMv(m)}{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
-  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr})[b.dataset.a]()});
+  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr})[b.dataset.a]()});
   document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const a=S.ag.find(x=>x.id===b.dataset.ck);a.done=!a.done;save();buzz(a.done?[10,40,10]:8);home()});
   document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>agItem(b.dataset.ed));
   if($('#agb'))agRender();
@@ -897,6 +913,82 @@ function gainsScr(){const G=GAINS.map(([k,n,l])=>[k,n,l.filter(it=>!it[2]||has(i
      return `<div class="ms ${c}"><span class="mk">${ok?ic('check'):''}</span><span><span class="when">${wl(d)}${ky?' '+KN[ky]:''}${c==='next'?' · encore '+(d-n)+' j':''}</span><b>${t}</b></span></div>`}).join('')}</div>`);
   x.querySelectorAll('[data-gc]').forEach(b=>b.onclick=()=>{gC=b.dataset.gc;buzz();gainsScr()})}
 
+/* ---------- Aide ---------- */
+const HELP=[
+ ['L’essentiel',[
+  ['À quoi sert l’app ?','À voir d’un coup d’œil <b>ce que tu as, ce que tu dois payer et ce que tu peux encore dépenser</b>. Tu notes, l’app fait tous les calculs et t’aide à t’organiser jour après jour.','','','but utilité'],
+  ['Je fais quoi chaque jour ?','Une minute par jour suffit : <b>note ce que tu dépenses</b> au moment où tu paies, coche ce qui est fait dans l’agenda, et réponds aux petites questions de l’app. C’est tout.','Noter une dépense','dep','quotidien routine habitude'],
+  ['C’est quoi les pastilles et « choses à faire » ?','Ce sont les questions que l’app a pour toi : un prélèvement à confirmer, un salaire arrivé, une dette, ta journée sans fumer… <b>Une touche suffit</b> pour répondre, et la pastille disparaît.','','','badge notification rond point'],
+  ['Comment revenir à l’accueil ?','La flèche en haut à gauche revient en arrière, la croix ferme l’écran. Rien n’est perdu tant que tu n’as pas validé.','','','retour fermer quitter annuler'],
+ ]],
+ ['Mon argent',[
+  ['Comment noter une dépense ?','<b>J’ai dépensé</b> → le montant → ce que c’était. Cinq secondes. Le mieux, c’est de le faire tout de suite après avoir payé.','Noter une dépense','dep','achat payer acheter courses'],
+  ['J’ai oublié de noter une dépense','Pas grave, note-la maintenant avec <b>J’ai dépensé</b> : elle compte dans ton mois et dans ton solde.','Noter une dépense','dep','oubli oublié hier'],
+  ['Je me suis trompé de montant','Dans <b>Derniers mouvements</b> (ou « Tout voir »), touche la ligne et supprime-la. Puis renote-la avec le bon montant.','Voir mes mouvements','hist','erreur trompé corriger modifier supprimer effacer'],
+  ['J’ai reçu de l’argent','<b>J’ai reçu</b> → le montant. Pour quelque chose qui revient chaque mois (salaire, aide…), mets-le plutôt dans tes revenus réguliers.','J’ai reçu','inc','virement argent reçu remboursé paie'],
+  ['Le solde n’est pas le même que ma banque','Touche la grande carte de ton compte et entre le vrai montant. L’app repart de là et le tient à jour avec ce que tu notes.','Corriger mon solde','bal','banque solde compte faux différent'],
+  ['J’ai plusieurs comptes (Revolut, Lydia…)','Mets <b>une ligne par compte</b> dans ton solde. L’app fait le total toute seule.','Mes comptes','bal','revolut lydia paypal plusieurs comptes livret'],
+  ['C’est quoi les chiffres sur la carte du haut ?','Le grand chiffre, c’est <b>ce que tu as</b> sur tes comptes. En dessous : ce qu’il te restera une fois payés les prélèvements et dettes du mois, et <b>combien ça te laisse par jour</b> jusqu’à la fin du mois.','','','reste chiffre carte combien par jour budget'],
+  ['Combien je peux dépenser par jour ?','C’est écrit sous ton solde sur l’accueil : ce qui te reste, divisé par les jours restants du mois. Si tu le respectes, tu finis le mois tranquille.','','','par jour limite budget'],
+  ['Voir tout ce que j’ai dépensé','Sur l’accueil, <b>Derniers mouvements → Tout voir</b>.','Voir mes mouvements','hist','historique liste toutes dépenses'],
+  ['Est-ce que je progresse ?','L’écran <b>Progrès</b> montre tes jours dans le vert, l’évolution de ton solde et ce que tu dépenses comparé aux semaines d’avant.','Voir mes progrès','prog','progrès évolution graphique stats'],
+ ]],
+ ['Charges et revenus',[
+  ['J’ai oublié une charge fixe','Ajoute-la quand tu veux : <b>⚙️ Réglages → Mes charges fixes</b>. Loyer, téléphone, abonnement, crédit…','Mes charges fixes','fx','charge oublié loyer abonnement prélèvement ajouter'],
+  ['Modifier ou supprimer une charge','Dans <b>Mes charges fixes</b>, change le nom, le montant ou la date, ou supprime la ligne.','Mes charges fixes','fx','modifier supprimer résilier arrêter'],
+  ['Je ne connais pas la date du prélèvement','Laisse vide. Tu pourras l’ajouter plus tard, l’app te le rappellera sur l’accueil.','Mes charges fixes','fx','date jour prélèvement inconnu'],
+  ['Ajouter un salaire ou une aide','<b>⚙️ Réglages → Mes revenus réguliers</b>. Le jour où il doit arriver, l’app te demande s’il est bien là.','Mes revenus','rin','salaire aide chômage caf rsa apl revenu'],
+  ['Mon salaire n’est pas arrivé','Réponds « Pas encore » quand l’app te pose la question : elle te redemande le lendemain.','','','retard salaire pas arrivé'],
+ ]],
+ ['Agenda',[
+  ['Ajouter un rendez-vous ou une tâche','Le bouton <b>Agenda</b>, puis le <b>+</b>. Choisis quoi, le jour, le moment, et si tu veux un rappel.','Ajouter maintenant','agnew','rendez-vous tâche rdv planifier prévoir ajouter'],
+  ['Mettre une heure précise','À l’étape « À quel moment ? », touche <b>Heure précise</b> en bas, choisis l’heure puis Valider.','Ajouter avec une heure','agnew','heure précise exacte horaire'],
+  ['Je veux qu’on me rappelle','Réponds « Oui, rappelle-moi » en ajoutant ton rendez-vous, et active les notifications. Sur iPhone, l’app doit être sur l’écran d’accueil.','Activer les notifications','push','rappel notification alarme alerte'],
+  ['Décaler ou supprimer quelque chose','Touche-le dans l’agenda ou dans « À venir » : <b>Décaler à demain</b>, <b>C’est fait</b> ou <b>Supprimer</b>.','Ouvrir l’agenda','ag','décaler reporter annuler supprimer'],
+  ['Noter un truc sans date','Choisis <b>Pas de date</b> : ça va dans ta liste, à faire un jour.','Ajouter','agnew','liste sans date idée'],
+  ['Cocher ce qui est fait','Touche le rond à côté de la tâche dans « Aujourd’hui ».','','','cocher fait terminé'],
+ ]],
+ ['Dettes',[
+  ['Je dois de l’argent à quelqu’un','<b>Dettes → Nouvelle dette</b> : à qui, combien, et quand tu comptes rembourser.','Nouvelle dette','debtnew','dette dois emprunt prêt'],
+  ['Quelqu’un me doit de l’argent','Même chose : <b>Nouvelle dette</b>, en choisissant « On me doit ».','Nouvelle dette','debtnew','doit rendre prêté'],
+  ['J’ai remboursé, ou on m’a remboursé','<b>Dettes</b> → la personne → <b>C’est réglé</b>. Elle disparaît de la liste.','Mes dettes','debts','remboursé réglé payé'],
+  ['Je ne peux pas rembourser ce mois-ci','<b>Dettes</b> → la personne → <b>Le mois prochain</b>. Ça sort du calcul de ce mois.','Mes dettes','debts','pas les moyens reporter mois prochain'],
+ ]],
+ ['Fumer',[
+  ['J’ai envie de fumer, je fais quoi ?','Touche <b>Envie de fumer</b> sur l’accueil. Respire avec le cercle pendant 3 minutes : l’envie redescend presque toujours d’elle-même.','Envie de fumer','sos','envie craving manque besoin','v'],
+  ['Un exercice pour tenir','Six exercices guidés avec minuteur : respiration, ancrage, 7 minutes de sport… Choisis-en un.','Les exercices','ex','exercice respiration calme stress angoisse','v'],
+  ['J’ai fumé, je le note comment ?','Sur l’accueil, dans <b>Fumette</b>, réponds à « Tu as fumé aujourd’hui ? ». Noter sans te juger, c’est déjà reprendre le contrôle.','Noter','smoked','fumé noter joint clope','v'],
+  ['J’ai craqué, mon compteur repart à zéro','Ça arrive à presque tout le monde qui arrête. Les jours que tu as tenus, tu les as tenus. Repars aujourd’hui, pas lundi.','Envie de fumer','sos','craqué rechute zéro échec','v'],
+  ['Qu’est-ce que mon corps y gagne ?','L’écran des bienfaits montre ce qui s’améliore jour après jour : souffle, sommeil, peau, tête, argent.','Voir mes bienfaits','gains','bienfaits corps santé gagne','v'],
+  ['Combien j’économise ?','Ouvre <b>Fumette</b> : jours sans fumer et argent gardé dans ta poche.','Ouvrir Fumette','fume','économie argent économisé','v'],
+  ['Parler à quelqu’un','Gratuit et anonyme : <a href="tel:3989">Tabac Info Service · 39 89</a> et <a href="tel:0800231313">Drogues Info Service · 0 800 23 13 13</a>.','','','aide parler appeler numéro','v'],
+  ['Suivre ce que je fume','Indique si tu fumes des clopes, des joints ou les deux : l’app compte tes jours sans fumer et l’argent économisé.','Suivre ma conso','vset','fumer suivre conso arrêter','nv'],
+ ]],
+ ['Mon téléphone',[
+  ['Mettre l’app sur l’écran d’accueil','iPhone : dans Safari, <b>Partager → Sur l’écran d’accueil</b>. Android : dans Chrome, <b>⋮ → Ajouter à l’écran d’accueil</b>.','','','installer icône écran accueil raccourci'],
+  ['Qui peut voir mes données ?','<b>Personne.</b> Tout reste sur ton téléphone, rien n’est envoyé ailleurs.','','','privé confidentiel sécurité données'],
+  ['Je change de téléphone','Avant, fais <b>Sauvegarder mes données</b> : ça crée un fichier. Sur le nouveau téléphone : Réglages → Restaurer une sauvegarde.','Sauvegarder','backup','changer téléphone perdre sauvegarde transférer'],
+  ['Changer mon prénom, les sons…','Tout est dans la <b>⚙️ roue en haut à droite</b> de l’accueil.','Réglages','set','prénom sons réglages paramètres'],
+  ['L’app se met à jour ?','Oui, toute seule à l’ouverture. Tu n’as rien à faire.','','','mise à jour version'],
+ ]]
+];
+function helpScr(){const sm=!!S.vice,norm=t=>(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/<[^>]+>/g,'');
+  const A={dep:flowDep,inc:flowInc,hist:histScr,bal:flowBal,prog:progScr,ag:()=>{agD=today;agScr('day')},agnew:()=>flowAg(),debts:debtList,debtnew:flowDebt,set:settings,push:pushEnable,backup:()=>backup(),sos:openSOS,ex:exList,smoked:flowSmoked,gains:gainsScr,fume:fumeScr,vset:flowVice,
+    fx:()=>flow([{k:'fx',q:'Tes charges fixes',sub:'Ajoute, renomme ou supprime ce que tu paies chaque mois.',type:'fixes'}],v=>{fxSave(v.fx);return['Enregistré',eur0(S.fixe)+' par mois']}),
+    rin:()=>flow([{...RIN_STEP,q:'Ce qui rentre chaque mois'}],v=>{rinSave(v.rin);return['Enregistré',rinSub()]})};
+  const G=HELP.map(([g,l])=>[g,l.filter(e=>!e[5]||(e[5]==='v'?sm:!sm))]).filter(g=>g[1].length);
+  const x=scr('Aide',`<div class="hs"><input id="hS" type="search" placeholder="Ta question… (ex. salaire, dette, heure)" autocomplete="off"></div><div id="hL"></div>`);
+  const L=x.querySelector('#hL');
+  const row=(e,id)=>`<div class="hq" data-h="${id}"><button type="button"><span>${e[0]}</span><i></i></button><div class="ha"><p>${e[1]}</p>${e[3]&&A[e[3]]?`<button type="button" class="hgo" data-go="${e[3]}">${e[2]} ›</button>`:''}</div></div>`;
+  const draw=q=>{const n=norm(q).trim().split(/\s+/).filter(Boolean);let h='',c=0;
+    G.forEach(([g,l],gi)=>{const m=l.map((e,i)=>[e,gi+'-'+i]).filter(([e])=>!n.length||n.every(w=>norm(e[0]+' '+e[1]+' '+e[4]+' '+g).includes(w)));if(!m.length)return;c+=m.length;h+=`<div class="hg">${g}</div>`+m.map(([e,id])=>row(e,id)).join('')});
+    L.innerHTML=c?h:`<div class="hnone">Pas trouvé avec ces mots.<br>Essaie plus simple : « dépense », « salaire », « dette », « heure ».</div>`;
+    L.style.display='grid';L.style.gap='8px';
+    if(n.length&&c<=3)L.querySelectorAll('.hq').forEach(d=>d.classList.add('on'));
+    L.querySelectorAll('.hq>button').forEach(b=>b.onclick=()=>{buzz();const d=b.parentNode,on=!d.classList.contains('on');L.querySelectorAll('.hq.on').forEach(z=>z.classList.remove('on'));if(on){d.classList.add('on');setTimeout(()=>{const r=d.getBoundingClientRect();if(r.bottom>innerHeight-20)x.scrollBy({top:r.bottom-innerHeight+40,behavior:'smooth'})},60)}});
+    L.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{buzz();const f=A[b.dataset.go];closeScr();f()})};
+  draw('');const si=x.querySelector('#hS');si.oninput=()=>draw(si.value)}
+
 /* ---------- Réglages ---------- */
 function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
   {i:'home',l:'Mes charges fixes',s:fxSub(),one:1,go:()=>flow([{k:'fx',q:'Tes charges fixes',sub:'Ajoute, renomme ou supprime ce que tu paies chaque mois.',type:'fixes'}],v=>{fxSave(v.fx);return['Enregistré',eur0(S.fixe)+' par mois']})},
@@ -904,6 +996,7 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
   {i:'in',l:'Mes revenus réguliers',s:rinSub(),one:1,go:()=>flow([{...RIN_STEP,q:'Ce qui rentre chaque mois'}],v=>{rinSave(v.rin);return['Enregistré',rinSub()]})},
   {i:'folder',l:'Sauvegarder mes données',s:S.bk?'Dernière le '+pd(S.bk).getDate()+' '+MN[pd(S.bk).getMonth()]:'Au cas où tu changes de téléphone',one:1,go:()=>backup()},
   {i:'undo',l:'Restaurer une sauvegarde',s:'Depuis un fichier',one:1,go:()=>restore()},
+  {i:'help',l:'Aide',s:'Toutes les réponses à tes questions',one:1,go:()=>{const f=$('.fl');if(f)f.remove();FL=null;helpScr()}},
   {i:'zap',l:'Sons',s:sndOn()?'Activés':'Coupés',one:1,go:()=>{S.snd=sndOn()?0:1;save();if(S.snd)sfx('ok');done(['Sons '+(S.snd?'activés':'coupés'),''])}},
   {i:'bell',l:'Notifications',s:pushOn()?'Activées':'Désactivées',one:1,go:()=>pushOn()?pushOff():pushEnable()},
   {i:'user',l:'Mon prénom',s:S.name||'',one:1,go:()=>flow([{k:'n',q:'Ton prénom ?',type:'text',ph:'Prénom'}],v=>{S.name=v.n;return['Enregistré',v.n]})},
