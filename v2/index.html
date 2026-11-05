@@ -195,7 +195,7 @@ const impV=()=>S.imp&&S.imp.on?r2(S.imp.v||0):0;
 const daysLeft=()=>lastDay(YM)-+today.slice(8)+1;
 function day(){/* ce que tu peux dépenser aujourd’hui */const L=liveBal();if(L==null)return null;const st=spentOn(today);
   const dispo=L+st-toPay()-impV(),per=dispo/daysLeft(),left=per-st;return{L,per,left,st,dispo}}
-function keptWeek(){/* ce que t’as pas dépensé cette semaine, par rapport à ce que tu pouvais */const D=day();if(!D||D.per<=0)return 0;const m=wkMon();let k=0;
+function keptWeek(){/* ce que t’as pas dépensé cette semaine, par rapport à ce que tu pouvais */const D=day();if(!D||D.per<=0)return 0;const m=[wkMon(),S.start||today].sort()[1];let k=0;
   for(let d=m;d<today;d=addD(d,1))k+=Math.max(0,D.per-spentOn(d));return Math.round(k)}
 /* tabac : rien ne retombe à zéro */
 const TK={tabac:'Clopes',cannabis:'Joints'};
