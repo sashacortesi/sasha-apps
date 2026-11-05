@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="fr" data-build="19">
+<html lang="fr" data-build="20">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Libre"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="../libre/apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><link rel="icon" type="image/png" href="../icons/icon-192.png"><link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <title>Libre</title>
 <style>
@@ -349,17 +349,22 @@ const pushOn=()=>!!S.push&&pushCan()&&Notification.permission==='granted';
 const ub64=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return Uint8Array.from(atob(s),c=>c.charCodeAt(0))};
 let swReg=null;if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').then(r=>{swReg=r;pushSoon(1500)}).catch(()=>{});
 function at(dateKey,h){const d=pd(dateKey);d.setHours(h,0,0,0);return d.getTime()}
-function pushItems(){const now=Date.now(),out=[],add=(t,title,body,tag)=>{if(t>now)out.push({at:t,title,body,tag})};
+function pushItems(){const now=Date.now(),out=[],add=(t,title,body,tag)=>{if(t>now)out.push({at:t,title,body,tag:tag+'-'+t})};
   const nm=(()=>{const y=+YM.slice(0,4),m=+YM.slice(5,7);return m===12?(y+1)+'-01':y+'-'+String(m+1).padStart(2,'0')})();
-  for(const ym of [YM,nm])for(const x of fxDated()){const dt=fxDate(x,ym);add(at(addD(dt,-1),19),'Demain : '+x.n,eur(x.v)+' vont être prélevés. Ton solde est à jour dans l’app.','fx')}
+  const L=S.bal?liveBal():null,P=S.name?S.name.split(' ')[0]:'';
+  const fxAll=[YM,nm].flatMap(ym=>fxDated().map(x=>({...x,dt:fxDate(x,ym)}))).filter(x=>x.dt>today).sort((a,b)=>a.dt.localeCompare(b.dt));
+  let run=L;for(const x of fxAll){if(run!=null)run-=x.v;
+    add(at(addD(x.dt,-1),19),x.n+' demain',eur(x.v)+' seront prélevés.'+(run!=null&&x.dt.startsWith(YM)?' Il te restera environ '+eur0(run)+'.':''),'fx')}
+  for(const x of (S.rin||[]).filter(x=>x.d)){const dt=fxDate(x,YM);if(dt>=today&&!(S.rok||{})[rinKey(x,YM)])add(at(dt,18),x.n+' est arrivé ?','Confirme-le dans Libre pour garder ton solde juste.','rin')}
   const dd=S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM);
-  if(dd.length){const t=dd.reduce((a,x)=>a+x.v,0);add(at(YM+'-25',18),'Remboursements du mois',dd.length===1?'Pense à rembourser '+dd[0].p+' ('+eur(dd[0].v)+') avant la fin du mois.':'Il te reste '+eur(t)+' à rembourser ce mois-ci.','debt')}
+  if(dd.length){const t=dd.reduce((a,x)=>a+x.v,0);add(at(YM+'-25',18),dd.length===1?dd[0].p+' attend ses '+eur(dd[0].v):eur(t)+' à rembourser ce mois-ci',dd.length===1?'Tu avais prévu de le rembourser ce mois-ci.':dd.map(x=>x.p).join(', ')+' attendent leur argent.','debt')}
   const okT=(S.e.some(x=>x.d===today)||(S.nos||{})[today])&&(!S.vice||S.log[today]);
-  for(let i=okT?1:0;i<14;i++)add(at(addD(today,i),21),'Ton point du soir',S.vice?'Note ta conso et tes dépenses du jour. 10 secondes, et tout reste juste.':'Tu as dépensé quelque chose aujourd’hui ? Note-le pour garder ton solde juste.','day');
-  if(S.vice&&!S.log[today])add(at(addD(today,1),10),'Tu as oublié hier','Note ta conso d’hier pour garder ton compteur juste.','miss');
-  if(S.bal)add(at(addD(S.bal.d,3),12),'Ton solde est toujours juste ?','Vérifie-le en 5 secondes dans l’app.','bal');
-  try{if(S.vice)for(const k of keys()){const n=streak(k);let c=0;for(const m of [1,2,3,7,14,21,30,60,90,180,365])if(m>n&&c<2){c++;add(at(addD(today,m-n),10),m+' jour'+(m>1?'s':'')+' '+KN[k],m<7?'Chaque jour compte. Ouvre l’app pour voir ce que tu gagnes.':'Énorme. Regarde ce que ton corps et ton compte y gagnent.','smoke')}}}catch(e){}
-  for(const a of S.ag.filter(a=>a.rem&&!a.done&&a.d&&a.d>=today)){let t;if(a.h){const[h,mi]=a.h.split(':').map(Number);const d=pd(a.d);d.setHours(h,mi,0,0);t=d.getTime()-15*60e3}else t=at(a.d,9);add(t,a.t,a.h?'À '+hl(a.h)+'. Touche quand c’est fait.':'Prévu aujourd’hui.','ag')}
+  for(let i=okT?1:0;i<14;i++)add(at(addD(today,i),21),(P?P+', ton':'Ton')+' point du soir',S.vice?'Ta conso et tes dépenses du jour, en 10 secondes.':'Tes dépenses du jour, en 10 secondes.','day');
+  if(S.vice&&!S.log[today])add(at(addD(today,1),10),'Il manque hier','Note ta conso d’hier pour garder ton compteur juste.','miss');
+  if(S.bal)add(at(addD(S.bal.d,3),12),'Ton solde est toujours juste ?','Libre pense que tu as '+eur0(L)+'. Vérifie en 5 secondes.','bal');
+  try{const same=keys().length===2&&streak('j')===streak('c');if(S.vice)for(const k of (same?['j']:keys())){const n=streak(k);let c=0;for(const m of [1,2,3,7,14,21,30,60,90,180,365])if(m>n&&c<2){c++;const sv=S.wk?Math.round(S.wk/7*m*(S.vice==='cj'?.5:1)):0;
+    add(at(addD(today,m-n),11),m+' jour'+(m>1?'s':'')+' '+(same?'sans fumer':KN[k]),sv>=5?'À peu près '+eur0(sv)+' restés dans ta poche. Continue.':'Chaque jour compte. Continue.','smoke')}}}catch(e){}
+  for(const a of S.ag.filter(a=>a.rem&&!a.done&&a.d&&a.d>=today)){let t;if(a.h){const[h,mi]=a.h.split(':').map(Number);const d=pd(a.d);d.setHours(h,mi,0,0);t=d.getTime()-15*60e3}else t=at(a.d,9);add(t,a.t,a.h?'À '+hl(a.h)+'.':'Prévu aujourd’hui.','ag')}
   return out.sort((a,b)=>a.at-b.at).slice(0,120)}
 var pT=null;function pushSoon(ms=2000){if(!S.push)return;clearTimeout(pT);pT=setTimeout(pushSync,ms)}
 async function pushSub(){const r=swReg||await navigator.serviceWorker.ready;let sub=await r.pushManager.getSubscription();if(!sub)sub=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:ub64(VKEY)});return sub}
@@ -370,7 +375,7 @@ async function pushEnable(){if(isIOS&&!isApp)return iosInstall();
   let perm=Notification.permission;if(perm!=='granted')perm=await Notification.requestPermission();
   if(perm!=='granted'){done(['Notifications refusées','Autorise-les dans les réglages du téléphone']);return}
   S.push=1;try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
-  try{await pushSync();await fetch(PUSH+'/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:S.pid})});done(['Notifications activées','Tu viens d’en recevoir une'])}
+  try{await pushSync();await fetch(PUSH+'/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:S.pid,title:'C’est bon'+(S.name?', '+S.name.split(' ')[0]:''),body:'Je te préviens la veille de chaque prélèvement, et le soir pour ta journée.'})});done(['Notifications activées','Tu viens d’en recevoir une'])}
   catch(e){done(['Oups','Réessaie dans un instant'])}}
 async function pushOff(){S.push=0;save();try{await fetch(PUSH+'/unsub',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:S.pid})});const sub=await pushSub();await sub.unsubscribe()}catch(e){}done(['Notifications coupées',''])}
 const APPURL=location.origin+location.pathname,inApp=/CriOS|FxiOS|EdgiOS|Instagram|FBAN|FBAV|WhatsApp|Snapchat|TikTok|musical_ly|Line\//i.test(navigator.userAgent);
