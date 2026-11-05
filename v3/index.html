@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1">
+<html lang="fr" data-build="5">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -521,6 +521,12 @@ function onboard(){flow([
 /* ---------- Démarrage ---------- */
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){const t=iso(new Date());if(t!==today||S.lo!==t){S.lo=t;save()}if(!FL&&!$('.scr'))render()}});
 if(S.name)S.lo=today;save();render();
+/* ---------- Mise à jour automatique : l’app vérifie à chaque ouverture s’il y a une nouvelle version ---------- */
+const BUILD=+document.documentElement.dataset.build||0;let updT=0;
+async function checkUpd(){if(Date.now()-updT<30000)return;updT=Date.now();try{const r=await fetch(location.pathname+'?b='+Date.now(),{cache:'no-store'});const t=await r.text(),m=t.match(/data-build="(\d+)"/);
+  if(m&&+m[1]>BUILD&&!FL){location.replace(location.pathname+'?v='+m[1])}}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpd()});setTimeout(checkUpd,800);
+
 </script>
 </body>
 </html>
