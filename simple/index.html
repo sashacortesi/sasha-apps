@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="17">
+<html lang="fr" data-build="18">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -300,7 +300,6 @@ function home(){const r=reste(),now=new Date(),left=new Date(now.getFullYear(),n
   const B=badges();
   $('#app').innerHTML=`
   <div class="hi"><span><small>${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,c=>c.toUpperCase())}</small><b>${new Date().getHours()<18?'Bonjour':'Bonsoir'}${S.name?', '+esc(S.name):''}</b></span><button class="gear" id="set" aria-label="Réglages">${ic('gear')}${B.set?'<i class="bdg"></i>':''}</button></div>
-  ${instCard()}
   ${balCard()}
   <div class="big" ${S.bal?'hidden':''}><small>Reste ce mois-ci</small><strong class="${r<0?'neg':''}">${eur0(r)}</strong><span>${r>0?eur0(r/left)+' par jour jusqu’au '+new Date(now.getFullYear(),now.getMonth()+1,0).getDate()+' '+MN[now.getMonth()]:r<0?'Dans le rouge ce mois-ci':'Ajoute ce que tu gagnes pour commencer'}</span>${incM()>0?`<div class="mbar"><i style="width:${Math.max(0,Math.min(100,(1-r/Math.max(1,incM()))*100))}%"></i></div>`:''}</div>
   <div class="acts">
@@ -377,9 +376,9 @@ async function pushOff(){S.push=0;save();try{await fetch(PUSH+'/unsub',{method:'
 const APPURL=location.origin+location.pathname,inApp=/CriOS|FxiOS|EdgiOS|Instagram|FBAN|FBAV|WhatsApp|Snapchat|TikTok|musical_ly|Line\//i.test(navigator.userAgent);
 const needInstall=()=>isIOS&&!isApp;
 function instHTML(){const st=(n,t,d)=>`<div class="isr"><span class="isn">${n}</span><span><b>${t}</b>${d?`<small>${d}</small>`:''}</span></div>`;
-  return `<div class="list isl">${[['Copie le lien','<button class="icb" data-copy>Copier le lien</button>'],...(inApp?[['Ouvre Safari et colle-le','Dans la barre d’adresse']]:[['Colle-le dans Safari','Ou touche directement Partager si tu y es déjà']]),['Touche Partager','En bas de Safari, le carré avec la flèche'],['Touche « Sur l’écran d’accueil »','Fais défiler si tu ne le vois pas'],['Ouvre Libre depuis ton écran d’accueil','Et commence là-bas']].map(([t,d],i)=>st(i+1,t,d)).join('')}</div>`}
+  return `<div class="list isl">${[['Copie le lien','<button class="icb" data-copy>Copier le lien</button>'],...(inApp?[['Ouvre Safari et colle-le','Dans la barre d’adresse']]:[['Colle-le dans Safari','Ou touche directement Partager si tu y es déjà']]),['Touche Partager','En bas de Safari, le carré avec la flèche'],['Touche « Sur l’écran d’accueil »','Fais défiler si tu ne le vois pas'],['Ouvre Libre depuis ton écran d’accueil','Tout commence là']].map(([t,d],i)=>st(i+1,t,d)).join('')}</div>`}
 function bindCopy(root){root.querySelectorAll('[data-copy]').forEach(btn=>btn.onclick=async e=>{e.stopPropagation();buzz();try{await navigator.clipboard.writeText(APPURL)}catch(_){const t=document.createElement('textarea');t.value=APPURL;document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(__){}t.remove()}btn.textContent='Copié ✓';btn.classList.add('ok2');setTimeout(()=>{btn.textContent='Copier le lien';btn.classList.remove('ok2')},2200)})}
-function instGate(){const x=scr('Avant de commencer',`<div class="ish"><h2>Mets Libre sur ton écran d’accueil</h2><p>Comme une vraie app, avec tes rappels. Ça prend 20 secondes.</p></div>${instHTML()}<button id="isk" style="border:0;background:none;color:var(--muted);font-weight:600;font-size:15px;padding:12px">Continuer sans installer</button>`);bindCopy(x);const bk=x.querySelector('.top .back');if(bk)bk.style.visibility='hidden';x.querySelector('#isk').onclick=()=>{buzz();S.skipInst=1;save();x.remove();document.body.style.overflow='';onboard()}}
+function instGate(){const x=scr('Bienvenue',`<div class="ish"><h2>D’abord, mets Libre sur ton écran d’accueil</h2><p>C’est là qu’elle marche vraiment : tes rappels, tes notifications, et elle s’ouvre comme une vraie app.</p></div>${instHTML()}`);bindCopy(x);const bk=x.querySelector('.top .back');if(bk)bk.style.visibility='hidden';x.classList.add('gate')}
 function iosInstall(){const x=scr('Notifications',`<div class="ish"><h2>Encore une étape</h2><p>Sur iPhone, les notifications marchent seulement quand l’app est sur ton écran d’accueil.</p></div>${instHTML()}`);bindCopy(x)}
 function instCard(){if(!needInstall()||S.instHide)return '';return `<div class="instc"><div class="ish"><h2 style="font-size:20px">Mets Libre sur ton écran d’accueil</h2><p>Pour recevoir tes rappels. Dans l’app installée, tu refais juste la présentation (2 min).</p></div>${instHTML()}<button class="later" data-a="ihide">Plus tard</button></div>`}
 function pushCard(){if(pushOn()||S.pushHide)return '';return `<button class="act pc" data-a="push"><span class="ib">${ic('bell')}</span><span><b>Activer les rappels</b><small>Prévenu la veille de chaque prélèvement</small></span></button>`}
@@ -404,7 +403,7 @@ const tdRow=(x,j)=>`<div class="li td" data-td="${j}"><span class="ck"></span><s
 function todoSec(){const T=tasks();if(!T.length)return '';return `<div class="sec"><h2>À faire</h2><small>${T.length}</small></div><div class="list" id="tdl">${T.map(tdRow).join('')}</div>`}
 function bindTodo(root,T,close){root.querySelectorAll('[data-td]').forEach(el=>el.onclick=()=>{buzz();if(close)close();T[+el.dataset.td].go()})}
 let tdLast=0;
-function showTodo(){if(FL||$('.scr')||$('.shb'))return;const T=tasks();if(!T.length)return;tdLast=Date.now();
+function showTodo(){if(FL||$('.scr')||$('.shb')||needInstall())return;const T=tasks();if(!T.length)return;tdLast=Date.now();
   const o=document.createElement('div');o.className='shb';o.innerHTML=`<div class="sh"><h3>${T.length>1?T.length+' choses à faire':'1 chose à faire'}</h3><div class="list">${T.map(tdRow).join('')}</div><button class="later">Plus tard</button></div>`;
   document.body.appendChild(o);const close=()=>o.remove();o.querySelector('.later').onclick=close;o.onclick=e=>{if(e.target===o)close()};bindTodo(o,T,close)}
 function flowConso(dk){const lab=dk===today?'aujourd’hui':'hier';flow([
@@ -809,10 +808,10 @@ function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoi
   ts.push(setTimeout(fin,300+ls.length*1250+200));
   o.querySelector('.sk').onclick=e=>{e.stopPropagation();fin()};
   o.onclick=e=>{if(!e.target.closest('.st'))fin()};
-  o.querySelector('.st').onclick=e=>{e.stopPropagation();buzz();o.style.transition='opacity .5s';o.style.opacity='0';setTimeout(()=>o.remove(),500);needInstall()&&!S.skipInst?instGate():onboard()}}
+  o.querySelector('.st').onclick=e=>{e.stopPropagation();buzz();o.style.transition='opacity .5s';o.style.opacity='0';setTimeout(()=>o.remove(),500);onboard()}}
 function countUp(){const el=$('#balc strong');if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=liveBal();if(L==null)return;const t0=performance.now(),D=900;
   const f=t=>{const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=eur(Math.round(L*e*100)/100);if(k<1)requestAnimationFrame(f);else el.textContent=eur(L)};requestAnimationFrame(f)}
-home();try{tPrev=S.name?tasks().length:0}catch(e){}if(!S.name)intro();else{countUp();setTimeout(showTodo,900)}
+home();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();setTimeout(showTodo,900)}
 </script>
 <script>
 (()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;
