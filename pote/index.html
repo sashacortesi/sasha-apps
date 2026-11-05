@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="17">
+<html lang="fr" data-build="18">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -97,6 +97,10 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .isl .isr{display:grid;grid-template-columns:30px 1fr;gap:14px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}.isl .isr:last-child{border-bottom:0}
 .isn{width:30px;height:30px;border-radius:15px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:700;font-size:14px}
 .isr b{font-size:16px;font-weight:600}.isr small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.icb{margin-top:8px;border:0;border-radius:12px;background:var(--ink);color:var(--bg);padding:10px 16px;font-size:15px;font-weight:600;display:inline-block}.icb.ok2{background:var(--good);color:#000}
+.isr small .icb{font-size:15px}
+.instc{display:grid;gap:12px;border:1px solid var(--line);border-radius:20px;padding:16px;background:var(--card)}.instc .list{background:var(--bg)}
+.instc .later{border:0;background:none;color:var(--muted);font-weight:600;font-size:14px;padding:4px}
 .icp{display:grid;gap:10px}.icp span{text-align:center;color:var(--muted);font-size:13px;word-break:break-all}
 @keyframes in{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
 .ft{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:12px}
@@ -296,6 +300,7 @@ function home(){const r=reste(),now=new Date(),left=new Date(now.getFullYear(),n
   const B=badges();
   $('#app').innerHTML=`
   <div class="hi"><span><small>${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,c=>c.toUpperCase())}</small><b>${new Date().getHours()<18?'Bonjour':'Bonsoir'}${S.name?', '+esc(S.name):''}</b></span><button class="gear" id="set" aria-label="Réglages">${ic('gear')}${B.set?'<i class="bdg"></i>':''}</button></div>
+  ${instCard()}
   ${balCard()}
   <div class="big" ${S.bal?'hidden':''}><small>Reste ce mois-ci</small><strong class="${r<0?'neg':''}">${eur0(r)}</strong><span>${r>0?eur0(r/left)+' par jour jusqu’au '+new Date(now.getFullYear(),now.getMonth()+1,0).getDate()+' '+MN[now.getMonth()]:r<0?'Dans le rouge ce mois-ci':'Ajoute ce que tu gagnes pour commencer'}</span>${incM()>0?`<div class="mbar"><i style="width:${Math.max(0,Math.min(100,(1-r/Math.max(1,incM()))*100))}%"></i></div>`:''}</div>
   <div class="acts">
@@ -312,8 +317,8 @@ function home(){const r=reste(),now=new Date(),left=new Date(now.getFullYear(),n
   <div class="list">${its.length?its.map(a=>`<button class="li ${a.done?'done':''}" data-ck="${a.id}"><span class="ck">${ic('check')}</span><span class="t">${esc(a.t)}</span><span class="r">${a.h||''}</span></button>`).join(''):`<div class="empty">Rien de prévu aujourd’hui.</div>`}</div>
   ${next.length?`<div class="sec"><h2>À venir</h2></div><div class="list">${next.map(a=>`<button class="li" data-ed="${a.id}"><span class="ck" style="border-style:dashed"></span><span class="t">${esc(a.t)}<small>${dLab(a.d)}</small></span><span class="r">${a.h||''}</span></button>`).join('')}</div>`:''}
   <p class="foot">Données privées, stockées sur ce téléphone.</p>`;
-  $('#set').onclick=settings;try{const n=S.name?tasks().length:0;if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}{const m=$('#mvl');if(m)bindMv(m)}{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
-  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr})[b.dataset.a]()});
+  $('#set').onclick=settings;bindCopy($('#app'));try{const n=S.name?tasks().length:0;if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}{const m=$('#mvl');if(m)bindMv(m)}{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
+  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr})[b.dataset.a]()});
   document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const a=S.ag.find(x=>x.id===b.dataset.ck);a.done=!a.done;save();buzz(a.done?[10,40,10]:8);home()});
   document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>agItem(b.dataset.ed));
   if($('#agb'))agRender();
@@ -369,12 +374,14 @@ async function pushEnable(){if(isIOS&&!isApp)return iosInstall();
   try{await pushSync();await fetch(PUSH+'/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:S.pid})});done(['Notifications activées','Tu viens d’en recevoir une'])}
   catch(e){done(['Oups','Réessaie dans un instant'])}}
 async function pushOff(){S.push=0;save();try{await fetch(PUSH+'/unsub',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:S.pid})});const sub=await pushSub();await sub.unsubscribe()}catch(e){}done(['Notifications coupées',''])}
-function iosInstall(){const url=location.origin+location.pathname,inApp=/CriOS|FxiOS|EdgiOS|Instagram|FBAN|FBAV|WhatsApp|Snapchat|TikTok|musical_ly|Line\//i.test(navigator.userAgent);
-  const st=(n,t,d)=>`<div class="isr"><span class="isn">${n}</span><span><b>${t}</b>${d?`<small>${d}</small>`:''}</span></div>`;
-  const x=scr('Notifications',`<div class="ish"><h2>Encore une étape</h2><p>Sur iPhone, les notifications marchent seulement quand l’app est sur ton écran d’accueil.</p></div>
-   <div class="list isl">${(inApp?[['Copie le lien','Avec le bouton en bas'],['Ouvre Safari et colle-le','Dans la barre d’adresse']]:[]).concat([['Touche Partager','En bas de Safari, le carré avec la flèche'],['Touche « Sur l’écran d’accueil »','Fais défiler si tu ne le vois pas'],['Ouvre Libre depuis ton écran d’accueil','Puis touche « Active les rappels »']]).map(([t,d],i)=>st(i+1,t,d)).join('')}</div>
-   <div class="icp"><span>${esc(url.replace(/^https:\/\//,''))}</span><button class="go" id="icp">Copier le lien</button></div>`);
-  const btn=x.querySelector('#icp');btn.onclick=async()=>{buzz();try{await navigator.clipboard.writeText(url)}catch(e){const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(_){}t.remove()}btn.textContent='Lien copié';setTimeout(()=>btn.textContent='Copier le lien',2000)}}
+const APPURL=location.origin+location.pathname,inApp=/CriOS|FxiOS|EdgiOS|Instagram|FBAN|FBAV|WhatsApp|Snapchat|TikTok|musical_ly|Line\//i.test(navigator.userAgent);
+const needInstall=()=>isIOS&&!isApp;
+function instHTML(){const st=(n,t,d)=>`<div class="isr"><span class="isn">${n}</span><span><b>${t}</b>${d?`<small>${d}</small>`:''}</span></div>`;
+  return `<div class="list isl">${[['Copie le lien','<button class="icb" data-copy>Copier le lien</button>'],...(inApp?[['Ouvre Safari et colle-le','Dans la barre d’adresse']]:[['Colle-le dans Safari','Ou touche directement Partager si tu y es déjà']]),['Touche Partager','En bas de Safari, le carré avec la flèche'],['Touche « Sur l’écran d’accueil »','Fais défiler si tu ne le vois pas'],['Ouvre Libre depuis ton écran d’accueil','Et commence là-bas']].map(([t,d],i)=>st(i+1,t,d)).join('')}</div>`}
+function bindCopy(root){root.querySelectorAll('[data-copy]').forEach(btn=>btn.onclick=async e=>{e.stopPropagation();buzz();try{await navigator.clipboard.writeText(APPURL)}catch(_){const t=document.createElement('textarea');t.value=APPURL;document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(__){}t.remove()}btn.textContent='Copié ✓';btn.classList.add('ok2');setTimeout(()=>{btn.textContent='Copier le lien';btn.classList.remove('ok2')},2200)})}
+function instGate(){const x=scr('Avant de commencer',`<div class="ish"><h2>Mets Libre sur ton écran d’accueil</h2><p>Comme une vraie app, avec tes rappels. Ça prend 20 secondes.</p></div>${instHTML()}<button id="isk" style="border:0;background:none;color:var(--muted);font-weight:600;font-size:15px;padding:12px">Continuer sans installer</button>`);bindCopy(x);const bk=x.querySelector('.top .back');if(bk)bk.style.visibility='hidden';x.querySelector('#isk').onclick=()=>{buzz();S.skipInst=1;save();x.remove();document.body.style.overflow='';onboard()}}
+function iosInstall(){const x=scr('Notifications',`<div class="ish"><h2>Encore une étape</h2><p>Sur iPhone, les notifications marchent seulement quand l’app est sur ton écran d’accueil.</p></div>${instHTML()}`);bindCopy(x)}
+function instCard(){if(!needInstall()||S.instHide)return '';return `<div class="instc"><div class="ish"><h2 style="font-size:20px">Mets Libre sur ton écran d’accueil</h2><p>Pour recevoir tes rappels. Dans l’app installée, tu refais juste la présentation (2 min).</p></div>${instHTML()}<button class="later" data-a="ihide">Plus tard</button></div>`}
 function pushCard(){if(pushOn()||S.pushHide)return '';return `<button class="act pc" data-a="push"><span class="ib">${ic('bell')}</span><span><b>Activer les rappels</b><small>Prévenu la veille de chaque prélèvement</small></span></button>`}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pushSoon(500)});
 
@@ -512,7 +519,7 @@ function draw(){const st=FL.steps[FL.i],n=FL.steps.filter(s=>!(s.skip&&s.skip(FL
   let f=$('.fl');if(f)f.remove();f=document.createElement('div');f.className='fl';document.body.style.overflow='hidden';
   const q=typeof st.q==='function'?st.q(FL.v):st.q;
   f.innerHTML=`<div class="ft"><button class="back" aria-label="Retour">${ic('back')}</button><div class="prog"><i style="width:${pos/n*100}%"></i></div><span></span></div><div class="fb"><h1 class="q">${q}</h1>${st.sub?`<p class="qs">${typeof st.sub==='function'?st.sub(FL.v):st.sub}</p>`:''}<div class="body"></div></div><div class="fbtm"></div>`;
-  document.body.appendChild(f);f.querySelector('.back').onclick=()=>{buzz();prevStep()};if(st.k==='n'&&!S.name)f.querySelector('.back').style.visibility='hidden';
+  document.body.appendChild(f);bindCopy(f);f.querySelector('.back').onclick=()=>{buzz();prevStep()};if(st.k==='n'&&!S.name)f.querySelector('.back').style.visibility='hidden';
   const body=f.querySelector('.body'),btm=f.querySelector('.fbtm');
   if(st.type==='amount')amountUI(st,body,btm);
   else if(st.type==='tiles')tilesUI(st,body);
@@ -791,7 +798,7 @@ function onboard(){const N=v=>esc(v.n||'');flow([
   {k:'acc',q:v=>`Et là, tu as combien sur tes comptes, ${N(v)} ?`,sub:'Une ligne par compte, l’app fait le total.',type:'accounts'},
   {k:'vice',q:'Tu fumes ?',sub:'Pour voir ce que ça te coûte, et ce que tu gardes les jours sans.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
   {k:'wk',q:'Ça te coûte combien par semaine, à peu près ?',sub:'À peu près, ça suffit.',type:'amount',skip:v=>!v.vice},
-  {k:'nt',q:v=>`Dernière chose, ${N(v)} : je te préviens quand il faut ?`,sub:'La veille d’un prélèvement, et le soir pour noter ta journée.',type:'tiles',opts:[{i:'bell',l:'Oui, préviens-moi',one:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}]}
+  {k:'nt',q:v=>`Dernière chose, ${N(v)} : je te préviens quand il faut ?`,sub:()=>'La veille d’un prélèvement, et le soir pour noter ta journée.'+(needInstall()?'<br><br>Sur iPhone, les rappels marchent dans l’app installée sur ton écran d’accueil. Tu trouveras comment faire sur l’accueil.':''),type:'tiles',opts:[...(needInstall()?[{i:'check',l:'OK',one:1,v:0}]:[{i:'bell',l:'Oui, préviens-moi',one:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}])]}
  ],v=>{onbApply(v);return['C’est prêt, '+v.n,S.bal?eur(S.bal.v)+' sur tes comptes · '+eur0(upSum())+' à payer'+(inSum()?' · '+eur0(inSum())+' à recevoir':'')+' ce mois':'']})}
 
 function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoir où.','g'],['Les clopes, les petits achats,','g'],['les prélèvements qu’on oublie.','g'],['À partir d’aujourd’hui,',''],['tu sais.','b']];
@@ -802,7 +809,7 @@ function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoi
   ts.push(setTimeout(fin,300+ls.length*1250+200));
   o.querySelector('.sk').onclick=e=>{e.stopPropagation();fin()};
   o.onclick=e=>{if(!e.target.closest('.st'))fin()};
-  o.querySelector('.st').onclick=e=>{e.stopPropagation();buzz();o.style.transition='opacity .5s';o.style.opacity='0';setTimeout(()=>o.remove(),500);onboard()}}
+  o.querySelector('.st').onclick=e=>{e.stopPropagation();buzz();o.style.transition='opacity .5s';o.style.opacity='0';setTimeout(()=>o.remove(),500);needInstall()&&!S.skipInst?instGate():onboard()}}
 function countUp(){const el=$('#balc strong');if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=liveBal();if(L==null)return;const t0=performance.now(),D=900;
   const f=t=>{const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=eur(Math.round(L*e*100)/100);if(k<1)requestAnimationFrame(f);else el.textContent=eur(L)};requestAnimationFrame(f)}
 home();try{tPrev=S.name?tasks().length:0}catch(e){}if(!S.name)intro();else{countUp();setTimeout(showTodo,900)}
