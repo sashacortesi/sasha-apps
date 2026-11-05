@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="4">
+<html lang="fr" data-build="5">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -78,7 +78,7 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .txt{width:100%;border:0;border-bottom:1.5px solid var(--line);border-radius:0;background:none;padding:12px 0;font-size:24px;font-weight:600;color:var(--ink)}
 .txt:focus{outline:none;border-color:var(--ink)}
 .fxl{display:grid;gap:6px;padding-bottom:10px}
-.fxr{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:10px 12px 10px 10px}
+.fxr{display:grid;grid-template-columns:34px 1fr auto 28px;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:10px 12px 10px 10px}
 .fxr .ib{width:34px;height:34px;border-radius:10px;background:var(--card2);display:grid;place-items:center}.fxr .ib svg{width:18px;height:18px}
 .fxr .nm{font-size:16px;font-weight:600;letter-spacing:-.01em;min-width:0}
 .fxr input.fnm{width:100%;border:0;background:none;font:inherit;color:var(--ink);padding:0}.fxr input.fnm:focus{outline:none}
@@ -86,6 +86,9 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .fxr .fv input{width:76px;text-align:right;border:0;border-bottom:1.5px solid var(--line);background:none;font:inherit;color:var(--ink);padding:4px 0}
 .fxr .fv input:focus{outline:none;border-color:var(--ink)}
 .fxr.on .fv{color:var(--ink)}
+.fxx{border:0;background:none;color:var(--muted);padding:4px;display:grid;place-items:center}.fxx svg{width:16px;height:16px}
+.fxe{margin:4px 2px 6px;color:var(--muted);font-size:15px}
+.fxs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding-top:6px}.fxs small{width:100%;color:var(--muted);font-size:13px;font-weight:600;padding:0 2px 2px}
 .fxadd{border:1px dashed var(--line);border-radius:14px;background:none;padding:14px;font-size:15px;font-weight:600;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px}.fxadd svg{width:18px;height:18px}
 .fxt{display:flex;justify-content:space-between;align-items:baseline;padding:0 2px 12px;font-size:15px;color:var(--muted);font-weight:500}.fxt b{font-size:22px;color:var(--ink);letter-spacing:-.02em}
 .fb:has(.fxl){overflow-y:auto}
@@ -247,22 +250,26 @@ function dateUI(st,body){const o=[[today,'sun','Aujourd’hui'],[addD(today,1),'
   const di=body.querySelector('#dd');body.querySelector('label.tile').onclick=e=>{if(e.target!==di){e.preventDefault();try{di.showPicker()}catch(_){di.focus();di.click()}}};
   di.onchange=()=>{if(di.value){FL.v[st.k]=di.value;nextStep()}}}
 
-const FXD=[['Loyer','home'],['Électricité, gaz','zap'],['Téléphone et internet','phone'],['Assurances','bank'],['Transport','train'],['Abonnements','spark'],['Crédit','card']];
-const fxSeed=()=>{const L=Array.isArray(S.fx)&&S.fx.length?S.fx:(S.fixe?[{n:'Charges fixes',v:S.fixe}]:[]);
-  const r=FXD.map(([n,i])=>{const f=L.find(x=>x.n===n);return{n,i,v:f?f.v:null,c:0}});
-  for(const x of L)if(!FXD.some(d=>d[0]===x.n))r.push({n:x.n,i:'dots',v:x.v,c:1});return r};
+const FXS=['Téléphone','Internet','Abonnement','Assurance','Transport','Mutuelle','Sport','Crédit','Loyer'];
+const FXI=[[/t[ée]l[ée]phone|forfait|mobile|portable/i,'phone'],[/internet|box|fibre|wifi/i,'zap'],[/abonn|netflix|spotify|deezer|canal|prime|disney|apple|youtube/i,'spark'],[/assur|mutuelle/i,'bank'],[/transport|navigo|essence|voiture|bus|m[ée]tro|train/i,'train'],[/sport|salle|gym|fitness/i,'gym'],[/cr[ée]dit|pr[eê]t|banque/i,'card'],[/loyer|logement|appart/i,'home'],[/[ée]lec|gaz|eau|edf|engie/i,'zap']];
+const fxIc=n=>{for(const [r,i] of FXI)if(r.test(n||''))return i;return 'dots'};
+const fxSeed=()=>{const L=Array.isArray(S.fx)&&S.fx.length?S.fx:(S.fixe?[{n:'Charges fixes',v:S.fixe}]:[]);return L.map(x=>({n:x.n,v:x.v}))};
 const fxSum=a=>a.reduce((t,x)=>t+(x.v>0?x.v:0),0);
 function fixesUI(st,body,btm){if(!FL.v[st.k])FL.v[st.k]=fxSeed();const R=FL.v[st.k];
-  const tot=()=>{const t=fxSum(R);btm.querySelector('#fxt').innerHTML=`<span>Total par mois</span><b>${eur(t)}</b>`;btm.querySelector('#go').textContent=t?'Suivant':'Je n’en ai pas'};
-  const row=(x,j)=>`<div class="fxr${x.v>0?' on':''}" data-j="${j}"><span class="ib">${ic(x.i)}</span><span class="nm">${x.c?`<input class="fnm" maxlength="40" placeholder="Nom de la charge" value="${esc(x.n||'')}">`:esc(x.n)}</span><label class="fv"><input inputmode="decimal" placeholder="0" value="${x.v>0?String(x.v).replace('.',','):''}" aria-label="${esc(x.n||'Montant')}"> €</label></div>`;
-  const render=()=>{body.innerHTML=`<div class="fxl">${R.map(row).join('')}<button class="fxadd" id="fxadd">${ic('plus')} Ajouter une charge</button></div>`;
-    body.querySelectorAll('.fxr').forEach(el=>{const x=R[+el.dataset.j],vi=el.querySelector('.fv input'),ni=el.querySelector('.fnm');
+  const tot=()=>{const t=fxSum(R);btm.querySelector('#fxt').innerHTML=R.length?`<span>Total par mois</span><b>${eur(t)}</b>`:'';btm.querySelector('#go').textContent=t?'Suivant':'Je n’en ai pas'};
+  const row=(x,j)=>`<div class="fxr${x.v>0?' on':''}" data-j="${j}"><span class="ib">${ic(fxIc(x.n))}</span><span class="nm"><input class="fnm" maxlength="40" placeholder="Nom (ex. Forfait)" value="${esc(x.n||'')}"></span><label class="fv"><input inputmode="decimal" placeholder="0" value="${x.v>0?String(x.v).replace('.',','):''}" aria-label="Montant"> €</label><button class="fxx" aria-label="Supprimer">${ic('x')}</button></div>`;
+  const add=(n,focusAmt)=>{buzz();R.push({n:n||'',v:null});render();const r=body.querySelectorAll('.fxr'),last=r[r.length-1];(focusAmt?last.querySelector('.fv input'):last.querySelector('.fnm')).focus()};
+  const render=()=>{const used=new Set(R.map(x=>pk(x.n||'')));const sug=FXS.filter(n=>!used.has(pk(n)));
+    body.innerHTML=`<div class="fxl">${R.length?R.map(row).join(''):`<p class="fxe">Aucune charge pour l’instant.</p>`}<button class="fxadd" id="fxadd">${ic('plus')} Ajouter une charge</button>${sug.length?`<div class="fxs"><small>Idées</small>${sug.map(n=>`<button class="chip" data-s="${esc(n)}">${esc(n)}</button>`).join('')}</div>`:''}</div>`;
+    body.querySelectorAll('.fxr').forEach(el=>{const j=+el.dataset.j,x=R[j],vi=el.querySelector('.fv input'),ni=el.querySelector('.fnm');
       vi.oninput=()=>{const v=parseFloat(vi.value.replace(/\s/g,'').replace(',','.'));x.v=v>0?Math.round(v*100)/100:null;el.classList.toggle('on',x.v>0);tot()};
-      if(ni)ni.oninput=()=>{x.n=ni.value.trim()}});
-    body.querySelector('#fxadd').onclick=()=>{buzz();R.push({n:'',i:'dots',v:null,c:1});render();const n=body.querySelectorAll('.fnm');n[n.length-1].focus()}};
+      ni.oninput=()=>{x.n=ni.value.trim();el.querySelector('.ib').innerHTML=ic(fxIc(x.n))};
+      el.querySelector('.fxx').onclick=()=>{buzz();R.splice(j,1);render();tot()}});
+    body.querySelector('#fxadd').onclick=()=>add('',false);
+    body.querySelectorAll('[data-s]').forEach(c=>c.onclick=()=>add(c.dataset.s,true))};
   btm.innerHTML=`<div class="fxt" id="fxt"></div><button class="go" id="go">Suivant</button>`;render();tot();
   btm.querySelector('#go').onclick=()=>{buzz();nextStep()}}
-const fxSave=R=>{S.fx=R.filter(x=>x.v>0).map(x=>({n:x.n||'Autre',v:x.v}));S.fixe=fxSum(S.fx)};
+const fxSave=R=>{S.fx=R.filter(x=>x.v>0).map(x=>({n:x.n||'Autre',v:x.v}));S.fixe=Math.round(fxSum(S.fx)*100)/100};
 const fxSub=()=>Array.isArray(S.fx)&&S.fx.length?eur0(S.fixe)+' par mois · '+S.fx.length+' charge'+(S.fx.length>1?'s':''):S.fixe!=null?eur0(S.fixe)+' par mois':'Loyer, téléphone, abonnements…';
 
 /* ---------- Les parcours ---------- */
@@ -444,7 +451,7 @@ function gainsScr(){const G=GAINS.map(([k,n,l])=>[k,n,l.filter(it=>!it[2]||has(i
 
 /* ---------- Réglages ---------- */
 function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
-  {i:'home',l:'Mes charges fixes',s:fxSub(),one:1,go:()=>flow([{k:'fx',q:'Tes charges fixes',sub:'Ce qui tombe chaque mois. Laisse vide ce que tu n’as pas.',type:'fixes'}],v=>{fxSave(v.fx);return['Enregistré',eur0(S.fixe)+' par mois']})},
+  {i:'home',l:'Mes charges fixes',s:fxSub(),one:1,go:()=>flow([{k:'fx',q:'Tes charges fixes',sub:'Ajoute, renomme ou supprime ce que tu paies chaque mois.',type:'fixes'}],v=>{fxSave(v.fx);return['Enregistré',eur0(S.fixe)+' par mois']})},
   {i:'user',l:'Mon prénom',s:S.name||'',one:1,go:()=>flow([{k:'n',q:'Ton prénom ?',type:'text',ph:'Prénom'}],v=>{S.name=v.n;return['Enregistré',v.n]})},
   {i:'smoke',l:'Ma conso',s:S.vice?({c:'Clopes',j:'Joints',cj:'Clopes et joints'}[S.vice]+(S.wk?' · '+eur0(S.wk)+' par semaine avant':'')):'Pas suivie',one:1,go:()=>flowVice()},
   {i:'trash',l:'Tout effacer',s:'Repartir de zéro',one:1,go:()=>flow([{k:'x',q:'Tout effacer ?',sub:'Tes dépenses, dettes et ton agenda seront supprimés.',type:'tiles',opts:[{i:'trash',l:'Oui, tout effacer',one:1,go:()=>{try{localStorage.removeItem(K)}catch(e){}location.reload()}},{i:'undo',l:'Non, garder',one:1,go:()=>closeFl()}]}],()=>['',''])},
@@ -453,7 +460,7 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
 /* ---------- Premier lancement ---------- */
 function onboard(){flow([
   {k:'n',q:'Comment tu t’appelles ?',sub:'Quelques questions et c’est prêt. Tes données restent sur ton téléphone.',type:'text',ph:'Ton prénom'},
-  {k:'fx',q:'Tes charges fixes',sub:'Note chaque charge qui tombe tous les mois. Laisse vide ce que tu n’as pas.',type:'fixes'},
+  {k:'fx',q:'Tes charges fixes',sub:'Ajoute ce que tu paies chaque mois, avec tes propres noms.',type:'fixes'},
   {k:'vice',q:'Tu fumes quoi ?',sub:'L’app t’aide à réduire, sans jugement.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
   {k:'wk',q:'Combien tu dépenses par semaine pour ça ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice}
  ],v=>{S.name=v.n;fxSave(v.fx);S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}return['Bienvenue, '+v.n,'']})}
