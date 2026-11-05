@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="27">
+<html lang="fr" data-build="28">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -200,6 +200,8 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 @keyframes sc{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
 .ok b{font-size:22px;font-weight:700;letter-spacing:-.02em}.ok small{color:var(--muted);font-size:15px;font-weight:500;margin-top:-6px}
 .dtin{position:absolute;opacity:0;width:1px;height:1px}
+.tlink{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;margin:4px auto 0;padding:12px 16px;border:0;background:none;color:var(--muted);font:inherit;font-size:14px;font-weight:600;letter-spacing:-.01em}.tlink svg{width:15px;height:15px;opacity:.8}
+.tlink.set{color:var(--ink)}.tlink .tv{display:none;margin-left:6px;padding:7px 14px;border-radius:16px;background:var(--ink);color:var(--bg);font-size:14px;font-weight:700}.tlink.set .tv{display:inline-block;animation:pop .3s cubic-bezier(.3,1.6,.5,1)}
 .sf{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
 .stk{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;width:100%;border:0;background:none;padding:16px 16px 14px;text-align:left;gap:10px;position:relative}
 .stk::after{content:"";position:absolute;right:18px;top:24px;width:8px;height:8px;border-right:1.6px solid var(--muted);border-top:1.6px solid var(--muted);transform:rotate(45deg)}
@@ -653,7 +655,11 @@ function amountUI(st,body,btm){let s=FL.v[st.k]!=null?String(FL.v[st.k]).replace
   btm.querySelector('#go').onclick=()=>{const v=parseFloat(s.replace(',','.'))||0;FL.v[st.k]=st.neg&&ng?-v:v;buzz();nextStep()}}
 function tilesUI(st,body){const opts=typeof st.opts==='function'?st.opts(FL.v):st.opts;
   body.innerHTML=`<div class="tiles">${opts.map((o,i)=>`<button class="tile${o.one?' one':''}${o.i?'':' noi'}" data-i="${i}">${o.i?`<span class="ib">${ic(o.i)}</span>`:''}<span><b>${o.dot?`<span class="dot" style="background:${o.dot}"></span>`:''}${esc(o.l)}</b>${o.s?`<br><small>${esc(o.s)}</small>`:''}</span></button>`).join('')}</div>`;
-  body.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];buzz();if(o.go){o.go(FL.v);return}FL.v[st.k]=o.v;nextStep()})}
+  body.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];buzz();if(o.go){o.go(FL.v);return}FL.v[st.k]=o.v;nextStep()});
+  if(st.time){const w=document.createElement('div');w.style.textAlign='center';w.innerHTML=`<label class="tlink">${ic('later')}<span class="tl">Heure précise</span><input type="time" class="dtin" id="tt" step="300"><button type="button" class="tv">Valider</button></label>`;body.appendChild(w);
+   const lb=w.querySelector('.tlink'),ti=w.querySelector('#tt'),tl=w.querySelector('.tl');
+   lb.onclick=e=>{if(e.target.closest('.tv')){e.preventDefault();if(ti.value){buzz();FL.v[st.k]=ti.value;nextStep()}return}if(e.target!==ti){e.preventDefault();try{ti.showPicker()}catch(_){ti.focus();ti.click()}}};
+   const upd=()=>{if(ti.value){tl.textContent='À '+hl(ti.value);lb.classList.add('set')}};ti.oninput=upd;ti.onchange=upd}}
 function textUI(st,body,btm){body.innerHTML=`<input class="txt" id="tx" placeholder="${esc(st.ph||'')}" maxlength="60" value="${esc(FL.v[st.k]||'')}" autocomplete="off">`;
   btm.innerHTML=`<button class="go" id="go">Suivant</button>`;const i=body.querySelector('#tx'),g=btm.querySelector('#go');const chk=()=>g.disabled=!i.value.trim();chk();i.oninput=chk;
   setTimeout(()=>i.focus(),250);const fin=()=>{if(!i.value.trim())return;FL.v[st.k]=i.value.trim();nextStep()};g.onclick=fin;i.onkeydown=e=>{if(e.key==='Enter')fin()}}
@@ -728,7 +734,7 @@ function flowAg(pre){const DS=S.debts.filter(x=>x.w==='me').slice(0,2).map(x=>['
   {k:'t',q:'Tu prévois quoi ?',type:'tiles',opts:[...DS.map(([i,l])=>({v:l,i,l})),...SUG.slice(0,DS.length?6:8).map(([i,l])=>({v:l,i,l})),{i:'pen',l:'Autre chose',one:1,go:v=>{v.t='';v.free=1;nextStep()}}]},
   {k:'t',q:'Écris-le',type:'text',ph:'Ex. Rendez-vous banque',skip:v=>!v.free},
   {k:'d',q:'Quel jour ?',type:'date',nodate:1,skip:()=>!!pre},
-  {k:'h',q:'À quel moment ?',type:'tiles',skip:v=>!(v.d||pre),opts:[{v:'09:00',l:'Matin',s:'9 h'},{v:'12:30',l:'Midi',s:'12 h 30'},{v:'15:00',l:'Après-midi',s:'15 h'},{v:'19:00',l:'Soir',s:'19 h'},{v:'',l:'Sans heure',one:1}]}
+  {k:'h',q:'À quel moment ?',type:'tiles',time:1,skip:v=>!(v.d||pre),opts:[{v:'09:00',l:'Matin',s:'9 h'},{v:'12:30',l:'Midi',s:'12 h 30'},{v:'15:00',l:'Après-midi',s:'15 h'},{v:'19:00',l:'Soir',s:'19 h'},{v:'',l:'Sans heure',one:1}]}
  ,
   {k:'rem',q:'Je te le rappelle ?',sub:'Une notification au bon moment. Seulement si tu veux.',type:'tiles',skip:v=>!(v.d||pre),opts:[{v:1,i:'bell',l:'Oui, rappelle-moi',one:1},{v:0,i:'ban',l:'Non, pas besoin',one:1}]}
  ],v=>{const d=pre||v.d||'';S.ag.push({id:uid(),t:v.t,d,h:d?v.h:'',rem:!!v.rem,done:false});return[d?'C’est prévu':'Ajouté à ta liste',d?`${v.t} · ${dLab(d)}${v.h?' · '+hl(v.h):''}`:v.t]})}
