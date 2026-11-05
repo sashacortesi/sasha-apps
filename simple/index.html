@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="10">
+<html lang="fr" data-build="11">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -320,10 +320,10 @@ function todoSec(){const T=tasks();if(!T.length)return '';return `<div class="se
 function bindTodo(root,T,close){root.querySelectorAll('[data-td]').forEach(el=>el.onclick=()=>{buzz();if(close)close();T[+el.dataset.td].go()})}
 let tdLast=0;
 function showTodo(){if(FL||$('.scr')||$('.shb'))return;const T=tasks();if(!T.length)return;tdLast=Date.now();
-  const o=document.createElement('div');o.className='shb';o.innerHTML=`<div class="sh"><h3>${T.length>1?T.length+' choses à faire':'1 chose à faire'}</h3><p>Pour que ton solde et tes compteurs restent justes.</p><div class="list">${T.map(tdRow).join('')}</div><button class="later">Plus tard</button></div>`;
+  const o=document.createElement('div');o.className='shb';o.innerHTML=`<div class="sh"><h3>${T.length>1?T.length+' choses à faire':'1 chose à faire'}</h3><div class="list">${T.map(tdRow).join('')}</div><button class="later">Plus tard</button></div>`;
   document.body.appendChild(o);const close=()=>o.remove();o.querySelector('.later').onclick=close;o.onclick=e=>{if(e.target===o)close()};bindTodo(o,T,close)}
 function flowConso(dk){const lab=dk===today?'aujourd’hui':'hier';flow([
-  {k:'w',q:`Tu as fumé ${lab} ?`,sub:'Sois honnête, personne d’autre ne le voit.',type:'tiles',opts:[{v:'0',i:'check',l:'Non, rien',one:1},{v:'1',i:'smoke',l:'Oui',one:1}]},
+  {k:'w',q:`Tu as fumé ${lab} ?`,type:'tiles',opts:[{v:'0',i:'check',l:'Non, rien',one:1},{v:'1',i:'smoke',l:'Oui',one:1}]},
   {k:'c',q:'Combien de clopes ?',type:'tiles',skip:v=>v.w!=='1'||!has('c'),opts:[{v:1,l:'1'},{v:3,l:'2 à 5'},{v:7,l:'5 à 10'},{v:12,l:'Plus de 10'},{v:0,l:'Aucune',one:1}]},
   {k:'j',q:'Combien de joints ?',type:'tiles',skip:v=>v.w!=='1'||!has('j'),opts:[{v:1,l:'1'},{v:2,l:'2'},{v:3,l:'3'},{v:5,l:'4 ou plus'},{v:0,l:'Aucun',one:1}]}
  ],v=>{const o={};keys().forEach(k=>o[k]=v.w==='1'?+(v[k]||0):0);S.log[dk]=o;return keys().every(k=>!o[k])?['Noté',best()+' jour'+(best()>1?'s':'')+' sans fumer']:['Noté','Ce n’est pas grave. On repart.']})}
@@ -529,7 +529,7 @@ function fumeScr(){const lg=S.log[today],zero=lg&&keys().every(k=>lg[k]===0),rs=
   x.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{buzz();leave(()=>flowFume(b.dataset.buy))})}
 function logZero(){S.log[today]={};keys().forEach(k=>S.log[today][k]=0);done(['Noté',best()+' jour'+(best()>1?'s':'')+' sans fumer'])}
 function flowVice(){flow([
-  {k:'vice',q:'Tu fumes quoi ?',sub:'L’app t’aide à réduire, sans jugement.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
+  {k:'vice',q:'Tu fumes quoi ?',sub:'Pour voir ce que ça te coûte, et ce que tu gardes les jours sans.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
   {k:'wk',q:'Combien tu dépenses par semaine pour ça ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice}
  ],v=>{S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=S.vstart||today;return['C’est en place','Chaque jour sans fumer compte']}return['Noté','']})}
 function flowSmoked(){const both=has('c')&&has('j');flow([
@@ -600,13 +600,13 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
 /* ---------- Premier lancement ---------- */
 function onbApply(v){S.name=v.n;fxSave(v.fx);accSave(v.acc);S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}}
 function onboard(){const N=v=>esc(v.n||'');flow([
-  {k:'hi',q:'Salut. On met de l’ordre ensemble ?',sub:'5 petites questions, 2 minutes. Pas de jugement, pas de bonne ou de mauvaise réponse. Et tout reste sur ton téléphone, personne d’autre ne le voit.',type:'tiles',opts:[{v:1,i:'next',l:'On y va',one:1}]},
+  {k:'hi',q:'Salut. On fait le point ?',sub:'5 questions, 2 minutes. Ensuite l’app s’occupe du reste.',type:'tiles',opts:[{v:1,i:'next',l:'On y va',one:1}]},
   {k:'n',q:'Comment tu t’appelles ?',sub:'Juste ton prénom.',type:'text',ph:'Ton prénom'},
-  {k:'fx',q:v=>`Enchanté ${N(v)}. Qu’est-ce qui sort de ton compte chaque mois ?`,sub:'Forfait, abonnements, assurance… Mets seulement ce que tu as vraiment, avec tes mots. Le jour du prélèvement, si tu le connais.',type:'fixes'},
-  {k:'acc',q:v=>`Et là, tu as combien sur tes comptes, ${N(v)} ?`,sub:'Une ligne par compte. Même si c’est dans le rouge, ce n’est qu’un point de départ. L’app fait le total pour toi.',type:'accounts'},
-  {k:'vice',q:'Tu fumes ?',sub:'Personne ne te demande d’arrêter. L’app te montre juste ce que ça coûte, et ce que tu gagnes les jours où tu lèves le pied.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
-  {k:'wk',q:'Ça te coûte combien par semaine, à peu près ?',sub:'Pas besoin d’être précis. Ça sert à calculer ce que tu mets de côté.',type:'amount',skip:v=>!v.vice},
-  {k:'nt',q:v=>`Dernière chose, ${N(v)} : je te préviens quand il faut ?`,sub:'La veille d’un prélèvement, et le soir pour noter ta journée en 10 secondes. Rien de plus, et tu coupes quand tu veux.',type:'tiles',opts:[{i:'bell',l:'Oui, préviens-moi',one:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}]}
+  {k:'fx',q:v=>`Enchanté ${N(v)}. Qu’est-ce qui sort de ton compte chaque mois ?`,sub:'Forfait, abonnements, assurance… Seulement ce que tu as. Le jour du prélèvement, si tu le connais.',type:'fixes'},
+  {k:'acc',q:v=>`Et là, tu as combien sur tes comptes, ${N(v)} ?`,sub:'Une ligne par compte, l’app fait le total.',type:'accounts'},
+  {k:'vice',q:'Tu fumes ?',sub:'Pour voir ce que ça te coûte, et ce que tu gardes les jours sans.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
+  {k:'wk',q:'Ça te coûte combien par semaine, à peu près ?',sub:'À peu près, ça suffit.',type:'amount',skip:v=>!v.vice},
+  {k:'nt',q:v=>`Dernière chose, ${N(v)} : je te préviens quand il faut ?`,sub:'La veille d’un prélèvement, et le soir pour noter ta journée.',type:'tiles',opts:[{i:'bell',l:'Oui, préviens-moi',one:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}]}
  ],v=>{onbApply(v);return['C’est prêt, '+v.n,S.bal?eur(S.bal.v)+' sur tes comptes · '+eur0(upSum())+' à payer ce mois':'']})}
 
 home();if(!S.name)onboard();else setTimeout(showTodo,700);
