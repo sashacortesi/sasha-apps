@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="30">
+<html lang="fr" data-build="31">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -1032,10 +1032,13 @@ function countUp(){const el=$('#balc strong');if(!el||matchMedia('(prefers-reduc
 home();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();setTimeout(showTodo,900)}
 </script>
 <script>
-(()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;
-const chk=()=>fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=t.match(/data-build="([^"]+)"/);
-  if(m&&m[1]!==mark){let k='upd:'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}{const q=new URLSearchParams(location.search);q.set('v',m[1]);location.replace(location.pathname+'?'+q+location.hash)}}}).catch(()=>{});
-chk();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')chk()});})();
+(()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;let busy=0;
+const chk=()=>{if(busy||!navigator.onLine)return;busy=1;fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{busy=0;const m=t.match(/data-build="([^"]+)"/);
+  if(!m||+m[1]<=+mark)return;const k='upd:'+m[1];try{const l=+sessionStorage.getItem(k)||0;if(Date.now()-l<20e3)return;sessionStorage.setItem(k,Date.now())}catch(e){}
+  location.replace(location.pathname+'?v='+m[1]+'&t='+Date.now()+location.hash)}).catch(()=>{busy=0})};
+chk();setInterval(()=>{if(document.visibilityState==='visible')chk()},45e3);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')chk()});
+addEventListener('pageshow',chk);addEventListener('focus',chk);addEventListener('online',chk);})();
 </script>
 </body>
 </html>
