@@ -302,7 +302,7 @@ function ctxHTML(){CTX=ctx();if(!CTX)return '';return `<div class="ctx"><div cla
 function bindCtx(){document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{buzz();CTX.a[+b.dataset.c].go()})}
 
 /* ---------- Saisies ---------- */
-const CATS=[['courses','cart','Courses'],['resto','resto','Manger dehors'],['sorties','glass','Sorties'],['transport','train','Transport'],['fume','smoke','Tabac / fumette'],['shopping','bag','Shopping'],['autre','dots','Autre']];
+const CATS=[['courses','cart','Courses'],['resto','resto','Manger dehors'],['sorties','glass','Sorties'],['transport','train','Transport'],['fume','smoke','Dépense nocive'],['shopping','bag','Shopping'],['autre','dots','Autre']];
 const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));CN.dette=['dette','users','Remboursement'];
 function flowDep(){track('dep');flow([
   {k:'v',q:'Combien ?',type:'amount'},

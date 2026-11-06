@@ -309,7 +309,7 @@ h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:12px 0 0}
       <div class="dh"><button type="button" class="nav" id="dPrev" aria-label="Jour précédent">‹</button><b id="dLabel">Aujourd'hui</b><button type="button" class="nav" id="dNext" aria-label="Jour suivant">›</button></div>
       <span class="sl">J’ai dépensé</span>
       <div class="cats" id="cats"></div>
-      <div class="fold" id="fold" hidden><div class="ah"><b>Fumette</b><button type="button" class="x" id="fX" aria-label="Fermer le dossier">×</button></div>
+      <div class="fold" id="fold" hidden><div class="ah"><b>Dépense nocive</b><button type="button" class="x" id="fX" aria-label="Fermer le dossier">×</button></div>
       <div class="step"><span>Joints<small id="jHint"></small></span><span class="ctl"><button type="button" data-s="j" data-d="-1" aria-label="Moins de joints">−</button><output id="oj">–</output><button type="button" data-s="j" data-d="1" aria-label="Plus de joints">+</button></span></div>
       <div class="step"><span>Clopes<small id="cHint"></small></span><span class="ctl"><button type="button" data-s="c" data-d="-1" aria-label="Moins de clopes">−</button><output id="oc">–</output><button type="button" data-s="c" data-d="1" aria-label="Plus de clopes">+</button></span></div>
         <div class="cats c3" id="fcats"></div>
@@ -474,7 +474,7 @@ const CATS=[
  ['autre','Autre','#6E7380','<circle cx="6" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/>',[5,10,20,50]]];
 const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));
 const FOLD=['shit','beuh','clopes'];
-const FOLDTILE=['fume','Fumette','#8A5CF6','<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'];
+const FOLDTILE=['fume','Dépense nocive','#8A5CF6','<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'];
 const VICE=['shit','beuh','clopes','malb'];
 const MEALS=[['pdj','Petit-déj'],['dej','Déjeuner'],['din','Dîner'],['snk','Grignotage']];
 const MOPT=[['maison','Maison'],['dehors','Resto'],['ff','Fast-food'],['rien','Rien']];

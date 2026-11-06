@@ -493,8 +493,8 @@ function addMenu(){flow([{k:'x',q:'Ajouter',type:'tiles',opts:[
   ...(!(S.imp&&S.imp.on)?[{i:'safe',l:'Une réserve imprévus',s:'Pour un pépin, en option',one:1,go:()=>{S.imp={on:1,v:(S.imp&&S.imp.v)||0};flowImp()}}]:[])]}],()=>null)}
 
 /* ---------- Saisies ---------- */
-const CATS=[['courses','cart','Courses'],['resto','resto','Manger dehors'],['sorties','glass','Sorties'],['transport','train','Transport'],['fume','smoke','Tabac / fumette'],['shopping','bag','Shopping'],['autre','dots','Autre']];
-const SHORT={courses:'Courses',resto:'Resto',sorties:'Sorties',transport:'Transport',fume:'Tabac',shopping:'Shopping',autre:'Autre'};
+const CATS=[['courses','cart','Courses'],['resto','resto','Manger dehors'],['sorties','glass','Sorties'],['transport','train','Transport'],['fume','smoke','Dépense nocive'],['shopping','bag','Shopping'],['autre','dots','Autre']];
+const SHORT={courses:'Courses',resto:'Resto',sorties:'Sorties',transport:'Transport',fume:'Nocif',shopping:'Shopping',autre:'Autre'};
 const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));CN.dette=['dette','users','Remboursement'];
 function flowDep(){track('dep');flow([
   {k:'v',q:'Combien ?',type:'amount'},
