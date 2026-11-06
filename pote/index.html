@@ -382,6 +382,22 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .duo button{display:flex;align-items:center;justify-content:center;gap:8px;height:60px;border:0;border-radius:30px;font:inherit;font-size:16px;font-weight:700;background:color-mix(in srgb,var(--c) 14%,var(--card));color:var(--c)}
 .duo .t-in{--c:var(--c-in)}.duo svg{width:18px;height:18px}.duo button:active{transform:scale(.97)}
 .mlink{justify-self:center;display:flex;align-items:center;gap:4px;border:0;background:none;font:inherit;font-size:14px;font-weight:600;color:var(--muted);padding:10px}.mlink svg{width:14px;height:14px}
+
+.me{display:grid;justify-items:center;text-align:center;padding:26px 0 8px;gap:4px}
+.ring{position:relative;width:148px;height:148px;border:0;background:none;padding:0;display:grid;place-items:center;margin-bottom:10px}
+.ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}.ring .tr{fill:none;stroke:var(--card2);stroke-width:7}
+.ring .pg2{fill:none;stroke:url(#lg);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1)}
+.av2{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;font-size:46px;font-weight:800;color:#fff;letter-spacing:-.03em;background:conic-gradient(from 210deg,#4F7CFF,#C084FC,#FF8A3D,#22C55E,#4F7CFF);box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
+.lvb{position:absolute;right:8px;bottom:8px;min-width:34px;height:34px;padding:0 8px;border-radius:17px;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-weight:800;font-size:15px;box-shadow:0 0 0 4px var(--bg)}
+.nm{font-size:32px;font-weight:800;letter-spacing:-.035em;line-height:1.1}.lvl{font-size:15px;font-weight:600;background:linear-gradient(90deg,var(--c-ag),#C084FC);-webkit-background-clip:text;background-clip:text;color:transparent}
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}.chip{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted)}
+.chip.f{color:#F5A524;border-color:color-mix(in srgb,#F5A524 35%,var(--line));background:color-mix(in srgb,#F5A524 10%,var(--card))}.chip svg{width:14px;height:14px}
+.duo2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.duo2 button{display:flex;align-items:center;justify-content:center;gap:8px;height:54px;border-radius:27px;border:0;font:inherit;font-size:15px;font-weight:700;background:color-mix(in srgb,#14B8A6 14%,var(--card));color:#14B8A6}
+.duo2 button+button{background:color-mix(in srgb,#C084FC 14%,var(--card));color:#C084FC}.duo2 svg{width:18px;height:18px}
+.grid6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 10px;padding:10px 0}
+.grid6 button{display:grid;justify-items:center;gap:8px;border:0;background:none;font:inherit;color:var(--ink)}
+.grid6 span{position:relative;width:62px;height:62px;border-radius:22px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 15%,var(--card));color:var(--c);transition:transform .15s}.grid6 button:active span{transform:scale(.92)}
+.grid6 svg{width:24px;height:24px}.grid6 small{font-size:13px;font-weight:600}.grid6 .dot{position:absolute;top:4px;right:4px;width:10px;height:10px;border-radius:5px;background:var(--c-out);box-shadow:0 0 0 2px var(--bg)}
 </style>
 </head>
 <body>
@@ -487,22 +503,15 @@ function catsCard(){const m={};let t=0;for(const x of S.e.filter(x=>x.d.startsWi
   const L=Object.entries(m).sort((a,b)=>b[1]-a[1]);
   return `<div class="cats"><div class="hd"><b>Où part ton argent</b><span>${MNL[+YM.slice(5,7)-1]}</span></div><div class="bar">${L.map(([c,v])=>`<i style="width:${v/t*100}%;background:${CCOL[c]||'#94A3B8'}"></i>`).join('')}</div>${L.slice(0,5).map(([c,v])=>`<div class="cr"><span class="dot" style="background:${CCOL[c]||'#94A3B8'}"></span><span>${esc(CN[c]?CN[c][2]:'Autre')}<small>${Math.round(v/t*100)} %</small></span><b>${eur(v)}</b></div>`).join('')}${m.conso?`<div class="dnote" style="text-align:left;padding:0">Dépense nocive : ${eur0(m.conso)} ce mois, soit ${eur0(m.conso/Math.max(1,+today.slice(8))*30)} sur un mois entier à ce rythme.</div>`:''}</div>`}
 async function shareApp(){const u=location.origin+location.pathname,t='Base : l’app qui m’aide à tenir mon argent et mes journées. Gratuite, sans compte.';try{if(navigator.share){await navigator.share({title:'Base',text:t,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t+' '+u);done(['Lien copié','Colle-le à qui tu veux'])}catch(e){done(['Le lien',u])}}
-function moiView(B){const st=typeof okStreak==='function'?okStreak():0,since=S.start?pd(S.start):new Date();
-  const row=(a,c,i,t,sub,r)=>`<button class="li ${c}" ${a} style="width:100%;text-align:left"><span class="ck ico">${ic(i)}</span><span class="t">${t}${sub?`<small>${sub}</small>`:''}</span><span class="r">${r||ic('next')}</span></button>`;
-  return `<div class="prof"><div class="ava">${esc((S.name||'?').trim().charAt(0).toUpperCase())}</div><div><b>${esc(S.name||'Moi')}</b><small>Sur Base depuis le ${since.getDate()} ${MN[since.getMonth()]} ${since.getFullYear()}${st?' · '+st+' jour'+(st>1?'s':'')+' d’affilée':''}</small></div></div>
-  ${progCard()}
-  ${S.name&&S.vice!==''&&S.vice?`<div class="quick one"><button class="qb qsos" data-a="sos"><span class="ib">${ic('wind')}</span>Envie de fumer</button></div>`:''}
-  ${smokeCard()}
-  <div class="sec"><h2>Mon compte</h2></div>
-  <div class="list setl">
-   ${row('data-m="set"','t-moi','gear','Réglages','Prénom, charges fixes, revenus, solde',B.set?`<i class="bdg" style="position:static;box-shadow:none">${B.set}</i>`:'')}
-   ${row('data-m="push"','t-ag','bell','Notifications',pushOn()?'Activées':'Désactivées')}
-   ${row('data-m="bk"','t-cof','folder','Sauvegarder mes données',S.bk?'Dernière le '+pd(S.bk).getDate()+' '+MN[pd(S.bk).getMonth()]:'Au cas où tu changes de téléphone')}
-   ${row('data-m="ics"','t-ag','cal','Calendrier du téléphone','Y mettre tes rappels et prélèvements')}
-   ${row('data-m="help"','t-hist','help','Aide','Toutes les réponses')}
-   ${row('data-m="share"','t-in','share','Partager Base','Gratuit, sans compte, en 1 lien')}
-  </div>
-  <p class="foot">Tes données restent sur ce téléphone. Personne d’autre ne les voit.</p>`}
+function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().charAt(0).toUpperCase()),R=56,C=+(2*Math.PI*R).toFixed(1),nx=LV[V.n]?LV[V.n][1]:'';
+  const T=[['set','gear','Réglages','var(--c-moi)'],['push','bell',pushOn()?'Rappels activés':'Rappels','var(--c-ag)'],['bk','folder','Sauvegarde','var(--c-cof)'],['ics','cal','Calendrier','#4F7CFF'],['help','help','Aide','#94A3B8'],['share','share','Partager','var(--c-in)']];
+  return `<div class="me"><button class="ring" data-a="prog" aria-label="Ma progression"><svg viewBox="0 0 128 128"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4F7CFF"/><stop offset="1" stop-color="#C084FC"/></linearGradient></defs><circle cx="64" cy="64" r="${R}" class="tr"/><circle cx="64" cy="64" r="${R}" class="pg2" style="stroke-dasharray:${C};stroke-dashoffset:${(C*(1-Math.max(.04,V.p))).toFixed(1)}"/></svg><span class="av2">${ini}</span><span class="lvb">${V.n}</span></button>
+  <b class="nm">${esc(S.name||'Moi')}</b><span class="lvl">${V.name}</span>
+  <div class="chips">${st?`<span class="chip f">${ic('spark')}${st} j d’affilée</span>`:''}${V.left?`<span class="chip">Encore ${V.left} j pour « ${nx} »</span>`:''}</div></div>
+  ${S.name&&S.vice?`<div class="duo2"><button data-a="sos">${ic('wind')}Envie de fumer</button><button data-a="fume">${ic('leaf')}Dépense nocive</button></div>`:''}
+  <div class="grid6">${T.map(([k,i,l,c])=>`<button data-m="${k}" style="--c:${c}"><span>${ic(i)}${k==='set'&&B.set?'<i class="dot"></i>':''}</span><small>${l}</small></button>`).join('')}</div>
+  ${S.name&&!S.vice&&S.vice!==''?`<button class="mlink" data-a="vset">Suivre une dépense nocive ${ic('next')}</button>`:''}
+  <p class="foot" style="text-align:center">Tes données restent sur ce téléphone.</p>`}
 function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x.v||0),0)*100)/100;try{snapBal()}catch(e){}const r=reste(),now=new Date(),left=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1;
   const its=S.ag.filter(a=>a.d===today).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'));
   const next=S.ag.filter(a=>a.d>today).sort((a,b)=>(a.d+(a.h||'99')).localeCompare(b.d+(b.h||'99'))).slice(0,3);
@@ -510,7 +519,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   const dn=its.filter(a=>a.done).length;
   const B=badges();
   const TB=`<nav class="tabbar" role="tablist"><div class="in">${[['argent','t-out','wallet','Dépenses',(B.dep||0)+(B.inc||0)+(B.bal||0)+(B.debts||0)+(B.cof||0)],['agenda','t-ag','cal','Agenda',B.ag||0],['fab'],['moi','t-moi','user','Moi',(B.set||0)]].map(([k,c,i,l,n])=>k==='fab'?`<button class="fab" id="fab" aria-label="Ajouter">${ic('plus')}</button>`:`<button class="tb ${c}" role="tab" data-tab="${k}" aria-selected="${TAB===k}">${ic(i)}<span>${l}</span></button>`).join('')}</div></nav>`;
-  if(TAB!=='argent'){$('#app').innerHTML=(TAB==='agenda'?`<div class="ttl ttl2"><span>Agenda</span><button class="ib2" id="agm" aria-label="${agV==='month'?'Retour au jour':'Voir le mois'}">${agV==='month'?ic('x'):ic('cal')}</button></div><div id="agb" style="display:grid;gap:16px"></div>`:`<div class="ttl">Moi</div>`+moiView(B))+TB;
+  if(TAB!=='argent'){$('#app').innerHTML=(TAB==='agenda'?`<div class="ttl ttl2"><span>Agenda</span><button class="ib2" id="agm" aria-label="${agV==='month'?'Retour au jour':'Voir le mois'}">${agV==='month'?ic('x'):ic('cal')}</button></div><div id="agb" style="display:grid;gap:16px"></div>`:moiView(B))+TB;
     homeBind();if(TAB==='agenda'){$('#agm').onclick=()=>{buzz(5);agV=agV==='month'?'day':'month';home()}}
     document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{buzz();({ics:icsExport,set:settings,push:()=>pushOn()?pushOff():pushEnable(),bk:backup,help:()=>helpScr(),share:shareApp})[b.dataset.m]()});
     return}
