@@ -376,7 +376,8 @@ const dLab=k=>k===today?'Aujourd’hui':k===addD(today,1)?'Demain':JN[pd(k).getD
 
 let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 /* Reprend ce qui a été noté dans Base 3 (même lien) : rien n'est perdu */
-try{const N=JSON.parse(localStorage.getItem('base3:v1'));if(S&&S.name&&N&&!S.m3){const has=(L,id)=>(L||[]).some(x=>x.id===id);S.e=S.e||[];S.inc=S.inc||[];S.ag=S.ag||[];
+try{const N=JSON.parse(localStorage.getItem('base3:v1'));if(N&&N.name&&!(S&&S.name)){const td=iso(new Date());S={name:N.name,start:N.start||td,bal:N.bal||{v:0,d:td,ts:Date.now()},e:[],inc:[],ag:[],fx:(N.fx||[]).map(x=>({id:x.id,n:x.n,v:x.v,d:x.d})),debts:(N.debts||[]).map(x=>({...x})),ppl:N.ppl||[],vice:'',log:{},crav:[],mine:[],rin:[],...(N.push&&N.pid?{push:1,pid:N.pid}:{})}}
+  if(S&&S.name&&N&&!S.m3){const has=(L,id)=>(L||[]).some(x=>x.id===id);S.e=S.e||[];S.inc=S.inc||[];S.ag=S.ag||[];
   for(const x of N.e||[])if(!has(S.e,x.id))S.e.push({id:x.id,d:x.d,v:x.v,c:x.c==='fume'?'conso':x.c,...(x.p?{p:x.p}:{}),...(x.nb?{nb:1}:{})});
   for(const x of N.inc||[])if(!has(S.inc,x.id))S.inc.push({id:x.id,d:x.d,v:x.v,n:x.n,...(x.nb?{nb:1}:{})});
   for(const a of N.ag||[])if(!has(S.ag,a.id))S.ag.push({id:a.id,t:a.t,d:a.d,h:a.h||'',rem:!!a.h,done:!!a.done});
