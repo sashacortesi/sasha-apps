@@ -369,6 +369,19 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .road b{position:absolute;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:var(--bg);border:3px solid var(--c-in);box-shadow:0 0 0 4px color-mix(in srgb,var(--c-in) 20%,transparent)}
 .rl{display:flex;justify-content:space-between;width:100%;font-size:12px;color:var(--muted);font-weight:600}
 .sbal{margin-top:12px;border:1px solid var(--line);background:none;border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;color:var(--muted)}.sbal b{color:var(--ink)}
+
+.h2{display:grid;justify-items:center;text-align:center;gap:6px;padding:44px 8px 28px}
+.h2 small{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.h2 strong{font-size:76px;font-weight:800;letter-spacing:-.05em;line-height:1}.h2 strong.hv{font-size:44px;color:var(--c-in);letter-spacing:-.035em}
+.h2 span{font-size:16px;color:var(--muted)}
+.h2 .pb{width:62%;height:6px;border-radius:3px;background:var(--card2);margin-top:12px;overflow:hidden}.h2 .pb i{display:block;height:100%;background:var(--c-in);border-radius:3px}
+.nud{display:flex;align-items:center;gap:12px;padding:14px 14px 14px 18px;border-radius:20px;background:var(--card);border:1px solid var(--line);animation:bin .45s both}
+.nud>span{flex:1;min-width:0}.nud b{display:block;font-size:16px;font-weight:700}.nud small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.nud>div{display:flex;gap:8px}.nud button{width:44px;height:44px;border-radius:22px;border:0;display:grid;place-items:center;background:var(--card2);color:var(--muted)}.nud button.p{background:var(--c-ag);color:#fff}.nud svg{width:18px;height:18px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.duo button{display:flex;align-items:center;justify-content:center;gap:8px;height:60px;border:0;border-radius:30px;font:inherit;font-size:16px;font-weight:700;background:color-mix(in srgb,var(--c) 14%,var(--card));color:var(--c)}
+.duo .t-in{--c:var(--c-in)}.duo svg{width:18px;height:18px}.duo button:active{transform:scale(.97)}
+.mlink{justify-self:center;display:flex;align-items:center;gap:4px;border:0;background:none;font:inherit;font-size:14px;font-weight:600;color:var(--muted);padding:10px}.mlink svg{width:14px;height:14px}
 </style>
 </head>
 <body>
@@ -496,28 +509,25 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   const me=S.debts.filter(x=>x.w==='me').reduce((a,x)=>a+x.v,0),th=S.debts.filter(x=>x.w==='them').reduce((a,x)=>a+x.v,0);
   const dn=its.filter(a=>a.done).length;
   const B=badges();
-  const TB=`<nav class="tabbar" role="tablist"><div class="in">${[['argent','t-out','wallet','Dépenses',(B.dep||0)+(B.inc||0)+(B.bal||0)+(B.debts||0)+(B.cof||0)],['agenda','t-ag','cal','Agenda',B.ag||0],['fab'],['moi','t-moi','user','Moi',(B.set||0)]].map(([k,c,i,l,n])=>k==='fab'?`<button class="fab" id="fab" aria-label="Ajouter">${ic('plus')}</button>`:`<button class="tb ${c}" role="tab" data-tab="${k}" aria-selected="${TAB===k}">${n&&TAB!==k?`<i class="bdg">${n}</i>`:''}${ic(i)}<span>${l}</span></button>`).join('')}</div></nav>`;
+  const TB=`<nav class="tabbar" role="tablist"><div class="in">${[['argent','t-out','wallet','Dépenses',(B.dep||0)+(B.inc||0)+(B.bal||0)+(B.debts||0)+(B.cof||0)],['agenda','t-ag','cal','Agenda',B.ag||0],['fab'],['moi','t-moi','user','Moi',(B.set||0)]].map(([k,c,i,l,n])=>k==='fab'?`<button class="fab" id="fab" aria-label="Ajouter">${ic('plus')}</button>`:`<button class="tb ${c}" role="tab" data-tab="${k}" aria-selected="${TAB===k}">${ic(i)}<span>${l}</span></button>`).join('')}</div></nav>`;
   if(TAB!=='argent'){$('#app').innerHTML=(TAB==='agenda'?`<div class="ttl ttl2"><span>Agenda</span><button class="ib2" id="agm" aria-label="${agV==='month'?'Retour au jour':'Voir le mois'}">${agV==='month'?ic('x'):ic('cal')}</button></div><div id="agb" style="display:grid;gap:16px"></div>`:`<div class="ttl">Moi</div>`+moiView(B))+TB;
     homeBind();if(TAB==='agenda'){$('#agm').onclick=()=>{buzz(5);agV=agV==='month'?'day':'month';home()}}
     document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{buzz();({ics:icsExport,set:settings,push:()=>pushOn()?pushOff():pushEnable(),bk:backup,help:()=>helpScr(),share:shareApp})[b.dataset.m]()});
     return}
   $('#app').innerHTML=`
-  <div class="hi"><span><small>${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,c=>c.toUpperCase())}</small><b>${new Date().getHours()<18?'Bonjour':'Bonsoir'}${S.name?', '+esc(S.name):''}</b></span><button class="gear" id="set" aria-label="Moi" style="font-weight:700;font-size:16px;color:var(--ink)">${esc((S.name||'?').trim().charAt(0).toUpperCase())}</button></div>
+  <div class="hi"><span><b>${new Date().getHours()<18?'Bonjour':'Bonsoir'}${S.name?', '+esc(S.name):''}</b></span></div>
   ${heroCard()}
   ${stepCard()}
-  <div class="acts">
-   <button class="act t-out" data-a="dep"><span class="ib">${ic('out')}</span><span><b>J’ai dépensé</b><small><b>−${eur0(spentM())}</b> ce mois</small></span></button>
-   <button class="act t-in" data-a="inc"><span class="ib">${ic('in')}</span><span><b>J’ai reçu</b><small><b>+${eur0(incM())}</b> ce mois</small></span></button>
-  </div>
-  <button class="more2" data-a="data"><span class="ib">${ic('week')}</span><span><b>Mes chiffres</b><small>Historique, dettes, à payer, où part ton argent</small></span>${ic('next')}</button>`+TB;
-  $('#set').onclick=()=>tabTo('moi');homeBind()}
+  <div class="duo"><button class="t-out" data-a="dep">${ic('out')}J’ai dépensé</button><button class="t-in" data-a="inc">${ic('in')}J’ai reçu</button></div>
+  <button class="mlink" data-a="data">Mes chiffres ${ic('next')}</button>`+TB;
+  homeBind()}
 function homeBind(){const B=badges();bindCopy($('#app'));try{const n=S.name?tasks().length:0;if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}{const m=$('#mvl');if(m)bindMv(m)}{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
   document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,wk:()=>wkScr(wkStart())})[b.dataset.a]()});
   document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const a=S.ag.find(x=>x.id===b.dataset.ck);a.done=!a.done;save();buzz(a.done?[10,40,10]:8);home()});
   document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>agItem(b.dataset.ed));
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=e=>{e.stopPropagation();tabTo(b.dataset.tab)});
   {const f=$('#fab');if(f)f.onclick=()=>{buzz();addSheet()}}
-  {const g=$('#stgo');if(g){const T=stepT();g.onclick=()=>{buzz();T[0].go()};$('#stlat').onclick=()=>{buzz(5);const L=(S.sk||{})[today]||[];S.sk={[today]:[...L,T[0].t]};save();home()}}}
+  {const bc2=$('.scr #balc');if(bc2)bc2.onclick=()=>{buzz();flowBal()}}{const g=$('#stgo');if(g){const T=stepT();g.onclick=()=>{buzz();T[0].go()};$('#stlat').onclick=()=>{buzz(5);const L=(S.sk||{})[today]||[];S.sk={[today]:[...L,T[0].t]};save();home()}}}
   if($('#agb'))agRender();
 }
 
@@ -526,24 +536,17 @@ const LV=[[0,'Départ'],[3,'Premiers pas'],[7,'Sur la route'],[14,'Régulier'],[
 function xpDays(){let n=0,d=S.start||today;for(let k=0;k<500&&d<=today;k++){if(dayOk(d))n++;d=addD(d,1)}return n}
 function lvl(){const x=xpDays();let i=0;while(i<LV.length-1&&x>=LV[i+1][0])i++;const nx=LV[i+1];return{n:i+1,name:LV[i][1],x,left:nx?nx[0]-x:0,p:nx?(x-LV[i][0])/(nx[0]-LV[i][0]):1}}
 function heroCard(){if(!S.bal)return balCard();
-  const L=liveBal(),up=upSum(),now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),dm=now.getDate(),left=ld-dm+1,free=L-up-cofV()+inSum(),V=lvl(),st=okStreak(),mon=MNL[now.getMonth()];
-  const top=`<div class="hlv"><span class="lv">Niveau ${V.n} · ${V.name}</span>${st?`<span class="hfl">${ic('spark')}${st} j d’affilée</span>`:''}</div><div class="xpb" title="${V.left?'Encore '+V.left+' jours à jour pour le niveau suivant':''}"><i style="width:${Math.max(4,Math.round(V.p*100))}%"></i></div>`;
-  let mid;
-  if(free>=0){delete S.low;const pj=free/left;
-    mid=`<small>Tu peux dépenser</small><strong>${eur0(pj)}<em>par jour</em></strong><span class="hope">Jusqu’au ${ld} ${mon}, et tu restes dans le vert.</span>
-    <div class="road"><i style="width:${Math.round(dm/ld*100)}%"></i><b style="left:${Math.round(dm/ld*100)}%"></b></div><div class="rl"><span>1 ${MN[now.getMonth()]}</span><span>Jour ${dm} sur ${ld}</span><span>${ld} ${MN[now.getMonth()]}</span></div>`}
-  else{const D=-free;if(S.low==null||free<S.low)S.low=free;const pr=Math.max(0,Math.min(1,1-D/(-S.low)));
-    const M=(S.rin||[]).reduce((a,x)=>a+x.v,0)-fxDated().reduce((a,x)=>a+x.v,0);let when='';
-    if(M>0){const k=Math.ceil(D/M),d=new Date(now.getFullYear(),now.getMonth()+k,1);when=`Avec ce qui rentre chaque mois, tu y es en ${MNL[d.getMonth()]}${d.getFullYear()!==now.getFullYear()?' '+d.getFullYear():''}.`}
-    else when='Chaque journée sans dépense te rapproche du vert.';
-    mid=`<small>Ton objectif</small><strong class="hv">Retour au vert</strong><span class="hope">Plus que <b>${eur0(D)}</b> à rattraper. ${when}</span>
-    <div class="road g"><i style="width:${Math.max(3,Math.round(pr*100))}%"></i><b style="left:${Math.max(3,Math.round(pr*100))}%"></b></div><div class="rl"><span>${pr>0?'Déjà '+Math.round(pr*100)+' % du chemin':'C’est parti'}</span><span>0 €, puis le bénéfice</span></div>`}
-  return `<div class="hero">${top}${mid}<button class="sbal" id="balc">Sur ton compte · <b>${eur(L)}</b></button></div>`}
+  const L=liveBal(),up=upSum(),now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1,free=L-up-cofV()+inSum();
+  if(free>=0){delete S.low;return `<div class="h2"><small>Pour aujourd’hui</small><strong>${eur0(free/left)}</strong><span>Tu restes dans le vert jusqu’au ${ld} ${MNL[now.getMonth()]}.</span></div>`}
+  const D=-free;if(S.low==null||free<S.low)S.low=free;const pr=Math.max(0,Math.min(1,1-D/(-S.low)));
+  const M=(S.rin||[]).reduce((a,x)=>a+x.v,0)-fxDated().reduce((a,x)=>a+x.v,0);let when='Chaque jour sans dépense t’en rapproche.';
+  if(M>0){const d=new Date(now.getFullYear(),now.getMonth()+Math.ceil(D/M),1);when='Tu y es en '+MNL[d.getMonth()]+'.'}
+  return `<div class="h2"><small>Ton cap</small><strong class="hv">Retour au vert</strong><span>${when}</span><div class="pb"><i style="width:${Math.max(4,Math.round(pr*100))}%"></i></div></div>`}
 const stepT=()=>{const L=(S.sk||{})[today]||[];return tasks().filter(t=>!L.includes(t.t))};
-function stepCard(){const T=stepT();if(!T.length)return `<div class="step ok"><span class="ib">${ic('check')}</span><span><b>Tout est à jour</b><small>Rien d’autre à faire aujourd’hui.</small></span></div>`;
-  const t=T[0],n=T.length;return `<div class="step"><div class="sh3"><span>${n>1?n+' étapes':'1 étape'} pour aujourd’hui</span><span class="dots3">${T.slice(0,6).map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</span></div><b>${esc(t.t)}</b>${t.s?`<small>${esc(t.s)}</small>`:''}<div class="sb3"><button class="p" id="stgo">C’est parti</button><button id="stlat">Plus tard</button></div></div>`}
+function stepCard(){const T=stepT();if(!T.length)return '';const t=T[0];
+  return `<div class="nud"><span><b>${esc(t.t)}</b>${t.s?`<small>${esc(t.s)}</small>`:''}</span><div><button id="stlat" aria-label="Plus tard">${ic('x')}</button><button class="p" id="stgo">${ic('next')}</button></div></div>`}
 function dataScr(){const me=S.debts.filter(x=>x.w==='me').reduce((a,x)=>a+x.v,0),th=S.debts.filter(x=>x.w==='them').reduce((a,x)=>a+x.v,0);
-  scr('Mes chiffres',`<div style="display:grid;gap:14px"><div class="acts"><button class="act t-hist" data-a="hist"><span class="ib">${ic('week')}</span><span><b>Historique</b><small>Tout, jour par jour</small></span></button><button class="act t-debt" data-a="debts"><span class="ib">${ic('users')}</span><span><b>Dettes</b><small>${me||th?(me?'Tu dois '+eur0(me):'')+(me&&th?' · ':'')+(th?'On te doit '+eur0(th):''):'Aucune'}</small></span></button></div>${payCard()}${catsCard()}${mvSec()}${S.name?cofCard(badges()):''}${wkCard()}</div>`);homeBind()}
+  scr('Mes chiffres',`<div style="display:grid;gap:14px">${balCard()}<div class="acts"><button class="act t-hist" data-a="hist"><span class="ib">${ic('week')}</span><span><b>Historique</b><small>Tout, jour par jour</small></span></button><button class="act t-debt" data-a="debts"><span class="ib">${ic('users')}</span><span><b>Dettes</b><small>${me||th?(me?'Tu dois '+eur0(me):'')+(me&&th?' · ':'')+(th?'On te doit '+eur0(th):''):'Aucune'}</small></span></button></div>${payCard()}${catsCard()}${mvSec()}${S.name?cofCard(badges()):''}${wkCard()}</div>`);homeBind()}
 function balCard(){if(!S.bal)return `<button class="big tap" id="balc"><small>Ton compte</small><span>Note ce que tu as sur ton compte : l’app suit ton solde au jour le jour.</span><div class="cta">Ajouter mon solde</div></button>`;
   const L=liveBal(),up=upSum(),af=Math.round((L-up)*100)/100,now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1;
   const ud=pd(S.bal.d),upd=S.bal.d===today?'aujourd’hui':'le '+ud.getDate()+' '+MN[ud.getMonth()];
