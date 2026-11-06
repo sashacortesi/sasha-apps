@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="9">
+<html lang="fr" data-build="10">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -184,6 +184,15 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 @keyframes floaty{0%,100%{translate:0 0}50%{translate:var(--x) var(--y)}}
 @keyframes pop{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.5);opacity:0}}
 @media (prefers-reduced-motion:reduce){.bb2{animation:none}}
+
+.bb2.act{background:radial-gradient(circle at 32% 26%,color-mix(in srgb,var(--ink) 4%,var(--bg)) 0%,var(--bg) 62%);box-shadow:inset 0 0 0 1.5px var(--line)}
+.bb2.act .bi svg{width:16px;height:16px;margin:0 auto 1px;color:var(--muted)}
+.bb2.ghost{background:none;box-shadow:inset 0 0 0 1px var(--line);opacity:.75}.bb2.ghost b{font-size:11px;color:var(--muted);font-weight:600}
+.bb2.sm b{font-size:11px}.bb2.sm small{font-size:11px}
+.bb2.bump{animation:bump .7s cubic-bezier(.3,1.6,.5,1)!important}
+@keyframes bump{0%{transform:scale(.7)}45%{transform:scale(1.16)}100%{transform:scale(1)}}
+.fly{position:absolute;transform:translate(-50%,0);font-size:15px;font-weight:700;color:var(--ink);pointer-events:none;animation:fly 1.3s ease-out forwards}
+@keyframes fly{0%{opacity:0;translate:0 6px}20%{opacity:1}100%{opacity:0;translate:0 -36px}}
 </style>
 </head>
 <body>
@@ -346,9 +355,12 @@ function bubbles(){const B=[],tm=addD(today,1),g=new Map();for(const x of S.debt
   if(S.tab.on&&S.tab.k.length){const n=Math.max(...S.tab.k.map(tabDays));B.push({k:'tab',l:'Fumer',v:n+' j sans',w:30,hot:!S.tab.log[addD(today,-1)]&&(S.tab.st||today)<today})}
   const age=Math.round((pd(today)-pd(S.start||today))/864e5),wd=pd(today).getDay();if(age>=6||wd===0||wd===1)B.push({k:'mois',l:'Ton mois',w:15,hot:(wd===0||wd===1)&&!S.aide[wkMon(addD(today,-1))]});
   if(S.imp&&S.imp.on)B.push({k:'imp',l:'Imprévus',v:eur0(impV()),w:20});
-  const wk=S.e.filter(x=>x.d>=addD(today,-6)&&x.c!=='dette').reduce((a,x)=>a+x.v,0);if([...S.e,...S.inc].some(x=>x.d>=addD(today,-6)))B.push({k:'mv',l:'Semaine',v:wk?'−'+eur0(wk):'',w:12});
+  const cm={};for(const x of S.e.filter(x=>x.d.startsWith(YM)&&x.c!=='dette'))cm[x.c]=(cm[x.c]||{v:0,n:0,t:0}),cm[x.c].v+=x.v,cm[x.c].n++,cm[x.c].t=Math.max(cm[x.c].t,x.t||0);
+  const used=CATS.filter(c=>cm[c[0]]).sort((a,b)=>cm[b[0]].v-cm[a[0]].v),ghost=CATS.filter(c=>!cm[c[0]]&&c[0]!=='autre'&&(c[0]!=='fume'||S.tab.on)).slice(0,Math.max(0,4-used.length));
+  for(const c of used)B.push({k:'c:'+c[0],l:SHORT[c[0]],v:eur0(cm[c[0]].v),w:cm[c[0]].v,act:1,i:c[1]});
+  for(const c of ghost)B.push({k:'c:'+c[0],l:SHORT[c[0]],w:0,act:1,ghost:1,i:c[1]});
   B.push({k:'add',l:'+',w:0,add:1});
-  for(const b of B)b.r=b.add?23:Math.round(Math.min(56,34+Math.sqrt(b.w||0)*1.6+(b.hot?7:0)));return B}
+  for(const b of B)b.r=b.add?23:b.ghost?27:b.act?Math.round(Math.min(52,28+Math.sqrt(b.w)*2.1)):Math.round(Math.min(56,34+Math.sqrt(b.w||0)*1.6+(b.hot?7:0)));return B}
 /* les bulles se rangent toutes seules, en grappe, sans se chevaucher */
 let BPOS={};
 function packB(B,W){const P=[],gap=7;let H=150;
@@ -363,9 +375,14 @@ function layB(){const f=$('.field');if(!f)return;const B=JSON.parse(f.dataset.bl
   const now2={};f.querySelectorAll('.bb2').forEach((el,i)=>{const p=P[i];el.style.left=(p.x-p.r)+'px';el.style.top=(p.y-p.r)+'px';now2[el.dataset.b]={x:p.x,y:p.y,r:p.r}});
   /* une bulle qui disparaît éclate doucement */
   for(const k of Object.keys(BPOS))if(!now2[k]){const p=BPOS[k],g=document.createElement('span');g.className='bpop';g.style.cssText=`left:${p.x-p.r}px;top:${p.y-p.r}px;width:${p.r*2}px;height:${p.r*2}px`;f.appendChild(g);setTimeout(()=>g.remove(),700)}
-  BPOS=now2}
+  BPOS=now2;
+  if(LADD&&now()>=LADD.t-50&&now()-LADD.t<5000){const el=f.querySelector(`[data-b="${LADD.k}"]`);if(el){el.classList.add('bump');const p=now2[LADD.k],fl=document.createElement('span');fl.className='fly';fl.textContent=LADD.txt;fl.style.left=p.x+'px';fl.style.top=(p.y-p.r)+'px';f.appendChild(fl);setTimeout(()=>{fl.remove();el.classList.remove('bump')},1400)}LADD=null}}
+let LADD=null;
+/* toucher une bulle de catégorie : ajouter une dépense en un geste */
+function catB(c){const C=CN[c],L=S.e.filter(x=>x.c===c&&x.d.startsWith(YM)).sort((a,b)=>b.t-a.t),tot=L.reduce((a,x)=>a+x.v,0);
+  flow([{k:'v',q:C[2],sub:L.length?eur(tot)+' ce mois-ci · '+L.length+' fois. Combien cette fois ?':'Combien ?',type:'amount',cta:'Ajouter'}],v=>{S.e.push({id:uid(),t:now(),d:today,v:v.v,c});LADD={k:'c:'+c,t:now(),txt:'−'+eur0(v.v)};buzz([8,40,8]);save();return null})}
 window.addEventListener('resize',()=>{if($('.field'))layB()});
-function openB(k){track('b-'+k.split(':')[0]);if(k==='add')return addMenu();if(k==='mois')return bilan();if(k==='imp')return flowImp();if(k.startsWith('p:'))return person(grpOf(k.slice(2)));
+function openB(k){track('b-'+k.split(':')[0]);if(k.startsWith('c:'))return catB(k.slice(2));if(k==='add')return addMenu();if(k==='mois')return bilan();if(k==='imp')return flowImp();if(k.startsWith('p:'))return person(grpOf(k.slice(2)));
   sub('',()=>toutView(k))}
 let Q=[];
 function render(){today=iso(new Date());YM=today.slice(0,7);
@@ -377,7 +394,7 @@ function home(){Q=cards();if(CI>Q.length+1)CI=Q.length+1;
   let body;
   if(CI===0){const big=Math.max(0,Math.floor(D.left));
     body=`<div class="stage num" data-tap="1"><div><small>pour aujourd’hui</small><strong>${eur0(big)}</strong><span class="hint">${n?n+' chose'+(n>1?'s':'')+' pour aujourd’hui · touche':D.dispo<=0?'Fin de mois serrée. On fait au plus juste.':'Rien d’autre aujourd’hui.'}</span><button class="sbal" id="sbal">Sur ton compte · <b>${eur(D.L)}</b></button></div></div>
-    <div class="dock">${(()=>{const B=bubbles();return `<div class="field" data-bl='${esc(JSON.stringify(B.map(b=>({r:b.r}))))}'>${B.map((b,i)=>`<button class="bb2${b.hot?' hot':''}${b.add?' add':''}" data-b="${esc(b.k)}" style="width:${b.r*2}px;height:${b.r*2}px;--d:${(i*1.7)%3}s;--t:${5+(i*1.3)%3}s;--x:${i%2?3:-3}px;--y:${i%3?-4:4}px"><span class="in3"><b>${esc(b.l)}</b>${b.v?`<small>${esc(b.v)}</small>`:''}</span></button>`).join('')}</div>`})()}${S.tab.on?`<button class="envie" id="senv">${ic('wind')}J’ai envie de fumer</button>`:''}<div class="row"><button class="rnd" id="sdep" aria-label="J’ai dépensé">${ic('out')}<span>Dépensé</span></button><button class="rnd" id="stout" aria-label="Tout voir">${ic('dots')}<span>Tout</span></button><button class="rnd" id="srec" aria-label="J’ai reçu">${ic('in')}<span>Reçu</span></button></div></div>`}
+    <div class="dock">${(()=>{const B=bubbles();return `<div class="field" data-bl='${esc(JSON.stringify(B.map(b=>({r:b.r}))))}'>${B.map((b,i)=>`<button class="bb2${b.hot?' hot':''}${b.add?' add':''}${b.act?' act':''}${b.ghost?' ghost':''}${b.r<38?' sm':''}" data-b="${esc(b.k)}" style="width:${b.r*2}px;height:${b.r*2}px;--d:${(i*1.7)%3}s;--t:${5+(i*1.3)%3}s;--x:${i%2?3:-3}px;--y:${i%3?-4:4}px"><span class="in3">${b.act&&b.r>=30?`<span class="bi">${ic(b.i)}</span>`:''}<b>${esc(b.l)}</b>${b.v?`<small>${esc(b.v)}</small>`:''}</span></button>`).join('')}</div>`})()}${S.tab.on?`<button class="envie" id="senv">${ic('wind')}J’ai envie de fumer</button>`:''}<div class="row"><button class="rnd" id="sdep" aria-label="J’ai dépensé">${ic('out')}<span>Dépensé</span></button><button class="rnd" id="stout" aria-label="Tout voir">${ic('dots')}<span>Tout</span></button><button class="rnd" id="srec" aria-label="J’ai reçu">${ic('in')}<span>Reçu</span></button></div></div>`}
   else if(CI<=n){const c=Q[CI-1];
     body=`<div class="stage card" data-tap="1"><div><span class="cib">${ic(c.i)}</span><h1>${c.t}</h1>${c.s?`<p>${c.s}</p>`:''}</div></div>
     <div class="dock"><div class="cacts ${c.a.length>2?'three':''}">${c.a.map((a,i)=>`<button class="ca${a.p?' p':''}" data-c="${i}">${esc(a.l)}</button>`).join('')}</div><button class="skip" id="sskip">Passer</button></div>`}
@@ -460,11 +477,12 @@ function addMenu(){flow([{k:'x',q:'Ajouter',type:'tiles',opts:[
 
 /* ---------- Saisies ---------- */
 const CATS=[['courses','cart','Courses'],['resto','resto','Manger dehors'],['sorties','glass','Sorties'],['transport','train','Transport'],['fume','smoke','Tabac / fumette'],['shopping','bag','Shopping'],['autre','dots','Autre']];
+const SHORT={courses:'Courses',resto:'Resto',sorties:'Sorties',transport:'Transport',fume:'Tabac',shopping:'Shopping',autre:'Autre'};
 const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));CN.dette=['dette','users','Remboursement'];
 function flowDep(){track('dep');flow([
   {k:'v',q:'Combien ?',type:'amount'},
   {k:'c',q:'Pour quoi ?',type:'tiles',opts:CATS.map(c=>({v:c[0],i:c[1],l:c[2]}))}
- ],v=>{S.e.push({id:uid(),t:now(),d:today,v:v.v,c:v.c});const D=day();return['Noté',D&&D.left>=0?'Il te reste '+eur0(D.left)+' pour aujourd’hui.':'C’est noté. On lisse sur le reste du mois.']})}
+ ],v=>{S.e.push({id:uid(),t:now(),d:today,v:v.v,c:v.c});LADD={k:'c:'+v.c,t:now()+1150,txt:'−'+eur0(v.v)};setTimeout(()=>{if(!FL&&!$('.scr')&&LADD)render()},1200);const D=day();return['Noté',D&&D.left>=0?'Il te reste '+eur0(D.left)+' pour aujourd’hui.':'C’est noté. On lisse sur le reste du mois.']})}
 function flowInc(){track('inc');flow([
   {k:'v',q:'Combien t’as reçu ?',type:'amount'},
   {k:'n',q:'Ça vient d’où ?',type:'tiles',opts:[['Salaire','brief'],['Mission / extra','zap'],['Aide / CAF','bank'],['Remboursement','undo'],['Cadeau','gift'],['Autre','dots']].map(([l,i])=>({v:l,i,l}))}
