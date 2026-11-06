@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="134">
+<html lang="fr" data-build="135">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -1320,6 +1320,11 @@ const chk=()=>{if(busy||!navigator.onLine)return;busy=1;fetch(location.pathname+
 chk();setInterval(()=>{if(document.visibilityState==='visible')chk()},45e3);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')chk()});
 addEventListener('pageshow',chk);addEventListener('focus',chk);addEventListener('online',chk);})();
+</script>
+<script>
+/* Mise à jour automatique : si une version plus récente est en ligne, on recharge (une fois) */
+(function(){const cur=document.documentElement.dataset.build;const chk=()=>fetch(location.pathname+'?b='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/data-build="(\d+)"/);if(m&&m[1]!==cur&&sessionStorage.getItem('bb')!==m[1]){sessionStorage.setItem('bb',m[1]);location.reload()}}).catch(()=>{});
+ setTimeout(chk,800);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')chk()})})();
 </script>
 </body>
 </html>
