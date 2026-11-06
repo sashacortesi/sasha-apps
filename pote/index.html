@@ -406,6 +406,12 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .chip.f{color:var(--ink);border-color:var(--line);background:var(--card)}
 .duo2 button,.duo2 button+button{background:var(--card);color:var(--ink);border:1px solid var(--line)}
 .grid6 span{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+
+.mlist{display:grid;gap:10px;margin-top:22px}
+.mrow2{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:14px;padding:16px 18px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;text-align:left}
+.mrow2 span{display:grid;place-items:center}.mrow2 svg{width:20px;height:20px}.mrow2>svg{width:16px;height:16px;color:var(--muted)}.mrow2 b{font-size:17px;font-weight:650}
+.mrow2 .dot{width:9px;height:9px;border-radius:5px;background:var(--c-out)}
+.me .lvl{margin-top:2px}
 </style>
 </head>
 <body>
@@ -511,15 +517,13 @@ function catsCard(){const m={};let t=0;for(const x of S.e.filter(x=>x.d.startsWi
   const L=Object.entries(m).sort((a,b)=>b[1]-a[1]);
   return `<div class="cats"><div class="hd"><b>Où part ton argent</b><span>${MNL[+YM.slice(5,7)-1]}</span></div><div class="bar">${L.map(([c,v])=>`<i style="width:${v/t*100}%;background:${CCOL[c]||'#94A3B8'}"></i>`).join('')}</div>${L.slice(0,5).map(([c,v])=>`<div class="cr"><span class="dot" style="background:${CCOL[c]||'#94A3B8'}"></span><span>${esc(CN[c]?CN[c][2]:'Autre')}<small>${Math.round(v/t*100)} %</small></span><b>${eur(v)}</b></div>`).join('')}${m.conso?`<div class="dnote" style="text-align:left;padding:0">Dépense nocive : ${eur0(m.conso)} ce mois, soit ${eur0(m.conso/Math.max(1,+today.slice(8))*30)} sur un mois entier à ce rythme.</div>`:''}</div>`}
 async function shareApp(){const u=location.origin+location.pathname,t='Base : l’app qui m’aide à tenir mon argent et mes journées. Gratuite, sans compte.';try{if(navigator.share){await navigator.share({title:'Base',text:t,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t+' '+u);done(['Lien copié','Colle-le à qui tu veux'])}catch(e){done(['Le lien',u])}}
-function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().charAt(0).toUpperCase()),R=56,C=+(2*Math.PI*R).toFixed(1),nx=LV[V.n]?LV[V.n][1]:'';
-  const T=[['set','gear','Réglages','var(--c-moi)'],['push','bell',pushOn()?'Rappels activés':'Rappels','var(--c-ag)'],['bk','folder','Sauvegarde','var(--c-cof)'],['ics','cal','Calendrier','#4F7CFF'],['help','help','Aide','#94A3B8'],['share','share','Partager','var(--c-in)']];
-  return `<div class="me"><button class="ring" data-a="prog" aria-label="Ma progression"><svg viewBox="0 0 128 128"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4F7CFF"/><stop offset="1" stop-color="#C084FC"/></linearGradient></defs><circle cx="64" cy="64" r="${R}" class="tr"/><circle cx="64" cy="64" r="${R}" class="pg2" style="stroke-dasharray:${C};stroke-dashoffset:${(C*(1-Math.max(.04,V.p))).toFixed(1)}"/></svg><span class="av2">${ini}</span><span class="lvb">${V.n}</span></button>
-  <b class="nm">${esc(S.name||'Moi')}</b><span class="lvl">${V.name}</span>
-  <div class="chips">${st?`<span class="chip f">${ic('spark')}${st} j d’affilée</span>`:''}${V.left?`<span class="chip">Encore ${V.left} j pour « ${nx} »</span>`:''}</div></div>
-  ${S.name&&S.vice?`<div class="duo2"><button data-a="sos">${ic('wind')}Envie de fumer</button><button data-a="fume">${ic('leaf')}Dépense nocive</button></div>`:''}
-  <div class="grid6">${T.map(([k,i,l,c])=>`<button data-m="${k}" style="--c:${c}"><span>${ic(i)}${k==='set'&&B.set?'<i class="dot"></i>':''}</span><small>${l}</small></button>`).join('')}</div>
-  ${S.name&&!S.vice&&S.vice!==''?`<button class="mlink" data-a="vset">Suivre une dépense nocive ${ic('next')}</button>`:''}
-  <p class="foot" style="text-align:center">Tes données restent sur ce téléphone.</p>`}
+function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().charAt(0).toUpperCase()),R=56,C=+(2*Math.PI*R).toFixed(1);
+  const row=(a,i,l,dot)=>`<button class="mrow2" ${a}><span>${ic(i)}</span><b>${l}</b>${dot?'<i class="dot"></i>':''}${ic('next')}</button>`;
+  return `<div class="me"><button class="ring" data-a="prog" aria-label="Ma progression"><svg viewBox="0 0 128 128"><circle cx="64" cy="64" r="${R}" class="tr"/><circle cx="64" cy="64" r="${R}" class="pg2" style="stroke-dasharray:${C};stroke-dashoffset:${(C*(1-Math.max(.04,V.p))).toFixed(1)}"/></svg><span class="av2">${ini}</span><span class="lvb">${V.n}</span></button>
+  <b class="nm">${esc(S.name||'Moi')}</b><span class="lvl">${V.name}${st?' · '+st+' j d’affilée':''}</span></div>
+  <div class="mlist">${S.name&&S.vice?row('data-a="fume"','leaf','Dépense nocive'):''}${row('data-m="all"','gear','Réglages',B.set)}</div>`}
+function setSheet(){const T=[['gear','Mon profil et mon budget',settings],['bell',pushOn()?'Rappels : activés':'Activer les rappels',()=>pushOn()?pushOff():pushEnable()],['folder','Sauvegarder mes données',backup],['cal','Calendrier du téléphone',icsExport],['help','Aide',()=>helpScr()],['share','Partager Base',shareApp]];
+  flow([{k:'x',q:'Réglages',sub:'Tes données restent sur ce téléphone.',type:'tiles',opts:T.map(([i,l,f])=>({i,l,one:1,go:()=>{closeFl();f()}}))}],()=>['',''])}
 function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x.v||0),0)*100)/100;try{snapBal()}catch(e){}const r=reste(),now=new Date(),left=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1;
   const its=S.ag.filter(a=>a.d===today).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'));
   const next=S.ag.filter(a=>a.d>today).sort((a,b)=>(a.d+(a.h||'99')).localeCompare(b.d+(b.h||'99'))).slice(0,3);
@@ -529,7 +533,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   const TB=`<nav class="tabbar" role="tablist"><div class="in">${[['argent','t-out','wallet','Dépenses',(B.dep||0)+(B.inc||0)+(B.bal||0)+(B.debts||0)+(B.cof||0)],['agenda','t-ag','cal','Agenda',B.ag||0],['fab'],['moi','t-moi','user','Moi',(B.set||0)]].map(([k,c,i,l,n])=>k==='fab'?`<button class="fab" id="fab" aria-label="Ajouter">${ic('plus')}</button>`:`<button class="tb ${c}" role="tab" data-tab="${k}" aria-selected="${TAB===k}">${ic(i)}<span>${l}</span></button>`).join('')}</div></nav>`;
   if(TAB!=='argent'){$('#app').innerHTML=(TAB==='agenda'?`<div class="ttl ttl2"><span>Agenda</span><button class="ib2" id="agm" aria-label="${agV==='month'?'Retour au jour':'Voir le mois'}">${agV==='month'?ic('x'):ic('cal')}</button></div><div id="agb" style="display:grid;gap:16px"></div>`:moiView(B))+TB;
     homeBind();if(TAB==='agenda'){$('#agm').onclick=()=>{buzz(5);agV=agV==='month'?'day':'month';home()}}
-    document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{buzz();({ics:icsExport,set:settings,push:()=>pushOn()?pushOff():pushEnable(),bk:backup,help:()=>helpScr(),share:shareApp})[b.dataset.m]()});
+    document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{buzz();({all:setSheet,ics:icsExport,set:settings,push:()=>pushOn()?pushOff():pushEnable(),bk:backup,help:()=>helpScr(),share:shareApp})[b.dataset.m]()});
     return}
   $('#app').innerHTML=`
   <div class="hi"><span><b>${new Date().getHours()<18?'Bonjour':'Bonsoir'}${S.name?', '+esc(S.name):''}</b></span></div>
