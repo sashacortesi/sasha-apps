@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794073422" data-theme="light">
+<html lang="fr" data-build="1794074100" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -305,6 +305,9 @@ label.tile{position:relative;overflow:hidden}.tlink.set .tl{color:var(--ink)!imp
 .tb .bdg{top:4px;right:calc(50% - 22px);min-width:16px;height:16px;font-size:10px;padding:0 4px;background:var(--c-out);color:#fff}
 .fab{justify-self:center;width:40px;height:40px;border-radius:13px;border:0;background:var(--ink);color:var(--bg);display:grid;place-items:center;box-shadow:none;transition:transform .2s}.fab:active{transform:scale(.92)}.fab svg{width:22px;height:22px}
 .scanw{display:grid;grid-template-rows:1fr;place-items:center}.scbox{display:grid;justify-items:center;gap:8px;text-align:center}.scbox b{font-size:20px}.scbox small{color:var(--muted);font-size:14px}.scsp{width:72px;height:72px;border-radius:24px;display:grid;place-items:center;background:color-mix(in srgb,var(--c-out) 14%,transparent);color:var(--c-out);margin-bottom:6px;animation:scp 1.2s ease-in-out infinite}.scsp svg{width:32px;height:32px}@keyframes scp{50%{transform:scale(.9);opacity:.6}}
+
+.bud{background:var(--card);border-radius:20px;overflow:hidden}.bdr{display:grid;grid-template-columns:36px 1fr auto 16px;align-items:center;gap:12px;width:100%;border:0;background:none;padding:13px 14px;text-align:left;font:inherit;color:var(--ink)}.bdr+.bdr{border-top:.5px solid var(--line)}.bdr .ib{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}.bdr .ib svg{width:19px;height:19px}.bdr .bl{display:grid;min-width:0}.bdr .bl b{font-size:16px;font-weight:600}.bdr .bl small{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bdr .bv{font-weight:700;font-size:16px}.bdr>svg{width:14px;height:14px;color:var(--muted)}
+.thd{grid-column:1/-1;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:18px 6px 2px}.thd:first-child{margin-top:0}
 .shb2{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;animation:fd .18s ease-out}
 @keyframes fd{from{opacity:0}to{opacity:1}}@keyframes su{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 .shb2 .sh2{width:100%;max-width:520px;background:var(--card);border-radius:26px 26px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom,0px));animation:su .28s cubic-bezier(.2,.8,.2,1)}
@@ -843,8 +846,6 @@ function catsCard(){const m={};let t=0;for(const x of S.e.filter(x=>x.d.startsWi
   const L=Object.entries(m).sort((a,b)=>b[1]-a[1]);
   return `<div class="cats"><div class="hd"><b>Où part ton argent</b><span>${MNL[+YM.slice(5,7)-1]}</span></div><div class="bar">${L.map(([c,v])=>`<i style="width:${v/t*100}%;background:${CCOL[c]||'#8E8E93'}"></i>`).join('')}</div>${L.slice(0,5).map(([c,v])=>`<div class="cr"><span class="dot" style="background:${CCOL[c]||'#8E8E93'}"></span><span>${esc(CN[c]?CN[c][2]:'Autre')}<small>${Math.round(v/t*100)} %</small></span><b>${eur(v)}</b></div>`).join('')}${m.conso?`<div class="dnote" style="text-align:left;padding:0">${esc(CN.conso[2])} : ${eur0(m.conso)} ce mois, soit ${eur0(m.conso/Math.max(1,+today.slice(8))*30)} sur un mois entier à ce rythme.</div>`:''}</div>`}
 async function shareApp(){const u=location.origin+location.pathname,t='Base : l’app qui m’aide à tenir mon argent et mes journées. Gratuite, sans compte.';try{if(navigator.share){await navigator.share({title:'Base',text:t,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t+' '+u);done(['Lien copié','Colle-le à qui tu veux'])}catch(e){done(['Le lien',u])}}
-function setSheet(){const T=[['spark','Mon Base · ce qu’il fait pour toi',()=>pfFlow()],['leaf','Ce que je veux réduire · '+(S.vice?[...S.vice].map(vkL).join(', '):'rien'),flowVice],...(mod('f')?[['brief','Mon côté pro',proScr]]:[]),...(S.vice?[['leaf','Ma conso : '+CN.conso[2],fumeScr]]:[]),...(mod('b')||S.bin?[['users',S.bin?'Mon binôme · '+S.bin:'Un binôme pour me suivre',binFlow]]:[]),['bank','Mes droits et mes frais',droitsScr],['sun','Apparence : '+({light:'clair',dark:'nuit',auto:'comme l’iPhone'}[S.theme||'light']),themeFlow],['gear','Mon profil et mon budget',settings],['bell',pushOn()?'Rappels : activés':'Activer les rappels',()=>pushOn()?pushOff():pushEnable()],['folder','Sauvegarder mes données',backup],['cal','Calendrier du téléphone',icsExport],['help','Aide',()=>helpScr()],['share','Partager Base',shareApp]];
-  flow([{k:'x',q:'Réglages',sub:'Tes données restent sur ce téléphone.',type:'tiles',opts:T.map(([i,l,f])=>({i,l,one:1,go:()=>{closeFl();f()}}))}],()=>['',''])}
 function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x.v||0),0)*100)/100;try{snapBal()}catch(e){}const r=reste(),now=new Date(),left=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1;
   const its=S.ag.filter(a=>a.d===today).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'));
   const next=S.ag.filter(a=>a.d>today).sort((a,b)=>(a.d+(a.h||'99')).localeCompare(b.d+(b.h||'99'))).slice(0,3);
@@ -865,7 +866,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   ${S.name?proCard():''}<button class="mlink" data-a="data">Mon mois ${ic('next')}</button>`+TB;
   homeBind()}
 function homeBind(){const B=badges();bindCopy($('#app'));try{const n=S.name?tasks().length:0;if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}{const m=$('#mvl');if(m)bindMv(m)}{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
-  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({tour:tourScr,vg:vgScr,rcp:()=>recap(),why:whySheet,bin:binFlow,droits:droitsScr,pay:payScr,wish:flowWish,eve:flowEve,bilan:()=>bilanScr(YM),data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,pro:proScr,wk:()=>wkScr(wkStart())})[b.dataset.a]()});
+  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({tour:tourScr,vg:vgScr,rcp:()=>recap(),why:whySheet,bin:binFlow,droits:droitsScr,pay:payScr,wish:flowWish,eve:flowEve,bilan:()=>bilanScr(YM),data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,pro:proScr,bfx:()=>BUD.fx(),brin:()=>BUD.rin(),bbal:()=>flowBal(),wk:()=>wkScr(wkStart())})[b.dataset.a]()});
   document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const a=S.ag.find(x=>x.id===b.dataset.ck);a.done=!a.done;save();buzz(a.done?[10,40,10]:8);home()});
   document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>agItem(b.dataset.ed));
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=e=>{e.stopPropagation();tabTo(b.dataset.tab)});
@@ -1209,7 +1210,7 @@ function amountUI(st,body,btm){let s=FL.v[st.k]!=null?String(FL.v[st.k]).replace
   btm.querySelector('#go').onclick=()=>{const v=parseFloat(s.replace(',','.'))||0;FL.v[st.k]=st.neg&&ng?-v:v;buzz();nextStep()}}
 function tilesUI(st,body){const opts=typeof st.opts==='function'?st.opts(FL.v):st.opts;
   const tcl=FL&&FL.steps.some(x=>x.pd==='in')?' tc t-in':FL&&FL.steps.some(x=>x.pd==='out')?' tc t-out':'';
-  body.innerHTML=`<div class="tiles">${opts.map((o,i)=>`<button class="tile${o.one?' one':''}${o.cta?' cta':''}${o.i?'':' noi'}${o.i?tcl:''}" data-i="${i}">${o.i?`<span class="ib">${ic(o.i)}</span>`:''}<span><b>${o.dot?`<span class="dot" style="background:${o.dot}"></span>`:''}${esc(o.l)}</b>${o.s?`<br><small>${esc(o.s)}</small>`:''}</span></button>`).join('')}</div>`;
+  body.innerHTML=`<div class="tiles">${opts.map((o,i)=>o.hd?`<div class="thd">${esc(o.hd)}</div>`:`<button class="tile${o.one?' one':''}${o.cta?' cta':''}${o.i?'':' noi'}${o.i?tcl:''}" data-i="${i}">${o.i?`<span class="ib">${ic(o.i)}</span>`:''}<span><b>${o.dot?`<span class="dot" style="background:${o.dot}"></span>`:''}${esc(o.l)}</b>${o.s?`<br><small>${esc(o.s)}</small>`:''}</span></button>`).join('')}</div>`;
   body.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];buzz();if(o.go){o.go(FL.v);return}FL.v[st.k]=o.v;nextStep()});
   if(st.time){const w=document.createElement('div');w.style.textAlign='center';w.innerHTML=`<label class="tlink">${ic('later')}<span class="tl">Heure précise</span><input type="time" class="dtin" id="tt" step="300" value="${esc(FL.v[st.k]||'')}"><button type="button" class="tv">Valider</button></label>`;body.appendChild(w);
    const lb=w.querySelector('.tlink'),ti=w.querySelector('#tt'),tl=w.querySelector('.tl');
@@ -1550,9 +1551,13 @@ function badgeList(){const V=vicStats(),g=S.cof&&S.cof.g,cv=cofV(),b=Math.max(V.
 function badgeCheck(ms=1800){try{if(!S.name)return;const on=badgeList().filter(b=>b[1]);if(S.bdgN==null||on.length<S.bdgN||!S.bdgS){S.bdgN=on.length;S.bdgS=on.map(b=>b[0]);return}
   if(on.length>S.bdgN){const seen=S.bdgS||[],nw=on.find(b=>!seen.includes(b[0]))||on[on.length-1];S.bdgN=on.length;S.bdgS=on.map(b=>b[0]);save();setTimeout(()=>{if($('.strk'))return setTimeout(()=>badgePop(nw),2200);badgePop(nw)},ms)}else if(!S.bdgS)S.bdgS=on.map(b=>b[0])}catch(e){}}
 function badgePop([t,,i]){const o=document.createElement('div');o.className='strk bp';o.innerHTML=`<div class="bdx">${ic(i)}</div><small>Nouveau trophée</small><b>${esc(t)}</b><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
+function budCard(){const fx=S.fixe||0,ri=(S.rin||[]).reduce((a,x)=>a+(x.v||0),0),lb=S.bal?liveBal():null,pb=mod('f')?proBal():null;
+  const row=(a,i,c,l,v,sub)=>`<button class="bdr" data-a="${a}"><span class="ib ${c}">${ic(i)}</span><span class="bl"><b>${l}</b><small>${sub}</small></span><span class="bv">${v}</span>${ic('next')}</button>`;
+  return `<div class="sec"><h2>Ton budget</h2></div><div class="bud">${row('bfx','home','t-out','Charges fixes',eur0(fx),(S.fx||[]).length?(S.fx.length+' par mois'):'Loyer, forfait, abonnements…')}${row('brin','in','t-in','Revenus réguliers',eur0(ri),(S.rin||[]).length?(S.rin.length+' par mois'):'Salaire, aides…')}${row('bbal','bank','t-ag','Mes comptes',lb!=null?eur0(lb):'—',S.bal&&S.bal.acc&&S.bal.acc.length?S.bal.acc.map(a=>a.n).join(', '):S.bal?'Mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'À renseigner')}${mod('f')?row('pro','brief','t-moi','Côté pro',pb!=null?eur0(pb):'',pb!=null?'Compte pro':'Dépenses pro, comptable'):''}</div>`}
 function moiView(B){const g=S.cof&&S.cof.g,cv=cofV();
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
   ${moiTour()}
+  ${budCard()}
   ${qCard()}
   <div class="sec"><h2>Ton objectif</h2></div>
   ${g?`<button class="goal" data-a="cof"><div class="gt"><b>${esc(g.n)}</b><span>${eur0(cv)} / ${eur0(g.v)}</span></div><div class="pb"><i style="width:${Math.max(3,Math.min(100,cv/g.v*100))}%"></i></div></button>`:`<button class="goal add" data-a="cof"><span class="gi">${ic('gift')}</span><span><b>Fixe-toi un objectif</b><small>Vacances, permis, une sécurité…</small></span>${ic('next')}</button>`}`}
@@ -2227,28 +2232,41 @@ function helpScr(){const sm=!!S.vice,norm=t=>(t||'').toLowerCase().normalize('NF
   draw('');const si=x.querySelector('#hS');si.oninput=()=>draw(si.value)}
 
 /* ---------- Réglages ---------- */
-function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
+function settings(){setSheet()}
+const BUD={fx:()=>flow([{k:'fx',q:'Tes charges fixes',sub:'Ajoute, renomme ou supprime ce que tu paies chaque mois.',type:'fixes'}],v=>{fxSave(v.fx);return['Enregistré',eur0(S.fixe)+' par mois']}),rin:()=>flow([{...RIN_STEP,q:'Ce qui rentre chaque mois'}],v=>{rinSave(v.rin);return['Enregistré',rinSub()]})};
+function setSheet(){const H=t=>({hd:t}),G=(i,l,s,f)=>({i,l,s,one:1,go:()=>{closeFl();f()}});
+  flow([{k:'x',q:'Réglages',sub:'Tes données restent sur ce téléphone.',type:'tiles',opts:[
+  H('Mon argent'),
   {i:'home',l:'Mes charges fixes',s:fxSub(),one:1,go:()=>flow([{k:'fx',q:'Tes charges fixes',sub:'Ajoute, renomme ou supprime ce que tu paies chaque mois.',type:'fixes'}],v=>{fxSave(v.fx);return['Enregistré',eur0(S.fixe)+' par mois']})},
-  {i:'bank',l:'Mon solde',s:S.bal?eur(liveBal())+' · mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'Pas encore renseigné',one:1,go:()=>flowBal()},
   {i:'in',l:'Mes revenus réguliers',s:rinSub(),one:1,go:()=>flow([{...RIN_STEP,q:'Ce qui rentre chaque mois'}],v=>{rinSave(v.rin);return['Enregistré',rinSub()]})},
+  {i:'bank',l:'Mon solde',s:S.bal?eur(liveBal())+' · mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'Pas encore renseigné',one:1,go:()=>flowBal()},
+  ...(mod('f')?[G('brief','Mon côté pro',proBal()!=null?'Compte pro : '+eur(proBal()):'Dépenses pro, paiements clients, comptable',proScr)]:[]),
+  G('bank','Mes droits et mes frais','Aides, frais bancaires',droitsScr),
+  H('Mon Base'),
+  G('spark','Mes fonctions','Ce que Base fait pour toi',()=>pfFlow()),
+  G('leaf','Ce que je veux réduire',S.vice?[...S.vice].map(vkL).join(', '):'Rien pour l’instant',flowVice),
+  ...(S.vice?[G('leaf','Mon suivi : '+CN.conso[2],'Jours sans, envies, économies',fumeScr)]:[]),
+  ...(mod('b')||S.bin?[G('users',S.bin?'Mon binôme':'Un binôme',S.bin||'Quelqu’un qui te suit et t’encourage',binFlow)]:[]),
+  {i:'user',l:'Mon prénom',s:S.name||'',one:1,go:()=>flow([{k:'n',q:'Ton prénom ?',type:'text',ph:'Prénom'}],v=>{S.name=v.n;return['Enregistré',v.n]})},
+  H('Rappels'),
+  {i:'bell',l:'Notifications',s:pushOn()?'Activées':'Désactivées',one:1,go:()=>pushOn()?pushOff():pushEnable()},
+  {i:'moon',l:'Heure du point du soir',s:(S.eh||21)+' h chaque soir',one:1,go:()=>flow([{k:'eh',q:'Ton point du soir, à quelle heure ?',type:'tiles',opts:[19,20,21,22,23].map(h=>({v:h,i:'moon',l:h+' h'}))}],v=>{S.eh=v.eh;pushSoon(300);return['C’est noté','Chaque soir à '+v.eh+' h']})},
+  {i:'moon',l:'Mode calme',s:S.calm?'Activé : juste ton point du soir et tes rappels':'2 notifications par jour maximum',one:1,go:()=>{S.calm=S.calm?0:1;pushSoon(300);done([S.calm?'Mode calme activé':'Mode calme coupé',S.calm?'Juste ton point du soir et tes rappels':'2 notifications par jour maximum'])}},
+  {i:'bell',l:'Notifications discrètes',s:S.disc!==0?'Oui : rien de perso sur l’écran verrouillé':'Non : montants et noms affichés',one:1,go:()=>{S.disc=S.disc!==0?0:1;pushSoon(300);done([S.disc?'Notifications discrètes':'Notifications détaillées',S.disc?'Rien de perso ne sort de ton téléphone':'Montants et noms visibles sur l’écran verrouillé'])}},
+  {i:'card',l:'Rappel après chaque paiement',s:'Avec Apple Pay et Raccourcis',one:1,go:()=>{closeFl();payTip()}},
+  G('cal','Calendrier du téléphone','Tes rappels dans ton agenda',icsExport),
+  H('Affichage'),
+  {i:'sun',l:'Apparence',s:{light:'Clair',dark:'Nuit',auto:'Comme mon iPhone'}[S.theme||'light'],one:1,go:()=>themeFlow()},
+  {i:'zap',l:'Sons',s:sndOn()?'Activés':'Coupés',one:1,go:()=>{S.snd=sndOn()?0:1;save();if(S.snd)sfx('ok');done(['Sons '+(S.snd?'activés':'coupés'),''])}},
+  {i:'sun',l:'Page du jour',s:S.rcOff?'Coupée':'À la 1re ouverture de la journée',one:1,go:()=>{S.rcOff=S.rcOff?0:1;done([S.rcOff?'Page du jour coupée':'Page du jour activée',S.rcOff?'Tu peux la revoir en touchant « Bonjour » sur l’accueil':'Elle t’accueille chaque matin'])}},
+  {i:'lock',l:'Code de verrouillage',s:S.pin?'Activé':'Pour que personne d’autre ne lise tes comptes',one:1,go:()=>{if(S.pin){delete S.pin;done(['Code retiré',''])}else{closeFl();pinPad('set')}}},
+  H('Mes données'),
   {i:'folder',l:'Sauvegarder mes données',s:S.bk?'Dernière le '+pd(S.bk).getDate()+' '+MN[pd(S.bk).getMonth()]:'Au cas où tu changes de téléphone',one:1,go:()=>backup()},
   {i:'undo',l:'Restaurer une sauvegarde',s:'Depuis un fichier',one:1,go:()=>restore()},
   {i:'help',l:'Aide',s:'Toutes les réponses à tes questions',one:1,go:()=>{const f=$('.fl');if(f)f.remove();FL=null;helpScr()}},
-  {i:'lock',l:'Code de verrouillage',s:S.pin?'Activé':'Pour que personne d’autre ne lise tes comptes',one:1,go:()=>{if(S.pin){delete S.pin;done(['Code retiré',''])}else{closeFl();pinPad('set')}}},
-  {i:'bell',l:'Notifications discrètes',s:S.disc!==0?'Oui : rien de perso sur l’écran verrouillé':'Non : montants et noms affichés',one:1,go:()=>{S.disc=S.disc!==0?0:1;pushSoon(300);done([S.disc?'Notifications discrètes':'Notifications détaillées',S.disc?'Rien de perso ne sort de ton téléphone':'Montants et noms visibles sur l’écran verrouillé'])}},
-  {i:'sun',l:'Apparence',s:{light:'Clair',dark:'Nuit',auto:'Comme mon iPhone'}[S.theme||'light'],one:1,go:()=>themeFlow()},
-  {i:'sun',l:'Page du jour',s:S.rcOff?'Coupée':'À la 1re ouverture de la journée',one:1,go:()=>{S.rcOff=S.rcOff?0:1;done([S.rcOff?'Page du jour coupée':'Page du jour activée',S.rcOff?'Tu peux la revoir en touchant « Bonjour » sur l’accueil':'Elle t’accueille chaque matin'])}},
-  {i:'moon',l:'Heure du point du soir',s:(S.eh||21)+' h chaque soir',one:1,go:()=>flow([{k:'eh',q:'Ton point du soir, à quelle heure ?',type:'tiles',opts:[19,20,21,22,23].map(h=>({v:h,i:'moon',l:h+' h'}))}],v=>{S.eh=v.eh;pushSoon(300);return['C’est noté','Chaque soir à '+v.eh+' h']})},
-  {i:'moon',l:'Mode calme',s:S.calm?'Activé : juste ton point du soir et tes rappels':'2 notifications par jour maximum',one:1,go:()=>{S.calm=S.calm?0:1;pushSoon(300);done([S.calm?'Mode calme activé':'Mode calme coupé',S.calm?'Juste ton point du soir et tes rappels':'2 notifications par jour maximum'])}},
+  G('share','Partager Base','Envoyer l’app à quelqu’un',shareApp),
   {i:'help',l:'Mentions et confidentialité',s:'Ce que Base fait de tes données',one:1,go:()=>{closeFl();legalScr()}},
-  {i:'card',l:'Rappel après chaque paiement',s:'Avec Apple Pay et Raccourcis',one:1,go:()=>{closeFl();payTip()}},
-  {i:'zap',l:'Sons',s:sndOn()?'Activés':'Coupés',one:1,go:()=>{S.snd=sndOn()?0:1;save();if(S.snd)sfx('ok');done(['Sons '+(S.snd?'activés':'coupés'),''])}},
-  {i:'bell',l:'Notifications',s:pushOn()?'Activées':'Désactivées',one:1,go:()=>pushOn()?pushOff():pushEnable()},
-  {i:'user',l:'Mon prénom',s:S.name||'',one:1,go:()=>flow([{k:'n',q:'Ton prénom ?',type:'text',ph:'Prénom'}],v=>{S.name=v.n;return['Enregistré',v.n]})},
-  {i:'smoke',l:'Ma conso',s:S.vice?(keys().map(vkL).join(', ')+(S.wk?' · '+eur0(S.wk)+' par semaine avant':' · montant inconnu')):'Pas suivie',one:1,go:()=>flowVice()},
-  {i:'trash',l:'Tout effacer',s:'Repartir de zéro',one:1,go:()=>flow([{k:'x',q:'Tout effacer ?',sub:'Tes dépenses, dettes et ton agenda seront supprimés.',type:'tiles',opts:[{i:'trash',l:'Oui, tout effacer',one:1,go:async()=>{try{if(S.pid)await fetch(PUSH+'/unsub',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:S.pid})})}catch(e){}try{const r=swReg||await navigator.serviceWorker.getRegistration();const sb=r&&await r.pushManager.getSubscription();if(sb)await sb.unsubscribe()}catch(e){}try{if(navigator.clearAppBadge)navigator.clearAppBadge()}catch(e){}try{localStorage.removeItem(K)}catch(e){}location.reload()}},{i:'undo',l:'Non, garder',one:1,go:()=>closeFl()}]}],()=>['',''])},
-  {i:'undo',l:'Retour',one:1,go:()=>closeFl()}]}],()=>['',''])}
-
+  {i:'trash',l:'Tout effacer',s:'Repartir de zéro',one:1,go:()=>flow([{k:'x',q:'Tout effacer ?',sub:'Tes dépenses, dettes et ton agenda seront supprimés.',type:'tiles',opts:[{i:'trash',l:'Oui, tout effacer',one:1,go:async()=>{try{if(S.pid)await fetch(PUSH+'/unsub',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:S.pid})})}catch(e){}try{const r=swReg||await navigator.serviceWorker.getRegistration();const sb=r&&await r.pushManager.getSubscription();if(sb)await sb.unsubscribe()}catch(e){}try{if(navigator.clearAppBadge)navigator.clearAppBadge()}catch(e){}try{localStorage.removeItem(K)}catch(e){}location.reload()}},{i:'undo',l:'Non, garder',one:1,go:()=>closeFl()}]}],()=>['',''])}]}],()=>['',''])}
 /* ---------- Premier lancement ---------- */
 function onbApply(v){S.name=v.n;try{pfApply(v)}catch(e){}fxSave(v.fx);rinSave(v.rin||[]);accSave(v.acc);S.start=today;S.eh=v.eh||21;if(v.vxn)S.vxn=v.vxn.trim().slice(0,24);if(v.ad===0)v.vice='';if(v.vice)S.adult=1;S.vice=v.vice;if(v.vice){wkApply(v);S.vstart=today}try{applyMods()}catch(e){}}
 function onboard(){const N=v=>esc(v.n||'');flow([
