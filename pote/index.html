@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="fr" data-build="1794060765" data-theme="dark">
+<html lang="fr" data-build="1794070000" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Base"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=2"><link rel="icon" type="image/png" href="../icons/icon-192.png?v=2"><link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#000000"><meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#F2F2F7"><meta name="color-scheme" content="dark">
 <title>Base</title>
 <style>
 :root{--bg:#000000;--num:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;--card:#1C1C1E;--card2:#2C2C2E;--ink:#FFFFFF;--muted:#8E8E93;--line:#2C2C2E;--good:#30D158;--bad:#FF453A;--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;color-scheme:dark}
@@ -570,6 +570,27 @@ body{background:#000}
 #rcp.rm .rb{animation:okin .2s ease-out both}
 .rce{text-align:center;color:var(--muted);font-size:15px;margin:0 0 10px}
 .rcin{height:56px;border:0;border-radius:16px;background:#fff;color:#000;font:inherit;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}.rcin svg{width:18px;height:18px;transform:rotate(90deg)}
+
+/* ===== Thèmes : clair (par défaut) et nuit ===== */
+:root{--hsg:rgba(255,255,255,.16)}
+:root[data-theme="light"]{--bg:#F2F2F7;--card:#FFFFFF;--card2:#E9E9EE;--ink:#000000;--muted:#6C6C70;--line:#E5E5EA;--sep:rgba(60,60,67,.16);--good:#1FA34A;--bad:#FF3B30;--hsg:rgba(0,0,0,.16);
+  --c-out:#E07800;--c-in:#1FA34A;--c-ag:#007AFF;--c-debt:#B98900;--c-cof:#AF52DE;--c-moi:#1C9CB8;--c-noc:#E0244A;--c-hist:#8E8E93;color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
+[data-theme="light"] body{background:var(--bg)}
+[data-theme="light"] .bub{background:color-mix(in srgb,var(--pc) 15%,#fff)}
+[data-theme="light"] #rcp{background:radial-gradient(120% 70% at 50% 0%,#FFFFFF 0%,#F2F2F7 70%)}
+[data-theme="light"] .rb{background:color-mix(in srgb,var(--bc) 14%,#fff);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--bc) 30%,transparent),0 6px 18px -10px color-mix(in srgb,var(--bc) 60%,transparent)}
+[data-theme="light"] .rb b{color:#000}
+[data-theme="light"] .rcin{background:#000;color:#fff}
+[data-theme="light"] .lock{background:var(--bg)}
+[data-theme="light"] .tipb .go{color:#fff}[data-theme="light"] .tipb .go.ghost{color:var(--ink)}
+[data-theme="light"] .bdgs span:empty{box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.16)}
+[data-theme="light"] .fire{background:rgba(255,149,0,.14);color:#E07800}[data-theme="light"] .fire svg{fill:#FF9500}
+[data-theme="light"] .vic b[style*="64D2FF"]{color:#1C9CB8!important}
+[data-theme="light"] .tile.cta{color:#fff}[data-theme="light"] .tile.cta .ib{background:rgba(255,255,255,.22);color:#fff}[data-theme="light"] .tile.cta small{color:rgba(255,255,255,.85)}
+[data-theme="light"] .nud,[data-theme="light"] .tile,[data-theme="light"] .mm,[data-theme="light"] .solr,[data-theme="light"] .lvc,[data-theme="light"] .vic div,[data-theme="light"] .goal,[data-theme="light"] .list,[data-theme="light"] .mrow2,[data-theme="light"] .wish,[data-theme="light"] .tipb{box-shadow:0 1px 2px rgba(0,0,0,.04)}
+[data-theme="light"] .rcs{color:#E07800}[data-theme="light"] .rcs svg{fill:#FF9500}
+[data-theme="light"] .wr.tot b,[data-theme="light"] .wnote,[data-theme="light"] .inx{color:#1FA34A}
 </style>
 </head>
 <body>
@@ -626,6 +647,9 @@ try{const N=JSON.parse(localStorage.getItem('base3:v1'));if(N&&N.name&&!(S&&S.na
   if(N.bal&&N.bal.ts>((S.bal&&S.bal.ts)||0))S.bal={...(S.bal||{}),v:N.bal.v,d:N.bal.d,ts:N.bal.ts};
   S.m3=1;localStorage.setItem(K,JSON.stringify(S))}}catch(e){}
 if(!S||typeof S!=='object')S={};
+function applyTheme(){const t=S.theme||'light',e=t==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t;document.documentElement.dataset.theme=e;const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=e==='dark'?'#000000':'#F2F2F7'}
+applyTheme();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(S.theme==='auto')applyTheme()})}catch(e){}
+function themeFlow(){flow([{k:'t',q:'Apparence',sub:'Tu peux changer quand tu veux.',type:'tiles',opts:[{v:'light',i:'sun',l:'Clair'},{v:'dark',i:'moon',l:'Nuit'},{v:'auto',i:'spark',l:'Comme mon iPhone',s:'Clair le jour, nuit le soir selon tes réglages',one:1}]}],v=>{S.theme=v.t;applyTheme();return[{light:'Mode clair',dark:'Mode nuit',auto:'Comme ton iPhone'}[v.t],'']})}
 for(const k of ['inc','e','debts','ag','mine','crav'])if(!Array.isArray(S[k]))S[k]=[];
 if(!S.log||typeof S.log!=='object')S.log={};if(!Array.isArray(S.wish))S.wish=[];if(!S.ex||typeof S.ex!=='object')S.ex={};
 if(S.fixe==null)S.fixe=null;
@@ -676,7 +700,7 @@ function catsCard(){const m={};let t=0;for(const x of S.e.filter(x=>x.d.startsWi
   const L=Object.entries(m).sort((a,b)=>b[1]-a[1]);
   return `<div class="cats"><div class="hd"><b>Où part ton argent</b><span>${MNL[+YM.slice(5,7)-1]}</span></div><div class="bar">${L.map(([c,v])=>`<i style="width:${v/t*100}%;background:${CCOL[c]||'#8E8E93'}"></i>`).join('')}</div>${L.slice(0,5).map(([c,v])=>`<div class="cr"><span class="dot" style="background:${CCOL[c]||'#8E8E93'}"></span><span>${esc(CN[c]?CN[c][2]:'Autre')}<small>${Math.round(v/t*100)} %</small></span><b>${eur(v)}</b></div>`).join('')}${m.conso?`<div class="dnote" style="text-align:left;padding:0">${esc(CN.conso[2])} : ${eur0(m.conso)} ce mois, soit ${eur0(m.conso/Math.max(1,+today.slice(8))*30)} sur un mois entier à ce rythme.</div>`:''}</div>`}
 async function shareApp(){const u=location.origin+location.pathname,t='Base : l’app qui m’aide à tenir mon argent et mes journées. Gratuite, sans compte.';try{if(navigator.share){await navigator.share({title:'Base',text:t,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t+' '+u);done(['Lien copié','Colle-le à qui tu veux'])}catch(e){done(['Le lien',u])}}
-function setSheet(){const T=[['in','Importer Plan Budget',()=>pbPaste()],['gear','Mon profil et mon budget',settings],['bell',pushOn()?'Rappels : activés':'Activer les rappels',()=>pushOn()?pushOff():pushEnable()],['folder','Sauvegarder mes données',backup],['cal','Calendrier du téléphone',icsExport],['help','Aide',()=>helpScr()],['share','Partager Base',shareApp]];
+function setSheet(){const T=[['sun','Apparence : '+({light:'clair',dark:'nuit',auto:'comme l’iPhone'}[S.theme||'light']),themeFlow],['in','Importer Plan Budget',()=>pbPaste()],['gear','Mon profil et mon budget',settings],['bell',pushOn()?'Rappels : activés':'Activer les rappels',()=>pushOn()?pushOff():pushEnable()],['folder','Sauvegarder mes données',backup],['cal','Calendrier du téléphone',icsExport],['help','Aide',()=>helpScr()],['share','Partager Base',shareApp]];
   flow([{k:'x',q:'Réglages',sub:'Tes données restent sur ce téléphone.',type:'tiles',opts:T.map(([i,l,f])=>({i,l,one:1,go:()=>{closeFl();f()}}))}],()=>['',''])}
 function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x.v||0),0)*100)/100;try{snapBal()}catch(e){}const r=reste(),now=new Date(),left=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1;
   const its=S.ag.filter(a=>a.d===today).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'));
@@ -1380,11 +1404,11 @@ function wishSkip(w){w.st='skip';w.dd=today;flow([{k:'x',q:'Bien joué. On le me
   {i:'x',l:'Non, je les laisse sur mon compte',one:1,go:()=>done(['Bien joué',eur(w.v)+' pas dépensés'])}]}],()=>['',''])}
 
 /* ===== La maison : chaque jour tenu pose une brique ===== */
-function houseSvg(n){const on=k=>n>=k,G='rgba(255,255,255,.14)',O='#FF9F0A',lit=n>=7;
+function houseSvg(n){const on=k=>n>=k,G='var(--hsg)',O='#FF9F0A',lit=n>=7;
   return `<svg class="hs" viewBox="0 0 120 120" aria-hidden="true">
    ${lit?'<circle cx="60" cy="66" r="54" fill="rgba(255,214,10,.08)"/>':''}
-   <path d="M24 60 60 30 96 60" fill="none" stroke="${G}" stroke-width="1.5" stroke-dasharray="3 4"/><rect x="30" y="58" width="60" height="34" fill="none" stroke="${G}" stroke-width="1.5" stroke-dasharray="3 4"/>
-   <line x1="8" y1="100" x2="112" y2="100" stroke="${on(1)?'#8E8E93':G}" stroke-width="2" stroke-linecap="round"/>
+   <path d="M24 60 60 30 96 60" fill="none" style="stroke:${G}" stroke-width="1.5" stroke-dasharray="3 4"/><rect x="30" y="58" width="60" height="34" fill="none" style="stroke:${G}" stroke-width="1.5" stroke-dasharray="3 4"/>
+   <line x1="8" y1="100" x2="112" y2="100" style="stroke:${on(1)?'#8E8E93':G}" stroke-width="2" stroke-linecap="round"/>
    ${on(2)?`<rect x="24" y="92" width="72" height="8" rx="2" fill="#636366"/>`:''}
    ${on(3)?`<rect x="30" y="58" width="60" height="34" rx="2" fill="rgba(255,159,10,.22)" stroke="${O}" stroke-width="2"/><path d="M30 69h60M30 80h60M45 58v11M75 58v11M60 69v11M38 80v12M82 80v12" stroke="rgba(255,159,10,.35)" stroke-width="1"/>`:''}
    ${on(4)?`<rect x="53" y="72" width="14" height="20" rx="2" fill="${lit?'#FFD60A':'#2C2C2E'}" stroke="${O}" stroke-width="1.5"/><rect x="36" y="64" width="11" height="9" rx="1.5" fill="${lit?'#FFD60A':'#64D2FF'}" opacity="${lit?1:.7}"/><rect x="73" y="64" width="11" height="9" rx="1.5" fill="${lit?'#FFD60A':'#64D2FF'}" opacity="${lit?1:.7}"/>`:''}
@@ -1814,6 +1838,7 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
   {i:'help',l:'Aide',s:'Toutes les réponses à tes questions',one:1,go:()=>{const f=$('.fl');if(f)f.remove();FL=null;helpScr()}},
   {i:'lock',l:'Code de verrouillage',s:S.pin?'Activé':'Pour que personne d’autre ne lise tes comptes',one:1,go:()=>{if(S.pin){delete S.pin;done(['Code retiré',''])}else{closeFl();pinPad('set')}}},
   {i:'bell',l:'Notifications discrètes',s:S.disc!==0?'Oui : rien de perso sur l’écran verrouillé':'Non : montants et noms affichés',one:1,go:()=>{S.disc=S.disc!==0?0:1;pushSoon(300);done([S.disc?'Notifications discrètes':'Notifications détaillées',S.disc?'Rien de perso ne sort de ton téléphone':'Montants et noms visibles sur l’écran verrouillé'])}},
+  {i:'sun',l:'Apparence',s:{light:'Clair',dark:'Nuit',auto:'Comme mon iPhone'}[S.theme||'light'],one:1,go:()=>themeFlow()},
   {i:'sun',l:'Page du jour',s:S.rcOff?'Coupée':'À la 1re ouverture de la journée',one:1,go:()=>{S.rcOff=S.rcOff?0:1;done([S.rcOff?'Page du jour coupée':'Page du jour activée',S.rcOff?'Tu peux la revoir en touchant « Bonjour » sur l’accueil':'Elle t’accueille chaque matin'])}},
   {i:'moon',l:'Heure du point du soir',s:(S.eh||21)+' h chaque soir',one:1,go:()=>flow([{k:'eh',q:'Ton point du soir, à quelle heure ?',type:'tiles',opts:[19,20,21,22,23].map(h=>({v:h,i:'moon',l:h+' h'}))}],v=>{S.eh=v.eh;pushSoon(300);return['C’est noté','Chaque soir à '+v.eh+' h']})},
   {i:'moon',l:'Mode calme',s:S.calm?'Activé : juste ton point du soir et tes rappels':'2 notifications par jour maximum',one:1,go:()=>{S.calm=S.calm?0:1;pushSoon(300);done([S.calm?'Mode calme activé':'Mode calme coupé',S.calm?'Juste ton point du soir et tes rappels':'2 notifications par jour maximum'])}},
