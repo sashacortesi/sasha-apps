@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794072096" data-theme="light">
+<html lang="fr" data-build="1794072424" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -1330,34 +1330,46 @@ function scanItems(txt,todayIso){const L=String(txt||'').replace(/\r/g,'').split
     out.push({v:Math.round(v*100)/100,n:n2,c,d})});
   return out}
 const SCAN_CH='abcdefghijklmnopqrstuvwxyz';
-function scanMulti(L,ctx){L=L.slice(0,26);const dup=it=>S.e.some(x=>x.d===it.d&&Math.abs(x.v-it.v)<.005);
-  const lab=it=>eur(it.v)+' · '+(it.n||'Dépense')+(it.c?' · '+CN[it.c][2]:'')+(it.d!==today?' · '+dLab(it.d).toLowerCase():'')+(dup(it)?' · déjà noté':'');
-  const steps=[{k:'sel',q:'J’ai trouvé '+L.length+' dépenses',sub:'Décoche ce que tu ne veux pas noter.',type:'multi',opts:L.map((it,j)=>({v:SCAN_CH[j],i:it.c?CN[it.c][1]:'dots',l:lab(it)}))}];
-  L.forEach((it,j)=>{if(!it.c)steps.push({k:'c'+j,q:eur(it.v)+(it.n?' · '+esc(it.n):''),sub:'C’était quoi ?',type:'tiles',skip:v=>!String(v.sel||'').includes(SCAN_CH[j]),opts:CATS.map(([v,i,l])=>({v,i,l}))})});
-  flow(steps,v=>{let n=0,t=0;L.forEach((it,j)=>{if(!String(v.sel||'').includes(SCAN_CH[j]))return;const c=it.c||v['c'+j]||'autre';const e={id:uid(),d:it.d,v:it.v,c,ph:1};if(it.n)e.n=it.n;if(nbFor(it.d,'n'))e.nb=1;addE(e);n++;t+=it.v});
-   if(ctx==='eve'){save();setTimeout(()=>{if(!FL&&!$('.fl'))flowEve()},1500)}
-   return[n>1?n+' dépenses notées':n?'C’est noté':'Rien de noté',n?eur(t)+' au total':'']},{sel:L.map((it,j)=>dup(it)?'':SCAN_CH[j]).join('')})}
 let SCAN_W=null;
 const scanLib=()=>window.Tesseract?Promise.resolve():new Promise((ok,ko)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.onload=ok;s.onerror=ko;document.head.appendChild(s)});
 function scanPick(ctx){let i=document.getElementById('scanin');if(!i){i=document.createElement('input');i.type='file';i.accept='image/*';i.id='scanin';i.hidden=true;document.body.appendChild(i)}
   i.value='';i.onchange=()=>{const f=i.files&&i.files[0];if(f)scanRun(f,ctx)};i.click();scanLib().catch(()=>{})}
 function scanImg(f){return new Promise((ok,ko)=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const k=Math.min(1,2000/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext('2d');x.filter='grayscale(1) contrast(1.25)';x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c)};im.onerror=ko;im.src=u})}
-async function scanRun(f,ctx){const old=$('.fl');if(old)old.remove();FL=null;
+/* Les justificatifs (photos) restent sur le téléphone, dans une petite base à part, pour partir avec le mois chez le comptable */
+const IDB=()=>new Promise((ok,ko)=>{const r=indexedDB.open('base-img',1);r.onupgradeneeded=()=>r.result.createObjectStore('i');r.onsuccess=()=>ok(r.result);r.onerror=ko});
+const imgPut=(id,b)=>IDB().then(db=>new Promise(ok=>{const t=db.transaction('i','readwrite');t.objectStore('i').put(b,id);t.oncomplete=ok;t.onerror=ok})).catch(()=>{});
+const imgGet=id=>IDB().then(db=>new Promise(ok=>{const q=db.transaction('i').objectStore('i').get(id);q.onsuccess=()=>ok(q.result||null);q.onerror=()=>ok(null)})).catch(()=>null);
+let SCAN_IMG=null;
+function scanKeep(f){return new Promise(ok=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const k=Math.min(1,1400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>ok(b),'image/jpeg',.72)};im.onerror=()=>ok(null);im.src=u})}
+const imgTag=e=>{if(!SCAN_IMG||!SCAN_IMG.b)return;e.img=SCAN_IMG.id;if(!SCAN_IMG.saved){SCAN_IMG.saved=1;imgPut(SCAN_IMG.id,SCAN_IMG.b)}};
+function scanMulti(L,ctx){L=L.slice(0,26);const pro=ctx==='pro';if(pro)L.forEach(it=>it.c='pro');const dup=it=>S.e.some(x=>x.d===it.d&&Math.abs(x.v-it.v)<.005)||(S.pro&&S.pro.e||[]).some(x=>x.d===it.d&&Math.abs(x.v-it.v)<.005);
+  const lab=it=>eur(it.v)+' · '+(it.n||'Dépense')+(it.c&&!pro?' · '+CN[it.c][2]:'')+(it.d!==today?' · '+dLab(it.d).toLowerCase():'')+(dup(it)?' · déjà noté':'');
+  const steps=[{k:'sel',q:'J’ai trouvé '+L.length+' dépenses'+(pro?' pro':''),sub:'Décoche ce que tu ne veux pas noter.',type:'multi',opts:L.map((it,j)=>({v:SCAN_CH[j],i:it.c?CN[it.c][1]:'dots',l:lab(it)}))}];
+  L.forEach((it,j)=>{if(!it.c)steps.push({k:'c'+j,q:eur(it.v)+(it.n?' · '+esc(it.n):''),sub:'C’était quoi ?',type:'tiles',skip:v=>!String(v.sel||'').includes(SCAN_CH[j]),opts:CATS.map(([v,i,l])=>({v,i,l}))})});
+  flow(steps,v=>{let n=0,t=0;L.forEach((it,j)=>{if(!String(v.sel||'').includes(SCAN_CH[j]))return;const c=it.c||v['c'+j]||'autre';const e={id:uid(),d:it.d,v:it.v,c,ph:1};if(it.n)e.n=it.n;if(c==='pro')imgTag(e);if(nbFor(it.d,'n'))e.nb=1;addE(e);n++;t+=it.v});
+   if(ctx==='eve'){save();setTimeout(()=>{if(!FL&&!$('.fl'))flowEve()},1500)}
+   return[n>1?n+' dépenses notées':n?'C’est noté':'Rien de noté',n?eur(t)+' au total':'']},{sel:L.map((it,j)=>dup(it)?'':SCAN_CH[j]).join('')})}
+async function scanRun(f,ctx){const old=$('.fl');if(old)old.remove();FL=null;SCAN_IMG=null;
   const o=document.createElement('div');o.className='fl scanw';o.innerHTML=`<div class="scbox"><span class="scsp">${ic('cam')}</span><b>Je lis ta capture…</b><small>Montants, dates, catégories</small></div>`;document.body.appendChild(o);document.body.style.overflow='hidden';
-  let R={};try{const[c]=await Promise.all([scanImg(f),scanLib()]);if(!SCAN_W)SCAN_W=await Tesseract.createWorker('fra');const{data}=await SCAN_W.recognize(c);const tx=data.text||'';R=scanParse(tx,today);R.ok=1;
+  let R={};try{const[c,b]=await Promise.all([scanImg(f),mod('f')?scanKeep(f):null,scanLib()]);if(b)SCAN_IMG={id:'img'+uid(),b};if(!SCAN_W)SCAN_W=await Tesseract.createWorker('fra');const{data}=await SCAN_W.recognize(c);const tx=data.text||'';R=scanParse(tx,today);R.ok=1;R.inv=/facture|invoice/i.test(tx);
    if(!/total|ttc|tva|ticket|caisse|facture|net [aà] payer/i.test(tx)){const L=scanItems(tx,today);if(L.length>1){o.remove();buzz([10,40,10]);return scanMulti(L,ctx)}if(L.length===1)R={...L[0],ok:1}}}catch(e){R={fail:1}}
   o.remove();buzz(R.v?[10,40,10]:8);scanFlow(R,ctx)}
-function scanFlow(R,ctx){const where=v=>[v.n?esc(v.n):'',v.d&&v.d!==today?dLab(v.d):'Aujourd’hui'].filter(Boolean).join(' · ');
+function scanFlow(R,ctx){const pro=ctx==='pro',where=v=>[v.n?esc(v.n):'',v.d&&v.d!==today?dLab(v.d):'Aujourd’hui'].filter(Boolean).join(' · ');
+  const lab=v=>v.kd==='in'?'Paiement client':CN[v.c][2];
   flow([
-   {k:'ok',q:v=>eur(v.v)+' · '+CN[v.c][2],sub:v=>where(v)+' — lu sur ta capture.',type:'tiles',skip:v=>!(v.v>0&&v.c),opts:[{v:'y',i:'check',l:'C’est bon',s:'Je le note',one:1,cta:1},{v:'c',i:'dots',l:'Autre catégorie',one:1},{v:'m',i:'pen',l:'Corriger le montant',one:1}]},
-   {k:'v',q:'Combien ?',sub:R.fail?'Je n’ai pas réussi à lire l’image. Tape le montant, je m’occupe du reste.':R.c?'Je n’ai pas trouvé le montant ('+CN[R.c][2]+(R.n?', '+esc(R.n):'')+').':'Je n’ai pas trouvé le montant.',type:'amount',pd:'out',skip:v=>v.v>0&&v.ok!=='m'},
+   {k:'kd',q:'C’est quoi, cette capture ?',sub:R.v?eur(R.v)+(R.n?' · '+esc(R.n):''):'',type:'tiles',skip:()=>!pro,opts:[{v:'out',i:'out',l:'Une dépense pro',s:'Facture reçue, ticket, notif de la banque'},{v:'in',i:'in',l:'Une facture que j’ai envoyée',s:'Un client m’a payé'}]},
+   {k:'ok',q:v=>eur(v.v)+' · '+lab(v),sub:v=>where(v)+' — lu sur ta capture.',type:'tiles',skip:v=>!(v.v>0&&v.c),opts:v=>[{v:'y',i:'check',l:'C’est bon',s:'Je le note',one:1,cta:1},...(pro?[]:[{v:'c',i:'dots',l:'Autre catégorie',one:1}]),{v:'m',i:'pen',l:'Corriger le montant',one:1}]},
+   {k:'v',q:'Combien ?',sub:R.fail?'Je n’ai pas réussi à lire l’image. Tape le montant, je m’occupe du reste.':R.c&&!pro?'Je n’ai pas trouvé le montant ('+CN[R.c][2]+(R.n?', '+esc(R.n):'')+').':'Je n’ai pas trouvé le montant.',type:'amount',pd:'out',skip:v=>v.v>0&&v.ok!=='m'},
    {k:'c',q:'C’était quoi ?',sub:v=>v.ok==='c'?'':eur(v.v)+(v.n?' · '+esc(v.n):''),type:'tiles',skip:v=>v.c&&v.ok!=='c',opts:CATS.map(([v,i,l])=>({v,i,l}))},
    {k:'s',q:()=>esc(CN.conso[2])+' : quoi ?',type:'tiles',skip:v=>v.c!=='conso',opts:()=>fsub()},
-   PA_STEP,
-   SAMEQ('out')
-  ],v=>{const d=v.d||today,nb=nbFor(d,v.sb);const e={id:uid(),d,v:v.v,c:v.c,ph:1};if(v.s)e.s=v.s;if(v.n)e.n=v.n;if(nb)e.nb=1;addE(e,v.pa);
+   {...PA_STEP,skip:v=>v.kd==='in'||PA_STEP.skip(v)},
+   {k:'ia',q:'Arrivé sur quel compte ?',type:'tiles',skip:v=>v.kd!=='in'||!proAcc(),opts:()=>[{v:'p',i:'brief',l:'Le compte pro',s:(S.pro.acc||[]).map(a=>a.n).join(', ')},{v:'m',i:'wallet',l:'Mon compte perso'}]},
+   {...SAMEQ('out'),skip:v=>v.kd==='in'||(v.c==='pro'&&proAcc()&&v.pa!=='m')||SAMEQ('out').skip(v)}
+  ],v=>{const d=v.d||today,nb=nbFor(d,v.sb);
+   if(v.kd==='in'){const o={id:uid(),d,v:v.v,ph:1};imgTag(o);if(v.ia==='p')proD().inc.push({...o,n:v.n||'Paiement client'});else S.inc.push({...o,n:'Paiement client',...(v.n?{cl:v.n}:{})});return['Bien reçu','+'+eur(v.v)+(v.n?' · '+v.n:'')+' · photo gardée']}
+   const e={id:uid(),d,v:v.v,c:v.c,ph:1};if(v.s)e.s=v.s;if(v.n)e.n=v.n;if(nb)e.nb=1;if(e.c==='pro')imgTag(e);const pp=addE(e,v.pa);
    if(ctx==='eve'){save();setTimeout(()=>{if(!FL&&!$('.fl'))flowEve()},1500)}
-   return['C’est noté',`${eur(v.v)} · ${v.s?FL2[v.s]:CN[v.c][2]}${dSuf(d)}${nb?' · solde inchangé':''}`]},{v:R.v,c:R.c,n:R.n,d:R.d})}
+   return['C’est noté',`${eur(v.v)} · ${v.s?FL2[v.s]:CN[v.c][2]}${dSuf(d)}${e.img?' · photo gardée':pp?' · compte pro':nb?' · solde inchangé':''}`]},{v:R.v,c:pro?'pro':R.c,n:R.n,d:R.d,...(pro&&R.inv?{}:{})})}
 function flowFume(sub){flow([{k:'v',q:`${FL2[sub]} : combien ?`,type:'amount'}],v=>{S.e.push({id:uid(),d:today,v:v.v,c:'conso',s:sub});return['C’est noté',`${eur(v.v)} · ${FL2[sub]}`]})}
 /* Le solde est la vérité : une date avant le dernier recalage est déjà dans le chiffre de ta banque, donc on ne la recompte pas. */
 function balNote(d,k){if(!S.bal||d===today)return '';const b=S.bal.d,bl='le '+pd(b).getDate()+' '+MN[pd(b).getMonth()];
@@ -1372,8 +1384,9 @@ function flowInc(pre,src){const BS=[{v:'Salaire',i:'brief',l:'Salaire'},{v:'Miss
   {k:'n',q:'Ça vient d’où ?',type:'tiles',skip:v=>!!v.fixN,opts:[...XS,...BS]},
   {k:'cl',q:'Quel client ?',sub:'Pour ton comptable. Tu peux passer.',type:'text',ph:'Ex. Next Spain',ml:60,opt:1,skip:v=>v.n!=='Paiement client'},
   {k:'ia',q:'Arrivé sur quel compte ?',type:'tiles',skip:v=>v.n!=='Paiement client'||!proAcc(),opts:()=>[{v:'p',i:'brief',l:'Le compte pro',s:(S.pro.acc||[]).map(a=>a.n).join(', ')},{v:'m',i:'wallet',l:'Mon compte perso'}]},
+  {k:'urs',q:'Ton taux de cotisations URSSAF ?',sub:'En %, il est sur ton espace URSSAF. Je te dirai combien garder à chaque paiement, sans que tu aies à calculer.',type:'text',ph:'Ex. 24,6',opt:1,skip:v=>v.n!=='Paiement client'||!mod('u')||!S.pf||S.pf.urs||S.pf.ursNo},
   {...SAMEQ('in'),skip:v=>v.ia==='p'||SAMEQ('in').skip(v)}
- ],v=>{const d=v.d||today,nb=nbFor(d,v.sb);const r=v.n==='Paiement client'&&mod('u')&&S.pf&&S.pf.urs?Math.round(v.v*S.pf.urs)/100:0;
+ ],v=>{if(v.urs!=null&&S.pf){const x=parseFloat(String(v.urs).replace(',','.'));if(x>0&&x<80)S.pf.urs=x;else S.pf.ursNo=1}const d=v.d||today,nb=nbFor(d,v.sb);const r=v.n==='Paiement client'&&mod('u')&&S.pf&&S.pf.urs?Math.round(v.v*S.pf.urs)/100:0;
   if(v.n==='Paiement client'){if(v.ia==='p')proD().inc.push({id:uid(),d,v:v.v,n:v.cl||'Paiement client'});else S.inc.push({id:uid(),d,v:v.v,n:'Paiement client',...(v.cl?{cl:v.cl}:{}),...(nb?{nb:1}:{})});
    if(r)setTimeout(()=>{if(FL)return;flow([{k:'x',q:'Garde '+eur(r)+' pour l’URSSAF',sub:String(S.pf.urs).replace('.',',')+' % de '+eur(v.v)+'. Je le mets de côté pour que tu n’y touches pas ?',type:'tiles',opts:[{i:'safe',l:'Oui, mets-le de côté',one:1,cta:1,go:()=>{if(v.ia==='p')done(['C’est noté','Laisse '+eur(r)+' sur le compte pro']);else{cofAdd(r);done(['Mis de côté',eur(r)+' pour l’URSSAF'])}}},{i:'later',l:'Non merci',one:1,go:()=>closeFl()}]}],()=>['',''])},1900);
    return['Bien reçu','+'+eur(v.v)+(v.cl?' · '+v.cl:'')+(v.ia==='p'?' · compte pro':'')]}
@@ -2264,17 +2277,16 @@ function modSug(sit){sit=sit||'';let s='dow';if(/[mc]/.test(sit))s='f'+s;if(sit.
 const modOpts=v=>MODL.filter(([k])=>k!=='u'||(v.sit||'').includes('m')||mod('u')).map(([k,i,l])=>({v:k,i,l,s:modWhy(k,v.sit)}));
 const PF_STEPS=()=>[
   {k:'sit',q:'Tu fais quoi dans la vie ?',sub:'Coche tout ce qui te correspond : Base s’adapte à toi.',type:'multi',opts:SIT.map(([v,i,l])=>({v,i,l}))},
-  {k:'lg',q:'Et tu vis où ?',type:'tiles',opts:LOG.map(([v,i,l])=>({v,i,l}))},
   {k:'mods',q:v=>'Voilà ton Base'+(S.name||v.n?', '+esc(S.name||v.n):''),sub:'Je l’ai préparé pour toi. Décoche ou ajoute, tu pourras tout changer quand tu veux.',type:'multi',def:v=>modSug(v.sit),none:'Le strict minimum',opts:modOpts},
   {k:'pa',q:v=>(v.sit||'').includes('c')?'Ta société a son compte à elle ?':'Tu as un compte rien que pour ton activité ?',sub:'Comme ça, son argent ne se mélange pas avec le tien.',type:'tiles',skip:v=>!(v.mods||'').includes('f'),opts:[{v:'y',i:'bank',l:'Oui, un compte à part',s:'Ex. Qonto, Shine, un 2e compte Bourso'},{v:'n',i:'wallet',l:'Non, tout passe par mon compte perso',s:'Je range juste tes dépenses en « Pro »'}]},
-  {k:'pacc',q:'Ton compte pro, il a combien ?',sub:'Une ligne par compte. Il reste séparé de ton argent perso.',type:'accounts',def:()=>(S.pro&&S.pro.acc&&S.pro.acc.length?S.pro.acc.map(x=>({n:x.n,v:null,neg:false,ph:x.v})):[{n:'',v:null,neg:false}]),skip:v=>!(v.mods||'').includes('f')||v.pa!=='y'},
-  {k:'cpt',q:'Ton comptable ou ton banquier',sub:'Son e-mail, pour lui envoyer ton mois en une touche. Tu peux passer.',type:'text',ph:'Ex. cabinet@…',ml:80,opt:1,skip:v=>!(v.mods||'').includes('f')},
-  {k:'urs',q:'Ton taux de cotisations URSSAF',sub:'En %, il est écrit sur ton espace URSSAF. Je m’en sers pour te dire combien garder à chaque paiement client.',type:'text',ph:'Ex. 24,6',opt:1,skip:v=>!(v.mods||'').includes('u')}];
-function pfApply(v){const o=S.pf||{};S.pf={...o,sit:v.sit||'',lg:v.lg||'',mods:v.mods||''};const r=parseFloat(String(v.urs||'').replace(',','.'));if(r>0&&r<80)S.pf.urs=r;if(v.cpt!=null)S.pf.cpt=v.cpt;
+  {k:'pacc',q:'Ton compte pro, il a combien ?',sub:'Une ligne par compte. Il reste séparé de ton argent perso.',type:'accounts',def:()=>(S.pro&&S.pro.acc&&S.pro.acc.length?S.pro.acc.map(x=>({n:x.n,v:null,neg:false,ph:x.v})):[{n:'',v:null,neg:false}]),skip:v=>!(v.mods||'').includes('f')||v.pa!=='y'}];
+function pfApply(v){const o=S.pf||{};const was=mod('f')&&!!S.pf;S.pf={...o,sit:v.sit||'',mods:v.mods||''};const r=parseFloat(String(v.urs||'').replace(',','.'));if(r>0&&r<80)S.pf.urs=r;if(v.cpt!=null)S.pf.cpt=v.cpt;
   if((v.mods||'').includes('f')){S.pro=S.pro||{e:[],inc:[],sent:{}};if(v.pa==='n')S.pro.acc=null;else if(v.pa==='y'&&Array.isArray(v.pacc)){const acc=v.pacc.filter(x=>x.v!=null).map(x=>({n:x.n||'Compte pro',v:x.v}));if(acc.length)S.pro.acc=acc,S.pro.d=today,S.pro.v=Math.round(acc.reduce((a,x)=>a+x.v,0)*100)/100}}
-  applyMods()}
+  applyMods();if(!was&&(v.mods||'').includes('f'))setTimeout(proIntro,2300)}
+function proIntro(n){if(FL||$('.fl')||$('.ok')||$('.strk')){if((n||0)<8)setTimeout(()=>proIntro((n||0)+1),1200);return}
+  flow([{k:'x',q:'Ton côté pro est prêt',sub:'Prends en photo tes factures, tes tickets, ou fais une capture de la notif de ta banque pro : je lis le montant et je range tout, à part de ton argent perso. Chaque début de mois, j’envoie le tout à ton comptable, photos comprises.',type:'tiles',opts:[{i:'cam',l:'Essayer maintenant',s:'Une facture, un ticket, une capture',one:1,cta:1,go:()=>scanPick('pro')},{i:'brief',l:'Voir mon côté pro',one:1,go:()=>{closeFl();proScr()}},{i:'later',l:'Plus tard',one:1,go:()=>closeFl()}]}],()=>['',''])}
 function applyMods(){const i=CATS.findIndex(c=>c[0]==='pro');if(mod('f')&&i<0){CATS.splice(CATS.length-1,0,['pro','brief','Pro']);CN.pro=CATS.find(c=>c[0]==='pro')}else if(!mod('f')&&i>=0)CATS.splice(i,1);if(!CCOL.pro)CCOL.pro='#5E5CE6'}
-function pfFlow(first){flow(PF_STEPS(),v=>{pfApply(v);const n=(v.mods||'').length;return[first?'Ton Base est prêt':'C’est réglé',n?n+' fonction'+(n>1?'s':'')+' rien que pour toi':'Juste l’essentiel']},S.pf?{sit:S.pf.sit,lg:S.pf.lg,mods:S.pf.mods,pa:S.pro&&S.pro.acc?'y':undefined,cpt:S.pf.cpt||'',urs:S.pf.urs?String(S.pf.urs).replace('.',','):''}:null)}
+function pfFlow(first){flow(PF_STEPS(),v=>{pfApply(v);const n=(v.mods||'').length;return[first?'Ton Base est prêt':'C’est réglé',n?n+' fonction'+(n>1?'s':'')+' rien que pour toi':'Juste l’essentiel']},S.pf?{sit:S.pf.sit,mods:S.pf.mods,pa:S.pro&&S.pro.acc?'y':undefined}:null)}
 function pfAsk(){if(!S.name||S.pf||(S.pfLater&&S.pfLater>addD(today,-3)))return;setTimeout(()=>{if(FL||$('.fl')||$('.scr')||$('#intro')||$('.strk'))return;
   flow([{k:'x',q:'Base s’adapte à toi',sub:'Dis-moi ce que tu fais dans la vie, je prépare les fonctions qui te servent vraiment. 30 secondes, rien n’est effacé.',type:'tiles',opts:[{i:'spark',l:'C’est parti',one:1,cta:1,go:()=>pfFlow(1)},{i:'later',l:'Plus tard',one:1,go:()=>{S.pfLater=today;closeFl();save()}}]}],()=>['',''])},2500)}
 function incSrc(){const s=(S.pf&&S.pf.sit)||'',L=[];if(mod('f'))L.push({v:'Paiement client',i:'brief',l:'Paiement client'});if(s.includes('e'))L.push({v:'Bourse',i:'book',l:'Bourse'});if(s.includes('j'))L.push({v:'France Travail',i:'search',l:'France Travail'});if(s.includes('i'))L.push({v:'Cachet',i:'spark',l:'Cachet / mission'});return L}
@@ -2288,18 +2300,24 @@ function addE(e,pa){if(e.c==='pro'&&proAcc()&&pa!=='m'){const o={...e};delete o.
 const prevYM=()=>{const d=pd(YM+'-01');d.setMonth(d.getMonth()-1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
 const ymLab=ym=>MNL[+ym.slice(5,7)-1];
 function proRows(ym){const P=proD(),R=[];
-  P.e.filter(x=>x.d.startsWith(ym)).forEach(x=>R.push([x.d,'Dépense',x.n||'',x.s||'Pro',-x.v,'Compte pro']));
-  S.e.filter(x=>x.c==='pro'&&x.d.startsWith(ym)).forEach(x=>R.push([x.d,'Dépense',x.n||'','Pro',-x.v,'Compte perso (à rembourser)']));
-  P.inc.filter(x=>x.d.startsWith(ym)).forEach(x=>R.push([x.d,'Encaissement',x.n||'Paiement client','',x.v,'Compte pro']));
-  S.inc.filter(x=>x.n==='Paiement client'&&x.d.startsWith(ym)).forEach(x=>R.push([x.d,'Encaissement',x.cl||'Paiement client','',x.v,'Compte perso']));
+  P.e.filter(x=>x.d.startsWith(ym)).forEach(x=>R.push([x.d,'Dépense',x.n||'',x.s||'Pro',-x.v,'Compte pro',x.img]));
+  S.e.filter(x=>x.c==='pro'&&x.d.startsWith(ym)).forEach(x=>R.push([x.d,'Dépense',x.n||'','Pro',-x.v,'Compte perso (à rembourser)',x.img]));
+  P.inc.filter(x=>x.d.startsWith(ym)).forEach(x=>R.push([x.d,'Encaissement',x.n||'Paiement client','',x.v,'Compte pro',x.img]));
+  S.inc.filter(x=>x.n==='Paiement client'&&x.d.startsWith(ym)).forEach(x=>R.push([x.d,'Encaissement',x.cl||'Paiement client','',x.v,'Compte perso',x.img]));
   return R.sort((a,b)=>a[0].localeCompare(b[0]))}
-async function proSend(ym){const R=proRows(ym),who=(S.name||'').split(' ')[0],L=ymLab(ym)+' '+ym.slice(0,4);
+async function proSend(ym,asked){if(!asked&&!(S.pf&&S.pf.cpt)&&!(S.pf&&S.pf.cptNo))return flow([{k:'cpt',q:'Ton comptable ou ton banquier',sub:'Son e-mail, pour lui envoyer ton mois en une touche. Je le garde pour les prochaines fois.',type:'text',ph:'Ex. cabinet@…',ml:80,opt:1}],v=>{S.pf=S.pf||{};if(v.cpt)S.pf.cpt=v.cpt;else S.pf.cptNo=1;save();setTimeout(()=>proSend(ym,1),80);return['','']});
+  const R=proRows(ym),who=(S.name||'').split(' ')[0],L=ymLab(ym)+' '+ym.slice(0,4),cpt=(S.pf&&S.pf.cpt)||'';
   const ein=R.filter(r=>r[4]>0).reduce((a,r)=>a+r[4],0),out=R.filter(r=>r[4]<0).reduce((a,r)=>a-r[4],0);
-  const csv='﻿Date;Type;Libellé;Catégorie;Montant;Compte\n'+R.map(r=>[r[0].split('-').reverse().join('/'),r[1],r[2],r[3],String(r[4].toFixed(2)).replace('.',','),r[5]].map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(';')).join('\n');
-  const txt=`Bonjour,\n\nVoici mon mois de ${L} : ${eur(ein)} encaissés, ${eur(out)} de dépenses pro (${R.length} opérations, détail en pièce jointe).\nJe vous envoie les justificatifs à part.\n\nBonne journée,\n${who}`;
-  const fin=()=>{proD().sent[ym]=today;save();done(['Mois de '+ymLab(ym)+' envoyé','Pense aux justificatifs (captures, tickets)'])};
-  try{const f=new File([csv],'base-'+ym+'-pro.csv',{type:'text/csv'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Mon mois de '+L,text:txt});return fin()}}catch(e){if(e&&e.name==='AbortError')return}
-  location.href='mailto:'+encodeURIComponent(S.pf&&S.pf.cpt||'')+'?subject='+encodeURIComponent('Mon mois de '+L)+'&body='+encodeURIComponent(txt+'\n\n'+R.map(r=>r[0].split('-').reverse().join('/')+' · '+r[1]+' · '+(r[2]||r[3])+' · '+eur(r[4])).join('\n'));setTimeout(fin,800)}
+  const ids=[...new Set(R.map(r=>r[6]).filter(Boolean))],imgs=[];for(const[k,id]of ids.entries()){const b=await imgGet(id);if(b)imgs.push(new File([b],'justificatif-'+ym+'-'+String(k+1).padStart(2,'0')+'.jpg',{type:'image/jpeg'}))}const nI=imgs.length;
+  const csv='\ufeffDate;Type;Libellé;Catégorie;Montant;Compte\n'+R.map(r=>[r[0].split('-').reverse().join('/'),r[1],r[2],r[3],String(r[4].toFixed(2)).replace('.',','),r[5]].map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(';')).join('\n');
+  const txt=`Bonjour,\n\nVoici mon mois de ${L} : ${eur(ein)} encaissés, ${eur(out)} de dépenses pro (${R.length} opérations, détail en pièce jointe).\n${nI?'Les justificatifs ('+nI+') sont joints.':'Je vous envoie les justificatifs à part.'}\n\nBonne journée,\n${who}`;
+  const f=new File([csv],'base-'+ym+'-pro.csv',{type:'text/csv'}),F=[f,...imgs];
+  const fin=()=>{proD().sent[ym]=today;save();done(['Mois de '+ymLab(ym)+' envoyé',nI?nI+' justificatif'+(nI>1?'s':'')+' joint'+(nI>1?'s':''):'Pense aux justificatifs (captures, tickets)'])};
+  const mail=()=>{location.href='mailto:'+encodeURIComponent(cpt)+'?subject='+encodeURIComponent('Mon mois de '+L)+'&body='+encodeURIComponent(txt+'\n\n'+R.map(r=>r[0].split('-').reverse().join('/')+' · '+r[1]+' · '+(r[2]||r[3])+' · '+eur(r[4])).join('\n'));setTimeout(fin,800)};
+  const canF=!!(navigator.canShare&&(navigator.canShare({files:F})||navigator.canShare({files:[f]})));
+  flow([{k:'x',q:'Ton mois de '+ymLab(ym)+' est prêt',sub:R.length+' opération'+(R.length>1?'s':'')+' · '+eur(ein)+' encaissés · '+eur(out)+' de dépenses'+(nI?' · '+nI+' photo'+(nI>1?'s':''):'')+'.',type:'tiles',opts:[
+   ...(canF?[{i:'share',l:'Envoyer',s:(cpt?'À '+cpt+' : ':'')+'le détail'+(nI?' et les photos':'')+', par mail ou WhatsApp',one:1,cta:1,go:()=>{const G=navigator.canShare({files:F})?F:[f];navigator.share({files:G,title:'Mon mois de '+L,text:txt}).then(fin).catch(e=>{if(!e||e.name!=='AbortError')mail()})}}]:[]),
+   {i:'folder',l:cpt?'Par e-mail à '+cpt:'Par e-mail',s:canF?'Sans pièce jointe, le détail dans le message':'Le détail dans le message',one:1,cta:canF?0:1,go:mail}]}],()=>['',''])}
 function proTask(T){if(!mod('f')||!S.name)return;const pm=prevYM(),day=new Date().getDate();if(day<=12&&!proD().sent[pm]&&(proRows(pm).length||S.start<=pm+'-28'))T.push({i:'brief',t:'Envoie ton mois de '+ymLab(pm)+' '+(S.pf&&S.pf.cpt?'à ton comptable':'à ton comptable ou ton banquier'),s:'En une touche, avec le détail',go:()=>proSend(pm)})}
 function proCard(){if(!mod('f'))return '';const b=proBal();return `<button class="mlink" data-a="pro">${ic('brief')}${b!=null?'Compte pro : '+eur(b):'Mon côté pro'} ${ic('next')}</button>`}
 function proScr(){const P=proD(),b=proBal(),R=proRows(YM),ein=R.filter(r=>r[4]>0).reduce((a,r)=>a+r[4],0),out=R.filter(r=>r[4]<0).reduce((a,r)=>a-r[4],0),pm=prevYM();
@@ -2307,7 +2325,7 @@ function proScr(){const P=proD(),b=proBal(),R=proRows(YM),ein=R.filter(r=>r[4]>0
   flow([{k:'x',q:b!=null?eur(b)+' sur ton compte pro':'Ton côté pro',sub:'Ce mois : '+eur(ein)+' encaissés · '+eur(out)+' de dépenses pro.'+(b!=null?' Séparé de ton argent perso.':''),type:'tiles',opts:[
     {i:'out',l:'Une dépense pro',one:1,go:()=>flowDep(null,'pro')},
     {i:'in',l:'Un paiement client',one:1,go:()=>flowInc(null,'Paiement client')},
-    {i:'cam',l:'Capture ou photo',s:'Notif de la banque pro, ticket, facture',one:1,go:()=>scanPick()},
+    {i:'cam',l:'Photo d’une facture ou d’un ticket',s:'Ou une capture de ta banque pro · gardée pour ton comptable',one:1,cta:1,go:()=>scanPick('pro')},
     ...(av.length&&proAcc()?[{i:'undo',l:'Avancé de ta poche : '+eur(av.reduce((a,x)=>a+x.v,0)),s:'Le compte pro te l’a remboursé ?',one:1,go:()=>{const t=av.reduce((a,x)=>a+x.v,0);av.forEach(x=>x.rb=1);proD().e.push({id:uid(),d:today,v:t,c:'pro',n:'Remboursement de frais à '+(S.name||'moi')});S.inc.push({id:uid(),d:today,v:t,n:'Remboursement'});done(['Remboursé',eur(t)+' revenus sur ton compte perso'])}}]:[]),
     {i:'share',l:'Envoyer '+ymLab(R.length?YM:pm)+(S.pf&&S.pf.cpt?' à mon comptable':' à mon comptable / banquier'),s:(P.sent[pm]?'Mois de '+ymLab(pm)+' déjà envoyé · ':'')+'Le détail en un fichier, prêt à envoyer',one:1,go:()=>proSend(R.length?YM:pm)},
     ...(P.acc?[{i:'bank',l:'Mettre à jour le compte pro',s:'Ce que dit ta banque pro',one:1,go:()=>flow([{k:'pacc',q:'Ton compte pro, il a combien ?',type:'accounts',def:()=>P.acc.map(x=>({n:x.n,v:null,neg:false,ph:x.v}))}],v=>{const acc=v.pacc.filter(x=>x.v!=null).map(x=>({n:x.n||'Compte pro',v:x.v}));if(acc.length){P.acc=acc;P.d=today;P.v=Math.round(acc.reduce((a,x)=>a+x.v,0)*100)/100}return['Compte pro à jour',eur(P.v)]})}]:[]),
