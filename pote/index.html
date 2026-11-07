@@ -711,6 +711,17 @@ body{background:#000}
 .tred{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:650;color:var(--good)}.tred svg{width:16px;height:16px}
 .tmis{width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:14px;background:var(--bg)}.tmis span{font-size:13px;color:var(--muted);font-weight:600}.tmis b{font-family:var(--num);font-size:15px}
 .tfull{display:grid;justify-items:center;padding:22px 0;border-radius:24px;background:var(--card)}
+.fw.cr{background:#E5E5EA url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Cpath d='M4 3l6 7-3 3 7 6M10 10l5-2' fill='none' stroke='%23FF3B30' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat}
+[data-theme="dark"] .fw.cr{background-color:#3A3A3C}
+.fw.rp{background:#FFD60A url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Cpath d='M4 3l6 7-3 3 7 6' fill='none' stroke='rgba(120,80,0,.35)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat}
+.frow{position:relative}.frow.scaf::before{content:'';position:absolute;inset:-4px -5px;border-radius:6px;background:repeating-linear-gradient(135deg,rgba(255,159,10,.28) 0 5px,transparent 5px 10px);box-shadow:inset 0 0 0 1.5px rgba(255,159,10,.6);z-index:0}.frow>*{position:relative;z-index:1}
+.tmis.crk b{color:#FF3B30}
+.ftw.big .ffac{gap:12px;padding:18px 10px}.ftw.big .frow{grid-template-columns:24px repeat(7,30px) 24px;gap:7px;align-items:center}.ftw.big .fw{width:30px;height:30px;border-radius:5px}
+.ftw.big .fgnd{width:100%;height:3px}.fno{font-size:11px;font-weight:700;color:var(--muted);text-align:right;font-family:var(--num)}.fno.r{text-align:left;color:#FF9F0A}
+.frow.gh .fw{background:transparent;box-shadow:inset 0 0 0 1px #E5E5EA}[data-theme="dark"] .frow.gh .fw{box-shadow:inset 0 0 0 1px #3A3A3C}.frow.gh{opacity:.7}
+.frow.fcur .fno:first-child{color:#FF9F0A}.fgoal{font-size:12px;font-weight:700;color:var(--muted);text-align:center;padding:2px 0 6px}
+.ftw.big{width:100%}.tfull{padding:14px 8px 22px}
+.ftw.pop{animation:fwon .5s cubic-bezier(.2,.9,.3,1.4) both}
 .qrow{grid-template-columns:1fr auto!important;padding:12px 14px!important}.qrow small svg{width:16px;height:16px;color:var(--good);stroke-width:2.6}
 </style>
 </head>
@@ -1545,6 +1556,9 @@ function houseSvg(n){const on=k=>n>=k,G='var(--hsg)',O='#FF9F0A',lit=n>=7;
 function weekBlocks(){const m=mon(today),used=!jkLeft()&&okStreak()>0;let ok=0,jd=null;if(used)for(let d=addD(today,-1);d>=m;d=addD(d,-1))if(!dayOk(d)){if(dayOk(addD(d,-1)))jd=d;break}const B=[...Array(7)].map((_,i)=>{const d=addD(m,i),o=d<=today&&dayOk(d);if(o)ok++;if(d===jd)return `<i class="jk">${jkIc(1)}</i>`;return `<i class="${o?'on':d===today?'td':d<today?'miss':''}"></i>`}).join('');return{B,ok}}
 const jkIc=on=>`<svg class="jki${on?'':' off'}" viewBox="0 0 44 26" aria-hidden="true"><rect x="2" y="2" width="40" height="22" rx="5"/><path d="M22 6.5l1.6 4.9 4.9 1.6-4.9 1.6L22 19.5l-1.6-4.9-4.9-1.6 4.9-1.6z"/></svg>`;
 function jkToast(){try{const yd=addD(today,-1),st=okStreak();if(!S.name||dayOk(yd)||!st||!(S.start<yd)||S.jkT===today||dayOk(addD(yd,-1))===false)return;S.jkT=today;save();setTimeout(()=>{const t=document.createElement('div');t.className='toast';t.innerHTML=`${jkIc(1)}<span>Hier est couvert par ton joker. Ta série continue : ${st} jour${st>1?'s':''}.</span>`;document.body.appendChild(t);setTimeout(()=>t.classList.add('out'),4200);setTimeout(()=>t.remove(),4600);t.onclick=()=>t.remove()},900)}catch(e){}}
+function crackCheck(){try{if(!S.name)return;const T=towerStats();if(S.tcr==null){S.tcr=T.cr;S.trp=T.rp;save();return}
+  let m='';if(T.rp>S.trp)m=`${ic('check')}<span>Fenêtre réparée. Ton étage tient.</span>`;else if(T.cr>S.tcr)m=`${ic('x')}<span>${T.F.some(f=>f.cur&&f.scaf)?'3 fissures : ton étage passe en échafaudage. Une journée tenue en répare une.':'Une fenêtre s’est fissurée. Tiens ta journée pour la réparer.'}</span>`;
+  S.tcr=T.cr;S.trp=T.rp;save();if(!m)return;setTimeout(()=>{const t=document.createElement('div');t.className='toast';t.innerHTML=m;document.body.appendChild(t);setTimeout(()=>t.classList.add('out'),4200);setTimeout(()=>t.remove(),4600);t.onclick=()=>t.remove()},S.jkT===today?5600:1200)}catch(e){}}
 function levelCheck(ms=1800){return;try{if(!S.name)return;const n=lvl().n;if(S.lvN==null||n<S.lvN){S.lvN=n;return}if(n>S.lvN){S.lvN=n;save();setTimeout(()=>{const go=()=>{const o=document.createElement('div');o.className='strk lvp';o.innerHTML=`<div class="hsw">${houseSvg(n)}</div><small>Niveau supérieur · ta maison avance</small><b>${LV[n-1][1]}</b><small>${LV[n]?'Prochaine étape : '+LV[n][1]:'Elle est terminée. Elle est à toi.'}</small><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}};$('.strk')?setTimeout(go,2400):go()},ms)}}catch(e){}}
 function sans30(k){const ks=k?[k]:keys();if(!ks.length)return{n:0,of:0};const st=S.vstart&&S.vstart>addD(today,-29)?S.vstart:addD(today,-29);let n=0,of=0;
   for(let d=st;d<=today;d=addD(d,1)){of++;const l=S.log[d];if(l&&ks.every(x=>l[x]===0))n++}return{n,of}}
@@ -1698,18 +1712,20 @@ function towerFloors(){const st=mon(S.start||today),cur=mon(today),F=[];
   for(let w=st,i=0;w<=cur&&i<520;w=addD(w,7),i++){let lit=0,gold=0;const days=[...Array(7)].map((_,k)=>{const d=addD(w,k);if(d<(S.start||today))return 'na';if(d>today)return 'fut';
       if(!dayOk(d))return d===today?'td':'off';lit++;const g=(S.vgM||{})[d]===1||!S.e.some(x=>x.d===d&&x.c!=='dette');if(g){gold++;return 'gd'}return 'on'});
     F.push({w,days,lit,gold,deco:((S.qd||{})[w]||[]).length,cur:w===cur})}
+  const st2=[];F.forEach((f,i)=>f.days.forEach((x,k)=>{if(x==='off')st2.push([i,k]);else if((x==='on'||x==='gd')&&st2.length){const [a,b]=st2.pop();F[a].days[b]='rp'}}));
+  st2.forEach(([a,b])=>F[a].days[b]='cr');F.forEach(f=>{f.cr=f.days.filter(x=>x==='cr').length;f.rp=f.days.filter(x=>x==='rp').length;f.scaf=f.cr>=3});
   return F}
 function floorRow(f,n){return `<div class="tf${f.cur?' cur':''}${f.lit>=7?' full':''}"><span class="tn">${n}</span><div class="tw">${f.days.map(s=>`<i class="${s}"></i>`).join('')}</div>${f.deco?`<span class="tdc">${'<i></i>'.repeat(Math.min(3,f.deco))}</span>`:''}</div>`}
 function towerHTML(lim){const F=towerFloors(),N=F.length,show=lim?F.slice(-lim):F,V=vgState(),base=V&&V.def>0;
   return `<div class="tower${lim?' mini':''}">${F.at(-1)&&F.at(-1).cur?'<div class="crane"><i></i><b></b></div>':''}
    ${show.slice().reverse().map((f,i)=>floorRow(f,N-i)).join('')}${lim&&N>lim?`<div class="tmore">+ ${N-lim} étage${N-lim>1?'s':''} en dessous</div>`:''}
    <div class="tgnd"><i class="door"></i></div>${base?`<div class="tbase">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}<span>Sous-sol · retour au vert</span></div>`:''}</div>`}
-function towerStats(){const F=towerFloors(),done=F.filter(f=>!f.cur).length,lit=F.reduce((a,f)=>a+f.lit,0),gold=F.reduce((a,f)=>a+f.gold,0);return{F,done,lit,gold,n:F.length}}
+function towerStats(){const F=towerFloors(),done=F.filter(f=>!f.cur).length,lit=F.reduce((a,f)=>a+f.lit,0),gold=F.reduce((a,f)=>a+f.gold,0);return{F,done,lit,gold,n:F.length,cr:F.reduce((a,f)=>a+f.cr,0),rp:F.reduce((a,f)=>a+f.rp,0)}}
 
 function dong(){try{if(!sndOn())return;const a=ac();if(!a)return;tone(392,0,1.6,.09,'sine');tone(784,0,.5,.025,'sine');tone(523.3,.42,1.8,.085,'sine');tone(1046.5,.42,.5,.02,'sine')}catch(e){}}
 function towerCheck(){try{if(!S.name)return;const cur=mon(today);if(!S.twk){S.twk=cur;save();return}if(S.twk===cur)return;
   const F=towerFloors(),prev=F.find(f=>f.w===S.twk)||F.at(-2),n=F.indexOf(prev)+1;S.twk=cur;save();if(!prev)return;
-  setTimeout(()=>{const go=()=>{const o=document.createElement('div');o.className='strk twp';o.innerHTML=`<div class="tower pop">${floorRow({...prev,cur:false},n)}<div class="tgnd"><i class="door"></i></div></div><small>Étage ${n} terminé</small><b>${prev.lit} fenêtre${prev.lit>1?'s':''} allumée${prev.lit>1?'s':''} sur 7</b><small>${prev.lit>=7?'Étage parfait. Ta tour brille.':prev.lit>=5?'Objectif de la semaine tenu.':'Il tient debout, et le suivant commence.'} Nouvel étage en construction.</small><button>Continuer</button>`;document.body.appendChild(o);dong();buzz([20,120,20]);o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}};$('.strk')||$('#rcp')?setTimeout(go,2500):go()},900)}catch(e){}}
+  setTimeout(()=>{const go=()=>{const o=document.createElement('div');o.className='strk twp';o.innerHTML=`<div class="ftw pop"><div class="ffac">${fRow({...prev,cur:false},n)}</div><div class="fgnd" style="width:226px"></div></div><small>Étage ${n} terminé</small><b>${prev.lit} fenêtre${prev.lit>1?'s':''} allumée${prev.lit>1?'s':''} sur 7</b><small>${prev.lit>=7?'Étage parfait. Ta tour brille.':prev.cr?prev.cr+' fissure'+(prev.cr>1?'s':'')+' encore à réparer. Tiens tes journées, elles se réparent.':prev.lit>=5?'Objectif de la semaine tenu.':'Il tient debout, et le suivant commence.'} Nouvel étage en construction.</small><button>Continuer</button>`;document.body.appendChild(o);dong();buzz([20,120,20]);o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}};$('.strk')||$('#rcp')?setTimeout(go,2500):go()},900)}catch(e){}}
 
 /* ===== La tour, version illustrée ===== */
 function towerSvg(lim){const F=towerFloors(),N=F.length,V=vgState(),base=V&&V.def>0,h=new Date().getHours();
@@ -1760,24 +1776,29 @@ function towerSvg(lim){const F=towerFloors(),N=F.length,V=vgState(),base=V&&V.de
   return o+`</svg>`}
 
 /* ===== Tour épurée (flat) ===== */
-function towerFlat(lim){const F=towerFloors(),N=F.length,show=lim&&N>lim?F.slice(-lim):F,V=vgState(),red=V&&V.def>0;
-  const rows=show.slice().reverse().map(f=>`<div class="frow">${f.days.map((s,k)=>`<i class="fw ${s}${f.cur&&addD(f.w,k)===today&&(s==='on'||s==='gd')?' now':''}"></i>`).join('')}</div>`).join('');
-  return `<div class="ftw"><div class="ffac">${rows}</div>${lim&&N>lim?`<small class="fmore">+ ${N-lim} étage${N-lim>1?'s':''}</small>`:''}<div class="fgnd"></div>
-   ${red?`<div class="fbase">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div><small class="flab">Niveau vert · ${V.br}/10</small>`:''}</div>`}
+function fRow(f,n,big){return `<div class="frow${f.scaf?' scaf':''}${f.cur?' fcur':''}"${f.cur?' id="fcur"':''}>${big?`<span class="fno">${n}</span>`:''}${f.days.map((s,k)=>`<i class="fw ${s}${f.cur&&addD(f.w,k)===today&&(s==='on'||s==='gd')?' now':''}"></i>`).join('')}${big?`<span class="fno r">${f.scaf?'⚠︎':''}</span>`:''}</div>`}
+function towerFlat(lim){const F=towerFloors(),N=F.length,show=lim&&N>lim?F.slice(-lim):F,V=vgState(),red=V&&V.def>0,big=lim===0;
+  let ghost='';if(big){const G=[52,104,208,520].find(x=>x>N)||N+52;for(let n=G;n>N;n--)ghost+=`<div class="frow gh">${n===G||n%10===0?`<span class="fno">${n}</span>`:'<span class="fno"></span>'}${'<i class="fw"></i>'.repeat(7)}<span class="fno r"></span></div>`;ghost=`<div class="fgoal">Sommet visé · étage ${G}${G===52?' · 1 an':''}</div>`+ghost}
+  const rows=show.slice().reverse().map((f,i)=>fRow(f,N-i,big)).join('');
+  return `<div class="ftw${big?' big':''}"><div class="ffac">${ghost}${rows}</div>${lim&&N>lim?`<small class="fmore">+ ${N-lim} étage${N-lim>1?'s':''}</small>`:''}<div class="fgnd"></div>
+   ${big?`<small class="flab">Fondations · semaine du ${(()=>{const d=pd(F[0].w);return d.getDate()+' '+['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'][d.getMonth()]})()}</small>`:''}${red?`<div class="fbase">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div><small class="flab">Niveau vert · ${V.br}/10</small>`:''}</div>`}
 function moiTour(){const T=towerStats(),V=vgState(),red=V&&V.def>0,W7=weekBlocks(),L=lvl();
   let line='',mis='';
   if(red){const P=vgPlan(V).find(o=>o.k==='win'||o.k==='inc');line=`<div class="tred">${ic('in')}<span>Retour au vert${P&&P.k==='win'?' · '+P.t.replace(/^Le /,'le ').replace(/ : tu repasses au vert$/,''):' · '+V.br+'/10'}</span></div>`;mis=`<div class="tmis"><span>Mission du jour</span><b>${V.zero?'Journée à 0 €':'Rester sous '+eur0(V.tg)}</b></div>`}
+  else if(T.cr&&!eveDone())mis=`<div class="tmis crk"><span>Ce soir</span><b>Répare ta fenêtre</b></div>`;
   else if(!eveDone())mis=`<div class="tmis"><span>Ce soir</span><b>Allume ta fenêtre</b></div>`;
-  return `<button class="tcard2" data-a="tour">${towerFlat(4)}<div class="tc2"><b>Étage ${T.n} · ${L.name}</b><span>Cette semaine ${Math.min(W7.ok,7)}/7${jkLeft()?' · joker dispo':''}</span></div>${line}${mis}</button>`}
+  const sub=T.cr?`${T.cr} fissure${T.cr>1?"s":""}${T.F.some(f=>f.scaf)?' · échafaudage':''}`:jkLeft()?'joker dispo':'';
+  return `<button class="tcard2" data-a="tour">${towerFlat(4)}<div class="tc2"><b>Étage ${T.n} · ${L.name}</b><span>Cette semaine ${Math.min(W7.ok,7)}/7${sub?' · '+sub:''}</span></div>${line}${mis}</button>`}
 function tourScr(){const T=towerStats(),W=vicStats(),BL=badgeList(),V=vgState();
   const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €'],[eur0(W.kept),'gardés en disant non'],[eur0(W.rb),'de dettes remboursées'],[recordStreak()+' j','plus haute pile']];
-  const x=scr('Ta tour',`<div class="tfull">${towerFlat(0)}</div>
-   <div class="msum"><div><b>${T.n}</b><small>étage${T.n>1?'s':''}</small></div><div><b>${T.lit}</b><small>fenêtres</small></div><div><b>${T.gold}</b><small>dorées</small></div></div>
+  const x=scr('Ta tour',`<div class="msum"><div><b>${T.n}</b><small>étage${T.n>1?'s':''}</small></div><div><b>${T.lit}</b><small>fenêtres</small></div><div><b>${T.rp}</b><small>réparées</small></div></div>
+   <div class="tfull">${towerFlat(0)}</div>
    ${V&&V.def>0?`<button class="vpl" data-vg><span class="vpi">${ic('in')}</span><span><b>Ton plan pour le vert</b><small>Mission, salaire, ce qu’on te doit…</small></span>${ic('next')}</button>`:''}
    <div class="sec"><h2>Tes victoires</h2></div><div class="vic">${vic.map(([v,l])=>`<div><b>${v}</b><small>${l}</small></div>`).join('')}</div>
    <div class="sec"><h2>Pierres posées</h2><small>${BL.filter(b=>b[1]).length} / ${BL.length}</small></div>
    <div class="bdgs">${BL.sort((a,b)=>b[1]-a[1]).map(([t,ok,i])=>`<div class="${ok?'on':''}"><span>${ok?ic(i):''}</span><small>${t}</small></div>`).join('')}</div>
-   <p class="tl" style="text-align:center">Chaque jour tenu allume une fenêtre. Journée à 0 € ou mission réussie : fenêtre dorée. Chaque dimanche, l’étage se termine. Rien n’est jamais détruit.</p>`);
+   <p class="tl" style="text-align:center">Jour tenu : la fenêtre s’allume. Jour raté : elle se fissure, et le jour tenu suivant la répare. 3 fissures dans la semaine : l’étage passe en échafaudage. Ce qui est construit ne tombe jamais.</p>`);
+  setTimeout(()=>{const c=x.querySelector('#fcur');if(c)c.scrollIntoView({block:'center'})},30);
   const g=x.querySelector('[data-vg]');if(g)g.onclick=()=>{buzz();closeScr();vgScr()}}
 
 /* ---------- Réserve ---------- */
@@ -2152,7 +2173,7 @@ function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoi
 function countUp(){const el=$('#balc strong');if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=liveBal();if(L==null)return;const t0=performance.now(),D=900;
   const f=t=>{const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=eur(Math.round(L*e*100)/100);if(k<1)requestAnimationFrame(f);else el.textContent=eur(L)};requestAnimationFrame(f)}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
-home();vgCheck();towerCheck();rcMaybe();lockCheck();jkToast();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();0}
+home();vgCheck();towerCheck();crackCheck();rcMaybe();lockCheck();jkToast();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();0}
 </script>
 <script>
 (()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;let busy=0;
