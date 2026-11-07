@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794079000" data-theme="light">
+<html lang="fr" data-build="1794080000" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -693,6 +693,7 @@ body{background:#000}
 .vpi{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--good) 14%,var(--card));color:var(--good)}.vpi svg{width:18px;height:18px}
 .vpl.win{background:linear-gradient(135deg,#1E7A43,#2E9D57);color:#fff}.vpl.win small{color:rgba(255,255,255,.85)}.vpl.win .vpi{background:rgba(255,255,255,.2);color:#fff}
 .chs{font-size:13px;font-weight:600;opacity:.92;text-align:center}
+.tnow{width:calc(100% - 32px);display:grid;gap:10px;padding:14px;border-radius:16px;background:var(--bg);text-align:left}
 </style>
 </head>
 <body>
@@ -1415,8 +1416,8 @@ function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().cha
   const BL=badgeList().map((b,k)=>[...b,k]).sort((a,b)=>(b[1]-a[1])||(a[3]-b[3]));
   const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €','var(--good)'],...(S.vice&&W.fs!=null?[[sans30().n+' / '+sans30().of+' j','jours sans sur les 30 derniers','#64D2FF']]:[[W.agd,'chose'+(W.agd>1?'s':'')+' faite'+(W.agd>1?'s':''),'var(--c-ag)']]),[eur0(W.kept),'gardés grâce à « Envie d’acheter »','var(--c-cof)'],[eur0(W.rb),'de dettes remboursées','var(--c-debt)']];
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
-  ${chantierCard()}${(()=>{const T=towerStats();return `<button class="tcard" data-a="tour">${towerSvg(4)}<div class="tcap"><b>${esc((S.name||'Ta').split(' ')[0])}${S.name?', ta':''} tour · ${T.n} étage${T.n>1?'s':''}</b><span>${T.lit} fenêtre${T.lit>1?'s':''} allumée${T.lit>1?'s':''} · toucher pour voir toute la tour</span></div></button>`})()}
-  ${(()=>{const W7=weekBlocks();return `<button class="lvc" data-a="prog"><div class="lvt"><span class="fl4">Étage en cours <b>${Math.min(W7.ok,7)} / 7</b></span><span>${W7.ok>=5?'Objectif de la semaine tenu ✓':'Objectif : 5 fenêtres'}</span></div><div class="wk7">${W7.B}</div><div class="lvt"><span>${xpDays()} jour${xpDays()>1?'s':''} tenu${xpDays()>1?'s':''} au total</span><span>Plus haute pile : ${recordStreak()}</span></div><span class="jkl">${jkIc(jkLeft())}${jkLeft()?'1 joker dispo cette semaine':'Joker utilisé · revient lundi'}</span></button>`})()}
+  ${chantierCard()}${(()=>{const T=towerStats();return `<button class="tcard" data-a="tour">${towerSvg(4)}<div class="tcap"><b>${esc((S.name||'Ta').split(' ')[0])}${S.name?', ta':''} tour · ${T.n} étage${T.n>1?'s':''}</b><span>${T.lit} fenêtre${T.lit>1?'s':''} allumée${T.lit>1?'s':''} · ${xpDays()} jour${xpDays()>1?'s':''} tenu${xpDays()>1?'s':''} · plus haute pile ${recordStreak()}</span></div>
+   ${(()=>{const W7=weekBlocks();return `<div class="tnow"><div class="lvt"><span class="fl4">Étage en cours <b>${Math.min(W7.ok,7)} / 7</b></span><span>${W7.ok>=5?'Objectif tenu ✓':'Objectif : 5 fenêtres'}</span></div><div class="wk7">${W7.B}</div><span class="jkl">${jkIc(jkLeft())}${jkLeft()?'1 joker dispo cette semaine':'Joker utilisé · revient lundi'}</span></div>`})()}</button>`})()}
   ${qCard()}
   <div class="sec"><h2>Tes victoires</h2></div>
   <div class="vic">${vic.map(([v,l,c])=>`<div><b style="color:${c}">${v}</b><small>${l}</small></div>`).join('')}</div>
