@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="144" data-theme="dark">
+<html lang="fr" data-build="145" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -1458,6 +1458,7 @@ function rcItems(){const now=new Date(),nm=now.getHours()*60+now.getMinutes(),L=
   for(const a of S.ag.filter(a=>!a.done&&a.d===today).sort((x,y)=>(x.h||'99').localeCompare(y.h||'99'))){const m=a.h?(+a.h.slice(0,2))*60+(+a.h.slice(3)):null,soon=m!=null&&m-nm<=120&&m-nm>=-30;
     L.push({id:'ag'+a.id,t:a.t,s:a.h?hl(a.h):'',c:'ag',late:m!=null&&m<nm-30,z:soon||(m!=null&&m<nm)?96:80,o:soon?0:2,go:()=>agItem(a.id)})}
   const MAP={moon:['ev','Faire le point'],bank:['mo',null],in:['mo',null],users:['dt',null],safe:['wi','Ma réserve'],bag:['wi','Toujours envie ?'],spark:['bi','Mon bilan est prêt'],folder:['gr','Sauver mes données'],bell:['gr','Activer les rappels'],smoke:['ev','Noter ma conso'],out:['ev','Faire le point']};
+  if(!eveDone()&&!stepT().some(t=>t.i==='moon'))L.push({id:'eve',t:now.getHours()<17?'Noter ma journée':'Faire le point',s:'',c:'ev',z:84,o:5,go:flowEve});
   for(const t of stepT()){if(t.i==='cal')continue;const m=MAP[t.i]||['gr',null];let lab=m[1]||t.t;
     if(t.i==='bank')lab=S.bal?'Vérifier mon solde':'Ajouter mon solde';if(t.i==='users')lab=t.t.replace(/\s*[\d\s.,]+ ?€.*$/,'').replace(/ t’a rendu.*$/,' t’a rendu ?');if(t.i==='in')lab=t.t;
     L.push({id:'t'+t.i+lab,t:lab,s:'',c:m[0],z:['gr'].includes(m[0])?74:84,o:{mo:3,dt:4,ev:5,wi:6,bi:7,gr:9}[m[0]]||8,go:t.go})}
@@ -1479,9 +1480,9 @@ function recap(back){if(!S.name||needInstall()||$('#rcp')&&!back)return;const ol
   o.querySelectorAll('[data-rb]').forEach(b=>b.onclick=()=>{const x=show[+b.dataset.rb];buzz(8);b.classList.add('tap');setTimeout(()=>{o.remove();document.body.style.overflow='';RC=1;x.go()},160)});
   let y0=null;o.addEventListener('touchstart',e=>{y0=e.touches[0].clientY},{passive:true});o.addEventListener('touchend',e=>{if(y0!=null&&e.changedTouches[0].clientY-y0<-70)enter();y0=null},{passive:true});
   S.rcS=rcKey();try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
-function rcMaybe(){if(S.rcOff||!S.name)return;if(S.rcS!==rcKey())recap()}
+function rcMaybe(){if(S.rcOff||!S.name||FL||$('.scr')||$('#rcp'))return;if(S.rcS!==rcKey()||rcItems().length)recap()}
 function rcBack(){if(!RC)return;RC=0;setTimeout(()=>{if(!FL&&!$('.scr')&&!$('.ok')&&!$('.strk'))recap(1)},250)}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')hidT=Date.now();else if(hidT&&Date.now()-hidT>3*3600e3&&!S.rcOff&&!$('.lock'))recap()});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')hidT=Date.now();else if(hidT&&Date.now()-hidT>45e3&&!$('.lock'))rcMaybe()});
 
 /* ---------- Réserve ---------- */
 function cofCard(B){const v=cofV(),g=S.cof&&S.cof.g;
