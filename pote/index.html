@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794073000" data-theme="light">
+<html lang="fr" data-build="1794074000" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -637,6 +637,10 @@ body{background:#000}
 .fdn .hole{width:150px;display:grid;gap:4px;padding:6px;border-radius:0 0 18px 18px;background:var(--card2);box-shadow:inset 0 6px 12px rgba(0,0,0,.12)}
 .fdn .hole i{height:14px;border-radius:4px;background:transparent;box-shadow:inset 0 0 0 1.5px var(--sep)}.fdn .hole i.on{background:linear-gradient(180deg,#FFB340,#FF9500);box-shadow:none}.fdn .hole i.gd{background:linear-gradient(180deg,#FFE27A,#F5C000)}
 .strk.vgw{background:radial-gradient(circle at 50% 35%,#1E6B3A,#000 72%)}.strk.vgw b{font-size:28px;text-align:center}.strk.vgw small{text-align:center;max-width:300px}.strk.vgw .fdn{margin-bottom:18px}.strk.vgw .hole{background:rgba(255,255,255,.08)}
+
+/* sélection multiple */
+.tile.mt{position:relative}.tile.mt .mk{position:absolute;top:12px;right:12px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 1.5px var(--sep);color:transparent}.tile.mt .mk svg{width:14px;height:14px;stroke-width:2.4}
+.tile.mt.on{box-shadow:inset 0 0 0 2px var(--c-ag)}.tile.mt.on .mk{background:var(--c-ag);box-shadow:none;color:#fff}
 </style>
 </head>
 <body>
@@ -703,7 +707,12 @@ const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}pushSoon
 
 const CATS=[['courses','cart','Courses'],['resto','resto','Resto'],['ff','fast','Fast-food'],['sorties','glass','Sorties'],['transport','train','Transport'],['conso','leaf','Conso'],['shopping','bag','Shopping'],['frais','bank','Frais bancaires'],['autre','dots','Autre']];
 const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));if(S.vn)CN.conso[2]=S.vn;
-const FSUB=[{v:'shit',i:'hex',l:'Shit'},{v:'beuh',i:'leaf',l:'Beuh'},{v:'clopes',i:'smoke',l:'Clopes'}];const FL2=Object.fromEntries(FSUB.map(o=>[o.v,o.l]));CN.dette=['dette','users','Dette remboursée'];
+const VK=[['c','smoke','Clopes'],['j','leaf','Cannabis'],['v','wind','Vape / puff'],['a','glass','Alcool'],['p','zap','Paris, jeux d’argent'],['l','fast','Livraisons de repas'],['o','bag','Achats impulsifs'],['x','pen','Autre chose']];
+const vkL=k=>k==='x'?(S.vxn||'Autre chose'):(VK.find(x=>x[0]===k)||[,,k])[2],vkI=k=>(VK.find(x=>x[0]===k)||[,'dots'])[1];
+const FALL=[{v:'clopes',k:'c',i:'smoke',l:'Clopes'},{v:'shit',k:'j',i:'hex',l:'Shit'},{v:'beuh',k:'j',i:'leaf',l:'Beuh'},{v:'vape',k:'v',i:'wind',l:'Vape / puff'},{v:'alcool',k:'a',i:'glass',l:'Alcool'},{v:'paris',k:'p',i:'zap',l:'Paris, jeux'},{v:'livraison',k:'l',i:'fast',l:'Livraison'},{v:'achats',k:'o',i:'bag',l:'Achat impulsif'},{v:'autre',k:'x',i:'pen',l:'Autre'}];
+const fsub=()=>{const L=FALL.filter(o=>S.vice&&S.vice.includes(o.k));return (L.length?L:FALL).map(o=>o.k==='x'?{...o,l:S.vxn||'Autre'}:o)};
+const FL2=new Proxy({},{get:(t,k)=>{const o=FALL.find(x=>x.v===k);return o?(o.k==='x'?(S.vxn||'Autre'):o.l):k}});
+const FSUB=null;CN.dette=['dette','users','Dette remboursée'];
 const PCOL=['#0A84FF','#64D2FF','#FF6B35','#BF5AF2','#FF453A','#30B0C7','#FFD60A'];
 const pk=n=>n.trim().toLowerCase();
 const pcol=n=>{let h=0;for(const c of pk(n))h=(h*31+c.charCodeAt(0))>>>0;return PCOL[h%PCOL.length]};
@@ -831,7 +840,7 @@ function pushItems(){const now=Date.now(),out=[],add=(t,title,body,tag)=>{if(t>n
   for(let i=eveDone()?1:0;i<14;i++)add(at(addD(today,i),S.eh||21),'Ton point du soir','Ta journée en 10 secondes. Rien du tout, c’est une réponse aussi.','day');
   if(S.vice&&!S.log[today])add(at(addD(today,1),10),'Il manque hier','Note ta journée d’hier pour garder ton compteur juste.','miss');
   if(S.bal)add(at(addD(S.bal.d,7),12),'Ton solde est toujours juste ?','Vérifie en 5 secondes.','bal');
-  try{const same=keys().length===2&&streak('j')===streak('c');if(S.vice)for(const k of (same?['j']:keys())){const n=streak(k);let c=0;for(const m of [1,2,3,7,14,21,30,60,90,180,365])if(m>n&&c<2){c++;add(at(addD(today,m-n),11),Z?m+' jour'+(m>1?'s':''):m+' jour'+(m>1?'s':'')+' '+(same?'sans fumer':KN[k]),'Nouveau palier. Chaque jour compte.','smoke')}}}catch(e){}
+  try{const same=keys().length===2&&streak('j')===streak('c');if(S.vice)for(const k of (same?['j']:keys())){const n=streak(k);let c=0;for(const m of [1,2,3,7,14,21,30,60,90,180,365])if(m>n&&c<2){c++;add(at(addD(today,m-n),11),Z?m+' jour'+(m>1?'s':''):m+' jour'+(m>1?'s':'')+' '+(same?'sans':KN[k]),'Nouveau palier. Chaque jour compte.','smoke')}}}catch(e){}
   for(let i=1;i<=14;i++){const d=addD(today,i),wd=pd(d).getDay();if(wd===0)add(at(d,19),'Ton bilan de la semaine',S.bin?'30 secondes, puis tu l’envoies à ton binôme.':'Ta semaine en 30 secondes.','wk');if(wd===1&&S.cof&&S.cof.w>0)add(at(d,10),'Ta réserve de la semaine',Z?'Un petit montant de côté, en une touche.':'Mets '+eur(S.cof.w)+' de côté, en une touche.','cof')}
   for(const a of S.ag.filter(a=>a.rem&&!a.done&&a.d&&a.d>=today)){let t;if(a.h){const[h,mi]=a.h.split(':').map(Number);const d=pd(a.d);d.setHours(h,mi,0,0);t=d.getTime()-15*60e3}else t=at(a.d,9);add(t,Z?'Un rappel':a.t,a.h?'À '+hl(a.h)+'.':'Prévu aujourd’hui.','ag')}
   for(let i=0;i<8;i++){const d=addD(today,i),L=S.ag.filter(a=>a.d===d&&!a.done).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'));if(L.length)add(at(d,8)+30*60e3,'Ta journée',Z?L.length+' chose'+(L.length>1?'s':'')+' prévue'+(L.length>1?'s':'')+' aujourd’hui.':L.slice(0,3).map(a=>a.t+(a.h?' à '+hl(a.h):'')).join(' · ')+(L.length>3?' · +'+(L.length-3):''),'mrn')}
@@ -890,11 +899,14 @@ let tdLast=0;
 function showTodo(){if(FL||$('.scr')||$('.shb')||needInstall())return;const T=tasks();if(!T.length)return;tdLast=Date.now();
   const o=document.createElement('div');o.className='shb';o.innerHTML=`<div class="sh"><h3>${T.length>1?T.length+' choses à faire':'1 chose à faire'}</h3><div class="list">${T.map(tdRow).join('')}</div><button class="later">Plus tard</button></div>`;
   document.body.appendChild(o);const close=()=>o.remove();o.querySelector('.later').onclick=close;o.onclick=e=>{if(e.target===o)close()};bindTodo(o,T,close)}
-function flowConso(dk){const lab=dk===today?'aujourd’hui':'hier';flow([
-  {k:'w',q:`Tu as fumé ${lab} ?`,type:'tiles',opts:[{v:'0',i:'check',l:'Non, rien',one:1},{v:'1',i:'smoke',l:'Oui',one:1}]},
-  {k:'c',q:'Combien de clopes ?',type:'tiles',skip:v=>v.w!=='1'||!has('c'),opts:[{v:1,l:'1'},{v:3,l:'2 à 5'},{v:7,l:'5 à 10'},{v:12,l:'Plus de 10'},{v:0,l:'Aucune',one:1}]},
-  {k:'j',q:'Combien de joints ?',type:'tiles',skip:v=>v.w!=='1'||!has('j'),opts:[{v:1,l:'1'},{v:2,l:'2'},{v:3,l:'3'},{v:5,l:'4 ou plus'},{v:0,l:'Aucun',one:1}]}
- ],v=>{const o={};keys().forEach(k=>o[k]=v.w==='1'?+(v[k]||0):0);S.log[dk]=o;return keys().every(k=>!o[k])?['Noté',best()+' jour'+(best()>1?'s':'')+' sans fumer']:['Noté','Ce n’est pas grave. On repart.']})}
+const pick=v=>keys().length>1?(v.w||''):keys().join('');
+const logOf=v=>{const sel=pick(v),o={};keys().forEach(k=>o[k]=sel.includes(k)?(v[k]!=null?+v[k]:1):0);return o};
+function flowConso(dk){const lab=dk===today?'Aujourd’hui':'Hier';flow([
+  {k:'z',q:`${lab}, un jour sans ?`,sub:keys().map(vkL).join(', '),type:'tiles',opts:[{v:'0',i:'check',l:'Oui, un jour sans',one:1,cta:1},{v:'1',i:'dots',l:'Non',one:1}]},
+  {k:'w',q:'C’était quoi ?',type:'multi',skip:v=>v.z!=='1'||keys().length<2,opts:keys().map(k=>({v:k,i:vkI(k),l:vkL(k)}))},
+  {k:'c',q:'Combien de clopes ?',type:'tiles',skip:v=>v.z!=='1'||!has('c')||!pick(v).includes('c'),opts:[{v:1,l:'1'},{v:3,l:'2 à 5'},{v:7,l:'5 à 10'},{v:12,l:'Plus de 10'}]},
+  {k:'j',q:'Combien de joints ?',type:'tiles',skip:v=>v.z!=='1'||!has('j')||!pick(v).includes('j'),opts:[{v:1,l:'1'},{v:2,l:'2'},{v:3,l:'3'},{v:5,l:'4 ou plus'}]}
+ ],v=>{const o=v.z==='1'?logOf(v):Object.fromEntries(keys().map(k=>[k,0]));S.log[dk]=o;return keys().every(k=>!o[k])?['Noté',best()+' jour'+(best()>1?'s':'')+' sans']:['Noté','Ce n’est pas grave. On repart.']})}
 function flowDay(){flowEve()}
 function flowCheckBal(){const L=liveBal();flow([{k:'x',q:'Tu as '+eur(L)+((S.bal.acc||[]).length>1?' sur tes comptes ?':' sur ton compte ?'),sub:'Vérifie dans ton appli bancaire.',type:'tiles',opts:[{i:'check',l:'Oui, c’est juste',one:1,go:()=>{S.bal={v:L,d:today,ts:Date.now()};done(['Solde confirmé',eur(L)])}},{i:'pen',l:'Non, je corrige',one:1,go:()=>flowBal()}]}],()=>['',''])}
 function grpOf(p){const l=S.debts.filter(x=>pk(x.p)===pk(p));return{n:l.length?l[0].p:p,l,net:l.reduce((a,x)=>a+(x.w==='them'?x.v:-x.v),0)}}
@@ -1045,7 +1057,7 @@ function progScr(){const st=okStreak(),best=okBest(),tr=balTrend(60),sv=S.vice?s
    <div class="sec"><h2>4 dernières semaines</h2><small>${done28} / ${Math.min(28,Math.round((pd(today)-pd(start))/864e5)+1)} jours</small></div>
    <div class="hmh">${['L','M','M','J','V','S','D'].map(d=>`<span>${d}</span>`).join('')}</div><div class="hm">${grid}</div>
    ${tr.length>2?`<div class="sec"><h2>Ton solde</h2><small>${eur0(tr[0][1])} → ${eur0(tr.at(-1)[1])}</small></div><div class="list" style="padding:12px 10px">${spark(tr,320,80).replace('class="spk"','class="spk" style="height:80px"')}</div>`:''}
-   <div class="msum">${S.vice?`<div><b style="color:var(--good)">${eur0(sv)}</b><small>gardés</small></div><div><b>${fs} j</b><small>sans fumer</small></div>`:`<div><b>${best} j</b><small>record</small></div><div><b>${S.ag.filter(a=>a.done).length}</b><small>rappels faits</small></div>`}<div><b style="${sc!=null&&sc<0?'color:var(--good)':''}">${sc==null?'—':(sc>0?'+':'')+sc+' %'}</b><small>dépenses vs mois dernier</small></div></div>
+   <div class="msum">${S.vice?`<div><b style="color:var(--good)">${eur0(sv)}</b><small>gardés</small></div><div><b>${fs} j</b><small>jours sans</small></div>`:`<div><b>${best} j</b><small>record</small></div><div><b>${S.ag.filter(a=>a.done).length}</b><small>rappels faits</small></div>`}<div><b style="${sc!=null&&sc<0?'color:var(--good)':''}">${sc==null?'—':(sc>0?'+':'')+sc+' %'}</b><small>dépenses vs mois dernier</small></div></div>
    <button class="pg" id="wkb" style="margin-top:4px"><div class="ph"><b>Bilan de la semaine</b><span>${ic('next')}</span></div></button>
    <div class="sec"><h2>Paliers</h2><small>${M.filter(m=>m[1]).length} / ${M.length}</small></div>
    <div class="list mls">${M.map(([t,ok])=>`<div class="li ${ok?'done':''}"><span class="ck">${ic('check')}</span><span class="t">${t}</span><span class="r"></span></div>`).join('')}</div>`);const wb=x.querySelector('#wkb');if(wb)wb.onclick=()=>{buzz();wkScr(wkStart())}}
@@ -1083,7 +1095,13 @@ function draw(){const st=FL.steps[FL.i],n=FL.steps.filter(s=>!(s.skip&&s.skip(FL
   else if(st.type==='date')dateUI(st,body);
   else if(st.type==='pdate')pdateUI(st,body);
   else if(st.type==='fixes')fixesUI(st,body,btm);
-  else if(st.type==='accounts')accountsUI(st,body,btm)}
+  else if(st.type==='accounts')accountsUI(st,body,btm);
+  else if(st.type==='multi')multiUI(st,body,btm)}
+function multiUI(st,body,btm){const opts=typeof st.opts==='function'?st.opts(FL.v):st.opts;let sel=new Set(String(FL.v[st.k]||'').split('').filter(Boolean));
+  body.innerHTML=`<div class="tiles">${opts.map((o,i)=>`<button class="tile mt${sel.has(o.v)?' on':''}" data-i="${i}" aria-pressed="${sel.has(o.v)}"><span class="ib">${ic(o.i)}</span><span><b>${esc(o.l)}</b></span><i class="mk">${ic('check')}</i></button>`).join('')}</div>`;
+  btm.innerHTML=`<button class="go" id="go">Valider</button>${st.none?`<button class="lkf" id="none" style="width:100%">${esc(st.none)}</button>`:''}`;const g=btm.querySelector('#go'),up=()=>{g.disabled=!sel.size};up();
+  body.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{buzz(5);const o=opts[+b.dataset.i];sel.has(o.v)?sel.delete(o.v):sel.add(o.v);b.classList.toggle('on',sel.has(o.v));b.setAttribute('aria-pressed',sel.has(o.v));up()});
+  g.onclick=()=>{FL.v[st.k]=[...sel].join('');buzz();nextStep()};{const n=btm.querySelector('#none');if(n)n.onclick=()=>{FL.v[st.k]='';buzz();nextStep()}}}
 function amountUI(st,body,btm){let s=FL.v[st.k]!=null?String(FL.v[st.k]).replace('.',','):'';
   body.innerHTML=`<div class="amt" id="amt"></div><div class="pad">${['1','2','3','4','5','6','7','8','9',',','0','⌫'].map(k=>`<button data-k="${k}" ${k==='⌫'?'aria-label="Effacer"':''}>${k==='⌫'?ic('del'):k}</button>`).join('')}</div>`;
   let ng=st.neg&&FL.v[st.k]<0;if(ng)s=s.replace('-','');
@@ -1170,7 +1188,7 @@ const fxSub=()=>Array.isArray(S.fx)&&S.fx.length?eur0(S.fixe)+' par mois · '+S.
 function flowDep(pre){flow([
   {k:'v',q:'Combien tu as dépensé ?',type:'amount',pd:'out',sug:1},
   {k:'c',q:'C’était quoi ?',type:'tiles',opts:CATS.map(([v,i,l])=>({v,i,l}))},
-  {k:'s',q:()=>esc(CN.conso[2])+' : quoi ?',type:'tiles',skip:v=>v.c!=='conso',opts:FSUB},
+  {k:'s',q:()=>esc(CN.conso[2])+' : quoi ?',type:'tiles',skip:v=>v.c!=='conso',opts:()=>fsub()},
   SAMEQ('out')
  ],v=>{const d=v.d||today,nb=nbFor(d,v.sb);const e={id:uid(),d,v:v.v,c:v.c};if(v.s)e.s=v.s;if(nb)e.nb=1;S.e.push(e);return['C’est noté',`${eur(v.v)} · ${v.s?FL2[v.s]:CN[v.c][2]}${dSuf(d)}${nb?' · solde inchangé':''}`]},pre?{d:pre}:null)}
 function flowFume(sub){flow([{k:'v',q:`${FL2[sub]} : combien ?`,type:'amount'}],v=>{S.e.push({id:uid(),d:today,v:v.v,c:'conso',s:sub});return['C’est noté',`${eur(v.v)} · ${FL2[sub]}`]})}
@@ -1226,7 +1244,7 @@ function flowEve(){const P=S.name?S.name.split(' ')[0]:'',L=S.e.filter(x=>x.d===
   const sumT=()=>S.e.filter(x=>x.d===today&&x.c!=='dette').reduce((a,x)=>a+x.v,0);
   flow([
    {k:'c',q:(P?P+', ta':'Ta')+' journée',sub:t?'Déjà noté aujourd’hui : '+eur(t)+'. Autre chose ?':'Tu as dépensé quoi aujourd’hui ?',type:'tiles',opts:[{i:'check',l:t?'Non, c’est tout':'Rien du tout',s:t?'Je boucle ma journée':'Journée à 0 €',one:1,cta:1,go:()=>{if(!t){S.nos=S.nos||{};S.nos[today]=1}eveEnd(t?['Journée bouclée',eur(t)+' aujourd’hui']:['Journée à 0 €','Bien joué'])}},...CATS.map(([v,i,l])=>({v,i,l}))]},
-   {k:'s',q:()=>esc(CN.conso[2])+' : quoi ?',type:'tiles',skip:v=>v.c!=='conso',opts:FSUB},
+   {k:'s',q:()=>esc(CN.conso[2])+' : quoi ?',type:'tiles',skip:v=>v.c!=='conso',opts:()=>fsub()},
    {k:'v',q:v=>(v.s?FL2[v.s]:CN[v.c][2])+' : combien ?',type:'amount',sug:0},
    SAMEQ('out'),
    {k:'m',q:'Autre chose ?',sub:v=>'Noté : '+eur(v.v)+(v.s?' de '+FL2[v.s]:' en '+CN[v.c][2].toLowerCase())+'.',type:'tiles',opts:[{i:'check',l:'Non, c’est tout',one:1,cta:1,go:v=>{saveE(v);eveEnd(['Journée bouclée',eur(sumT())+' aujourd’hui'])}},{i:'plus',l:'Oui, une autre dépense',one:1,go:v=>{saveE(v);save();flowEve()}}]}
@@ -1337,13 +1355,13 @@ function vicStats(){let z=0,d=S.start||today;for(let k=0;k<500&&d<=today;k++){if
   return{z,kept,rb,fs,agd,cof:cofV(),best:okBest()}}
 function badgeList(){const V=vicStats(),g=S.cof&&S.cof.g,cv=cofV(),b=Math.max(V.best,okStreak(),S.rec||0);
   return [['1 semaine d’affilée',b>=7,'flame'],['1 mois d’affilée',b>=30,'flame'],['Journée à 0 €',V.z>=1,'spark'],['Envie résistée',V.kept>0,'ban'],['Dette réglée',V.rb>0,'users'],['Objectif atteint',!!(g&&cv>=g.v),'gift'],['1er bilan du mois',!!Object.keys(S.bseen||{}).length,'week'],
-   ...(S.vice?[['7 jours sans fumer',sans30().n>=7,'leaf']]:[])]}
+   ...(S.vice?[['7 jours sans',sans30().n>=7,'leaf']]:[])]}
 function badgeCheck(ms=1800){try{if(!S.name)return;const on=badgeList().filter(b=>b[1]);if(S.bdgN==null||on.length<S.bdgN||!S.bdgS){S.bdgN=on.length;S.bdgS=on.map(b=>b[0]);return}
   if(on.length>S.bdgN){const seen=S.bdgS||[],nw=on.find(b=>!seen.includes(b[0]))||on[on.length-1];S.bdgN=on.length;S.bdgS=on.map(b=>b[0]);save();setTimeout(()=>{if($('.strk'))return setTimeout(()=>badgePop(nw),2200);badgePop(nw)},ms)}else if(!S.bdgS)S.bdgS=on.map(b=>b[0])}catch(e){}}
 function badgePop([t,,i]){const o=document.createElement('div');o.className='strk bp';o.innerHTML=`<div class="bdx">${ic(i)}</div><small>Nouvelle pierre posée</small><b>${esc(t)}</b><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
 function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().charAt(0).toUpperCase()),R=56,C=+(2*Math.PI*R).toFixed(1),nx=LV[V.n],W=vicStats(),g=S.cof&&S.cof.g,cv=cofV();
   const BL=badgeList().map((b,k)=>[...b,k]).sort((a,b)=>(b[1]-a[1])||(a[3]-b[3]));
-  const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €','var(--good)'],...(S.vice&&W.fs!=null?[[sans30().n+' / '+sans30().of+' j','sans fumer sur les 30 derniers','#64D2FF']]:[[W.agd,'chose'+(W.agd>1?'s':'')+' faite'+(W.agd>1?'s':''),'var(--c-ag)']]),[eur0(W.kept),'gardés grâce à « Envie d’acheter »','var(--c-cof)'],[eur0(W.rb),'de dettes remboursées','var(--c-debt)']];
+  const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €','var(--good)'],...(S.vice&&W.fs!=null?[[sans30().n+' / '+sans30().of+' j','jours sans sur les 30 derniers','#64D2FF']]:[[W.agd,'chose'+(W.agd>1?'s':'')+' faite'+(W.agd>1?'s':''),'var(--c-ag)']]),[eur0(W.kept),'gardés grâce à « Envie d’acheter »','var(--c-cof)'],[eur0(W.rb),'de dettes remboursées','var(--c-debt)']];
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
   <div class="me"><button class="house" data-a="prog" aria-label="Ma maison">${houseSvg(V.n)}</button>
   <b class="nm">${esc(S.name||'Moi')}</b><span class="lvl">Étape ${V.n} sur 7 · ${V.name}</span></div>
@@ -1713,45 +1731,45 @@ const EX=[
  ['detente','Détente musculaire','Relâche toute la tension','4 min','#30B0C7','#30D158',[T('Serre tes poings très fort.',7),T('Relâche d’un coup. Sens la chaleur.',15),T('Monte tes épaules vers tes oreilles.',7),T('Relâche.',15),T('Crispe tout ton visage.',7),T('Relâche, mâchoire comprise.',15),T('Contracte ton ventre.',7),T('Relâche, respire dans le ventre.',15),T('Tends tes jambes, pointes de pieds vers toi.',7),T('Relâche tout.',15),T('Reste immobile. Ton corps entier est lourd et calme.',30)]]];
 
 const has=k=>!!S.vice&&S.vice.includes(k);
-const keys=()=>['j','c'].filter(has);
+const keys=()=>['j','c','v','a','p','l','o','x'].filter(has);
 function streak(k){let n=0;const x=new Date();const t=S.log[iso(x)];if(t&&t[k]>0)return 0;if(!(t&&t[k]===0))x.setDate(x.getDate()-1);
   while(true){const d=S.log[iso(x)];if(d&&d[k]===0){n++;x.setDate(x.getDate()-1)}else break}return n}
 const best=()=>Math.max(0,...keys().map(streak));
 const saved=()=>{if(!S.vstart||!keys().length)return 0;let f=0;for(let d=S.vstart;d<=today;d=addD(d,1)){const l=S.log[d];if(l)f+=keys().filter(k=>l[k]===0).length/keys().length}return Math.round((S.wk||0)/7*f)};
-const KN={j:'sans joint',c:'sans clope'};
+const KN={j:'sans cannabis',c:'sans clope',v:'sans vape',a:'sans alcool',p:'sans pari',l:'sans livraison',o:'sans achat impulsif',get x(){return 'sans '+(S.vxn||'ton truc').toLowerCase()}};
 function smokeCard(){if(!S.name)return'';
   if(!S.vice)return S.vice===''?'':`<button class="vset" data-a="vset"><span class="ib">${ic('smoke')}</span><span><b>Suivre ma conso</b><small>Clopes, joints : jours sans fumer et argent économisé</small></span></button>`;
   const lg=S.log[today];
   return `<button class="vset fold" data-a="fume">${S.name&&tasks().some(t=>t.i==='smoke')?`<i class="bdg">${tasks().filter(t=>t.i==='smoke').length}</i>`:''}<span class="ib">${ic('leaf')}</span><span><b>${esc(CN.conso[2])}</b><small>${(()=>{const q=sans30();return q.n+' j sans sur '+q.of})()}${lg?'':' · note ta journée'}</small></span></button>`}
 function fumeScr(){const lg=S.log[today],zero=lg&&keys().every(k=>lg[k]===0),rs=RS(),[rk,rt]=rs[rI%rs.length];
-  const nx=(k)=>{const n=streak(k),m=BODY[k==='c'?'tabac':'cannabis'].find(([d])=>n<d);return m?`<div class="rc"><small>${KN[k].replace(/^./,c=>c.toUpperCase())} · ${n} j · encore ${m[0]-n} j</small><p>${m[2]}</p></div>`:''};
+  const nx=(k)=>{if(k!=='c'&&k!=='j')return '';const n=streak(k),m=BODY[k==='c'?'tabac':'cannabis'].find(([d])=>n<d);return m?`<div class="rc"><small>${KN[k].replace(/^./,c=>c.toUpperCase())} · ${n} j · encore ${m[0]-n} j</small><p>${m[2]}</p></div>`:''};
   const x=scr(esc(CN.conso[2]),`<div class="st3">${keys().map(k=>{const q=sans30(k);return `<div><b>${q.n}/${q.of} j</b><small>${KN[k]}</small></div>`}).join('')}<div><b>${eur0(saved())}</b><small>économisés</small></div></div>
-   <div class="sf">${lg?`<div class="ask okk" style="border-top:0">${zero?ic('check'):ic('dots')}<span>${zero?'Aujourd’hui : rien fumé':'Aujourd’hui : '+keys().filter(k=>lg[k]).map(k=>lg[k]+' '+(k==='c'?'clope':'joint')+(lg[k]>1?'s':'')).join(', ')}</span><button data-f="lg1">Modifier</button></div>`
-     :`<div class="ask" style="border-top:0"><span>Tu as fumé aujourd’hui ?</span><button data-f="lg0">Non</button><button data-f="lg1">Oui</button></div>`}
-    <button class="sos" data-f="sos"><span class="ib">${ic('wind')}</span><span><b>Envie de fumer ?</b><small>Respire 3 minutes, l’envie redescend</small></span></button></div>
+   <div class="sf">${lg?`<div class="ask okk" style="border-top:0">${zero?ic('check'):ic('dots')}<span>${zero?'Aujourd’hui : un jour sans':'Aujourd’hui : '+keys().filter(k=>lg[k]).map(k=>k==='c'||k==='j'?lg[k]+' '+(k==='c'?'clope':'joint')+(lg[k]>1?'s':''):vkL(k).toLowerCase()).join(', ')}</span><button data-f="lg1">Modifier</button></div>`
+     :`<div class="ask" style="border-top:0"><span>Aujourd’hui, un jour sans ?</span><button data-f="lg0">Oui</button><button data-f="lg1">Non</button></div>`}
+    <button class="sos" data-f="sos"><span class="ib">${ic('wind')}</span><span><b>Une envie ?</b><small>Respire 3 minutes, l’envie redescend</small></span></button></div>
    <div class="sec" style="margin-top:4px"><h2>J’ai acheté</h2></div>
-   <div class="fbuy">${FSUB.map(o=>`<button data-buy="${o.v}"><span class="ib">${ic(o.i)}</span><b>${o.l}</b></button>`).join('')}</div>
+   <div class="fbuy">${fsub().map(o=>`<button data-buy="${o.v}"><span class="ib">${ic(o.i)}</span><b>${o.l}</b></button>`).join('')}</div>
    <div class="sec" style="margin-top:4px"><h2>Santé</h2><button class="lk fall" data-f="gains">Tout voir</button></div>
    ${keys().map(nx).join('')}
    <div class="rc"><small>${rk==='Toi'?'À te rappeler':'Pourquoi ne pas fumer · '+rk}</small><p>${rt}</p></div>
-   <div class="fcall"><a href="tel:0800231313"><small>Drogues Info Service</small><b>0 800 23 13 13</b></a><a href="tel:3989"><small>Tabac Info Service</small><b>39 89</b></a></div>`);
+   <div class="fcall">${(has('j')||!keys().some(k=>'cvap'.includes(k)))?'<a href="tel:0800231313"><small>Drogues Info Service</small><b>0 800 23 13 13</b></a>':''}${has('c')||has('v')?'<a href="tel:3989"><small>Tabac Info Service</small><b>39 89</b></a>':''}${has('a')?'<a href="tel:0980980930"><small>Alcool Info Service</small><b>0 980 980 930</b></a>':''}${has('p')?'<a href="tel:0974751313"><small>Joueurs Info Service</small><b>09 74 75 13 13</b></a>':''}</div>`);
   const leave=fn=>{clearInterval(sT);clearInterval(sB);x.remove();document.body.style.overflow='';fn()};
   x.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{buzz();const a=b.dataset.f;if(a==='sos')return openSOS();if(a==='gains')return gainsScr();leave(a==='lg0'?logZero:flowSmoked)});
   x.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{buzz();leave(()=>flowFume(b.dataset.buy))})}
-function logZero(){S.log[today]={};keys().forEach(k=>S.log[today][k]=0);done(['Noté',best()+' jour'+(best()>1?'s':'')+' sans fumer'])}
+function logZero(){S.log[today]={};keys().forEach(k=>S.log[today][k]=0);done(['Noté',best()+' jour'+(best()>1?'s':'')+' sans'])}
 function flowVice(){flow([
-  {k:'ad',q:'Tu as 18 ans ou plus ?',sub:'Ce suivi parle de tabac et de cannabis.',type:'tiles',skip:()=>!!S.adult,opts:[{v:1,i:'check',l:'Oui',one:1},{v:0,i:'x',l:'Non',one:1}]},
-  {k:'vice',q:'Tu fumes quoi ?',skip:v=>v.ad===0,sub:'Pour voir ce que ça te coûte, et ce que tu gardes les jours sans.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
-  {k:'wk',q:'Combien tu dépenses par semaine pour ça ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice},
+  {k:'ad',q:'Tu as 18 ans ou plus ?',sub:'Ce suivi parle d’alcool, de tabac, de cannabis et de jeux d’argent.',type:'tiles',skip:()=>!!S.adult,opts:[{v:1,i:'check',l:'Oui',one:1},{v:0,i:'x',l:'Non',one:1}]},
+  {k:'vice',q:'Qu’est-ce que tu aimerais réduire ?',sub:'Choisis tout ce qui compte pour toi. Personne d’autre ne le voit.',skip:v=>v.ad===0,type:'multi',none:'Rien de tout ça',opts:VK.map(([v,i,l])=>({v,i,l}))},
+  {k:'vxn',q:'C’est quoi, « autre chose » ?',type:'text',ph:'Ex. Les sodas, le jeu vidéo…',skip:v=>!(v.vice||'').includes('x')},
+  {k:'wk',q:'Combien ça te coûte par semaine, en tout ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice},
   {k:'vn',q:'Comment tu veux l’appeler ?',sub:'C’est ton app, c’est ton mot. Personne d’autre ne le voit.',type:'tiles',skip:v=>!v.vice,opts:[{v:'Conso',l:'Conso'},{v:'Perso',l:'Perso'},{v:'Fumette',l:'Fumette'},{v:'Dépense nocive',l:'Dépense nocive'},{i:'pen',l:'Autre nom',one:1,go:v=>{v.vn='';v.vnf=1;nextStep()}}]},
   {k:'vn',q:'Ton mot à toi',type:'text',ph:'Ex. Mes petits plaisirs',skip:v=>!v.vnf}
- ],v=>{if(v.ad===0)return['Pas pour l’instant','Pour en parler, gratuitement et sans jugement : Drogues Info Service, 0 800 23 13 13'];S.adult=1;if(v.vn){S.vn=v.vn.trim().slice(0,24)||'Conso';CN.conso[2]=S.vn}S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=S.vstart||today;return['C’est en place','Chaque jour sans fumer compte']}return['Noté','']})}
-function flowSmoked(){const both=has('c')&&has('j');flow([
-  {k:'w',q:'Qu’est-ce que tu as fumé ?',type:'tiles',skip:()=>!both,opts:[{v:'c',i:'smoke',l:'Clopes'},{v:'j',i:'leaf',l:'Joint'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'0',i:'ban',l:'Rien finalement',one:1}]},
-  {k:'c',q:'Combien de clopes ?',type:'tiles',skip:v=>!has('c')||(both&&!(v.w||'').includes('c')),opts:[{v:1,l:'1'},{v:3,l:'2 à 5'},{v:7,l:'5 à 10'},{v:12,l:'Plus de 10'},{v:0,l:'Aucune',one:1}]},
-  {k:'j',q:'Combien de joints ?',type:'tiles',skip:v=>!has('j')||(both&&!(v.w||'').includes('j')),opts:[{v:1,l:'1'},{v:2,l:'2'},{v:3,l:'3'},{v:5,l:'4 ou plus'},{v:0,l:'Aucun',one:1}]}
- ],v=>{const o={};keys().forEach(k=>o[k]=+(v[k]||0));S.log[today]=o;return keys().every(k=>!o[k])?['Noté','Rien fumé aujourd’hui']:['Noté','Ce n’est pas grave. Demain, on repart.']})}
-
+ ],v=>{if(v.vxn)S.vxn=v.vxn.trim().slice(0,24);if(v.ad===0)return['Pas pour l’instant','Pour en parler, gratuitement et sans jugement : Drogues Info Service, 0 800 23 13 13'];S.adult=1;if(v.vn){S.vn=v.vn.trim().slice(0,24)||'Conso';CN.conso[2]=S.vn}S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=S.vstart||today;return['C’est en place','Chaque jour sans compte']}return['Noté','']})}
+function flowSmoked(){flow([
+  {k:'w',q:'C’était quoi ?',type:'multi',none:'Rien finalement',skip:()=>keys().length<2,opts:keys().map(k=>({v:k,i:vkI(k),l:vkL(k)}))},
+  {k:'c',q:'Combien de clopes ?',type:'tiles',skip:v=>!has('c')||!pick(v).includes('c'),opts:[{v:1,l:'1'},{v:3,l:'2 à 5'},{v:7,l:'5 à 10'},{v:12,l:'Plus de 10'}]},
+  {k:'j',q:'Combien de joints ?',type:'tiles',skip:v=>!has('j')||!pick(v).includes('j'),opts:[{v:1,l:'1'},{v:2,l:'2'},{v:3,l:'3'},{v:5,l:'4 ou plus'}]}
+ ],v=>{const o=logOf(v);S.log[today]=o;return keys().every(k=>!o[k])?['Noté','Un jour sans aujourd’hui']:['Noté','Ce n’est pas grave. Demain, on repart.']})}
 /* ---------- Envie de fumer ---------- */
 let sT=null,sB=null,rI=Math.floor(Math.random()*100);
 const RS=()=>REASONS.filter(([k])=>k==='Toi'||(k==='Cannabis'&&has('j'))||(k==='Tabac'&&has('c')));
@@ -1759,7 +1777,7 @@ function closeScr(){clearInterval(sT);clearInterval(sB);clearInterval(eT);const 
 function scr(title,html){let x=$('.scr');if(x)x.remove();x=document.createElement('div');x.className='scr';x.innerHTML=`<div class="in2"><div class="top"><button class="back" aria-label="Fermer">${ic('x')}</button><span>${title}</span><span></span></div>${html}</div>`;document.body.appendChild(x);document.body.style.overflow='hidden';x.querySelector('.back').onclick=()=>{buzz();closeScr()};return x}
 function openSOS(){clearInterval(sT);clearInterval(sB);
   const won=S.crav.filter(c=>c.w).length,rs=RS();
-  const x=scr('Envie de fumer',`<div class="orbw"><div class="orb" id="orb"></div><div class="orbt"><b id="bT">Inspire</b><small id="cT">3:00</small></div></div>
+  const x=scr('Une envie',`<div class="orbw"><div class="orb" id="orb"></div><div class="orbt"><b id="bT">Inspire</b><small id="cT">3:00</small></div></div>
    <div class="rc"><small id="rK"></small><p id="rT"></p><button class="lk" id="rN">Une autre raison</button></div>
    ${cravInsight()}
    <div class="rc"><small>Mes raisons d’arrêter</small>${S.mine.length?`<ul>${S.mine.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:''}<form id="mF"><input id="mI" placeholder="${S.mine.length?'Ajouter une raison':'Pourquoi tu veux arrêter ?'}" maxlength="80"><button>OK</button></form></div>
@@ -1850,7 +1868,7 @@ const HELP=[
  ['Fumer',[
   ['J’ai envie de fumer, je fais quoi ?','Touche <b>Envie de fumer</b> sur l’accueil. Respire avec le cercle pendant 3 minutes : l’envie redescend presque toujours d’elle-même.','Envie de fumer','sos','envie craving manque besoin','v'],
   ['Un exercice pour tenir','Six exercices guidés avec minuteur : respiration, ancrage, 7 minutes de sport… Choisis-en un.','Les exercices','ex','exercice respiration calme stress angoisse','v'],
-  ['J’ai fumé, je le note comment ?','Dans <b>Moi</b>, ouvre ta <b>conso</b> et réponds à « Tu as fumé aujourd’hui ? ». Noter sans te juger, c’est déjà reprendre le contrôle.','Noter','smoked','fumé noter joint clope','v'],
+  ['J’ai fumé, je le note comment ?','Dans <b>Moi</b>, ouvre ta <b>conso</b> et réponds à « Aujourd’hui, un jour sans ? ». Noter sans te juger, c’est déjà reprendre le contrôle.','Noter','smoked','fumé noter joint clope','v'],
   ['J’ai craqué, mon compteur repart à zéro','Ça arrive à presque tout le monde qui arrête. Les jours que tu as tenus, tu les as tenus. Repars aujourd’hui, pas lundi.','Envie de fumer','sos','craqué rechute zéro échec','v'],
   ['Qu’est-ce que mon corps y gagne ?','L’écran des bienfaits montre ce qui s’améliore jour après jour : souffle, sommeil, peau, tête, argent.','Voir mes bienfaits','gains','bienfaits corps santé gagne','v'],
   ['Combien j’économise ?','Ouvre <b>Dépense nocive</b> : jours sans fumer et argent gardé dans ta poche.','Ouvrir ma conso','fume','économie argent économisé','v'],
@@ -1922,19 +1940,20 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
   {i:'zap',l:'Sons',s:sndOn()?'Activés':'Coupés',one:1,go:()=>{S.snd=sndOn()?0:1;save();if(S.snd)sfx('ok');done(['Sons '+(S.snd?'activés':'coupés'),''])}},
   {i:'bell',l:'Notifications',s:pushOn()?'Activées':'Désactivées',one:1,go:()=>pushOn()?pushOff():pushEnable()},
   {i:'user',l:'Mon prénom',s:S.name||'',one:1,go:()=>flow([{k:'n',q:'Ton prénom ?',type:'text',ph:'Prénom'}],v=>{S.name=v.n;return['Enregistré',v.n]})},
-  {i:'smoke',l:'Ma conso',s:S.vice?({c:'Clopes',j:'Joints',cj:'Clopes et joints'}[S.vice]+(S.wk?' · '+eur0(S.wk)+' par semaine avant':'')):'Pas suivie',one:1,go:()=>flowVice()},
+  {i:'smoke',l:'Ma conso',s:S.vice?(keys().map(vkL).join(', ')+(S.wk?' · '+eur0(S.wk)+' par semaine avant':'')):'Pas suivie',one:1,go:()=>flowVice()},
   {i:'trash',l:'Tout effacer',s:'Repartir de zéro',one:1,go:()=>flow([{k:'x',q:'Tout effacer ?',sub:'Tes dépenses, dettes et ton agenda seront supprimés.',type:'tiles',opts:[{i:'trash',l:'Oui, tout effacer',one:1,go:async()=>{try{if(S.pid)await fetch(PUSH+'/unsub',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:S.pid})})}catch(e){}try{const r=swReg||await navigator.serviceWorker.getRegistration();const sb=r&&await r.pushManager.getSubscription();if(sb)await sb.unsubscribe()}catch(e){}try{if(navigator.clearAppBadge)navigator.clearAppBadge()}catch(e){}try{localStorage.removeItem(K)}catch(e){}location.reload()}},{i:'undo',l:'Non, garder',one:1,go:()=>closeFl()}]}],()=>['',''])},
   {i:'undo',l:'Retour',one:1,go:()=>closeFl()}]}],()=>['',''])}
 
 /* ---------- Premier lancement ---------- */
-function onbApply(v){S.name=v.n;fxSave(v.fx);rinSave(v.rin||[]);accSave(v.acc);S.start=today;S.eh=v.eh||21;if(v.ad===0)v.vice='';if(v.vice)S.adult=1;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}}
+function onbApply(v){S.name=v.n;fxSave(v.fx);rinSave(v.rin||[]);accSave(v.acc);S.start=today;S.eh=v.eh||21;if(v.vxn)S.vxn=v.vxn.trim().slice(0,24);if(v.ad===0)v.vice='';if(v.vice)S.adult=1;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}}
 function onboard(){const N=v=>esc(v.n||'');flow([
   {k:'n',q:'Comment tu t’appelles ?',sub:'Juste ton prénom.',type:'text',ph:'Ton prénom'},
   {k:'fx',q:v=>`Enchanté ${N(v)}. Qu’est-ce qui sort de ton compte chaque mois ?`,sub:'Forfait, abonnements, assurance… Seulement ce que tu as. Le jour du prélèvement, si tu le connais.',type:'fixes'},
   {...RIN_STEP,q:v=>'Et qu’est-ce qui rentre chaque mois ?'},
   {k:'acc',q:v=>`Et là, tu as combien sur tes comptes, ${N(v)} ?`,sub:'Une ligne par compte, l’app fait le total.',type:'accounts'},
-  {k:'ad',q:'Tu as 18 ans ou plus ?',sub:'Une des parties de l’app parle de tabac et de cannabis.',type:'tiles',opts:[{v:1,i:'check',l:'Oui',one:1},{v:0,i:'x',l:'Non',one:1}]},
-  {k:'vice',q:'Tu fumes ?',sub:'Pour voir ce que ça te coûte, et ce que tu gardes les jours sans.',skip:v=>v.ad===0,type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
+  {k:'ad',q:'Tu as 18 ans ou plus ?',sub:'Une des parties de l’app parle d’alcool, de tabac, de cannabis et de jeux d’argent.',type:'tiles',opts:[{v:1,i:'check',l:'Oui',one:1},{v:0,i:'x',l:'Non',one:1}]},
+  {k:'vice',q:'Qu’est-ce que tu aimerais réduire ?',sub:'Choisis tout ce qui compte pour toi. Personne d’autre ne le voit.',skip:v=>v.ad===0,type:'multi',none:'Rien de tout ça',opts:VK.map(([v,i,l])=>({v,i,l}))},
+  {k:'vxn',q:'C’est quoi, « autre chose » ?',type:'text',ph:'Ex. Les sodas, le jeu vidéo…',skip:v=>!(v.vice||'').includes('x')},
   {k:'wk',q:'Ça te coûte combien par semaine, à peu près ?',sub:'À peu près, ça suffit.',type:'amount',skip:v=>!v.vice},
   {k:'eh',q:'Chaque soir, ton point du soir',sub:'10 secondes pour noter ta journée : ce que tu as dépensé, ou « rien du tout ». C’est le seul vrai rendez-vous de Base, et c’est lui qui construit ta maison. Tu le veux à quelle heure ?',type:'tiles',opts:[{v:20,i:'moon',l:'20 h'},{v:21,i:'moon',l:'21 h'},{v:22,i:'moon',l:'22 h'},{v:23,i:'moon',l:'23 h'}]},
   {k:'nt',q:v=>`Je te le rappelle chaque soir, ${N(v)} ?`,sub:v=>`À ${v.eh||21} h, une notification : « Ton point du soir ». Et la veille d’un prélèvement, pour ne pas être surpris.`+(needInstall()?'<br><br>Sur iPhone, les rappels marchent dans l’app installée sur ton écran d’accueil. Tu trouveras comment faire sur l’accueil.':''),type:'tiles',opts:[...(needInstall()?[{i:'check',l:'OK',one:1,v:0}]:[{i:'bell',l:'Oui, préviens-moi',s:'Recommandé',one:1,cta:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}])]}
