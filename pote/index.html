@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794072424" data-theme="light">
+<html lang="fr" data-build="1794072740" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -2278,7 +2278,7 @@ const modOpts=v=>MODL.filter(([k])=>k!=='u'||(v.sit||'').includes('m')||mod('u')
 const PF_STEPS=()=>[
   {k:'sit',q:'Tu fais quoi dans la vie ?',sub:'Coche tout ce qui te correspond : Base s’adapte à toi.',type:'multi',opts:SIT.map(([v,i,l])=>({v,i,l}))},
   {k:'mods',q:v=>'Voilà ton Base'+(S.name||v.n?', '+esc(S.name||v.n):''),sub:'Je l’ai préparé pour toi. Décoche ou ajoute, tu pourras tout changer quand tu veux.',type:'multi',def:v=>modSug(v.sit),none:'Le strict minimum',opts:modOpts},
-  {k:'pa',q:v=>(v.sit||'').includes('c')?'Ta société a son compte à elle ?':'Tu as un compte rien que pour ton activité ?',sub:'Comme ça, son argent ne se mélange pas avec le tien.',type:'tiles',skip:v=>!(v.mods||'').includes('f'),opts:[{v:'y',i:'bank',l:'Oui, un compte à part',s:'Ex. Qonto, Shine, un 2e compte Bourso'},{v:'n',i:'wallet',l:'Non, tout passe par mon compte perso',s:'Je range juste tes dépenses en « Pro »'}]},
+  {k:'pa',q:v=>(v.sit||'').includes('c')?'Ta société a son compte à elle ?':'Tu as un compte rien que pour ton activité ?',sub:'Comme ça, son argent ne se mélange pas avec le tien.',type:'tiles',skip:v=>!(v.mods||'').includes('f'),opts:[{v:'y',i:'bank',l:'Oui, un compte à part',s:'Ex. Qonto, Shine, un compte pro à ta banque'},{v:'n',i:'wallet',l:'Non, pas de compte pro',s:'Tes dépenses pro restent sur tes comptes perso, rangées en « Pro »'}]},
   {k:'pacc',q:'Ton compte pro, il a combien ?',sub:'Une ligne par compte. Il reste séparé de ton argent perso.',type:'accounts',def:()=>(S.pro&&S.pro.acc&&S.pro.acc.length?S.pro.acc.map(x=>({n:x.n,v:null,neg:false,ph:x.v})):[{n:'',v:null,neg:false}]),skip:v=>!(v.mods||'').includes('f')||v.pa!=='y'}];
 function pfApply(v){const o=S.pf||{};const was=mod('f')&&!!S.pf;S.pf={...o,sit:v.sit||'',mods:v.mods||''};const r=parseFloat(String(v.urs||'').replace(',','.'));if(r>0&&r<80)S.pf.urs=r;if(v.cpt!=null)S.pf.cpt=v.cpt;
   if((v.mods||'').includes('f')){S.pro=S.pro||{e:[],inc:[],sent:{}};if(v.pa==='n')S.pro.acc=null;else if(v.pa==='y'&&Array.isArray(v.pacc)){const acc=v.pacc.filter(x=>x.v!=null).map(x=>({n:x.n||'Compte pro',v:x.v}));if(acc.length)S.pro.acc=acc,S.pro.d=today,S.pro.v=Math.round(acc.reduce((a,x)=>a+x.v,0)*100)/100}}
