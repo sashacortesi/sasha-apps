@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794071000" data-theme="light">
+<html lang="fr" data-build="1794073000" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -592,24 +592,10 @@ body{background:#000}
 [data-theme="light"] .rcs{color:#E07800}[data-theme="light"] .rcs svg{fill:#FF9500}
 [data-theme="light"] .wr.tot b,[data-theme="light"] .wnote,[data-theme="light"] .inx{color:#1FA34A}
 
-/* ===== Bulles modernes : orbes vivantes, reflet, profondeur ===== */
-.rb,.bub:not(.add){--g:var(--bc,var(--pc));color:#fff;background:
-  radial-gradient(90% 70% at 30% 18%,rgba(255,255,255,.55),rgba(255,255,255,0) 55%),
-  radial-gradient(120% 120% at 70% 100%,color-mix(in srgb,var(--g) 70%,#000) 0%,transparent 60%),
-  linear-gradient(155deg,color-mix(in srgb,var(--g) 80%,#fff) 0%,var(--g) 55%,color-mix(in srgb,var(--g) 78%,#000) 100%)!important;
-  box-shadow:inset 0 1px 1.5px rgba(255,255,255,.7),inset 0 -10px 18px rgba(0,0,0,.18),0 14px 30px -14px color-mix(in srgb,var(--g) 85%,transparent),0 2px 6px -2px rgba(0,0,0,.18)!important}
-.bub:not(.add){--g:var(--pc)}
-.rb b,.bub:not(.add) b{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.18)}
-.rb small,.bub:not(.add) .bt{color:rgba(255,255,255,.9)!important;font-family:var(--num);font-weight:700}
+/* ===== Bulles façon verre (inspiré d'Apple, à notre façon) ===== */
 .rbi{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.35);margin-bottom:3px}.rbi svg{width:15px;height:15px;stroke-width:2;color:#fff}
 .rb[style*="74px"] .rbi{width:20px;height:20px}.rb[style*="74px"] .rbi svg{width:12px;height:12px}.rb[data-more] .rbi{display:none}
 .rb.big .rbi{width:40px;height:40px}.rb.big .rbi svg{width:22px;height:22px}
-.c-gr{--bc:#A1A1A6}.rb.c-gr{--g:#A1A1A6}
-.rb .rdot{top:6px;right:10px;width:12px;height:12px;background:#FF3B30;box-shadow:0 0 0 2.5px #fff}
-.rb.tap,.bub:active{transform:scale(.92)}
-.bub.done:not(.add){--g:#8E8E93;opacity:.55}.bub.done b{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.7)}
-.bub.arm{--g:#30D158!important}
-.bub.add{outline-color:var(--sep)}
 #rcp .rbs{position:relative}
 #rcp::before,#rcp::after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;filter:blur(70px);opacity:.35;pointer-events:none;z-index:-1}
 #rcp::before{background:#0A84FF;top:28%;left:-90px;animation:aur 14s ease-in-out infinite alternate}#rcp::after{background:#BF5AF2;top:45%;right:-110px;animation:aur 17s ease-in-out infinite alternate-reverse}
@@ -617,7 +603,40 @@ body{background:#000}
 #rcp{isolation:isolate;overflow:hidden}
 @keyframes aur{to{transform:translate(40px,-30px) scale(1.15)}}
 #rcp.rm::before,#rcp.rm::after{animation:none}
-[data-theme="light"] .rb b{color:#fff!important}
+.rb,.bub:not(.add){--g:var(--bc,var(--pc));color:var(--ink);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--g) 10%,rgba(255,255,255,.72)),color-mix(in srgb,var(--g) 16%,rgba(255,255,255,.5)));
+  -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 0 1px rgba(255,255,255,.55),inset 0 -1px 0 color-mix(in srgb,var(--g) 25%,transparent),0 10px 30px -14px color-mix(in srgb,var(--g) 55%,transparent),0 1px 3px rgba(0,0,0,.06)}
+.bub:not(.add){--g:var(--pc)}
+[data-theme="dark"] .rb,[data-theme="dark"] .bub:not(.add){background:linear-gradient(180deg,color-mix(in srgb,var(--g) 22%,rgba(255,255,255,.10)),color-mix(in srgb,var(--g) 14%,rgba(255,255,255,.04)));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 0 0 1px rgba(255,255,255,.08),0 10px 30px -14px color-mix(in srgb,var(--g) 60%,transparent)}
+.rb b,.bub:not(.add) b{color:var(--ink);text-shadow:none;font-weight:650}
+.rb small,.bub:not(.add) .bt{color:var(--g);font-family:var(--num);font-weight:700}
+.rbi{background:var(--g);box-shadow:0 3px 8px -3px color-mix(in srgb,var(--g) 80%,transparent)}.rbi svg{color:#fff}
+.c-gr{--bc:#8E8E93}
+.rb .rdot{top:6px;right:10px;width:11px;height:11px;background:#FF3B30;box-shadow:0 0 0 2px var(--bg)}
+.bub.done:not(.add){--g:#8E8E93;opacity:.6}.bub.done b{text-decoration:line-through}
+.bub.arm{--g:#30D158}
+.rb.tap,.bub:active{transform:scale(.93)}
+#rcp::before{background:#5AC8FA}#rcp::after{background:#BF5AF2}
+[data-theme="light"] #rcp::before,[data-theme="light"] #rcp::after{opacity:.30}
+.bubs{position:relative;isolation:isolate}
+.bubs::before{content:"";position:absolute;inset:-10px -20px;background:radial-gradient(40% 50% at 20% 40%,color-mix(in srgb,#5AC8FA 22%,transparent),transparent 70%),radial-gradient(40% 50% at 80% 60%,color-mix(in srgb,#BF5AF2 18%,transparent),transparent 70%);filter:blur(20px);z-index:-1;pointer-events:none}
+
+/* ===== Fondations (retour au vert) ===== */
+.vgp{width:100%;display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;padding:14px 16px;border:0;border-radius:20px;font:inherit;text-align:left;color:var(--ink);margin-top:-6px;
+  background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.55));-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:inset 0 1px 0 #fff,inset 0 0 0 1px rgba(0,0,0,.04),0 8px 24px -14px rgba(31,163,74,.6)}
+[data-theme="dark"] .vgp{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04));box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 24px -14px rgba(48,209,88,.5)}
+.vgb{grid-column:1/-1;display:grid;grid-template-columns:repeat(10,1fr);gap:4px}.vgb i{height:10px;border-radius:3px;background:var(--card2)}.vgb i.on{background:linear-gradient(180deg,#5FD37E,var(--good))}
+.vgt b{display:block;font-size:15px;font-weight:700}.vgt span{font-size:13px;color:var(--muted);font-weight:500}
+.vgm{display:grid;justify-items:end;text-align:right;padding:6px 10px;border-radius:12px;background:var(--card2)}.vgm small{font-size:11px;color:var(--muted);font-weight:700}.vgm b{font-size:14px;font-family:var(--num)}.vgm em{font-style:normal;font-size:11.5px;color:var(--muted);font-weight:600}
+.vgm.ok{background:color-mix(in srgb,var(--good) 16%,var(--card))}.vgm.ok b{color:var(--good);filter:brightness(.85)}
+[data-theme="light"] .vgp{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.05),0 10px 24px -16px rgba(31,163,74,.45)}
+.fdn{position:relative;width:180px;margin:6px auto 0;display:grid;justify-items:center}.fdn .grass{width:220px;height:10px;border-radius:5px;background:linear-gradient(90deg,#8BD17C,var(--good))}
+.fdn .grass.up{box-shadow:0 -10px 0 -4px #8BD17C}
+.fdn .hole{width:150px;display:grid;gap:4px;padding:6px;border-radius:0 0 18px 18px;background:var(--card2);box-shadow:inset 0 6px 12px rgba(0,0,0,.12)}
+.fdn .hole i{height:14px;border-radius:4px;background:transparent;box-shadow:inset 0 0 0 1.5px var(--sep)}.fdn .hole i.on{background:linear-gradient(180deg,#FFB340,#FF9500);box-shadow:none}.fdn .hole i.gd{background:linear-gradient(180deg,#FFE27A,#F5C000)}
+.strk.vgw{background:radial-gradient(circle at 50% 35%,#1E6B3A,#000 72%)}.strk.vgw b{font-size:28px;text-align:center}.strk.vgw small{text-align:center;max-width:300px}.strk.vgw .fdn{margin-bottom:18px}.strk.vgw .hole{background:rgba(255,255,255,.08)}
 </style>
 </head>
 <body>
@@ -749,7 +768,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   <button class="mlink" data-a="data">Mon mois ${ic('next')}</button>`+TB;
   homeBind()}
 function homeBind(){const B=badges();bindCopy($('#app'));try{const n=S.name?tasks().length:0;if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}{const m=$('#mvl');if(m)bindMv(m)}{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
-  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({rcp:()=>recap(),why:whySheet,bin:binFlow,droits:droitsScr,pay:payScr,wish:flowWish,eve:flowEve,bilan:()=>bilanScr(YM),data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,wk:()=>wkScr(wkStart())})[b.dataset.a]()});
+  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({vg:vgScr,rcp:()=>recap(),why:whySheet,bin:binFlow,droits:droitsScr,pay:payScr,wish:flowWish,eve:flowEve,bilan:()=>bilanScr(YM),data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,wk:()=>wkScr(wkStart())})[b.dataset.a]()});
   document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const a=S.ag.find(x=>x.id===b.dataset.ck);a.done=!a.done;save();buzz(a.done?[10,40,10]:8);home()});
   document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>agItem(b.dataset.ed));
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=e=>{e.stopPropagation();tabTo(b.dataset.tab)});
@@ -765,14 +784,14 @@ function lvl(){const x=xpPts();let i=0;while(i<LV.length-1&&x>=LV[i+1][0])i++;co
 function heroCard(){if(!S.bal)return balCard();
   const L=liveBal(),up=upSum(),now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1,free=L-up-cofV(),tdS=S.e.filter(x=>x.d===today).reduce((a,x)=>a+x.v,0),nr=nextRin();
   const inx=nr?`<em class="inx">+${eur0(nr.v)} attendus le ${pd(nr.dt).getDate()} (${esc(nr.n)}), comptés quand ils arrivent</em>`:'';
-  if(free+tdS>=0){delete S.low;const base=(free+tdS)/left,rest=base-tdS;
+  if(free+tdS>=0){if(S.vgW>0)S.vgWin=1;delete S.low;const base=(free+tdS)/left,rest=base-tdS;
     if(rest>=-.5)return `<div class="h2" data-a="why"><small>${tdS?'Il te reste aujourd’hui':'Pour aujourd’hui'}</small><strong>${eur0(Math.max(0,rest))}</strong><span>${tdS?'sur '+eur0(base)+' pour la journée':'Tu restes dans le vert jusqu’au '+ld+' '+MNL[now.getMonth()]+'.'}</span>${inx}<span class="howc">Comment c’est calculé ›</span></div>`;
     const tm=left>1?free/(left-1):0;return `<div class="h2" data-a="why"><small>Aujourd’hui, au-dessus de ta journée</small><strong class="hv over">${eur0(-rest)}</strong><span>Pas grave : à partir de demain, ${tm>0?eur0(tm)+' par jour.':'on lève le pied.'}</span>${inx}<span class="howc">Comment c’est calculé ›</span></div>`}
   const D=-free;if(S.low==null||free<S.low)S.low=free;const pr=Math.max(0,Math.min(1,1-D/(-S.low)));
   const M=(S.rin||[]).reduce((a,x)=>a+x.v,0)-fxDated().reduce((a,x)=>a+x.v,0)-avgVar();let when='Chaque jour sans dépense t’en rapproche.';
   if(M>20){const d=new Date(now.getFullYear(),now.getMonth()+Math.ceil(D/M),1);when='À ce rythme, tu y es en '+MNL[d.getMonth()]+'.'}
   const dj=nr?Math.max(0,(free+tdS+nr.v)/left):0,rj=Math.max(0,dj-tdS);
-  return `<div class="h2" data-a="why"><small>${nr?(tdS?'Il te reste aujourd’hui':'Pour aujourd’hui'):'Aujourd’hui'}</small><strong>${eur0(nr?rj:0)}</strong><span>${nr?(dj>0?'maximum, en comptant les '+eur0(nr.v)+' du '+pd(nr.dt).getDate()+'. Comme ça, tu ne creuses pas.':'Le mieux aujourd’hui : rien de plus. '+esc(nr.n)+' arrive le '+pd(nr.dt).getDate()+'.'):'Chaque journée à 0 € te rapproche du vert.'}</span><div class="cap"><span>Retour au vert</span><div class="pb"><i style="width:${Math.max(4,Math.round(pr*100))}%"></i></div><small>${when}</small></div><span class="howc">Comment c’est calculé ›</span></div>`}
+  return `<div class="h2" data-a="why"><small>${nr?(tdS?'Il te reste aujourd’hui':'Pour aujourd’hui'):'Aujourd’hui'}</small><strong>${eur0(nr?rj:0)}</strong><span>${nr?(dj>0?'maximum, en comptant les '+eur0(nr.v)+' du '+pd(nr.dt).getDate()+'. Comme ça, tu ne creuses pas.':'Le mieux aujourd’hui : rien de plus. '+esc(nr.n)+' arrive le '+pd(nr.dt).getDate()+'.'):'Chaque journée à 0 € te rapproche du vert.'}</span><span class="howc">Comment c’est calculé ›</span></div>${vgPill()}`}
 const stepT=()=>{const L=(S.sk||{})[today]||[];return tasks().filter(t=>!L.includes(t.t))};
 function stepCard(){const T=stepT();if(!T.length)return '';const t=T[0];
   return `<div class="nud"><span><b>${esc(t.t)}</b>${t.s?`<small>${esc(t.s)}</small>`:''}</span><div><button id="stlat" aria-label="Plus tard">${ic('x')}</button><button class="p" id="stgo">${ic('next')}</button></div></div>`}
@@ -1047,7 +1066,7 @@ function done([t,s]){const f=$('.fl');if(f)f.remove();FL=null;save();
   const N=big?14:9,parts=Array.from({length:N},(_,i)=>`<i style="--a:${Math.round(i*360/N)}deg;--d:${big?-86:-66}px"></i>`).join('');
   const o=document.createElement('div');o.className='ok'+(big?' grand':'');
   o.innerHTML=`<div class="stp"><span class="rg"></span>${parts}<svg class="dr" viewBox="0 0 104 104"><circle cx="52" cy="52" r="48"/><path d="M33 53l13 13 25-27"/></svg></div><b>${esc(t)}</b>${s?`<small>${esc(s)}</small>`:''}${all?'<span class="xt">Tout est à jour</span>':''}`;
-  document.body.appendChild(o);home();streakCheck(all?2350:1800);badgeCheck(all?2350:1800);levelCheck(all?2600:2000);
+  document.body.appendChild(o);home();vgCheck();streakCheck(all?2350:1800);badgeCheck(all?2350:1800);levelCheck(all?2600:2000);
   setTimeout(()=>{buzz(9);sfx('stamp')},80);setTimeout(()=>{buzz(big?[12,60,18]:10);sfx(big?'big':'ok')},470);
   setTimeout(()=>o.classList.add('out'),all?1900:1350);setTimeout(()=>{o.remove();rcBack()},all?2250:1700);
   o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
@@ -1201,7 +1220,7 @@ function momentCard(){const m=MO=moment();if(!m)return '';
 
 /* ---------- Le point du soir ---------- */
 const eveDone=()=>!!(S.eve||{})[today]||((S.e.some(x=>x.d===today)||!!(S.nos||{})[today])&&(!S.vice||!!S.log[today]));
-function eveEnd(msg){S.eve=S.eve||{};S.eve={[today]:1};if(S.vice&&!S.log[today]){save();return flowConso(today)}done(msg)}
+function eveEnd(msg){S.eve=S.eve||{};S.eve={[today]:1};msg=vgEve(msg);if(S.vice&&!S.log[today]){save();return flowConso(today)}done(msg)}
 function flowEve(){const P=S.name?S.name.split(' ')[0]:'',L=S.e.filter(x=>x.d===today&&x.c!=='dette'),t=L.reduce((a,x)=>a+x.v,0);
   const saveE=v=>{if(v.ok)return;v.ok=1;const e={id:uid(),d:today,v:v.v,c:v.c};if(v.s)e.s=v.s;if(nbFor(today,v.sb))e.nb=1;S.e.push(e)};
   const sumT=()=>S.e.filter(x=>x.d===today&&x.c!=='dette').reduce((a,x)=>a+x.v,0);
@@ -1534,6 +1553,35 @@ function recap(back){if(!S.name||needInstall()||$('#rcp')&&!back)return;const ol
 function rcMaybe(){if(S.rcOff||!S.name||FL||$('.scr')||$('#rcp'))return;if(S.rcS!==rcKey()||rcItems().length)recap()}
 function rcBack(){if(!RC)return;RC=0;setTimeout(()=>{if(!FL&&!$('.scr')&&!$('.ok')&&!$('.strk'))recap(1)},250)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')hidT=Date.now();else if(hidT&&Date.now()-hidT>45e3&&!$('.lock'))rcMaybe()});
+
+/* ===== Retour au vert : remplir les fondations ===== */
+function vgState(){if(!S.bal)return null;const H=heroNums(),nr=nextRin(),def=Math.max(0,-H.free);
+  if(def>0){S.vgW=Math.max(S.vgW||0,def)}const W=S.vgW||def||1,p=def>0?Math.max(0,Math.min(1,(W-def)/W)):1;
+  const br=Math.max(S.vgBr||1,1+Math.floor(p*9));const moved=S.vgLastDef!=null&&def>S.vgLastDef+5;
+  let tg=nr?Math.max(0,(H.free+H.tdS+nr.v)/H.left):0;const zero=tg<3;
+  const tr=balTrend(14);let when='';if(tr.length>=3){const sl=(tr.at(-1)[1]-tr[0][1])/Math.max(1,(pd(tr.at(-1)[0])-pd(tr[0][0]))/864e5);if(sl>0){const d=new Date();d.setDate(d.getDate()+Math.ceil(def/sl));when=MNL[d.getMonth()]}}
+  return{H,nr,def,W,p,br,tg:zero?0:tg,zero,when,moved}}
+function vgPill(){const V=vgState();if(!V||V.def<=0)return '';const M=V.zero?'Journée à 0 €':'≤ '+eur0(V.tg);
+  return `<button class="vgp" data-a="vg"><div class="vgb">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div><div class="vgt"><b>Retour au vert · ${V.p>=.9?'plus que '+eur0(V.def):V.br+'/10'}</b><span>${V.when?'À ce rythme, '+V.when:'Chaque journée sous '+eur0(V.tg)+' compte'}</span></div><div class="vgm${V.H.tdS<=V.tg+.5?' ok':''}"><small>Mission</small><b>${M}</b>${V.H.tdS?`<em>${eur0(V.H.tdS)} dépensés</em>`:''}</div></button>`}
+function vgScr(){const V=vgState();if(!V)return;const gold=S.vgG||0,P=[25,50,75,90],got=S.vgP||[];
+  const holes=[...Array(10)].map((_,i)=>{const k=9-i,on=k<V.br;return `<i class="${on?'on':''}${on&&k>=10-Math.min(gold,10)?' gd':''}"></i>`}).join('');
+  scr('Fondations',`<div class="fdn"><div class="grass"></div><div class="hole">${holes}</div></div>
+   <div class="big2"><small>${V.def>0?'Retour au vert':'Tu es dans le vert'}</small><strong>${V.def>0?(V.p>=.9?'Plus que '+eur0(V.def):V.br+' / 10'):'Au niveau du sol'}</strong><span>${V.def>0?(V.moved?'Le chantier a bougé, tes briques restent. ':'')+(V.when?'À ce rythme, tu y es en '+V.when+'.':'Chaque journée sous '+eur0(V.tg)+' compte.'):'Le trou est rempli. Maintenant, on construit.'}</span></div>
+   <div class="tipb"><b>Mission du jour</b><p class="tl">${V.zero?'Journée à 0 €. Rien du tout, c’est déjà une victoire.':'Rester sous '+eur0(V.tg)+'. Ça suffit pour que le trou ne grandisse pas.'}${V.H.tdS?' Aujourd’hui : '+eur0(V.H.tdS)+'.':''}</p><p class="tl">Elle se valide à ton point du soir. Réussie : une brique dorée. Journée à 0 € : deux.</p></div>
+   <div class="msum"><div><b>${gold}</b><small>briques dorées</small></div><div><b>${P.filter(x=>got.includes(x)).length} / 4</b><small>paliers</small></div><div><b>${Math.round(V.p*100)} %</b><small>du trou rempli</small></div></div>`)}
+function vgEve(msg){try{const V=vgState();if(!V||V.def<=0&&!(V.H.free+V.H.tdS<0))return msg;const sp=V.H.tdS,ok=sp<=V.tg+.5;S.vgM=S.vgM||{};if(S.vgM[today])return msg;S.vgM[today]=ok?1:-1;
+  const nl=Math.max(1,V.H.left-1),tm=V.nr?Math.max(0,(V.H.free+V.nr.v)/nl):0;
+  if(ok){const n=sp<.5?2:1;S.vgG=(S.vgG||0)+n;return[n>1?'Deux briques posées':'Brique posée',V.nr?'Demain, ton budget monte à '+eur0(tm)+'.':'Le trou ne grandit pas. Bien joué.']}
+  return['C’est noté',`Aujourd’hui c’était ${eur0(sp)}. C’est déjà ça. Demain : ${eur0(tm)} maximum, et on continue.`]}catch(e){return msg}}
+function vgCheck(){try{const V=vgState();if(!V)return;
+  if(S.vgWin){delete S.vgWin;S.vgW=0;S.vgBr=0;S.vgP=[];S.vgSt=today;save();return vgPop('Tu es au niveau du sol','Le trou est rempli. Maintenant, on construit. Étape 1 : Terrain.',1)}
+  if(V.def>0){S.vgLastDef=V.def;if(V.br>(S.vgBr||0)){S.vgBr=V.br}const fresh=S.bal&&S.bal.d>=addD(today,-3);S.vgP=S.vgP||[];
+    const hit=[25,50,75,90].filter(x=>V.p*100>=x&&!S.vgP.includes(x));if(hit.length&&fresh){const x=hit.at(-1);S.vgP.push(...hit);save();const t={25:'Un quart du trou est rempli',50:'La moitié du trou est remplie',75:'Les trois quarts sont remplis',90:'La dernière ligne droite'}[x];
+      return vgPop(t,x===90?'Plus que '+eur0(V.def)+'. Tu y es presque.':'Les '+eur0(V.W-V.def)+' qui manquaient en moins, c’est toi qui les as remontés.')}
+    save()}
+  else if(S.vgSt){const n=Math.round((pd(today)-pd(S.vgSt))/864e5);if(n>=7&&!S.vgSd){S.vgSd=1;save();vgPop('Terrain stable','7 jours au-dessus de 0. Ta maison a un vrai sol maintenant.',1)}}}catch(e){}}
+function vgPop(t,s,big){if($('.strk'))return;const o=document.createElement('div');o.className='strk vgw'+(big?' big':'');o.innerHTML=`<div class="fdn sm"><div class="grass${big?' up':''}"></div><div class="hole">${[...Array(10)].map((_,i)=>`<i class="on"></i>`).join('')}</div></div><b>${esc(t)}</b><small>${esc(s)}</small><button>Continuer</button>`;
+  document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
 
 /* ---------- Réserve ---------- */
 function cofCard(B){const v=cofV(),g=S.cof&&S.cof.g;
@@ -1906,7 +1954,7 @@ function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoi
 function countUp(){const el=$('#balc strong');if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=liveBal();if(L==null)return;const t0=performance.now(),D=900;
   const f=t=>{const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=eur(Math.round(L*e*100)/100);if(k<1)requestAnimationFrame(f);else el.textContent=eur(L)};requestAnimationFrame(f)}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
-home();rcMaybe();lockCheck();jkToast();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();0}
+home();vgCheck();rcMaybe();lockCheck();jkToast();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();0}
 </script>
 <script>
 (()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;let busy=0;
