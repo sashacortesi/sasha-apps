@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794074100" data-theme="light">
+<html lang="fr" data-build="1794074781" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -826,9 +826,11 @@ function liveBal(){const b=S.bal;if(!b)return null;let v=b.v;
   return Math.round(v*100)/100}
 const upSum=()=>fxUpcoming().reduce((a,x)=>a+x.v,0)+debtDue();
 const flowBal=()=>{const L0=S.bal?liveBal():null;flow([{k:'acc',q:'Combien tu as sur tes comptes ?',sub:'Une ligne par compte (banque, Revolut, Lydia…). L’app fait le total et le tient à jour toute seule.',type:'accounts'}],v=>{accSave(v.acc);const g=L0!=null?Math.round(L0-S.bal.v):0;if(g>=5)setTimeout(()=>{if(!FL)gapFlow(g)},1900);return['Solde à jour',eur(S.bal.v)]})};
-const reste=()=>incM()-(S.fixe||0)-spentM()-debtDue()-cofM();
+const reste=()=>incM()-(S.fixe||0)-spentM()-debtDue()-Math.max(cofM(),cofPlan());
 const addM=(ym,k)=>{const d=new Date(+ym.slice(0,4),+ym.slice(5,7)-1+k,1);return iso(d).slice(0,7)};
 const cofV=()=>S.cof?Math.round((S.cof.v||0)*100)/100:0;
+const cofPlan=()=>!S.cof?0:S.cof.m>0?S.cof.m:S.cof.w>0?Math.round(S.cof.w*52/12):0;
+const cofTodo=()=>Math.max(0,Math.round((cofPlan()-cofM())*100)/100);
 const cofM=()=>S.cof?(S.cof.h||[]).filter(x=>x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0):0;
 const agOff=x=>{if(x&&x.ag){const a=S.ag.find(a=>a.id===x.ag);if(a)a.done=true}};
 const people=()=>{const m=new Map();for(const x of S.debts)if(!m.has(pk(x.p)))m.set(pk(x.p),x.p);for(const p of (S.ppl||[]))if(!m.has(pk(p)))m.set(pk(p),p);return [...m.values()]};
@@ -880,7 +882,7 @@ const LV=[[0,'Rez-de-chaussée'],[10,'Premiers étages'],[30,'Mi-hauteur'],[60,'
 function xpDays(){let n=0,d=S.start||today;for(let k=0;k<500&&d<=today;k++){if(dayOk(d))n++;d=addD(d,1)}return n}
 function lvl(){const x=xpPts();let i=0;while(i<LV.length-1&&x>=LV[i+1][0])i++;const nx=LV[i+1];return{n:i+1,name:LV[i][1],x,left:nx?nx[0]-x:0,p:nx?(x-LV[i][0])/(nx[0]-LV[i][0]):1}}
 function heroCard(){if(!S.bal)return balCard();
-  const L=liveBal(),up=upSum(),now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1,free=L-up-cofV(),tdS=S.e.filter(x=>x.d===today).reduce((a,x)=>a+x.v,0),nr=nextRin();
+  const L=liveBal(),up=upSum(),now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1,free=L-up-cofV()-cofTodo(),tdS=S.e.filter(x=>x.d===today).reduce((a,x)=>a+x.v,0),nr=nextRin();
   const inx=nr?`<em class="inx">+${eur0(nr.v)} attendus le ${pd(nr.dt).getDate()} (${esc(nr.n)}), comptés quand ils arrivent</em>`:'';
   if(free+tdS>=0){if(S.vgW>0)S.vgWin=1;delete S.low;const base=(free+tdS)/left,rest=base-tdS;
     if(rest>=-.5)return `<div class="h2" data-a="why"><small>${tdS?'Il te reste aujourd’hui':'Pour aujourd’hui'}</small><strong>${eur0(Math.max(0,rest))}</strong><span>${tdS?'sur '+eur0(base)+' pour la journée':'Tu restes dans le vert jusqu’au '+ld+' '+MNL[now.getMonth()]+'.'}</span>${inx}<span class="howc">Comment c’est calculé ›</span></div>`;
@@ -896,9 +898,9 @@ function stepCard(){const T=stepT();if(!T.length)return '';const t=T[0];
 function balCard(){if(!S.bal)return `<button class="big tap" id="balc"><small>Ton compte</small><span>Note ce que tu as sur ton compte : l’app suit ton solde au jour le jour.</span><div class="cta">Ajouter mon solde</div></button>`;
   const L=liveBal(),up=upSum(),af=Math.round((L-up)*100)/100,now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1;
   const ud=pd(S.bal.d),upd=S.bal.d===today?'aujourd’hui':'le '+ud.getDate()+' '+MN[ud.getMonth()];
-  return `<button class="big tap" id="balc">${tasks().some(t=>t.i==='bank')?'<i class="bdg">1</i>':''}<small>${(S.bal.acc||[]).length>1?'Sur tes comptes':'Sur ton compte'}</small><strong class="${L<0?'neg':''}">${eur(L)}</strong>${(S.bal.acc||[]).length>1?`<span class="accs">${S.bal.acc.map(a=>esc(a.n)+' '+eur(a.v)).join(' · ')}</span>`:''}${cofV()>0?`<span class="accs">dont ${eur0(cofV())} dans ta réserve, à ne pas toucher</span>`:''}<span class="upd">${ic('undo')} Solde noté ${upd} · toucher pour mettre à jour</span>
+  return `<button class="big tap" id="balc">${tasks().some(t=>t.i==='bank')?'<i class="bdg">1</i>':''}<small>${(S.bal.acc||[]).length>1?'Sur tes comptes':'Sur ton compte'}</small><strong class="${L<0?'neg':''}">${eur(L)}</strong>${(S.bal.acc||[]).length>1?`<span class="accs">${S.bal.acc.map(a=>esc(a.n)+' '+eur(a.v)).join(' · ')}</span>`:''}${cofV()>0?`<span class="accs">dont ${eur0(cofV())} dans ton coffre, à ne pas toucher</span>`:''}<span class="upd">${ic('undo')} Solde noté ${upd} · toucher pour mettre à jour</span>
    ${up||inSum()?`<div class="aft"><span>Fin du mois prévue<em>${up?'−'+eur0(up)+' à payer':''}${up&&inSum()?' · ':''}${inSum()?'+'+eur0(inSum())+' à recevoir':''}</em></span><b class="${af+inSum()<0?'neg':''}">${eur(Math.round((af+inSum())*100)/100)}</b></div>`:''}
-   <span style="margin-top:6px">${af-cofV()>0?'Soit '+eur0((af-cofV())/left)+' par jour jusqu’au '+ld+' '+MN[now.getMonth()]:af>0?'Hors réserve, il ne te reste rien à dépenser ce mois-ci':'Attention, tu risques d’être à découvert ce mois-ci'}</span></button>`}
+   <span style="margin-top:6px">${af-cofV()-cofTodo()>0?'Soit '+eur0((af-cofV()-cofTodo())/left)+' par jour jusqu’au '+ld+' '+MN[now.getMonth()]:af>0?'Hors coffre, il ne te reste rien à dépenser ce mois-ci':'Attention, tu risques d’être à découvert ce mois-ci'}</span></button>`}
 function payCard(){const rows=fxThisMonth(),dd=S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM),nod=(S.fx||[]).filter(x=>!x.d),rin=rinMonth().filter(x=>!x.ok&&x.dt&&x.dt>today);
   if(!rows.length&&!dd.length&&!nod.length&&!rin.length)return '';
   const inD=dt=>{const n=Math.round((pd(dt)-pd(today))/864e5);return n===0?'aujourd’hui':n===1?'demain':'dans '+n+' j'};
@@ -930,7 +932,7 @@ function pushItems(){const now=Date.now(),out=[],add=(t,title,body,tag)=>{if(t>n
   if(S.vice&&!S.log[today])add(at(addD(today,1),10),'Il manque hier','Note ta journée d’hier pour garder ton compteur juste.','miss');
   if(S.bal)add(at(addD(S.bal.d,7),12),'Ton solde est toujours juste ?','Vérifie en 5 secondes.','bal');
   try{const same=keys().length===2&&streak('j')===streak('c');if(S.vice)for(const k of (same?['j']:keys())){const n=streak(k);let c=0;for(const m of [1,2,3,7,14,21,30,60,90,180,365])if(m>n&&c<2){c++;add(at(addD(today,m-n),11),Z?m+' jour'+(m>1?'s':''):m+' jour'+(m>1?'s':'')+' '+(same?'sans':KN[k]),'Nouveau palier. Chaque jour compte.','smoke')}}}catch(e){}
-  for(let i=1;i<=14;i++){const d=addD(today,i),wd=pd(d).getDay();if(wd===0)add(at(d,19),'Ton bilan de la semaine',S.bin?'30 secondes, puis tu l’envoies à ton binôme.':'Ta semaine en 30 secondes.','wk');if(wd===1&&S.cof&&S.cof.w>0)add(at(d,10),'Ta réserve de la semaine',Z?'Un petit montant de côté, en une touche.':'Mets '+eur(S.cof.w)+' de côté, en une touche.','cof')}
+  for(let i=1;i<=14;i++){const d=addD(today,i),wd=pd(d).getDay();if(wd===0)add(at(d,19),'Ton bilan de la semaine',S.bin?'30 secondes, puis tu l’envoies à ton binôme.':'Ta semaine en 30 secondes.','wk');if(wd===1&&S.cof&&S.cof.w>0)add(at(d,10),'Ton coffre de la semaine',Z?'Un petit montant de côté, en une touche.':'Mets '+eur(S.cof.w)+' de côté, en une touche.','cof')}
   for(const a of S.ag.filter(a=>a.rem&&!a.done&&a.d&&a.d>=today)){let t;if(a.h){const[h,mi]=a.h.split(':').map(Number);const d=pd(a.d);d.setHours(h,mi,0,0);t=d.getTime()-15*60e3}else t=at(a.d,9);add(t,Z?'Un rappel':a.t,a.h?'À '+hl(a.h)+'.':'Prévu aujourd’hui.','ag')}
   for(let i=0;i<8;i++){const d=addD(today,i),L=S.ag.filter(a=>a.d===d&&!a.done).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'));if(L.length)add(at(d,8)+30*60e3,'Ta journée',Z?L.length+' chose'+(L.length>1?'s':'')+' prévue'+(L.length>1?'s':'')+' aujourd’hui.':L.slice(0,3).map(a=>a.t+(a.h?' à '+hl(a.h):'')).join(' · ')+(L.length>3?' · +'+(L.length-3):''),'mrn')}
   for(const w of (S.wish||[]).filter(w=>w.st==='wait'))add(w.t+864e5,Z?'Une envie à re-décider':'Toujours envie de '+w.n+' ?','Ça fait 24 h. Oui ou non, en une touche.','wish');
@@ -975,7 +977,7 @@ function tasks(){const T=[],h=new Date().getHours(),yd=addD(today,-1);if(!S.name
     if(age>=7||(passed&&age>=2))T.push({i:'bank',t:'Vérifie ton solde',s:'L’app pense que tu as '+eur(liveBal()),go:flowCheckBal})}
   else T.push({i:'bank',t:'Ajoute ton solde',s:'Pour voir ce qu’il te reste vraiment',go:flowBal});
   for(const x of S.debts.filter(x=>x.pm&&x.pm<=YM&&(x.dd?x.dd<=today:x.w==='me'&&new Date().getDate()>=20)))T.push({i:'users',t:x.w==='me'?'Rembourser '+x.p:x.p+' t’a rendu '+eur(x.v)+' ?',s:x.dd?(x.t||'Échéance')+' · prévue le '+pd(x.dd).getDate()+' '+MN[pd(x.dd).getMonth()]:eur(x.v)+' prévu ce mois-ci',go:()=>flowDebtQ(x)});
-  if(S.cof&&S.cof.w>0&&S.cof.sk!==wkMon()&&!(S.cof.h||[]).some(x=>x.d>=wkMon()&&x.v>0))T.push({i:'safe',t:'Ta réserve de la semaine',s:'Mets '+eur(S.cof.w)+' de côté',go:flowCofW});
+  if(S.cof&&S.cof.w>0&&S.cof.sk!==wkMon()&&!(S.cof.h||[]).some(x=>x.d>=wkMon()&&x.v>0))T.push({i:'safe',t:'Ton coffre de la semaine',s:'Mets '+eur(S.cof.w)+' de côté',go:flowCofW});
   {const od=S.ag.filter(a=>!a.done&&a.d&&a.d<today);if(od.length)T.push({i:'cal',t:od.length>1?od.length+' rappels en retard':'Un rappel en retard',s:od.map(a=>a.t).slice(0,2).join(', '),go:()=>{agD=today;agScr('day')}})}
   if(S.start&&S.start<=addD(today,-7)&&(!S.bk||S.bk<=addD(today,-14)))T.push({i:'folder',t:'Sauvegarde tes données',s:'Au cas où tu perds ton téléphone',go:backup});
   if(S.bin&&(pd(today).getDay()===0||pd(today).getDay()===1)&&(!S.binS||S.binS<addD(today,-4)))T.push({i:'users',t:'Envoie ton point à '+S.bin,s:'Tes efforts de la semaine, sans aucun montant',go:binSend});
@@ -1467,7 +1469,7 @@ function streakPop(st){if($('.strk'))return;const nx=MIL.find(m=>m>st),o=documen
   document.body.appendChild(o);buzz([12,60,18]);sfx('big');const c=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)};o.onclick=c}
 
 /* ---------- Envie d'acheter ---------- */
-function freeNow(){if(!S.bal)return null;const n=new Date(),ld=lastDay(n.getFullYear(),n.getMonth()),left=ld-n.getDate()+1;return{free:liveBal()-upSum()-cofV(),left,ld}}
+function freeNow(){if(!S.bal)return null;const n=new Date(),ld=lastDay(n.getFullYear(),n.getMonth()),left=ld-n.getDate()+1;return{free:liveBal()-upSum()-cofV()-cofTodo(),left,ld}}
 function wishImpact(v){const F=freeNow(),L=[];
   if(F){if(F.free>=0){const a=F.free/F.left,b=(F.free-v)/F.left;L.push(b>=0?`Ton budget passe de ${eur0(a)} à ${eur0(b)} par jour jusqu’au ${F.ld}.`:`Tu passerais dans le rouge ce mois-ci.`);if(a>0&&v>a*1.5)L.push(`Ça fait ${Math.round(v/a)} jours de budget.`)}
     else L.push('Ça repousse ton retour au vert.')}
@@ -1478,12 +1480,12 @@ function flowWish(){flow([
   {k:'v',q:'Ça coûte combien ?',type:'amount'},
   {k:'x',q:v=>esc(v.n)+' · '+eur(v.v),sub:v=>wishImpact(v.v),type:'tiles',opts:v=>[
     {i:'later',l:'J’attends 24 h',s:'Je te redemande demain',one:1,cta:1,go:v=>{S.wish.push({id:uid(),n:v.n,v:v.v,t:Date.now(),d:today,st:'wait'});done(['On en reparle demain','Si l’envie est toujours là, tu sauras'])}},
-    {i:'ban',l:'Finalement non',s:'Et je peux le mettre dans ta réserve',one:1,go:v=>{const w={id:uid(),n:v.n,v:v.v,t:Date.now(),d:today,st:'skip',dd:today};S.wish.push(w);wishSkip(w)}},
+    {i:'ban',l:'Finalement non',s:'Et je peux le mettre dans ton coffre',one:1,go:v=>{const w={id:uid(),n:v.n,v:v.v,t:Date.now(),d:today,st:'skip',dd:today};S.wish.push(w);wishSkip(w)}},
     {i:'bag',l:'Je l’achète',s:'Je le note dans mes dépenses',one:1,go:v=>{S.e.push({id:uid(),d:today,v:v.v,c:'shopping'});S.wish.push({id:uid(),n:v.n,v:v.v,t:Date.now(),d:today,st:'buy',dd:today});done(['C’est noté',eur(v.v)+' · '+v.n])}}]}
  ],()=>['',''])}
 const wishDue=()=>(S.wish||[]).filter(w=>w.st==='wait'&&Date.now()-w.t>=864e5);
 function flowWishQ(w){flow([{k:'x',q:'Toujours envie de '+esc(w.n)+' ?',sub:eur(w.v)+'. '+wishImpact(w.v),type:'tiles',opts:[
-  {i:'ban',l:'Non, ça m’est passé',s:'Et je peux le mettre dans ta réserve',one:1,cta:1,go:()=>wishSkip(w)},
+  {i:'ban',l:'Non, ça m’est passé',s:'Et je peux le mettre dans ton coffre',one:1,cta:1,go:()=>wishSkip(w)},
   {i:'bag',l:'Oui, je l’achète',one:1,go:()=>{w.st='buy';w.dd=today;S.e.push({id:uid(),d:today,v:w.v,c:'shopping'});done(['C’est noté',eur(w.v)+' · '+w.n])}},
   {i:'later',l:'Encore 24 h',one:1,go:()=>{w.t=Date.now();done(['On en reparle demain',''])}}]}],()=>['',''])}
 
@@ -1538,7 +1540,7 @@ function dataScr(){const B=badges(),m={};let t=0;for(const x of S.e.filter(x=>x.
     ${t?`<div class="bar">${L.map(([c,v])=>`<i style="width:${v/t*100}%;background:${CCOL[c]||'#8E8E93'}"></i>`).join('')}</div><div class="mm3">${L.slice(0,3).map(([c,v])=>`<div><span class="dot" style="background:${CCOL[c]||'#8E8E93'}"></span><span>${esc(CN[c]?CN[c][2]:'Autre')}</span><b>${eur0(v)}</b></div>`).join('')}</div>`:''}</button>
    <div class="sec" style="margin-top:4px"><h2>À payer bientôt</h2>${up.length>2?`<button class="lk" data-a="pay">Tout voir (${up.length})</button>`:''}</div>
    <div class="list">${up.length?up.slice(0,2).map(x=>`<div class="li"><span class="ck pv"></span><span class="t">${esc(x.n)}<small>${x.s}</small></span><span class="r"><b>${eur(x.v)}</b></span></div>`).join(''):`<div class="li done"><span class="ck">${ic('check')}</span><span class="t">Rien à payer d’ici la fin du mois</span><span class="r"></span></div>`}</div>
-   <div class="rnd">${[['hist','t-hist','week','Historique',''],['debts','t-debt','users','Dettes',B.debts],['cof','t-cof','safe','Réserve',B.cof],['bilan','t-in','spark','Bilan','']].map(([a,c,i,l,n])=>`<button class="${c}" data-a="${a}"><span>${ic(i)}${n?`<i class="bdg">${n}</i>`:''}</span><small>${l}</small></button>`).join('')}</div></div>`);homeBind()}
+   <div class="rnd">${[['hist','t-hist','week','Historique',''],['debts','t-debt','users','Dettes',B.debts],['cof','t-cof','safe','Coffre',B.cof],['bilan','t-in','spark','Bilan','']].map(([a,c,i,l,n])=>`<button class="${c}" data-a="${a}"><span>${ic(i)}${n?`<i class="bdg">${n}</i>`:''}</span><small>${l}</small></button>`).join('')}</div></div>`);homeBind()}
 function payScr(){scr('À payer',`<div style="display:grid;gap:14px">${payCard()||'<p class="emp2">Rien à payer ce mois-ci.</p>'}</div>`)}
 
 /* ---------- Moi = ma progression ---------- */
@@ -1553,7 +1555,7 @@ function badgeCheck(ms=1800){try{if(!S.name)return;const on=badgeList().filter(b
 function badgePop([t,,i]){const o=document.createElement('div');o.className='strk bp';o.innerHTML=`<div class="bdx">${ic(i)}</div><small>Nouveau trophée</small><b>${esc(t)}</b><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
 function budCard(){const fx=S.fixe||0,ri=(S.rin||[]).reduce((a,x)=>a+(x.v||0),0),lb=S.bal?liveBal():null,pb=mod('f')?proBal():null;
   const row=(a,i,c,l,v,sub)=>`<button class="bdr" data-a="${a}"><span class="ib ${c}">${ic(i)}</span><span class="bl"><b>${l}</b><small>${sub}</small></span><span class="bv">${v}</span>${ic('next')}</button>`;
-  return `<div class="sec"><h2>Ton budget</h2></div><div class="bud">${row('bfx','home','t-out','Charges fixes',eur0(fx),(S.fx||[]).length?(S.fx.length+' par mois'):'Loyer, forfait, abonnements…')}${row('brin','in','t-in','Revenus réguliers',eur0(ri),(S.rin||[]).length?(S.rin.length+' par mois'):'Salaire, aides…')}${row('bbal','bank','t-ag','Mes comptes',lb!=null?eur0(lb):'—',S.bal&&S.bal.acc&&S.bal.acc.length?S.bal.acc.map(a=>a.n).join(', '):S.bal?'Mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'À renseigner')}${mod('f')?row('pro','brief','t-moi','Côté pro',pb!=null?eur0(pb):'',pb!=null?'Compte pro':'Dépenses pro, comptable'):''}</div>`}
+  return `<div class="sec"><h2>Ton budget</h2></div><div class="bud">${row('bfx','home','t-out','Charges fixes',eur0(fx),(S.fx||[]).length?(S.fx.length+' par mois'):'Loyer, forfait, abonnements…')}${row('brin','in','t-in','Revenus réguliers',eur0(ri),(S.rin||[]).length?(S.rin.length+' par mois'):'Salaire, aides…')}${row('bbal','bank','t-ag','Mes comptes',lb!=null?eur0(lb):'—',S.bal&&S.bal.acc&&S.bal.acc.length?S.bal.acc.map(a=>a.n).join(', '):S.bal?'Mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'À renseigner')}${row('cof','safe','t-cof','Coffre',cofPlan()?eur0(cofPlan()):eur0(cofV()),cofPlan()?(cofTodo()?'Encore '+eur0(cofTodo())+' ce mois':'Fait ce mois-ci')+(S.cof&&S.cof.g?' · '+esc(S.cof.g.n):''):cofV()?'De côté'+(S.cof.g?' pour '+esc(S.cof.g.n):''):'Rien de prévu · touche pour un objectif')}${mod('f')?row('pro','brief','t-moi','Côté pro',pb!=null?eur0(pb):'',pb!=null?'Compte pro':'Dépenses pro, comptable'):''}</div>`}
 function moiView(B){const g=S.cof&&S.cof.g,cv=cofV();
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
   ${moiTour()}
@@ -1620,10 +1622,10 @@ function binFlow(){flow([{k:'x',q:S.bin?'Ton binôme : '+esc(S.bin):'Un binôme 
 
 /* Un revenu arrive : on le range tout de suite */
 function planFlow(v){if(!(v>=150))return;const dd=S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM),D=dd.reduce((a,x)=>a+x.v,0),c=Math.max(5,S.cof&&S.cof.w?S.cof.w*4:Math.round(v*.1/5)*5),r=v-D-c;
-  if(r<0&&!D)return;const L=[...dd.map(x=>'Rembourser '+x.p+' : '+eur0(x.v)),'Réserve : '+eur0(c),'Pour vivre : '+eur0(Math.max(0,r))];
+  if(r<0&&!D)return;const L=[...dd.map(x=>'Rembourser '+x.p+' : '+eur0(x.v)),'Coffre : '+eur0(c),'Pour vivre : '+eur0(Math.max(0,r))];
   flow([{k:'x',q:'+'+eur0(v)+' arrivés. On les range ?',sub:L.join(' · '),type:'tiles',opts:[
-   {i:'check',l:'Oui, comme ça',s:dd.length?'Réserve + rappels de remboursement aujourd’hui':'Je mets '+eur0(c)+' dans ta réserve',one:1,cta:1,go:()=>{const r1=cofAdd(c);for(const x of dd)if(!x.ag||!S.ag.some(a=>a.id===x.ag&&!a.done)){const id=uid();S.ag.push({id,t:'Rembourser '+x.p+' '+eur(x.v),d:today,h:'',rem:false,done:false});x.ag=id}done(['C’est rangé',r1[1]])}},
-   {i:'safe',l:'Juste la réserve',one:1,go:()=>done(cofAdd(c))},
+   {i:'check',l:'Oui, comme ça',s:dd.length?'Coffre + rappels de remboursement aujourd’hui':'Je mets '+eur0(c)+' dans ton coffre',one:1,cta:1,go:()=>{const r1=cofAdd(c);for(const x of dd)if(!x.ag||!S.ag.some(a=>a.id===x.ag&&!a.done)){const id=uid();S.ag.push({id,t:'Rembourser '+x.p+' '+eur(x.v),d:today,h:'',rem:false,done:false});x.ag=id}done(['C’est rangé',r1[1]])}},
+   {i:'safe',l:'Juste le coffre',one:1,go:()=>done(cofAdd(c))},
    {i:'x',l:'Pas cette fois',one:1,go:()=>closeFl()}]}],()=>['',''])}
 
 /* Dettes : les mots pour le dire */
@@ -1650,8 +1652,8 @@ function droitsScr(){const fm=S.e.filter(x=>x.c==='frais'&&x.d.startsWith(YM)).r
     try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t);done(['Lettre copiée','Colle-la dans la messagerie de ta banque'])}catch(e){}}}
 
 /* Envie d'acheter : l'argent gardé va vraiment quelque part */
-function wishSkip(w){w.st='skip';w.dd=today;flow([{k:'x',q:'Bien joué. On le met dans ta réserve ?',sub:'Comme ça, ces '+eur(w.v)+' sont vraiment gardés, pas juste « pas dépensés ».',type:'tiles',opts:[
-  {i:'safe',l:'Oui, '+eur(w.v)+' dans ta réserve',one:1,cta:1,go:()=>{w.cof=1;done(cofAdd(w.v))}},
+function wishSkip(w){w.st='skip';w.dd=today;flow([{k:'x',q:'Bien joué. On le met dans ton coffre ?',sub:'Comme ça, ces '+eur(w.v)+' sont vraiment gardés, pas juste « pas dépensés ».',type:'tiles',opts:[
+  {i:'safe',l:'Oui, '+eur(w.v)+' dans ton coffre',one:1,cta:1,go:()=>{w.cof=1;done(cofAdd(w.v))}},
   {i:'x',l:'Non, je les laisse sur mon compte',one:1,go:()=>done(['Bien joué',eur(w.v)+' pas dépensés'])}]}],()=>['',''])}
 
 /* ===== La maison : chaque jour tenu pose une brique ===== */
@@ -1681,22 +1683,22 @@ function legalScr(){scr('Mentions et confidentialité',`<div class="tipb"><b>Ce 
  <div class="tipb"><b>Éditeur</b><p class="tl">Sasha Cortesi, projet personnel en test. Hébergement : GitHub Pages (GitHub Inc.).</p></div>`)}
 
 /* ===== Ton chiffre du jour : pourquoi, ce qui arrive, une idée ===== */
-function heroNums(){const L=liveBal(),up=upSum(),cv=cofV(),now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1,tdS=S.e.filter(x=>x.d===today).reduce((a,x)=>a+x.v,0),free=L-up-cv;
-  return{L,up,cv,left,ld,tdS,free,base:(free+tdS)/left,rest:(free+tdS)/left-tdS}}
+function heroNums(){const L=liveBal(),up=upSum(),cv=cofV(),now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1,tdS=S.e.filter(x=>x.d===today).reduce((a,x)=>a+x.v,0),cp=cofTodo(),free=L-up-cv-cp;
+  return{L,up,cv,cp,left,ld,tdS,free,base:(free+tdS)/left,rest:(free+tdS)/left-tdS}}
 function sgRules(){const H=heroNums(),R=[],yd=addD(today,-1),pm=addM(YM,-1),day=+today.slice(8),W7=weekBlocks();
   const age=S.bal?Math.round((pd(today)-pd(S.bal.d))/864e5):0;
   if(S.bal&&age>3)R.push({id:1,t:`Ton solde date de ${age} jours. Un coup d’œil à ta banque et ton chiffre sera juste.`,b:'Vérifier mon solde',go:flowCheckBal});
   const rd=rinDue()[0];if(rd)R.push({id:2,t:`${rd.n} devait arriver le ${pd(rd.dt).getDate()}. S’il est là, tu passes à ${eur0((H.free+rd.v)/H.left)} par jour.`,b:'Il est arrivé',go:()=>flowRinQ(rd)});
   if(S.start&&S.start<=yd&&!dayOk(yd))R.push({id:3,t:'Hier n’est pas rempli. 10 secondes et tout est à jour.',b:'Remplir hier',go:()=>flow([{k:'x',q:'Hier, tu as dépensé quelque chose ?',type:'tiles',opts:[{i:'check',l:'Rien du tout',one:1,cta:1,go:()=>{S.nos=S.nos||{};S.nos[yd]=1;done(['Hier est à jour','Journée à 0 €'])}},{i:'out',l:'Oui, je note',one:1,go:()=>flowDep(yd)}]}],()=>['',''])});
   const th=S.debts.filter(x=>x.w==='them'&&x.pm&&x.pm<=YM)[0];if(th){const l=S.debts.filter(x=>pk(x.p)===pk(th.p)),o={n:th.p,l,net:l.reduce((a,x)=>a+(x.w==='them'?x.v:-x.v),0)};if(o.net>0)R.push({id:4,t:`${th.p} te doit ${eur0(o.net)}${th.pm<YM?' depuis '+MNL[+th.pm.slice(5,7)-1]:''}. Un petit message ?`,b:'Lui écrire',go:()=>debtMsg(o)})}
-  const ks=(S.wish||[]).filter(w=>w.st==='skip'&&!w.cof),kv=ks.reduce((a,w)=>a+w.v,0);if(kv>=5)R.push({id:5,t:`Tu as gardé ${eur0(kv)} en disant non.${H.base>0?' C’est '+Math.max(1,Math.round(kv/H.base))+' jours de budget.':''}`,b:'Les mettre dans ta réserve',go:()=>{ks.forEach(w=>w.cof=1);done(cofAdd(kv))}});
+  const ks=(S.wish||[]).filter(w=>w.st==='skip'&&!w.cof),kv=ks.reduce((a,w)=>a+w.v,0);if(kv>=5)R.push({id:5,t:`Tu as gardé ${eur0(kv)} en disant non.${H.base>0?' C’est '+Math.max(1,Math.round(kv/H.base))+' jours de budget.':''}`,b:'Les mettre dans ton coffre',go:()=>{ks.forEach(w=>w.cof=1);done(cofAdd(kv))}});
   const wd=wishDue()[0];if(wd)R.push({id:6,t:`Tu hésitais pour ${wd.n} (${eur0(wd.v)}). Toujours envie ?`,b:'Décider',go:()=>flowWishQ(wd)});
   const fr=S.e.filter(x=>x.c==='frais'&&x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);if(fr>0)R.push({id:7,t:`La banque a pris ${eur0(fr)} de frais ce mois-ci. Ces frais peuvent être plafonnés, et parfois remboursés.`,b:'Voir comment',go:droitsScr});
   {const cur={},prv={};for(const x of S.e){if(x.c==='dette'||x.c==='conso'||x.gap)continue;if(x.d.startsWith(YM))cur[x.c]=(cur[x.c]||0)+x.v;else if(x.d.startsWith(pm)&&+x.d.slice(8)<=day)prv[x.c]=(prv[x.c]||0)+x.v}
     const up=Object.keys(cur).map(c=>[c,cur[c],prv[c]||0]).filter(([c,a,b])=>b>=15&&a>b*1.3&&a-b>=10).sort((p,q)=>(q[1]-q[2])-(p[1]-p[2]))[0];
     if(up&&CN[up[0]]){const g=Math.max(1,Math.round(up[1]/day*.5*H.left/H.left));R.push({id:8,t:`${CN[up[0]][2]} monte un peu ce mois-ci. En lever un peu le pied jusqu’au ${H.ld} : environ +${eur0(g)} par jour.`,b:'Voir le détail',go:histScr})}}
   if(S.vice){const c=S.e.filter(x=>x.c==='conso'&&x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);if(c>0)R.push({id:9,t:`Ta conso, c’est environ ${eur0(c/day)} par jour ce mois-ci. Chaque jour sans, ils restent à toi.`,b:'Mes raisons',go:fumeScr})}
-  if(H.base<10&&S.cof&&S.cof.w>0&&S.cof.sk!==wkMon())R.push({id:10,t:`Mois serré : tu peux sauter ta réserve cette semaine. Ça te laisse ${eur0(S.cof.w)} de plus.`,b:'Sauter cette semaine',go:()=>{S.cof.sk=wkMon();done(['C’est noté','La semaine prochaine, on reprend'])}});
+  if(H.base<10&&S.cof&&S.cof.w>0&&S.cof.sk!==wkMon())R.push({id:10,t:`Mois serré : tu peux sauter ton coffre cette semaine. Ça te laisse ${eur0(S.cof.w)} de plus.`,b:'Sauter cette semaine',go:()=>{S.cof.sk=wkMon();done(['C’est noté','La semaine prochaine, on reprend'])}});
   const m=mon(today),z=[...Array(7)].map((_,i)=>addD(m,i)).filter(d=>d<=today&&dayOk(d)&&!S.e.some(x=>x.d===d&&x.c!=='dette')).length;if(z>=2)R.push({id:11,t:`${z} journées à 0 € cette semaine : c’est exactement ce qui fait monter ton chiffre.`,c:1});
   if(W7.ok>=5)R.push({id:12,t:`${W7.ok} jours sur 7 : ton chiffre est fiable parce que tu le tiens.`,c:1});
   return R}
@@ -1717,7 +1719,7 @@ function whySheet(){const H=heroNums(),ev=[];
   const sug=()=>{const r=L[k];if(!r)return `<div class="wi c"><p>Tout est en ordre. Continue comme ça.</p></div>`;sgSeen(r);save();
     return `<div class="wi${r.c?' c':''}"><p>${esc(r.t)}</p>${r.b?`<button class="wgo" data-sgo>${esc(r.b)}</button>`:''}<div class="wl2">${L.length>1&&k<Math.min(2,L.length-1)?'<button data-sn>Autre idée</button>':'<span></span>'}${r.c?'':'<button data-sx>Pas pour moi</button>'}</div></div>`};
   o.innerHTML=`<div class="sh2 why"><div class="grab"></div><h3>Ton chiffre du jour</h3>
-   <div class="wcalc">${row('Sur ton compte'+(S.bal?'<small>vérifié '+(S.bal.d===today?'aujourd’hui':dLab(S.bal.d).toLowerCase())+'</small>':''),eur0(H.L))}${H.tdS?row('Dépensé aujourd’hui<small>remis pour calculer ta journée</small>','+ '+eur0(H.tdS)):''}${H.up?row('Encore à payer ce mois','− '+eur0(H.up)):''}${H.cv?row('Mis de côté pour toi','− '+eur0(H.cv)):''}
+   <div class="wcalc">${row('Sur ton compte'+(S.bal?'<small>vérifié '+(S.bal.d===today?'aujourd’hui':dLab(S.bal.d).toLowerCase())+'</small>':''),eur0(H.L))}${H.tdS?row('Dépensé aujourd’hui<small>remis pour calculer ta journée</small>','+ '+eur0(H.tdS)):''}${H.up?row('Encore à payer ce mois','− '+eur0(H.up)):''}${H.cv?row('Dans ton coffre','− '+eur0(H.cv)):''}${H.cp?row('Encore à mettre au coffre ce mois<small>ton objectif : '+eur0(cofPlan())+' par mois</small>','− '+eur0(H.cp)):''}
    ${neg?(()=>{const nr=nextRin();return nr?row('Avec les '+eur0(nr.v)+' du '+pd(nr.dt).getDate()+'<small>'+eur0(H.free+H.tdS+nr.v)+' pour '+H.left+' jours</small>','= '+eur0(Math.max(0,(H.free+H.tdS+nr.v)/H.left))+' par jour','tot'):row('Ton cap',pct>=10?'Déjà '+pct+' % du chemin':'Chaque jour à 0 € compte','tot')})():row(eur0(H.free+H.tdS)+' pour '+H.left+' jour'+(H.left>1?'s':''),'= '+eur0(H.base)+' par jour','tot')}${!neg&&H.tdS?row('Déjà noté aujourd’hui','− '+eur0(H.tdS)+' → reste '+eur0(Math.max(0,H.rest))):''}</div>
    ${(()=>{const nr=nextRin();return nr?`<p class="wnote">+${eur0(nr.v)} attendus le ${pd(nr.dt).getDate()} (${esc(nr.n)}), comptés dès que tu confirmes.</p>`:''})()}
    <h4>Une idée</h4><div id="wsg">${sug()}</div>
@@ -1735,7 +1737,7 @@ function rcItems(){const now=new Date(),nm=now.getHours()*60+now.getMinutes(),L=
   for(const a of S.ag.filter(a=>!a.done&&a.d&&a.d<today))L.push({id:'ag'+a.id,t:a.t,s:'',c:'ag',late:1,z:96,o:1,go:()=>agItem(a.id)});
   for(const a of S.ag.filter(a=>!a.done&&a.d===today).sort((x,y)=>(x.h||'99').localeCompare(y.h||'99'))){const m=a.h?(+a.h.slice(0,2))*60+(+a.h.slice(3)):null,soon=m!=null&&m-nm<=120&&m-nm>=-30;
     L.push({id:'ag'+a.id,t:a.t,s:a.h?hl(a.h):'',c:'ag',late:m!=null&&m<nm-30,z:soon||(m!=null&&m<nm)?96:80,o:soon?0:2,go:()=>agItem(a.id)})}
-  const MAP={moon:['ev','Faire le point'],bank:['mo',null],in:['mo',null],users:['dt',null],safe:['wi','Ma réserve'],bag:['wi','Toujours envie ?'],spark:['bi','Mon bilan est prêt'],folder:['gr','Sauver mes données'],bell:['gr','Activer les rappels'],smoke:['ev','Noter ma conso'],out:['ev','Faire le point']};
+  const MAP={moon:['ev','Faire le point'],bank:['mo',null],in:['mo',null],users:['dt',null],safe:['wi','Mon coffre'],bag:['wi','Toujours envie ?'],spark:['bi','Mon bilan est prêt'],folder:['gr','Sauver mes données'],bell:['gr','Activer les rappels'],smoke:['ev','Noter ma conso'],out:['ev','Faire le point']};
   if(!eveDone()&&!stepT().some(t=>t.i==='moon'))L.push({id:'eve',t:now.getHours()<17?'Noter ma journée':'Faire le point',s:'',c:'ev',z:84,o:5,go:flowEve});
   for(const t of stepT()){if(t.i==='cal')continue;const m=MAP[t.i]||['gr',null];let lab=m[1]||t.t;
     if(t.i==='bank')lab=S.bal?'Vérifier mon solde':'Ajouter mon solde';if(t.i==='users')lab=t.t.replace(/\s*[\d\s.,]+ ?€.*$/,'').replace(/ t’a rendu.*$/,' t’a rendu ?');if(t.i==='in')lab=t.t;
@@ -1779,7 +1781,7 @@ function vgPlan(V){const L=[];if(!V||V.def<=0)return L;const nr=V.nr;
     L.push(after<=0?{i:'in',t:'Le '+pd(nr.dt).getDate()+' '+MN[pd(nr.dt).getMonth()]+' : tu repasses au vert',s:'Avec '+esc(nr.n)+' (+'+eur0(nr.v)+'), si tu tiens ta mission d’ici là.',k:'win'}:{i:'in',t:'Le '+pd(nr.dt).getDate()+' : +'+eur0(nr.v)+' ('+esc(nr.n)+')',s:'Ton trou remonte d’un coup. Il restera environ '+eur0(after)+' à remonter.',k:'inc'})}
   const th={};S.debts.filter(x=>x.w==='them').forEach(x=>th[x.p]=(th[x.p]||0)+x.v);const tt=Object.entries(th).sort((a,b)=>b[1]-a[1]);
   if(tt.length)L.push({i:'users',t:'Récupérer ce qu’on te doit : '+eur0(tt.reduce((a,x)=>a+x[1],0)),s:tt.slice(0,3).map(([p,v])=>esc(p)+' '+eur0(v)).join(' · '),k:'debt',go:()=>debtList()});
-  if(S.cof&&S.cof.w>0&&S.cof.sk!==wkMon())L.push({i:'safe',t:'Mettre ta réserve en pause',s:'+'+eur0(S.cof.w)+' par semaine pour remonter plus vite.',k:'cof',go:()=>{S.cof.sk=wkMon();done(['Réserve en pause','Cette semaine, tout va au retour au vert'])}});
+  if(S.cof&&S.cof.w>0&&S.cof.sk!==wkMon())L.push({i:'safe',t:'Mettre ton coffre en pause',s:'+'+eur0(S.cof.w)+' par semaine pour remonter plus vite.',k:'cof',go:()=>{S.cof.sk=wkMon();done(['Coffre en pause','Cette semaine, tout va au retour au vert'])}});
   const fr=S.e.filter(x=>x.c==='frais'&&x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);if(fr>0)L.push({i:'bank',t:'Récupérer tes frais bancaires ('+eur0(fr)+')',s:'Une lettre toute prête pour ta banque.',k:'fr',go:droitsScr});
   L.push({i:'check',t:'Chaque journée à 0 €',s:V.tg>0?'C’est '+eur0(V.tg)+' de plus vers le vert, et deux briques dorées.':'Deux briques dorées.',k:'z'});
   return L}
@@ -1934,17 +1936,18 @@ function msAdd(){flow([{k:'t',q:'Quel moment compte pour toi ?',sub:'Il s’affi
 
 /* ---------- Réserve ---------- */
 function cofCard(B){const v=cofV(),g=S.cof&&S.cof.g;
-  return `<button class="cof" data-a="cof">${bd(B,'cof')}<span class="ib">${ic('safe')}</span><span class="t"><b>Réserve</b><small>${!S.cof?'Mets de l’argent à côté, sans y toucher':g?(v>=g.v?'Objectif atteint : '+esc(g.n):'Pour '+esc(g.n)+' · '+Math.round(v/g.v*100)+' %'):S.cof.w?eur0(S.cof.w)+' chaque semaine':'De côté, à ne pas toucher'}</small></span><b>${eur0(v)}</b>${g?`<div class="mbar"><i style="width:${Math.min(100,v/g.v*100)}%"></i></div>`:''}</button>`}
+  return `<button class="cof" data-a="cof">${bd(B,'cof')}<span class="ib">${ic('safe')}</span><span class="t"><b>Coffre</b><small>${!S.cof?'Mets de l’argent à côté, sans y toucher':g?(v>=g.v?'Objectif atteint : '+esc(g.n):'Pour '+esc(g.n)+' · '+Math.round(v/g.v*100)+' %'):S.cof.w?eur0(S.cof.w)+' chaque semaine':'De côté, à ne pas toucher'}</small></span><b>${eur0(v)}</b>${g?`<div class="mbar"><i style="width:${Math.min(100,v/g.v*100)}%"></i></div>`:''}</button>`}
 function cofAdd(a,note){S.cof=S.cof||{v:0,h:[]};S.cof.h=S.cof.h||[];a=Math.round(a*100)/100;S.cof.v=Math.round(((S.cof.v||0)+a)*100)/100;S.cof.h.push({id:uid(),d:today,v:a});const g=S.cof.g;
   if(a>0&&g&&S.cof.v>=g.v&&S.cof.v-a<g.v)return['Objectif atteint',esc(g.n)+' · '+eur(S.cof.v)];
-  return a>0?['Mis de côté','Ta réserve : '+eur(S.cof.v)+(g&&S.cof.v<g.v?' · encore '+eur0(g.v-S.cof.v):'')]:['Repris',eur(-a)+' · il reste '+eur(S.cof.v)]}
-function cofScr(){const v=cofV(),g=S.cof&&S.cof.g;flow([{k:'x',q:v?eur(v)+' de côté':'Ta réserve',sub:v?(g?(v>=g.v?'Objectif « '+esc(g.n)+' » atteint.':'Pour '+esc(g.n)+' : encore '+eur0(g.v-v)+'.'):'Cet argent reste sur ton compte, l’app le met juste de côté pour que tu n’y touches pas.'):'L’argent reste sur ton compte. L’app le retire de ce que tu peux dépenser, pour que tu n’y touches pas.',type:'tiles',opts:[
+  return a>0?['Mis de côté','Ton coffre : '+eur(S.cof.v)+(g&&S.cof.v<g.v?' · encore '+eur0(g.v-S.cof.v):'')]:['Repris',eur(-a)+' · il reste '+eur(S.cof.v)]}
+function cofScr(){const v=cofV(),g=S.cof&&S.cof.g;flow([{k:'x',q:v?eur(v)+' de côté':'Ton coffre',sub:v?(g?(v>=g.v?'Objectif « '+esc(g.n)+' » atteint.':'Pour '+esc(g.n)+' : encore '+eur0(g.v-v)+'.'):'Cet argent reste sur ton compte, l’app le met juste de côté pour que tu n’y touches pas.'):'L’argent reste sur ton compte. L’app le retire de ce que tu peux dépenser, pour que tu n’y touches pas.',type:'tiles',opts:[
   {i:'plus',l:'Mettre de côté',one:1,go:()=>flow([{k:'v',q:'Combien tu mets de côté ?',type:'tiles',opts:[5,10,20,50].map(n=>({v:n,i:'safe',l:eur0(n)})).concat([{i:'pen',l:'Autre montant',one:1,go:()=>flow([{k:'v',q:'Combien tu mets de côté ?',type:'amount'}],r=>cofAdd(r.v))}])}],r=>cofAdd(r.v))},
   ...(v>0?[{i:'out',l:'Reprendre',s:'Si tu en as vraiment besoin',one:1,go:()=>flow([{k:'v',q:'Combien tu reprends ?',sub:'Sur '+eur(v)+'. Pas de souci, ça arrive.',type:'amount'}],r=>cofAdd(-Math.min(r.v,cofV())))}]:[]),
   {i:'gift',l:g?'Changer l’objectif':'Un objectif',s:g?esc(g.n)+' · '+eur0(g.v):'Ex. vacances, permis, une sécurité',one:1,go:()=>flow([{k:'n',q:'C’est pour quoi ?',type:'text',ph:'Ex. vacances, permis, une sécurité'},{k:'v',q:'Combien il te faut ?',type:'amount'}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.g={n:r.n.trim()||'Mon objectif',v:r.v};return['C’est noté',S.cof.g.n+' · '+eur0(r.v)]})},
+  {i:'safe',l:'Chaque mois',s:S.cof&&S.cof.m?eur0(S.cof.m)+' par mois, déjà retirés de ton budget':'Un montant retiré de ton budget dès le début du mois',one:1,go:()=>flow([{k:'m',q:'Combien tu mets au coffre chaque mois ?',sub:'Je le retire de ce que tu peux dépenser, comme une charge fixe.',type:'tiles',opts:[25,50,100,200].map(n=>({v:n,i:'safe',l:eur0(n)+' par mois'})).concat([{i:'pen',l:'Autre montant',one:1,go:v=>{v.mf=1;nextStep()}}]).concat(S.cof&&S.cof.m?[{v:0,i:'x',l:'Plus d’objectif mensuel'}]:[])},{k:'m',q:'Combien par mois ?',type:'amount',skip:v=>!v.mf}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.m=r.m||0;return r.m?['C’est noté',eur0(r.m)+' par mois au coffre, déjà retirés']:['Arrêté','Plus d’objectif mensuel']})},
   {i:'cal',l:'Chaque semaine',s:S.cof&&S.cof.w?eur0(S.cof.w)+' le lundi':'Un rappel chaque lundi',one:1,go:()=>flow([{k:'w',q:'Combien chaque semaine ?',sub:'Le lundi, l’app te propose de le mettre de côté en une touche.',type:'tiles',opts:[5,10,20,30,50].map(n=>({v:n,i:'safe',l:eur0(n)+' par semaine',s:'≈ '+eur0(n*52/12)+' par mois'})).concat(S.cof&&S.cof.w?[{v:0,i:'x',l:'Arrêter'}]:[])}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.w=r.w;return r.w?['C’est noté',eur0(r.w)+' chaque lundi']:['Arrêté','Plus de rappel du lundi']})}]}],()=>['',''])}
 const wkMon=(d=today)=>addD(d,-((pd(d).getDay()+6)%7));
-function flowCofW(){const w=S.cof.w;flow([{k:'x',q:'Ta réserve de la semaine',sub:'Tu mets '+eur(w)+' de côté ?',type:'tiles',opts:[
+function flowCofW(){const w=S.cof.w;flow([{k:'x',q:'Ton coffre de la semaine',sub:'Tu mets '+eur(w)+' de côté ?',type:'tiles',opts:[
   {i:'check',l:'Oui, '+eur(w),one:1,go:()=>done(cofAdd(w))},
   {i:'pen',l:'Un autre montant',one:1,go:()=>flow([{k:'v',q:'Combien cette semaine ?',type:'amount'}],r=>cofAdd(r.v))},
   {i:'later',l:'Pas cette semaine',one:1,go:()=>{S.cof.sk=wkMon();done(['',''])}}]}],()=>['',''])}
@@ -2192,7 +2195,7 @@ const HELP=[
   ['J’ai remboursé, ou on m’a remboursé','<b>Dettes</b> → la personne → <b>C’est réglé</b>. Elle disparaît de la liste.','Mes dettes','debts','remboursé réglé payé'],
   ['J’ai remboursé seulement une partie','<b>Dettes</b> → la personne → <b>J’ai remboursé une partie</b> (ou <b>J’ai reçu une partie</b>) → le montant, par ex. 100 € sur 500 €. L’app garde le reste à payer. Elle te demande aussi si ton solde affiché compte déjà cet argent, pour ne pas le compter deux fois.','Mes dettes','debts','partie partiel acompte morceau reste reçu envoyé virement'],
   ['Rembourser en plusieurs fois','<b>Nouvelle dette</b> → « Tu le règles quand ? » → <b>En plusieurs fois</b>. Tu choisis en combien de fois et le jour du mois : l’app remplit ton agenda et te le rappelle à chaque échéance.','Nouvelle dette','debtnew','plusieurs fois échéancier échéance mensualité étaler par mois'],
-  ['Mettre de l’argent de côté','Touche <b>Réserve</b> sur l’accueil. L’argent reste sur ton compte, mais l’app le retire de ce que tu peux dépenser. Tu peux te fixer un objectif et un montant chaque lundi.','Ma réserve','cof','épargne économiser côté réserve tirelire objectif'],
+  ['Mettre de l’argent de côté','Touche <b>Coffre</b> sur l’accueil. L’argent reste sur ton compte, mais l’app le retire de ce que tu peux dépenser. Tu peux te fixer un objectif et un montant chaque lundi.','Mon coffre','cof','épargne économiser côté réserve tirelire objectif'],
   ['Le bilan de la semaine','Chaque dimanche soir, une carte apparaît sur l’accueil : ce que tu as dépensé, remboursé, mis de côté, et tes victoires. Tu le retrouves aussi dans <b>Ta progression</b>.','Voir mon bilan','wk','bilan semaine dimanche résumé'],
   ['Je ne peux pas rembourser ce mois-ci','<b>Dettes</b> → la personne → <b>Le mois prochain</b>. Ça sort du calcul de ce mois.','Mes dettes','debts','pas les moyens reporter mois prochain'],
  ]],
