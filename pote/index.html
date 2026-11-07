@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794072740" data-theme="light">
+<html lang="fr" data-build="1794073071" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -218,7 +218,8 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 @media (prefers-reduced-motion:reduce){.ok .stp,.ok .stp circle,.ok .stp path,.ok .stp i,.ok .stp .rg{animation:none!important;stroke-dashoffset:0}}
 @keyframes sc{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
 .ok b{font-size:22px;font-weight:700;letter-spacing:-.02em}.ok small{color:var(--muted);font-size:15px;font-weight:500;margin-top:-6px}
-.dtin{position:absolute;opacity:0;width:1px;height:1px}
+.dtin{position:absolute!important;inset:0;display:block;width:100%!important;height:100%!important;min-width:0;margin:0;padding:0;border:0;opacity:0;font-size:16px;-webkit-appearance:none;appearance:none;box-sizing:border-box;z-index:1;cursor:pointer;background:transparent;color:transparent}
+label.tile{position:relative;overflow:hidden}.tlink.set .tl{color:var(--ink)!important}.tlink .tv{position:relative;z-index:2}.dpill input{font-size:16px;-webkit-appearance:none;appearance:none;margin:0;padding:0;border:0;box-sizing:border-box;min-width:0}
 .tlink{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;margin:4px auto 0;padding:12px 16px;border:0;background:none;color:var(--muted);font:inherit;font-size:14px;font-weight:600;letter-spacing:-.01em}.tlink svg{width:15px;height:15px;opacity:.8}
 .tlink.set{color:var(--ink)}.tlink .tv{display:none;margin-left:6px;padding:7px 14px;border-radius:16px;background:var(--ink);color:var(--bg);font-size:14px;font-weight:700}.tlink.set .tv{display:inline-block;animation:pop .3s cubic-bezier(.3,1.6,.5,1)}
 .sf{background:var(--card);border:0;border-radius:18px;overflow:hidden}
@@ -1014,7 +1015,7 @@ function mvRedate(x,k){flow([{k:'d',q:'C’était quel jour ?',type:'pdate'},SAM
 function pdateUI(st,body){const o=[[today,'sun','Aujourd’hui'],[addD(today,-1),'moon','Hier'],[addD(today,-2),'cal',dLab(addD(today,-2)).replace(/^./,c=>c.toUpperCase())]];
   body.innerHTML=`<div class="tiles">${o.map(([k,i,l])=>`<button class="tile tc t-ag" data-d="${k}"><span class="ib">${ic(i)}</span><b>${l}</b></button>`).join('')}<label class="tile tc t-ag"><span class="ib">${ic('calp')}</span><b>Autre jour</b><input type="date" class="dtin" id="dd" max="${today}"></label></div>`;
   body.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{buzz();FL.v[st.k]=b.dataset.d;nextStep()});
-  const di=body.querySelector('#dd');body.querySelector('label.tile').onclick=e=>{if(e.target!==di){e.preventDefault();try{di.showPicker()}catch(_){di.focus();di.click()}}};
+  const di=body.querySelector('#dd');
   di.onchange=()=>{if(di.value&&di.value<=today){FL.v[st.k]=di.value;nextStep()}}}
 function histScr(){const l=mvAll();const x=scr('Mouvements',l.length?`<div class="list">${l.slice(0,200).map(mvRow).join('')}</div><p class="foot">Touche une ligne pour la supprimer.</p>`:'<div class="empty">Rien pour l’instant.</div>');bindMv(x)}
 
@@ -1195,7 +1196,7 @@ function amountUI(st,body,btm){let s=FL.v[st.k]!=null?String(FL.v[st.k]).replace
     const pi=body.querySelector('#dpi'),pt=body.querySelector('#dpt'),pl=body.querySelector('#dpl'),pn=body.querySelector('#dpn');
     const ud=()=>{const d=FL.v.d;pt.textContent=d===today?'Aujourd’hui':dLab(d).replace(/^./,c=>c.toUpperCase());pl.classList.toggle('past',d<today);pn.textContent=balNote(d,st.pd)};ud();
     pi.onchange=pi.oninput=()=>{const v=pi.value;if(v&&v<=today){FL.v.d=v;buzz(5);ud()}};
-    pl.onclick=e=>{if(e.target!==pi){e.preventDefault();try{pi.showPicker()}catch(_){pi.focus();pi.click()}}}}
+    0}
   if(st.sug){const Q=quickSugs();if(Q.length){body.insertAdjacentHTML('afterbegin',`<div class="sugs"><small>Comme d’habitude ?</small><div>${Q.map((o,i)=>`<button class="chip sg" data-sg="${i}">${esc(sugLab(o))}</button>`).join('')}</div></div>`);
     body.querySelectorAll('[data-sg]').forEach(b=>b.onclick=()=>{const o=Q[+b.dataset.sg],d=FL.v.d||today,nb=nbFor(d,d===(S.bal&&S.bal.d)?'n':'');const e={id:uid(),d,v:o.v,c:o.c};if(o.s)e.s=o.s;if(nb)e.nb=1;S.e.push(e);buzz([10,40,10]);done(['C’est noté',sugLab(o)])})}}
   btm.innerHTML=`<button class="go" id="go">Suivant</button>`;
@@ -1209,7 +1210,7 @@ function tilesUI(st,body){const opts=typeof st.opts==='function'?st.opts(FL.v):s
   body.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];buzz();if(o.go){o.go(FL.v);return}FL.v[st.k]=o.v;nextStep()});
   if(st.time){const w=document.createElement('div');w.style.textAlign='center';w.innerHTML=`<label class="tlink">${ic('later')}<span class="tl">Heure précise</span><input type="time" class="dtin" id="tt" step="300" value="${esc(FL.v[st.k]||'')}"><button type="button" class="tv">Valider</button></label>`;body.appendChild(w);
    const lb=w.querySelector('.tlink'),ti=w.querySelector('#tt'),tl=w.querySelector('.tl');
-   lb.onclick=e=>{if(e.target.closest('.tv')){e.preventDefault();if(ti.value){buzz();FL.v[st.k]=ti.value;nextStep()}return}if(e.target!==ti){e.preventDefault();try{ti.showPicker()}catch(_){ti.focus();ti.click()}}};
+   lb.onclick=e=>{if(e.target.closest('.tv')){e.preventDefault();if(ti.value){buzz();FL.v[st.k]=ti.value;nextStep()}}};
    const upd=()=>{if(ti.value){tl.textContent='À '+hl(ti.value);lb.classList.add('set')}};ti.oninput=upd;ti.onchange=upd}}
 function textUI(st,body,btm){body.innerHTML=`<input class="txt" id="tx" placeholder="${esc(st.ph||'')}" maxlength="${st.ml||60}" value="${esc(FL.v[st.k]||'')}" autocomplete="off">`;
   btm.innerHTML=`<button class="go" id="go">Suivant</button>`;const i=body.querySelector('#tx'),g=btm.querySelector('#go');const chk=()=>{if(st.opt){g.disabled=false;g.textContent=i.value.trim()?'Suivant':'Passer'}else g.disabled=!i.value.trim()};chk();i.oninput=chk;
@@ -1217,7 +1218,7 @@ function textUI(st,body,btm){body.innerHTML=`<input class="txt" id="tx" placehol
 function dateUI(st,body){const o=[[today,'sun','Aujourd’hui'],[addD(today,1),'moon','Demain'],[addD(today,2),'cal',dLab(addD(today,2))]];
   body.innerHTML=`<div class="tiles">${o.map(([k,i,l])=>`<button class="tile" data-d="${k}"><span class="ib">${ic(i)}</span><b>${l}</b></button>`).join('')}<label class="tile"><span class="ib">${ic('calp')}</span><b>Autre jour</b><input type="date" class="dtin" id="dd" min="${st.past?'':today}"></label>${st.nodate?`<button class="tile one" data-d=""><span class="ib">${ic('pen')}</span><span><b>Pas de date</b><br><small>Dans ma liste, à faire un jour</small></span></button>`:''}</div>`;
   body.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{buzz();FL.v[st.k]=b.dataset.d;nextStep()});
-  const di=body.querySelector('#dd');body.querySelector('label.tile').onclick=e=>{if(e.target!==di){e.preventDefault();try{di.showPicker()}catch(_){di.focus();di.click()}}};
+  const di=body.querySelector('#dd');
   di.onchange=()=>{if(di.value){FL.v[st.k]=di.value;nextStep()}}}
 
 const FXS=['Téléphone','Internet','Abonnement','Assurance','Transport','Mutuelle','Sport','Crédit','Loyer'];
