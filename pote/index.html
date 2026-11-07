@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794071487" data-theme="light">
+<html lang="fr" data-build="1794071639" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -830,7 +830,7 @@ const people=()=>{const m=new Map();for(const x of S.debts)if(!m.has(pk(x.p)))m.
 let TAB='argent';
 function tabTo(t){if(t===TAB){scrollTo({top:0,behavior:'smooth'});return}TAB=t;buzz(6);if(t==='agenda'){agD=today}home();scrollTo(0,0)}
 function addSheet(){const o=document.createElement('div');o.className='shb2';
-  const it=[['dep','t-out','out','J’ai dépensé','Une dépense, même petite'],['inc','t-in','in','J’ai reçu','Salaire, aide, virement'],['ag','t-ag','bell','Un rappel','Agenda, heure exacte'],['debt','t-debt','users','Une dette','Je dois ou on me doit'],['wish','t-cof','bag','Envie d’acheter','J’y réfléchis 24 h'],['scan','t-out','cam','Photo d’un ticket','Je range tout seul']];
+  const it=[['dep','t-out','out','J’ai dépensé','Une dépense, même petite'],['inc','t-in','in','J’ai reçu','Salaire, aide, virement'],['ag','t-ag','bell','Un rappel','Agenda, heure exacte'],['debt','t-debt','users','Une dette','Je dois ou on me doit'],['wish','t-cof','bag','Envie d’acheter','J’y réfléchis 24 h'],['scan','t-out','cam','Capture ou photo','Notif banque, ticket']];
   o.innerHTML=`<div class="sh2"><div class="grab"></div><div class="g4">${it.map(([k,c,i,l,s])=>`<button class="row4 ${c}" data-k="${k}"><span class="ib">${ic(i)}</span><span><b>${l}</b><small>${s}</small></span></button>`).join('')}</div></div>`;
   document.body.appendChild(o);const close=()=>o.remove();o.onclick=e=>{if(e.target===o)close()};
   o.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{buzz();close();({dep:()=>flowDep(TAB==='agenda'&&agD<=today?agD:null),inc:()=>flowInc(TAB==='agenda'&&agD<=today?agD:null),ag:()=>flowAg(TAB==='agenda'&&agV==='day'&&agD>=today?agD:null),debt:()=>typeof flowDebt==='function'?flowDebt():debtList(),wish:flowWish,scan:()=>scanPick()})[b.dataset.k]()})}
@@ -1304,19 +1304,51 @@ function scanParse(txt,todayIso){const T=String(txt||'').replace(/\r/g,''),L=T.s
   if(/\bhier\b|yesterday/i.test(T)&&!D){D=new Date(td);D.setDate(D.getDate()-1)}
   if(D){const p=n=>String(n).padStart(2,'0');out.d=D.getFullYear()+'-'+p(D.getMonth()+1)+'-'+p(D.getDate())}
   return out}
+/* Capture d'écran de la banque (notifs ou liste d'opérations) : on sort toutes les dépenses d'un coup */
+function scanItems(txt,todayIso){const L=String(txt||'').replace(/\r/g,'').split('\n').map(s=>s.replace(/[  ]/g,' ').trim()).filter(Boolean);
+  const td=new Date(todayIso+'T12:00:00'),p2=n=>String(n).padStart(2,'0'),fmt=D=>D.getFullYear()+'-'+p2(D.getMonth()+1)+'-'+p2(D.getDate());
+  const MO=/(janv|jan|f[ée]vr?|mars?|avr|mai|juin|juil|ao[uû]t|sept?|oct|nov|d[ée]c)[a-zé]*\.?/i;
+  const hdr=l=>{if(/^aujourd.?hui\b/i.test(l))return todayIso;if(/^hier\b/i.test(l)){const D=new Date(td);D.setDate(D.getDate()-1);return fmt(D)}
+    const r=new RegExp('^(?:(?:lun|mar|mer|jeu|ven|sam|dim)[a-z]*\\.?\\s+)?(\\d{1,2})(?:er)?\\s+'+MO.source+'(?:\\s+(\\d{4}))?$','i').exec(l);if(r){const k=r[2].toLowerCase().replace('û','u');const mo=SCAN_MO[k]||SCAN_MO[k.slice(0,4)]||SCAN_MO[k.slice(0,3)];if(mo){let y=r[3]?+r[3]:td.getFullYear();let D=new Date(y,mo-1,+r[1],12);if(D>td&&!r[3])D=new Date(y-1,mo-1,+r[1],12);return fmt(D)}}
+    const n=/^(\d{1,2})[\/.](\d{1,2})(?:[\/.](\d{2,4}))?$/.exec(l);if(n){let y=n[3]?+n[3]:td.getFullYear();if(y<100)y+=2000;const D=new Date(y,+n[2]-1,+n[1],12);if(D.getMonth()===+n[2]-1&&D<=td)return fmt(D)}return null};
+  const AM=/([+\-−–])?\s?(\d{1,3}(?:[ .]\d{3})+|\d+)\s?[,.]\s?(\d{2})(?!\d)\s*(€|eur)?/i;
+  const SKIP=/solde|disponible|plafond|encours|[eé]pargne|total|cumul|budget|re[cç]u de|virement re[cç]u|remboursement re[cç]u|cr[eé]dit/i;
+  const clean=s=>s.replace(/^(paiement|achat|pr[eé]l[eè]vement|d[eé]bit|transaction|carte|cb|par carte)\b[^a-z]*?(de|par)?\s*/i,'').replace(/\b(il y a \d+ ?\w+|maintenant|now|\d{1,2}[:h]\d{2})\b/gi,'').replace(/[^\p{L}\p{N} '&’.*-]/gu,' ').replace(/\s{2,}/g,' ').trim();
+  const out=[];let cur=null;
+  L.forEach((l,i)=>{const h=hdr(l);if(h){cur=h;return}
+    const m=AM.exec(l);if(!m)return;if(m[1]==='+'||SKIP.test(l))return;if(!m[4]&&!m[1]&&!/€|eur/i.test(l))return;
+    const v=parseFloat(m[2].replace(/[ .]/g,'')+'.'+m[3]);if(!(v>0&&v<20000))return;
+    let name='';const ch=/(?:chez|à|a|at|aupr[eè]s de)\s+([^,.;]+?)(?:\s+(?:le|du)\s+\d|\s+(?:avec|via|sur)\b|[,.;]|$)/i.exec(l.slice(m.index+m[0].length))||/(?:chez|aupr[eè]s de)\s+([^,.;]+)/i.exec(l);
+    if(ch)name=clean(ch[1]);if(!name)name=clean(l.slice(0,m.index));
+    if(!/[a-zà-ÿ]{2,}/i.test(name)){const pv=L[i-1]||'';if(pv&&!hdr(pv)&&!AM.test(pv))name=clean(pv)}
+    if(/^(boursobank|boursorama|banxo|caisse d.?[eé]pargne|revolut|lydia|n26|qonto|soci[eé]t[eé] g[eé]n[eé]rale|bnp|lcl|cr[eé]dit agricole)$/i.test(name))name=''
+    let c=null;for(const[re,k]of SCAN_M)if(re.test(name||l)){c=k;break}
+    let n2=(name||'').replace(/\b([A-ZÀ-Ý]{2,})\b/g,w=>w[0]+w.slice(1).toLowerCase()).slice(0,26);for(const[nn,re]of SCAN_N)if(re.test(name||l)){n2=nn;break}
+    let d=cur||todayIso;const dl=/\b(hier|yesterday)\b/i.test(l+' '+(L[i-1]&&!AM.test(L[i-1])?L[i-1]:''))?(()=>{const D=new Date(td);D.setDate(D.getDate()-1);return fmt(D)})():null;if(dl)d=dl;
+    out.push({v:Math.round(v*100)/100,n:n2,c,d})});
+  return out}
+const SCAN_CH='abcdefghijklmnopqrstuvwxyz';
+function scanMulti(L,ctx){L=L.slice(0,26);const dup=it=>S.e.some(x=>x.d===it.d&&Math.abs(x.v-it.v)<.005);
+  const lab=it=>eur(it.v)+' · '+(it.n||'Dépense')+(it.c?' · '+CN[it.c][2]:'')+(it.d!==today?' · '+dLab(it.d).toLowerCase():'')+(dup(it)?' · déjà noté':'');
+  const steps=[{k:'sel',q:'J’ai trouvé '+L.length+' dépenses',sub:'Décoche ce que tu ne veux pas noter.',type:'multi',opts:L.map((it,j)=>({v:SCAN_CH[j],i:it.c?CN[it.c][1]:'dots',l:lab(it)}))}];
+  L.forEach((it,j)=>{if(!it.c)steps.push({k:'c'+j,q:eur(it.v)+(it.n?' · '+esc(it.n):''),sub:'C’était quoi ?',type:'tiles',skip:v=>!String(v.sel||'').includes(SCAN_CH[j]),opts:CATS.map(([v,i,l])=>({v,i,l}))})});
+  flow(steps,v=>{let n=0,t=0;L.forEach((it,j)=>{if(!String(v.sel||'').includes(SCAN_CH[j]))return;const c=it.c||v['c'+j]||'autre';const e={id:uid(),d:it.d,v:it.v,c,ph:1};if(it.n)e.n=it.n;if(nbFor(it.d,'n'))e.nb=1;S.e.push(e);n++;t+=it.v});
+   if(ctx==='eve'){save();setTimeout(()=>{if(!FL&&!$('.fl'))flowEve()},1500)}
+   return[n>1?n+' dépenses notées':n?'C’est noté':'Rien de noté',n?eur(t)+' au total':'']},{sel:L.map((it,j)=>dup(it)?'':SCAN_CH[j]).join('')})}
 let SCAN_W=null;
 const scanLib=()=>window.Tesseract?Promise.resolve():new Promise((ok,ko)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.onload=ok;s.onerror=ko;document.head.appendChild(s)});
 function scanPick(ctx){let i=document.getElementById('scanin');if(!i){i=document.createElement('input');i.type='file';i.accept='image/*';i.id='scanin';i.hidden=true;document.body.appendChild(i)}
   i.value='';i.onchange=()=>{const f=i.files&&i.files[0];if(f)scanRun(f,ctx)};i.click();scanLib().catch(()=>{})}
 function scanImg(f){return new Promise((ok,ko)=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const k=Math.min(1,2000/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext('2d');x.filter='grayscale(1) contrast(1.25)';x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c)};im.onerror=ko;im.src=u})}
 async function scanRun(f,ctx){const old=$('.fl');if(old)old.remove();FL=null;
-  const o=document.createElement('div');o.className='fl scanw';o.innerHTML=`<div class="scbox"><span class="scsp">${ic('cam')}</span><b>Je lis ta photo…</b><small>Montant, date, catégorie</small></div>`;document.body.appendChild(o);document.body.style.overflow='hidden';
-  let R={};try{const[c]=await Promise.all([scanImg(f),scanLib()]);if(!SCAN_W)SCAN_W=await Tesseract.createWorker('fra');const{data}=await SCAN_W.recognize(c);R=scanParse(data.text,today);R.ok=1}catch(e){R={fail:1}}
+  const o=document.createElement('div');o.className='fl scanw';o.innerHTML=`<div class="scbox"><span class="scsp">${ic('cam')}</span><b>Je lis ta capture…</b><small>Montants, dates, catégories</small></div>`;document.body.appendChild(o);document.body.style.overflow='hidden';
+  let R={};try{const[c]=await Promise.all([scanImg(f),scanLib()]);if(!SCAN_W)SCAN_W=await Tesseract.createWorker('fra');const{data}=await SCAN_W.recognize(c);const tx=data.text||'';R=scanParse(tx,today);R.ok=1;
+   if(!/total|ttc|tva|ticket|caisse|facture|net [aà] payer/i.test(tx)){const L=scanItems(tx,today);if(L.length>1){o.remove();buzz([10,40,10]);return scanMulti(L,ctx)}if(L.length===1)R={...L[0],ok:1}}}catch(e){R={fail:1}}
   o.remove();buzz(R.v?[10,40,10]:8);scanFlow(R,ctx)}
 function scanFlow(R,ctx){const where=v=>[v.n?esc(v.n):'',v.d&&v.d!==today?dLab(v.d):'Aujourd’hui'].filter(Boolean).join(' · ');
   flow([
-   {k:'ok',q:v=>eur(v.v)+' · '+CN[v.c][2],sub:v=>where(v)+' — lu sur ta photo.',type:'tiles',skip:v=>!(v.v>0&&v.c),opts:[{v:'y',i:'check',l:'C’est bon',s:'Je le note',one:1,cta:1},{v:'c',i:'dots',l:'Autre catégorie',one:1},{v:'m',i:'pen',l:'Corriger le montant',one:1}]},
-   {k:'v',q:'Combien sur la photo ?',sub:R.fail?'Je n’ai pas réussi à lire la photo. Tape le montant, je m’occupe du reste.':R.c?'Je n’ai pas trouvé le montant ('+CN[R.c][2]+(R.n?', '+esc(R.n):'')+').':'Je n’ai pas trouvé le montant.',type:'amount',pd:'out',skip:v=>v.v>0&&v.ok!=='m'},
+   {k:'ok',q:v=>eur(v.v)+' · '+CN[v.c][2],sub:v=>where(v)+' — lu sur ta capture.',type:'tiles',skip:v=>!(v.v>0&&v.c),opts:[{v:'y',i:'check',l:'C’est bon',s:'Je le note',one:1,cta:1},{v:'c',i:'dots',l:'Autre catégorie',one:1},{v:'m',i:'pen',l:'Corriger le montant',one:1}]},
+   {k:'v',q:'Combien ?',sub:R.fail?'Je n’ai pas réussi à lire l’image. Tape le montant, je m’occupe du reste.':R.c?'Je n’ai pas trouvé le montant ('+CN[R.c][2]+(R.n?', '+esc(R.n):'')+').':'Je n’ai pas trouvé le montant.',type:'amount',pd:'out',skip:v=>v.v>0&&v.ok!=='m'},
    {k:'c',q:'C’était quoi ?',sub:v=>v.ok==='c'?'':eur(v.v)+(v.n?' · '+esc(v.n):''),type:'tiles',skip:v=>v.c&&v.ok!=='c',opts:CATS.map(([v,i,l])=>({v,i,l}))},
    {k:'s',q:()=>esc(CN.conso[2])+' : quoi ?',type:'tiles',skip:v=>v.c!=='conso',opts:()=>fsub()},
    SAMEQ('out')
@@ -1375,7 +1407,7 @@ function flowEve(){const P=S.name?S.name.split(' ')[0]:'',L=S.e.filter(x=>x.d===
   const saveE=v=>{if(v.ok)return;v.ok=1;const e={id:uid(),d:today,v:v.v,c:v.c};if(v.s)e.s=v.s;if(nbFor(today,v.sb))e.nb=1;S.e.push(e)};
   const sumT=()=>S.e.filter(x=>x.d===today&&x.c!=='dette').reduce((a,x)=>a+x.v,0);
   flow([
-   {k:'c',q:(P?P+', ta':'Ta')+' journée',sub:t?'Déjà noté aujourd’hui : '+eur(t)+'. Autre chose ?':'Tu as dépensé quoi aujourd’hui ?',type:'tiles',opts:[{i:'check',l:t?'Non, c’est tout':'Rien du tout',s:t?'Je boucle ma journée':'Journée à 0 €',one:1,cta:1,go:()=>{if(!t){S.nos=S.nos||{};S.nos[today]=1}eveEnd(t?['Journée bouclée',eur(t)+' aujourd’hui']:['Journée à 0 €','Bien joué'])}},{i:'cam',l:'Photo d’un ticket',s:'Ticket, facture, capture d’écran',one:1,go:()=>scanPick('eve')},...CATS.map(([v,i,l])=>({v,i,l}))]},
+   {k:'c',q:(P?P+', ta':'Ta')+' journée',sub:t?'Déjà noté aujourd’hui : '+eur(t)+'. Autre chose ?':'Tu as dépensé quoi aujourd’hui ?',type:'tiles',opts:[{i:'check',l:t?'Non, c’est tout':'Rien du tout',s:t?'Je boucle ma journée':'Journée à 0 €',one:1,cta:1,go:()=>{if(!t){S.nos=S.nos||{};S.nos[today]=1}eveEnd(t?['Journée bouclée',eur(t)+' aujourd’hui']:['Journée à 0 €','Bien joué'])}},{i:'cam',l:'Capture ou photo',s:'Notif de ta banque, ticket, facture',one:1,go:()=>scanPick('eve')},...CATS.map(([v,i,l])=>({v,i,l}))]},
    {k:'s',q:()=>esc(CN.conso[2])+' : quoi ?',type:'tiles',skip:v=>v.c!=='conso',opts:()=>fsub()},
    {k:'v',q:v=>(v.s?FL2[v.s]:CN[v.c][2])+' : combien ?',type:'amount',sug:0},
    SAMEQ('out'),
