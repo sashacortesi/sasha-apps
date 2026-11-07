@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794080000" data-theme="light">
+<html lang="fr" data-build="1794081000" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -1416,8 +1416,8 @@ function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().cha
   const BL=badgeList().map((b,k)=>[...b,k]).sort((a,b)=>(b[1]-a[1])||(a[3]-b[3]));
   const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €','var(--good)'],...(S.vice&&W.fs!=null?[[sans30().n+' / '+sans30().of+' j','jours sans sur les 30 derniers','#64D2FF']]:[[W.agd,'chose'+(W.agd>1?'s':'')+' faite'+(W.agd>1?'s':''),'var(--c-ag)']]),[eur0(W.kept),'gardés grâce à « Envie d’acheter »','var(--c-cof)'],[eur0(W.rb),'de dettes remboursées','var(--c-debt)']];
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
-  ${chantierCard()}${(()=>{const T=towerStats();return `<button class="tcard" data-a="tour">${towerSvg(4)}<div class="tcap"><b>${esc((S.name||'Ta').split(' ')[0])}${S.name?', ta':''} tour · ${T.n} étage${T.n>1?'s':''}</b><span>${T.lit} fenêtre${T.lit>1?'s':''} allumée${T.lit>1?'s':''} · ${xpDays()} jour${xpDays()>1?'s':''} tenu${xpDays()>1?'s':''} · plus haute pile ${recordStreak()}</span></div>
-   ${(()=>{const W7=weekBlocks();return `<div class="tnow"><div class="lvt"><span class="fl4">Étage en cours <b>${Math.min(W7.ok,7)} / 7</b></span><span>${W7.ok>=5?'Objectif tenu ✓':'Objectif : 5 fenêtres'}</span></div><div class="wk7">${W7.B}</div><span class="jkl">${jkIc(jkLeft())}${jkLeft()?'1 joker dispo cette semaine':'Joker utilisé · revient lundi'}</span></div>`})()}</button>`})()}
+  ${chantierCard()}${(()=>{const T=towerStats();return `<button class="tcard" data-a="tour">${towerSvg(4)}<div class="tcap"><b>${esc((S.name||'Ta').split(' ')[0])}${S.name?', ta':''} tour · ${T.n} étage${T.n>1?'s':''}</b><span>${T.lit} fenêtre${T.lit>1?'s':''} allumée${T.lit>1?'s':''}</span></div>
+   ${(()=>{const W7=weekBlocks();return `<div class="tnow"><div class="lvt"><span class="fl4">Cette semaine <b>${Math.min(W7.ok,7)} / 7</b></span>${jkLeft()?`<span class="jkl">${jkIc(1)}joker</span>`:''}</div><div class="wk7">${W7.B}</div></div>`})()}</button>`})()}
   ${qCard()}
   <div class="sec"><h2>Tes victoires</h2></div>
   <div class="vic">${vic.map(([v,l,c])=>`<div><b style="color:${c}">${v}</b><small>${l}</small></div>`).join('')}</div>
@@ -1681,8 +1681,7 @@ function qCheck(){try{if(!S.name)return;const w=mon(today);S.qd=S.qd||{};const L
 function qCard(){const Q=qWeek(),w=mon(today),L=(S.qd||{})[w]||[],d=7-((pd(today).getDay()+6)%7);
   return `<div class="sec"><h2>Quêtes de la semaine</h2><small>${d>1?'encore '+d+' jours':'dernier jour'}</small></div><div class="qlist">${Q.map(q=>{const ok=L.some(x=>String(x).startsWith(q.id+':'))||q.v>=q.n;return `<div class="qrow${ok?' qdone':''}"><span class="qic">${ok?ic('check'):ic('home')}</span><span class="qtx"><b>${esc(q.t)}</b><i><em style="width:${Math.min(100,Math.round(q.v/q.n*100))}%"></em></i></span><small>${ok?'Fait':Math.min(q.v,q.n)+(q.u?' €':'')+' / '+q.n+(q.u?' €':'')}</small></div>`}).join('')}</div>`}
 function chantierCard(){const V=vgState();if(!V||V.def<=0)return '';const M=V.zero?'Journée à 0 €':'Rester sous '+eur0(V.tg);
-  return `<button class="chc" data-a="vg"><div class="chh"><span class="chb">Mode chantier</span><b>Retour au vert</b></div><div class="vgb">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div>
-   <div class="chg"><div><b>${V.p>=.9?eur0(V.def):V.br+'/10'}</b><small>${V.p>=.9?'plus que':'briques'}</small></div><div><b>${S.vgG||0}</b><small>dorées</small></div><div><b>${(S.vgP||[]).length}/4</b><small>paliers</small></div></div>
+  return `<button class="chc" data-a="vg"><div class="chh"><span class="chb">Mode chantier</span><b>Retour au vert · ${V.p>=.9?'plus que '+eur0(V.def):V.br+'/10'}</b></div><div class="vgb">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div>
    <div class="chm"><span>${ic('spark')}Mission du jour</span><b>${M}</b></div><div class="chs">${(()=>{const P=vgPlan(V).find(o=>o.k==='win'||o.k==='inc');return P?esc(P.t.replace(/<[^>]+>/g,'')):'Seuil vert : 0 € · encore '+eur0(V.def)+' à remonter'})()}</div></button>`}
 
 /* ===== La tour : un étage par semaine, une fenêtre par jour ===== */
