@@ -910,7 +910,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   const me=S.debts.filter(x=>x.w==='me').reduce((a,x)=>a+x.v,0),th=S.debts.filter(x=>x.w==='them').reduce((a,x)=>a+x.v,0);
   const dn=its.filter(a=>a.done).length;
   const B=badges();
-  const TB=`<nav class="tabbar" role="tablist"><div class="in">${[['argent','t-out','wallet','Dépenses',(B.dep||0)+(B.inc||0)+(B.bal||0)+(B.debts||0)+(B.cof||0)],['agenda','t-ag','cal','Agenda',B.ag||0],['fab'],['vu','t-vu','spark','Vécu',0],['moi','t-moi','user','Moi',(B.set||0)]].map(([k,c,i,l,n])=>k==='fab'?`<button class="fab" id="fab" aria-label="Ajouter">${ic('plus')}</button>`:`<button class="tb ${c}" role="tab" data-tab="${k}" aria-selected="${TAB===k}" aria-label="${l}">${ic(i)}<span>${l}</span></button>`).join('')}</div></nav>`;
+  const TB=`<nav class="tabbar" role="tablist"><div class="in">${[['argent','t-out','wallet','Dépenses',(B.dep||0)+(B.inc||0)+(B.bal||0)+(B.debts||0)+(B.cof||0)],['agenda','t-ag','cal','Agenda',B.ag||0],['fab'],['vu','t-vu','spark','Moments',0],['moi','t-moi','user','Moi',(B.set||0)]].map(([k,c,i,l,n])=>k==='fab'?`<button class="fab" id="fab" aria-label="Ajouter">${ic('plus')}</button>`:`<button class="tb ${c}" role="tab" data-tab="${k}" aria-selected="${TAB===k}" aria-label="${l}">${ic(i)}<span>${l}</span></button>`).join('')}</div></nav>`;
   if(TAB==='vu'){$('#app').innerHTML=vuView()+TB;homeBind();vuBind();return}
   if(TAB!=='argent'){$('#app').innerHTML=(TAB==='agenda'?`<div class="ttl ttl2"><span>Agenda</span><button class="ib2" id="agm" aria-label="${agV==='month'?'Retour au jour':'Voir le mois'}">${agV==='month'?ic('x'):ic('cal')}</button></div><div id="agb" style="display:grid;gap:16px"></div>`:moiView(B))+TB;
     homeBind();if(TAB==='agenda'){$('#agm').onclick=()=>{buzz(5);agV=agV==='month'?'day':'month';home()}}
@@ -1905,7 +1905,7 @@ function qPool(){const m=mon(today),ds=[];for(let d=m;d<=today;d=addD(d,1))ds.pu
    {id:'cof',c:'c',t:g?'Mettre '+eur0(gw)+' pour '+g.n:'Mettre 20 € de côté',v:Math.round(cof),n:g?gw:20,u:'€',r:10,why:g?'Ton objectif avance':'Ton coffre grandit'},
    {id:'ag',c:'d',t:'Cocher 5 choses de ton agenda',v:agd,n:5,r:10,why:'Tu avances sur ta liste'},
    {id:'eve',c:'e',t:'3 points du soir',v:evn,n:3,r:10,why:'Tu gardes le contrôle'},
-   {id:'vu',c:'f',t:'Noter 2 choses vécues',v:vu.length,n:2,r:10,why:'Je te cerne mieux'},
+   {id:'vu',c:'f',t:'Noter 2 moments',v:vu.length,n:2,r:10,why:'Je te cerne mieux'},
    {id:'fr',c:'g',t:'Une sortie gratuite',v:fr,n:1,r:10,why:'Te faire plaisir sans dépenser'}];
   if(red)P.unshift({id:'up',c:'h',t:'Remonter de '+eur0(goal),v:up,n:goal,u:'€',r:15,why:'Un palier de plus vers le vert'},{id:'mis',c:'i',t:'Réussir 3 missions',v:mis,n:3,r:10,why:'Tenir ton max du jour'});
   return P}
@@ -2108,7 +2108,7 @@ function goalFlow(){const g0=S.cof&&S.cof.g,v0=cofV();
     const g=S.cof.g,per=goalPer();
     return['Objectif posé',esc(g.n)+' · '+eur0(g.v)+(d?' pour le '+dShort(d):'')+(+r.a>0?' · '+eur0(+r.a)+' alloués':'')+(r.pm&&per?' · '+eur0(per)+' par mois':'')]})}
 function goalPut(){const g=S.cof&&S.cof.g;flow([{k:'v',q:'Combien tu alloues à '+(g?esc(g.n):'ton objectif')+' ?',sub:'Retiré de ce que tu peux dépenser.',type:'tiles',opts:[10,20,50,100].map(n=>({v:n,i:'safe',l:eur0(n)})).concat([{i:'pen',l:'Autre montant',one:1,go:()=>flow([{k:'v',q:'Combien tu alloues ?',type:'amount'}],r=>cofAdd(r.v))}])}],r=>cofAdd(r.v))}
-/* ===== Vécu : films, séries, livres, sorties, restos, activités — il note, dit s'il a aimé, l'app le cerne et suggère ===== */
+/* ===== Moments : films, séries, livres, sorties, restos, activités — il note, dit s'il a aimé, l'app le cerne et suggère ===== */
 const VT={film:['Film','spark','#FF375F'],serie:['Série','moon','#BF5AF2'],livre:['Livre','book','#FF9F0A'],sortie:['Sortie','glass','#0A84FF'],resto:['Resto','resto','#30D158'],act:['Activité','zap','#64D2FF']};
 const VG={a:'Action',c:'Comédie',d:'Émotion',s:'SF / fantastique',h:'Thriller',r:'Romance',o:'Vrai / docu',i:'Animé',m:'Musique',p:'Art / culture',n:'Plein air',f:'Food',g:'Sport',x:'Entre potes',z:'Chill',e:'Découverte',l:'Se développer',t:'Histoire',u:'Argent / business'};
 const VTG={film:'acdshroimt',serie:'acdshroit',livre:'ldsoarthu',sortie:'pmxenzfg',resto:'fxez',act:'ngxzelp'};
@@ -2139,7 +2139,7 @@ function vuProfile(){const V=vuS(),it=V.it;if(it.length<3)return null;const {W,T
   const fr=it.filter(x=>x.p===0&&x.r!=null),py=it.filter(x=>x.p>0&&x.r!=null),av=a=>a.reduce((s,x)=>s+x.r,0)/a.length;
   if(fr.length>=2&&py.length>=2){const a=av(fr),b=av(py);L.push(['safe','Gratuit ou payant',a>=b-.2?'Le gratuit te plaît autant que le payant. Bonne nouvelle pour ton budget.':'Tu préfères tes sorties payantes. Garde-leur une petite place dans ton budget.'])}
   const m=today.slice(0,7),sp=S.e.filter(x=>x.d.startsWith(m)&&(x.c==='sorties'||x.c==='resto')).reduce((a,x)=>a+x.v,0),nb=it.filter(x=>x.d.startsWith(m)).length;
-  L.push(['glass','Ce mois-ci',nb+' chose'+(nb>1?'s':'')+' vécue'+(nb>1?'s':'')+(sp?' · '+eur0(sp)+' en sorties et restos':'')]);
+  L.push(['glass','Ce mois-ci',nb+' moment'+(nb>1?'s':'')+(sp?' · '+eur0(sp)+' en sorties et restos':'')]);
   const mood=it.filter(x=>x.r===2&&(x.t==='act'||x.t==='sortie')).flatMap(x=>[...(x.g||'')]);if(mood.length>=2){const c={};for(const g of mood)c[g]=(c[g]||0)+1;const g=Object.entries(c).sort((a,b)=>b[1]-a[1])[0][0];L.push(['sun','Ce qui te fait du bien',VG[g]])}
   return L}
 const vuNudge=()=>{const V=vuS(),from=addD(today,-3);return S.e.filter(e=>(e.c==='sorties'||e.c==='resto')&&e.d>=from&&!e.vu&&!(V.ign||[]).includes(e.id)).sort((a,b)=>b.d.localeCompare(a.d))[0]};
@@ -2178,14 +2178,14 @@ function vuView(){const V=vuS(),sg=vuSug(6),ng=vuNudge(),tight=vuTight(),{W}=vuT
   const tops=Object.entries(W).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([g])=>VG[g]);
   const story=(t,n,sub,attr,on)=>`<button class="vsto${on?' on':''}" ${attr} style="--vc:${VT[t][2]}"><span class="vsr">${ic(VT[t][1])}</span><b>${esc(n)}</b><small>${sub}</small></button>`;
   const lk=V.it.length?Math.round(V.it.filter(x=>x.r>=1).length/V.it.length*100):0;
-  return `<div class="ttl ttl2"><span>Vécu</span><button class="ib2 vplus" data-vnew aria-label="Ajouter">${ic('plus')}</button></div>
-  ${V.it.length?`<div class="vme"><div><b>${V.it.length}</b><small>vécus</small></div><div><b>${lk} %</b><small>aimés</small></div><div><b>${pl.length}</b><small>prévus</small></div></div>`:''}
+  return `<div class="ttl ttl2"><span>Moments</span><button class="ib2 vplus" data-vnew aria-label="Ajouter">${ic('plus')}</button></div>
+  ${V.it.length?`<div class="vme"><div><b>${V.it.length}</b><small>moments</small></div><div><b>${lk} %</b><small>aimés</small></div><div><b>${pl.length}</b><small>prévus</small></div></div>`:''}
   ${tops.length?`<div class="vtags">${tops.map(t=>`<span>${t}</span>`).join('')}</div>`:''}
   ${pl.length||wl.length?`<div class="vstr">${pl.map(a=>story(a.vu.t,a.vu.n,a.d===today?'Aujourd’hui':dLab(a.d),`data-vw="${a.vu.id}"`,1)).join('')}${wl.map(w=>story(w.t,w.n,'Envie',`data-vw="${w.id}"`,0)).join('')}</div>`:''}
   ${ng?`<button class="vng" data-vng="${ng.id}">${ic('glass')}<span><b>${eur0(ng.v)} en ${ng.c==='resto'?'resto':'sortie'}</b> · c’était quoi ?</span>${ic('next')}</button>`:''}
   <div class="vh"><b>Pour toi</b><small>${V.it.length<3?'Note 3 trucs, je m’affine':tight?'Surtout du gratuit ce mois-ci':'Selon tes goûts'}</small></div>
   <div class="vsug">${sg.map(c=>`<div class="vs" style="--vc:${VT[c[0]][2]}"><div class="vsi">${ic(VT[c[0]][1])}</div><span class="vst">${VT[c[0]][0]}${c[3]===0?' · gratuit':''}</span><b>${esc(c[1])}</b><small>${vuWhy(c).replace(/ · (Gratuit|Petit prix)$/,'')}</small><div class="vsb"><button data-vno="${esc(c[0]+c[1])}" aria-label="Pas pour moi">${ic('x')}</button><button data-vok="${esc(c[0]+c[1])}" aria-label="Ça me tente">${ic('cal')}<span>Ça me tente</span></button></div></div>`).join('')}</div>
-  ${V.it.length?`<div class="vh"><b>Déjà vécu</b></div><div class="vgrid">${V.it.slice().sort((a,b)=>b.d.localeCompare(a.d)).slice(0,30).map(x=>`<button class="vcell" data-vi="${x.id}" style="--vc:${VT[x.t][2]}"><span class="vci">${ic(VT[x.t][1])}</span><b>${esc(x.n)}</b><em>${VRE[x.r]||''}</em></button>`).join('')}</div>`
+  ${V.it.length?`<div class="vh"><b>Déjà vécus</b></div><div class="vgrid">${V.it.slice().sort((a,b)=>b.d.localeCompare(a.d)).slice(0,30).map(x=>`<button class="vcell" data-vi="${x.id}" style="--vc:${VT[x.t][2]}"><span class="vci">${ic(VT[x.t][1])}</span><b>${esc(x.n)}</b><em>${VRE[x.r]||''}</em></button>`).join('')}</div>`
    :`<div class="vempty"><b>Commence par un truc que tu as vu ou fait cette semaine</b><div class="vchips">${Object.entries(VT).map(([k,[l,i,c]])=>`<button class="vchip" data-vadd="${k}" style="--vc:${c}">${ic(i)}<span>${l}</span></button>`).join('')}</div></div>`}`}
 function vuBind(){const V=vuS();
   const nw=$('[data-vnew]');if(nw)nw.onclick=()=>{buzz();vuAdd({})};
