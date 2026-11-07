@@ -169,6 +169,7 @@ svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .tile .ib svg{width:19px;height:19px}
 .tile b{font-size:16px;font-weight:600;letter-spacing:-.01em}
 .tile small{font-size:13px;color:var(--muted);font-weight:500}
+.tile.cta{background:var(--good);border-color:var(--good);color:#04130A;min-height:64px;box-shadow:0 8px 24px -8px var(--good)}.tile.cta .ib{background:rgba(0,0,0,.14);color:#04130A}.tile.cta b{font-size:18px;font-weight:700}.tile.cta small{color:rgba(4,19,10,.7)}.tile.cta:active{transform:scale(.97)}
 .tile.one{grid-column:1/-1;min-height:0;grid-template-columns:auto 1fr auto;align-items:center;padding:14px 16px}
 .tile.one::after{content:"";width:8px;height:8px;border-right:1.6px solid var(--muted);border-top:1.6px solid var(--muted);transform:rotate(45deg);margin-right:4px}
 .tile.one:not(:has(.ib)){grid-template-columns:1fr auto}
@@ -874,7 +875,7 @@ function amountUI(st,body,btm){let s=FL.v[st.k]!=null?String(FL.v[st.k]).replace
   btm.querySelector('#go').onclick=()=>{const v=parseFloat(s.replace(',','.'))||0;FL.v[st.k]=st.neg&&ng?-v:v;buzz();nextStep()}}
 function tilesUI(st,body){const opts=typeof st.opts==='function'?st.opts(FL.v):st.opts;
   const tcl=FL&&FL.steps.some(x=>x.pd==='in')?' tc t-in':FL&&FL.steps.some(x=>x.pd==='out')?' tc t-out':'';
-  body.innerHTML=`<div class="tiles">${opts.map((o,i)=>`<button class="tile${o.one?' one':''}${o.i?'':' noi'}${o.i?tcl:''}" data-i="${i}">${o.i?`<span class="ib">${ic(o.i)}</span>`:''}<span><b>${o.dot?`<span class="dot" style="background:${o.dot}"></span>`:''}${esc(o.l)}</b>${o.s?`<br><small>${esc(o.s)}</small>`:''}</span></button>`).join('')}</div>`;
+  body.innerHTML=`<div class="tiles">${opts.map((o,i)=>`<button class="tile${o.one?' one':''}${o.cta?' cta':''}${o.i?'':' noi'}${o.i?tcl:''}" data-i="${i}">${o.i?`<span class="ib">${ic(o.i)}</span>`:''}<span><b>${o.dot?`<span class="dot" style="background:${o.dot}"></span>`:''}${esc(o.l)}</b>${o.s?`<br><small>${esc(o.s)}</small>`:''}</span></button>`).join('')}</div>`;
   body.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];buzz();if(o.go){o.go(FL.v);return}FL.v[st.k]=o.v;nextStep()});
   if(st.time){const w=document.createElement('div');w.style.textAlign='center';w.innerHTML=`<label class="tlink">${ic('later')}<span class="tl">Heure précise</span><input type="time" class="dtin" id="tt" step="300" value="${esc(FL.v[st.k]||'')}"><button type="button" class="tv">Valider</button></label>`;body.appendChild(w);
    const lb=w.querySelector('.tlink'),ti=w.querySelector('#tt'),tl=w.querySelector('.tl');
@@ -974,7 +975,7 @@ function agEdit(a,what){const fin=r=>{if($('#agb'))agRender();return r};
   if(what==='d')return flow([{k:'d',q:'Quel jour ?',type:'date',nodate:1,past:1}],v=>{a.d=v.d;if(!a.d)a.h='';a.done=false;agD=a.d||agD;return fin(['Déplacé',a.d?dLab(a.d):'Dans ta liste'])});
   if(what==='t')return flow([{k:'t',q:'Renommer',type:'text',ph:a.t}],v=>{a.t=v.t;return fin(['Renommé',a.t])})}
 function agItem(id){const a=S.ag.find(x=>x.id===id);flow([
-  {k:'x',q:esc(a.t),sub:a.d?dLab(a.d)+(a.h?' · '+hl(a.h):''):'Dans ta liste',type:'tiles',opts:[{i:'later',l:a.h?'Changer l’heure ('+hl(a.h)+')':'Mettre une heure',s:'Matin, soir ou l’heure exacte',one:1,go:()=>agEdit(a,'h')},{i:'cal',l:'Changer le jour',s:a.d?dLab(a.d):'Pas encore de date',one:1,go:()=>agEdit(a,'d')},{i:'pen',l:'Renommer',one:1,go:()=>agEdit(a,'t')},{i:'check',l:'C’est fait',one:1,go:()=>{a.done=true;a.d=a.d<today?a.d:today;done(['Fait',a.t])}},{i:'next',l:a.d?'Décaler à demain':'Le prévoir demain',one:1,go:()=>{a.d=addD(a.d&&a.d>today?a.d:today,1);done(['Décalé',dLab(a.d)])}},{i:'trash',l:'Supprimer',one:1,go:()=>{S.ag=S.ag.filter(x=>x!==a);done(['Supprimé',''])}},{i:'undo',l:'Garder',one:1,go:()=>closeFl()}]}],()=>['',''])}
+  {k:'x',q:esc(a.t),sub:a.d?dLab(a.d)+(a.h?' · '+hl(a.h):''):'Dans ta liste',type:'tiles',opts:[a.done?{i:'undo',l:'Pas encore fait',s:'Remettre dans ta journée',one:1,go:()=>{a.done=false;done(['Remis',a.t])}}:{i:'check',l:'C’est fait',s:'Bravo, un de moins',one:1,cta:1,go:()=>{a.done=true;a.d=a.d<today?a.d:today;done(['Fait',a.t])}},{i:'later',l:a.h?'Changer l’heure ('+hl(a.h)+')':'Mettre une heure',s:'Matin, soir ou l’heure exacte',one:1,go:()=>agEdit(a,'h')},{i:'cal',l:'Changer le jour',s:a.d?dLab(a.d):'Pas encore de date',one:1,go:()=>agEdit(a,'d')},{i:'pen',l:'Renommer',one:1,go:()=>agEdit(a,'t')},{i:'next',l:a.d?'Décaler à demain':'Le prévoir demain',one:1,go:()=>{a.d=addD(a.d&&a.d>today?a.d:today,1);done(['Décalé',dLab(a.d)])}},{i:'trash',l:'Supprimer',one:1,go:()=>{S.ag=S.ag.filter(x=>x!==a);done(['Supprimé',''])}},{i:'undo',l:'Garder',one:1,go:()=>closeFl()}]}],()=>['',''])}
 
 
 /* ---------- Coffre ---------- */
