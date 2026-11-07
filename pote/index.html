@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794074781" data-theme="light">
+<html lang="fr" data-build="1794074837" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -2300,12 +2300,16 @@ function modWhy(k,sit){sit=sit||'';const m=sit.includes('m'),c=sit.includes('c')
   return (MODL.find(x=>x[0]===k)||[])[3]||''}
 function modSug(sit){sit=sit||'';let s='dow';if(/[mc]/.test(sit))s='f'+s;if(sit.includes('m'))s='u'+s;if(S.bin)s+='b';return s}
 const modOpts=v=>MODL.filter(([k])=>k!=='u'||(v.sit||'').includes('m')||mod('u')).map(([k,i,l])=>({v:k,i,l,s:modWhy(k,v.sit)}));
+const CM_STEPS=sk=>[{k:'cm',q:'Tu veux mettre de l’argent de côté chaque mois ?',sub:'Je le range dans ton coffre et je le retire de ce que tu peux dépenser dès le début du mois. Tu ne le dépenses pas sans le voir.',type:'tiles',skip:sk||(()=>0),opts:[25,50,100,200].map(n=>({v:n,i:'safe',l:eur0(n)+' par mois'})).concat([{i:'pen',l:'Un autre montant',one:1,go:v=>{v.cmf=1;nextStep()}},{v:0,i:'later',l:'Pas pour l’instant',s:'Tu pourras le faire dans Moi → Coffre',one:1}])},{k:'cm',q:'Combien par mois ?',type:'amount',skip:v=>!v.cmf||(sk&&sk(v))}];
+const cmApply=v=>{if(v.cm==null)return;S.cof=S.cof||{v:0,h:[]};S.cof.m=+v.cm||0};
+function cofAsk(){if(!S.name||!S.pf||!mod('o')||(S.cof&&S.cof.m>0)||S.cmAsk)return;setTimeout(()=>{if(FL||$('.fl')||$('.scr')||$('#intro')||$('.strk')||$('.ok'))return;S.cmAsk=today;save();flow(CM_STEPS(),v=>{cmApply(v);return v.cm?['C’est noté',eur0(v.cm)+' par mois au coffre, déjà retirés']:['OK','Tu pourras le faire dans Moi → Coffre']})},2600)}
 const PF_STEPS=()=>[
   {k:'sit',q:'Tu fais quoi dans la vie ?',sub:'Coche tout ce qui te correspond : Base s’adapte à toi.',type:'multi',opts:SIT.map(([v,i,l])=>({v,i,l}))},
   {k:'mods',q:v=>'Voilà ton Base'+(S.name||v.n?', '+esc(S.name||v.n):''),sub:'Je l’ai préparé pour toi. Décoche ou ajoute, tu pourras tout changer quand tu veux.',type:'multi',def:v=>modSug(v.sit),none:'Le strict minimum',opts:modOpts},
+  ...CM_STEPS(v=>!(v.mods||'').includes('o')||!!(S.cof&&S.cof.m>0&&v.cm==null&&!v.cmr)),
   {k:'pa',q:v=>(v.sit||'').includes('c')?'Ta société a son compte à elle ?':'Tu as un compte rien que pour ton activité ?',sub:'Comme ça, son argent ne se mélange pas avec le tien.',type:'tiles',skip:v=>!(v.mods||'').includes('f'),opts:[{v:'y',i:'bank',l:'Oui, un compte à part',s:'Ex. Qonto, Shine, un compte pro à ta banque'},{v:'n',i:'wallet',l:'Non, pas de compte pro',s:'Tes dépenses pro restent sur tes comptes perso, rangées en « Pro »'}]},
   {k:'pacc',q:'Ton compte pro, il a combien ?',sub:'Une ligne par compte. Il reste séparé de ton argent perso.',type:'accounts',def:()=>(S.pro&&S.pro.acc&&S.pro.acc.length?S.pro.acc.map(x=>({n:x.n,v:null,neg:false,ph:x.v})):[{n:'',v:null,neg:false}]),skip:v=>!(v.mods||'').includes('f')||v.pa!=='y'}];
-function pfApply(v){const o=S.pf||{};const was=mod('f')&&!!S.pf;S.pf={...o,sit:v.sit||'',mods:v.mods||''};const r=parseFloat(String(v.urs||'').replace(',','.'));if(r>0&&r<80)S.pf.urs=r;if(v.cpt!=null)S.pf.cpt=v.cpt;
+function pfApply(v){cmApply(v);const o=S.pf||{};const was=mod('f')&&!!S.pf;S.pf={...o,sit:v.sit||'',mods:v.mods||''};const r=parseFloat(String(v.urs||'').replace(',','.'));if(r>0&&r<80)S.pf.urs=r;if(v.cpt!=null)S.pf.cpt=v.cpt;
   if((v.mods||'').includes('f')){S.pro=S.pro||{e:[],inc:[],sent:{}};if(v.pa==='n')S.pro.acc=null;else if(v.pa==='y'&&Array.isArray(v.pacc)){const acc=v.pacc.filter(x=>x.v!=null).map(x=>({n:x.n||'Compte pro',v:x.v}));if(acc.length)S.pro.acc=acc,S.pro.d=today,S.pro.v=Math.round(acc.reduce((a,x)=>a+x.v,0)*100)/100}}
   applyMods();if(!was&&(v.mods||'').includes('f'))setTimeout(proIntro,2300)}
 function proIntro(n){if(FL||$('.fl')||$('.ok')||$('.strk')){if((n||0)<8)setTimeout(()=>proIntro((n||0)+1),1200);return}
@@ -2370,7 +2374,7 @@ function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoi
 function countUp(){const el=$('#balc strong');if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=liveBal();if(L==null)return;const t0=performance.now(),D=900;
   const f=t=>{const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=eur(Math.round(L*e*100)/100);if(k<1)requestAnimationFrame(f);else el.textContent=eur(L)};requestAnimationFrame(f)}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
-try{applyMods()}catch(e){}home();vgCheck();towerCheck();crackCheck();rcMaybe();lockCheck();jkToast();pfAsk();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();0}
+try{applyMods()}catch(e){}home();vgCheck();towerCheck();crackCheck();rcMaybe();lockCheck();jkToast();pfAsk();cofAsk();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();0}
 </script>
 <script>
 (()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;let busy=0;
