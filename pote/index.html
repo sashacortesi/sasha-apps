@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794068330" data-theme="light">
+<html lang="fr" data-build="1794076000" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -642,6 +642,20 @@ body{background:#000}
 /* sélection multiple */
 .tile.mt{position:relative}.tile.mt .mk{position:absolute;top:12px;right:12px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 1.5px var(--sep);color:transparent}.tile.mt .mk svg{width:14px;height:14px;stroke-width:2.4}
 .tile.mt.on{box-shadow:inset 0 0 0 2px var(--c-ag)}.tile.mt.on .mk{background:var(--c-ag);box-shadow:none;color:#fff}
+
+/* ===== Le jeu dans Moi ===== */
+.chc{width:100%;display:grid;gap:12px;padding:18px;border:0;border-radius:22px;font:inherit;text-align:left;color:#fff;margin:4px 0 6px;
+  background:radial-gradient(120% 90% at 0% 0%,#2E9D57 0%,transparent 55%),linear-gradient(160deg,#1E7A43,#0E3F24);box-shadow:0 14px 30px -16px rgba(31,163,74,.8)}
+.chh{display:grid;gap:4px}.chb{justify-self:start;font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.18)}.chh b{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.chc .vgb i{background:rgba(255,255,255,.18)}.chc .vgb i.on{background:linear-gradient(180deg,#FFD66B,#FF9F0A)}
+.chg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.chg div{display:grid;padding:10px;border-radius:14px;background:rgba(255,255,255,.12)}.chg b{font-family:var(--num);font-size:20px}.chg small{font-size:12px;opacity:.8;font-weight:600}
+.chm{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.95);color:#0E3F24}.chm span{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700}.chm span svg{width:16px;height:16px}.chm b{font-family:var(--num);font-size:16px}
+.qlist{display:grid;gap:8px}.qrow{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px;border-radius:18px;background:var(--card)}
+.qic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-family:var(--num);font-weight:800;font-size:14px;color:#FF9500;background:color-mix(in srgb,#FF9500 14%,var(--card))}.qic svg{width:18px;height:18px;stroke-width:2.4}
+.qrow.qdone .qic{background:var(--good);color:#fff}.qtx{display:grid;gap:7px}.qtx b{font-size:15px}.qtx i{display:block;height:6px;border-radius:3px;background:var(--card2);overflow:hidden}.qtx em{display:block;height:100%;background:linear-gradient(90deg,#FFB340,#FF9500);border-radius:3px}
+.qrow.qdone .qtx em{background:var(--good)}.qrow small{font-family:var(--num);font-size:12.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+.strk.qp .qbig{width:110px;height:110px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(160deg,#5FD37E,#1FA34A);animation:yay .6s cubic-bezier(.2,.9,.3,1.4) both;margin-bottom:14px}.strk.qp .qbig svg{width:52px;height:52px;color:#fff;stroke-width:2.4}
+.strk.qp b{font-size:28px;text-align:center}.strk.qp em{font-style:normal;font-family:var(--num);font-size:20px;font-weight:800;color:#FFD66B}
 </style>
 </head>
 <body>
@@ -1079,7 +1093,7 @@ function done([t,s]){const f=$('.fl');if(f)f.remove();FL=null;save();
   const N=big?14:9,parts=Array.from({length:N},(_,i)=>`<i style="--a:${Math.round(i*360/N)}deg;--d:${big?-86:-66}px"></i>`).join('');
   const o=document.createElement('div');o.className='ok'+(big?' grand':'');
   o.innerHTML=`<div class="stp"><span class="rg"></span>${parts}<svg class="dr" viewBox="0 0 104 104"><circle cx="52" cy="52" r="48"/><path d="M33 53l13 13 25-27"/></svg></div><b>${esc(t)}</b>${s?`<small>${esc(s)}</small>`:''}${all?'<span class="xt">Tout est à jour</span>':''}`;
-  document.body.appendChild(o);home();vgCheck();streakCheck(all?2350:1800);badgeCheck(all?2350:1800);levelCheck(all?2600:2000);
+  document.body.appendChild(o);home();vgCheck();qCheck();streakCheck(all?2350:1800);badgeCheck(all?2350:1800);levelCheck(all?2600:2000);
   setTimeout(()=>{buzz(9);sfx('stamp')},80);setTimeout(()=>{buzz(big?[12,60,18]:10);sfx(big?'big':'ok')},470);
   setTimeout(()=>o.classList.add('out'),all?1900:1350);setTimeout(()=>{o.remove();rcBack()},all?2250:1700);
   o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
@@ -1364,9 +1378,10 @@ function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().cha
   const BL=badgeList().map((b,k)=>[...b,k]).sort((a,b)=>(b[1]-a[1])||(a[3]-b[3]));
   const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €','var(--good)'],...(S.vice&&W.fs!=null?[[sans30().n+' / '+sans30().of+' j','jours sans sur les 30 derniers','#64D2FF']]:[[W.agd,'chose'+(W.agd>1?'s':'')+' faite'+(W.agd>1?'s':''),'var(--c-ag)']]),[eur0(W.kept),'gardés grâce à « Envie d’acheter »','var(--c-cof)'],[eur0(W.rb),'de dettes remboursées','var(--c-debt)']];
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
-  <div class="me"><button class="house" data-a="prog" aria-label="Ma maison">${houseSvg(V.n)}</button>
+  ${chantierCard()}<div class="me"><button class="house" data-a="prog" aria-label="Ma maison">${houseSvg(V.n)}</button>
   <b class="nm">${esc(S.name||'Moi')}</b><span class="lvl">Étape ${V.n} sur 7 · ${V.name}</span></div>
   ${(()=>{const W7=weekBlocks();return `<button class="lvc" data-a="prog"><div class="lvt"><span class="fl4">Cette semaine <b>${Math.min(W7.ok,7)} / 5</b></span><span>${W7.ok>=5?'Objectif tenu ✓':'Encore '+(5-W7.ok)+' jour'+(5-W7.ok>1?'s':'')}</span></div><div class="wk7">${W7.B}</div><div class="lvt"><span>${xpDays()} jour${xpDays()>1?'s':''} tenu${xpDays()>1?'s':''} au total</span><span>Plus haute pile : ${recordStreak()}</span></div><div class="pb"><i style="width:${Math.max(4,Math.round(V.p*100))}%"></i></div><small class="lvn">${nx?'Encore '+V.left+' points pour « '+nx[1]+' »':'Ta maison est terminée'}</small><span class="jkl">${jkIc(jkLeft())}${jkLeft()?'1 joker dispo cette semaine':'Joker utilisé · revient lundi'}</span></button>`})()}
+  ${qCard()}
   <div class="sec"><h2>Tes victoires</h2></div>
   <div class="vic">${vic.map(([v,l,c])=>`<div><b style="color:${c}">${v}</b><small>${l}</small></div>`).join('')}</div>
   <div class="sec"><h2>Ton objectif</h2></div>
@@ -1391,7 +1406,7 @@ function recordStreak(){const st=okStreak(),r=Math.max(S.rec||0,st,okBest());if(
 
 /* Points : la régularité ET les vrais résultats */
 function xpPts(){const debts=S.e.filter(x=>x.c==='dette').length,wish=(S.wish||[]).filter(w=>w.st==='skip').length,g=S.cof&&S.cof.g&&cofV()>=S.cof.g.v?1:0,gap=S.e.filter(x=>x.gap).length;
-  return xpDays()+debts*8+wish*3+g*15+Object.keys(S.bseen||{}).length*5+Math.min(gap,5)*2}
+  return xpDays()+debts*8+wish*3+g*15+Object.keys(S.bseen||{}).length*5+Math.min(gap,5)*2+(S.vgG||0)*3+(S.vgPts||0)+qPts()}
 
 /* Code de verrouillage */
 async function sha(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('base:'+t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return 'x'+t}}
@@ -1484,7 +1499,7 @@ function houseSvg(n){const on=k=>n>=k,G='var(--hsg)',O='#FF9F0A',lit=n>=7;
 function weekBlocks(){const m=mon(today),used=!jkLeft()&&okStreak()>0;let ok=0,jd=null;if(used)for(let d=addD(today,-1);d>=m;d=addD(d,-1))if(!dayOk(d)){if(dayOk(addD(d,-1)))jd=d;break}const B=[...Array(7)].map((_,i)=>{const d=addD(m,i),o=d<=today&&dayOk(d);if(o)ok++;if(d===jd)return `<i class="jk">${jkIc(1)}</i>`;return `<i class="${o?'on':d===today?'td':d<today?'miss':''}"></i>`}).join('');return{B,ok}}
 const jkIc=on=>`<svg class="jki${on?'':' off'}" viewBox="0 0 44 26" aria-hidden="true"><rect x="2" y="2" width="40" height="22" rx="5"/><path d="M22 6.5l1.6 4.9 4.9 1.6-4.9 1.6L22 19.5l-1.6-4.9-4.9-1.6 4.9-1.6z"/></svg>`;
 function jkToast(){try{const yd=addD(today,-1),st=okStreak();if(!S.name||dayOk(yd)||!st||!(S.start<yd)||S.jkT===today||dayOk(addD(yd,-1))===false)return;S.jkT=today;save();setTimeout(()=>{const t=document.createElement('div');t.className='toast';t.innerHTML=`${jkIc(1)}<span>Hier est couvert par ton joker. Ta série continue : ${st} jour${st>1?'s':''}.</span>`;document.body.appendChild(t);setTimeout(()=>t.classList.add('out'),4200);setTimeout(()=>t.remove(),4600);t.onclick=()=>t.remove()},900)}catch(e){}}
-function levelCheck(ms=1800){try{if(!S.name)return;const n=lvl().n;if(S.lvN==null||n<S.lvN){S.lvN=n;return}if(n>S.lvN){S.lvN=n;save();setTimeout(()=>{const go=()=>{const o=document.createElement('div');o.className='strk lvp';o.innerHTML=`<div class="hsw">${houseSvg(n)}</div><small>Ta maison avance</small><b>${LV[n-1][1]}</b><small>${LV[n]?'Prochaine étape : '+LV[n][1]:'Elle est terminée. Elle est à toi.'}</small><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}};$('.strk')?setTimeout(go,2400):go()},ms)}}catch(e){}}
+function levelCheck(ms=1800){try{if(!S.name)return;const n=lvl().n;if(S.lvN==null||n<S.lvN){S.lvN=n;return}if(n>S.lvN){S.lvN=n;save();setTimeout(()=>{const go=()=>{const o=document.createElement('div');o.className='strk lvp';o.innerHTML=`<div class="hsw">${houseSvg(n)}</div><small>Niveau supérieur · ta maison avance</small><b>${LV[n-1][1]}</b><small>${LV[n]?'Prochaine étape : '+LV[n][1]:'Elle est terminée. Elle est à toi.'}</small><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}};$('.strk')?setTimeout(go,2400):go()},ms)}}catch(e){}}
 function sans30(k){const ks=k?[k]:keys();if(!ks.length)return{n:0,of:0};const st=S.vstart&&S.vstart>addD(today,-29)?S.vstart:addD(today,-29);let n=0,of=0;
   for(let d=st;d<=today;d=addD(d,1)){of++;const l=S.log[d];if(l&&ks.every(x=>l[x]===0))n++}return{n,of}}
 function legalScr(){scr('Mentions et confidentialité',`<div class="tipb"><b>Ce qu’est Base</b><p class="tl">Un outil de suivi personnel, pour t’aider à y voir clair. Ce n’est pas un conseil financier, juridique ou médical. Pour une aide personnalisée : les Points conseil budget (gratuits) ou ton médecin.</p></div>
@@ -1590,17 +1605,34 @@ function vgScr(){const V=vgState();if(!V)return;const gold=S.vgG||0,P=[25,50,75,
    <div class="msum"><div><b>${gold}</b><small>briques dorées</small></div><div><b>${P.filter(x=>got.includes(x)).length} / 4</b><small>paliers</small></div><div><b>${Math.round(V.p*100)} %</b><small>du trou rempli</small></div></div>`)}
 function vgEve(msg){try{const V=vgState();if(!V||V.def<=0&&!(V.H.free+V.H.tdS<0))return msg;const sp=V.H.tdS,ok=sp<=V.tg+.5;S.vgM=S.vgM||{};if(S.vgM[today])return msg;S.vgM[today]=ok?1:-1;
   const nl=Math.max(1,V.H.left-1),tm=V.nr?Math.max(0,(V.H.free+V.nr.v)/nl):0;
-  if(ok){const n=sp<.5?2:1;S.vgG=(S.vgG||0)+n;return[n>1?'Deux briques posées':'Brique posée',V.nr?'Demain, ton budget monte à '+eur0(tm)+'.':'Le trou ne grandit pas. Bien joué.']}
+  if(ok){const n=sp<.5?2:1;S.vgG=(S.vgG||0)+n;return[n>1?'Deux briques dorées':'Brique dorée','+'+(n*3)+' points · '+(V.nr?'demain, ton budget monte à '+eur0(tm)+'.':'le trou ne grandit pas.')]}
   return['C’est noté',`Aujourd’hui c’était ${eur0(sp)}. C’est déjà ça. Demain : ${eur0(tm)} maximum, et on continue.`]}catch(e){return msg}}
 function vgCheck(){try{const V=vgState();if(!V)return;
-  if(S.vgWin){delete S.vgWin;S.vgW=0;S.vgBr=0;S.vgP=[];S.vgSt=today;save();return vgPop('Tu es au niveau du sol','Le trou est rempli. Maintenant, on construit. Étape 1 : Terrain.',1)}
+  if(S.vgWin){delete S.vgWin;S.vgPts=(S.vgPts||0)+50;S.vgW=0;S.vgBr=0;S.vgP=[];S.vgSt=today;save();return vgPop('Tu es au niveau du sol','Le trou est rempli. Maintenant, on construit. Étape 1 : Terrain.',1)}
   if(V.def>0){S.vgLastDef=V.def;if(V.br>(S.vgBr||0)){S.vgBr=V.br}const fresh=S.bal&&S.bal.d>=addD(today,-3);S.vgP=S.vgP||[];
-    const hit=[25,50,75,90].filter(x=>V.p*100>=x&&!S.vgP.includes(x));if(hit.length&&fresh){const x=hit.at(-1);S.vgP.push(...hit);save();const t={25:'Un quart du trou est rempli',50:'La moitié du trou est remplie',75:'Les trois quarts sont remplis',90:'La dernière ligne droite'}[x];
+    const hit=[25,50,75,90].filter(x=>V.p*100>=x&&!S.vgP.includes(x));if(hit.length&&fresh){const x=hit.at(-1);S.vgP.push(...hit);S.vgPts=(S.vgPts||0)+20*hit.length;save();const t={25:'Un quart du trou est rempli',50:'La moitié du trou est remplie',75:'Les trois quarts sont remplis',90:'La dernière ligne droite'}[x];
       return vgPop(t,x===90?'Plus que '+eur0(V.def)+'. Tu y es presque.':'Les '+eur0(V.W-V.def)+' qui manquaient en moins, c’est toi qui les as remontés.')}
     save()}
   else if(S.vgSt){const n=Math.round((pd(today)-pd(S.vgSt))/864e5);if(n>=7&&!S.vgSd){S.vgSd=1;save();vgPop('Terrain stable','7 jours au-dessus de 0. Ta maison a un vrai sol maintenant.',1)}}}catch(e){}}
 function vgPop(t,s,big){if($('.strk'))return;const o=document.createElement('div');o.className='strk vgw'+(big?' big':'');o.innerHTML=`<div class="fdn sm"><div class="grass${big?' up':''}"></div><div class="hole">${[...Array(10)].map((_,i)=>`<i class="on"></i>`).join('')}</div></div><b>${esc(t)}</b><small>${esc(s)}</small><button>Continuer</button>`;
   document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
+
+/* ===== Le jeu : quêtes de la semaine + chantier dans Moi ===== */
+function qWeek(){const m=mon(today),ds=[];for(let d=m;d<=today;d=addD(d,1))ds.push(d);const V=vgState(),red=V&&V.def>0;
+  const zero=ds.filter(d=>dayOk(d)&&!S.e.some(x=>x.d===d&&x.c!=='dette')).length,eves=ds.filter(d=>(S.eve||{})[d]||dayOk(d)).length;
+  const mis=Object.entries(S.vgM||{}).filter(([d,v])=>d>=m&&v===1).length,cof=S.cof?(S.cof.h||[]).filter(x=>x.d>=m&&x.v>0).reduce((a,x)=>a+x.v,0):0;
+  if(red){const goal=Math.max(30,Math.round(V.W*.1/10)*10),h0=(S.hist||{})[m],up=h0!=null&&S.bal?Math.max(0,Math.round(liveBal()-h0)):0;
+    return[{id:'up',t:'Remonter de '+eur0(goal),v:up,n:goal,u:'€',r:15},{id:'mis',t:'Réussir 3 missions',v:mis,n:3,r:10},{id:'z',t:'2 journées à 0 €',v:zero,n:2,r:10}]}
+  return[{id:'ev',t:'5 jours tenus',v:eves,n:5,r:10},{id:'z',t:'2 journées à 0 €',v:zero,n:2,r:10},{id:'cof',t:'Mettre 20 € de côté',v:Math.round(cof),n:20,u:'€',r:10}]}
+function qPts(){let n=0;for(const w in (S.qd||{}))n+=S.qd[w].reduce((a,x)=>a+(+String(x).split(':')[1]||10),0);return n}
+function qCheck(){try{if(!S.name)return;const w=mon(today);S.qd=S.qd||{};const L=S.qd[w]=S.qd[w]||[];const Q=qWeek();
+  for(const q of Q)if(q.v>=q.n&&!L.some(x=>String(x).startsWith(q.id+':'))){L.push(q.id+':'+q.r);save();setTimeout(()=>{const go=()=>{const o=document.createElement('div');o.className='strk qp';o.innerHTML=`<div class="qbig">${ic('check')}</div><small>Quête réussie</small><b>${esc(q.t)}</b><em>+${q.r} points</em><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}};$('.strk')?setTimeout(go,2400):go()},1900);break}}catch(e){}}
+function qCard(){const Q=qWeek(),w=mon(today),L=(S.qd||{})[w]||[],d=7-((pd(today).getDay()+6)%7);
+  return `<div class="sec"><h2>Quêtes de la semaine</h2><small>${d>1?'encore '+d+' jours':'dernier jour'}</small></div><div class="qlist">${Q.map(q=>{const ok=L.some(x=>String(x).startsWith(q.id+':'))||q.v>=q.n;return `<div class="qrow${ok?' qdone':''}"><span class="qic">${ok?ic('check'):'+'+q.r}</span><span class="qtx"><b>${esc(q.t)}</b><i><em style="width:${Math.min(100,Math.round(q.v/q.n*100))}%"></em></i></span><small>${ok?'Fait':Math.min(q.v,q.n)+(q.u?' €':'')+' / '+q.n+(q.u?' €':'')}</small></div>`}).join('')}</div>`}
+function chantierCard(){const V=vgState();if(!V||V.def<=0)return '';const M=V.zero?'Journée à 0 €':'Rester sous '+eur0(V.tg);
+  return `<button class="chc" data-a="vg"><div class="chh"><span class="chb">Mode chantier</span><b>Retour au vert</b></div><div class="vgb">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div>
+   <div class="chg"><div><b>${V.p>=.9?eur0(V.def):V.br+'/10'}</b><small>${V.p>=.9?'plus que':'briques'}</small></div><div><b>${S.vgG||0}</b><small>dorées</small></div><div><b>${(S.vgP||[]).length}/4</b><small>paliers</small></div></div>
+   <div class="chm"><span>${ic('spark')}Mission du jour</span><b>${M}</b></div></button>`}
 
 /* ---------- Réserve ---------- */
 function cofCard(B){const v=cofV(),g=S.cof&&S.cof.g;
