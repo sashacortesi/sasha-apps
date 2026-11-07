@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794081000" data-theme="light">
+<html lang="fr" data-build="1794082000" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -694,6 +694,24 @@ body{background:#000}
 .vpl.win{background:linear-gradient(135deg,#1E7A43,#2E9D57);color:#fff}.vpl.win small{color:rgba(255,255,255,.85)}.vpl.win .vpi{background:rgba(255,255,255,.2);color:#fff}
 .chs{font-size:13px;font-weight:600;opacity:.92;text-align:center}
 .tnow{width:calc(100% - 32px);display:grid;gap:10px;padding:14px;border-radius:16px;background:var(--bg);text-align:left}
+
+/* ===== Tour épurée ===== */
+.tcard2{width:100%;border:0;padding:22px 16px 16px;border-radius:24px;background:var(--card);font:inherit;color:var(--ink);display:grid;gap:12px;justify-items:center;text-align:center;margin:4px 0 6px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.ftw{display:grid;justify-items:center;gap:0}.ffac{display:grid;gap:8px;padding:14px;border-radius:10px 10px 0 0;background:var(--bg)}
+[data-theme="dark"] .ffac{background:#2C2C2E}
+.frow{display:grid;grid-template-columns:repeat(7,22px);gap:6px}.fw{width:22px;height:22px;border-radius:4px;background:#E5E5EA}[data-theme="dark"] .fw{background:#3A3A3C}
+.fw.on{background:#FFD60A}.fw.gd{background:#FF9F0A;box-shadow:0 0 0 2px rgba(255,159,10,.3)}.fw.fut,.fw.na{background:transparent;box-shadow:inset 0 0 0 1.5px #D1D1D6}[data-theme="dark"] .fw.fut,[data-theme="dark"] .fw.na{box-shadow:inset 0 0 0 1.5px #48484A}
+.fw.td{background:transparent;box-shadow:inset 0 0 0 1.5px #FF9F0A}
+.fw.now{animation:fwon .45s cubic-bezier(.2,.9,.3,1.4) .3s both}@keyframes fwon{0%{transform:scale(.6);opacity:.3}100%{transform:none;opacity:1}}
+.fgnd{width:250px;height:2px;border-radius:1px;background:#34C759}
+.fmore{font-size:12px;color:var(--muted);font-weight:600;padding:6px 0 4px;background:var(--bg);width:226px;text-align:center}[data-theme="dark"] .fmore{background:#2C2C2E}
+.fbase{display:grid;grid-template-columns:repeat(10,18px);gap:4px;margin-top:10px}.fbase i{width:18px;height:10px;border-radius:3px;background:#E5E5EA}[data-theme="dark"] .fbase i{background:#3A3A3C}.fbase i.on{background:#34C759}
+.flab{font-size:11px;color:var(--muted);font-weight:600;margin-top:5px}
+.tc2{display:grid;gap:2px}.tc2 b{font-size:17px;font-weight:700}.tc2 span{font-size:13px;color:var(--muted);font-weight:500}
+.tred{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:650;color:var(--good)}.tred svg{width:16px;height:16px}
+.tmis{width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:14px;background:var(--bg)}.tmis span{font-size:13px;color:var(--muted);font-weight:600}.tmis b{font-family:var(--num);font-size:15px}
+.tfull{display:grid;justify-items:center;padding:22px 0;border-radius:24px;background:var(--card)}
+.qrow{grid-template-columns:1fr auto!important;padding:12px 14px!important}.qrow small svg{width:16px;height:16px;color:var(--good);stroke-width:2.6}
 </style>
 </head>
 <body>
@@ -808,7 +826,7 @@ function catsCard(){const m={};let t=0;for(const x of S.e.filter(x=>x.d.startsWi
   const L=Object.entries(m).sort((a,b)=>b[1]-a[1]);
   return `<div class="cats"><div class="hd"><b>Où part ton argent</b><span>${MNL[+YM.slice(5,7)-1]}</span></div><div class="bar">${L.map(([c,v])=>`<i style="width:${v/t*100}%;background:${CCOL[c]||'#8E8E93'}"></i>`).join('')}</div>${L.slice(0,5).map(([c,v])=>`<div class="cr"><span class="dot" style="background:${CCOL[c]||'#8E8E93'}"></span><span>${esc(CN[c]?CN[c][2]:'Autre')}<small>${Math.round(v/t*100)} %</small></span><b>${eur(v)}</b></div>`).join('')}${m.conso?`<div class="dnote" style="text-align:left;padding:0">${esc(CN.conso[2])} : ${eur0(m.conso)} ce mois, soit ${eur0(m.conso/Math.max(1,+today.slice(8))*30)} sur un mois entier à ce rythme.</div>`:''}</div>`}
 async function shareApp(){const u=location.origin+location.pathname,t='Base : l’app qui m’aide à tenir mon argent et mes journées. Gratuite, sans compte.';try{if(navigator.share){await navigator.share({title:'Base',text:t,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t+' '+u);done(['Lien copié','Colle-le à qui tu veux'])}catch(e){done(['Le lien',u])}}
-function setSheet(){const T=[['sun','Apparence : '+({light:'clair',dark:'nuit',auto:'comme l’iPhone'}[S.theme||'light']),themeFlow],['in','Importer Plan Budget',()=>pbPaste()],['gear','Mon profil et mon budget',settings],['bell',pushOn()?'Rappels : activés':'Activer les rappels',()=>pushOn()?pushOff():pushEnable()],['folder','Sauvegarder mes données',backup],['cal','Calendrier du téléphone',icsExport],['help','Aide',()=>helpScr()],['share','Partager Base',shareApp]];
+function setSheet(){const T=[...(S.vice?[['leaf','Ma conso : '+CN.conso[2],fumeScr]]:[]),['users',S.bin?'Mon binôme · '+S.bin:'Un binôme pour me suivre',binFlow],['bank','Mes droits et mes frais',droitsScr],['sun','Apparence : '+({light:'clair',dark:'nuit',auto:'comme l’iPhone'}[S.theme||'light']),themeFlow],['in','Importer Plan Budget',()=>pbPaste()],['gear','Mon profil et mon budget',settings],['bell',pushOn()?'Rappels : activés':'Activer les rappels',()=>pushOn()?pushOff():pushEnable()],['folder','Sauvegarder mes données',backup],['cal','Calendrier du téléphone',icsExport],['help','Aide',()=>helpScr()],['share','Partager Base',shareApp]];
   flow([{k:'x',q:'Réglages',sub:'Tes données restent sur ce téléphone.',type:'tiles',opts:T.map(([i,l,f])=>({i,l,one:1,go:()=>{closeFl();f()}}))}],()=>['',''])}
 function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x.v||0),0)*100)/100;try{snapBal()}catch(e){}const r=reste(),now=new Date(),left=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1;
   const its=S.ag.filter(a=>a.d===today).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'));
@@ -840,7 +858,7 @@ function homeBind(){const B=badges();bindCopy($('#app'));try{const n=S.name?task
 }
 
 /* Ton cap : on ne montre pas un relevé de banque, on montre le chemin. Toujours une issue, jamais de peur. */
-const LV=[[0,'Terrain'],[10,'Fondations'],[30,'Murs'],[60,'Fenêtres'],[100,'Toit'],[160,'Maison'],[250,'Chez toi']];
+const LV=[[0,'Rez-de-chaussée'],[10,'Premiers étages'],[30,'Mi-hauteur'],[60,'Régulier'],[100,'Solide'],[160,'Gratte-ciel'],[250,'Au sommet']];
 function xpDays(){let n=0,d=S.start||today;for(let k=0;k<500&&d<=today;k++){if(dayOk(d))n++;d=addD(d,1)}return n}
 function lvl(){const x=xpPts();let i=0;while(i<LV.length-1&&x>=LV[i+1][0])i++;const nx=LV[i+1];return{n:i+1,name:LV[i][1],x,left:nx?nx[0]-x:0,p:nx?(x-LV[i][0])/(nx[0]-LV[i][0]):1}}
 function heroCard(){if(!S.bal)return balCard();
@@ -1412,21 +1430,12 @@ function badgeList(){const V=vicStats(),g=S.cof&&S.cof.g,cv=cofV(),b=Math.max(V.
 function badgeCheck(ms=1800){try{if(!S.name)return;const on=badgeList().filter(b=>b[1]);if(S.bdgN==null||on.length<S.bdgN||!S.bdgS){S.bdgN=on.length;S.bdgS=on.map(b=>b[0]);return}
   if(on.length>S.bdgN){const seen=S.bdgS||[],nw=on.find(b=>!seen.includes(b[0]))||on[on.length-1];S.bdgN=on.length;S.bdgS=on.map(b=>b[0]);save();setTimeout(()=>{if($('.strk'))return setTimeout(()=>badgePop(nw),2200);badgePop(nw)},ms)}else if(!S.bdgS)S.bdgS=on.map(b=>b[0])}catch(e){}}
 function badgePop([t,,i]){const o=document.createElement('div');o.className='strk bp';o.innerHTML=`<div class="bdx">${ic(i)}</div><small>Nouvelle pierre posée</small><b>${esc(t)}</b><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
-function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().charAt(0).toUpperCase()),R=56,C=+(2*Math.PI*R).toFixed(1),nx=LV[V.n],W=vicStats(),g=S.cof&&S.cof.g,cv=cofV();
-  const BL=badgeList().map((b,k)=>[...b,k]).sort((a,b)=>(b[1]-a[1])||(a[3]-b[3]));
-  const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €','var(--good)'],...(S.vice&&W.fs!=null?[[sans30().n+' / '+sans30().of+' j','jours sans sur les 30 derniers','#64D2FF']]:[[W.agd,'chose'+(W.agd>1?'s':'')+' faite'+(W.agd>1?'s':''),'var(--c-ag)']]),[eur0(W.kept),'gardés grâce à « Envie d’acheter »','var(--c-cof)'],[eur0(W.rb),'de dettes remboursées','var(--c-debt)']];
+function moiView(B){const g=S.cof&&S.cof.g,cv=cofV();
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
-  ${chantierCard()}${(()=>{const T=towerStats();return `<button class="tcard" data-a="tour">${towerSvg(4)}<div class="tcap"><b>${esc((S.name||'Ta').split(' ')[0])}${S.name?', ta':''} tour · ${T.n} étage${T.n>1?'s':''}</b><span>${T.lit} fenêtre${T.lit>1?'s':''} allumée${T.lit>1?'s':''}</span></div>
-   ${(()=>{const W7=weekBlocks();return `<div class="tnow"><div class="lvt"><span class="fl4">Cette semaine <b>${Math.min(W7.ok,7)} / 7</b></span>${jkLeft()?`<span class="jkl">${jkIc(1)}joker</span>`:''}</div><div class="wk7">${W7.B}</div></div>`})()}</button>`})()}
+  ${moiTour()}
   ${qCard()}
-  <div class="sec"><h2>Tes victoires</h2></div>
-  <div class="vic">${vic.map(([v,l,c])=>`<div><b style="color:${c}">${v}</b><small>${l}</small></div>`).join('')}</div>
   <div class="sec"><h2>Ton objectif</h2></div>
-  ${g?`<button class="goal" data-a="cof"><div class="gt"><b>${esc(g.n)}</b><span>${eur0(cv)} / ${eur0(g.v)}</span></div><div class="pb"><i style="width:${Math.max(3,Math.min(100,cv/g.v*100))}%"></i></div><small>${cv>=g.v?'Objectif atteint, bravo':'Encore '+eur0(g.v-cv)+(S.cof.w?' · '+eur0(S.cof.w)+' chaque lundi':'')}</small></button>`:`<button class="goal add" data-a="cof"><span class="gi">${ic('gift')}</span><span><b>Fixe-toi un objectif</b><small>Vacances, permis, une sécurité…</small></span>${ic('next')}</button>`}
-  <div class="mlist" style="margin-top:4px"><button class="mrow2" data-a="bin"><span>${ic('users')}</span><b>${S.bin?'Mon binôme · '+esc(S.bin):'Un binôme pour me suivre'}</b>${ic('next')}</button><button class="mrow2" data-a="droits"><span>${ic('bank')}</span><b>Mes droits et mes frais</b>${ic('next')}</button></div>
-  <div class="sec"><h2>Pierres posées</h2><small>${BL.filter(b=>b[1]).length} / ${BL.length}</small></div>
-  <div class="bdgs">${BL.map(([t,ok,i])=>`<div class="${ok?'on':''}"><span>${ok?ic(i):''}</span><small>${t}</small></div>`).join('')}</div>
-  ${S.name&&S.vice?`<div class="mlist" style="margin-top:6px"><button class="mrow2" data-a="fume"><span>${ic('leaf')}</span><b>${esc(CN.conso[2])}</b>${ic('next')}</button></div>`:''}`}
+  ${g?`<button class="goal" data-a="cof"><div class="gt"><b>${esc(g.n)}</b><span>${eur0(cv)} / ${eur0(g.v)}</span></div><div class="pb"><i style="width:${Math.max(3,Math.min(100,cv/g.v*100))}%"></i></div></button>`:`<button class="goal add" data-a="cof"><span class="gi">${ic('gift')}</span><span><b>Fixe-toi un objectif</b><small>Vacances, permis, une sécurité…</small></span>${ic('next')}</button>`}`}
 
 
 /* ===== Conseil v1 : confiance, justesse, accompagnement ===== */
@@ -1679,7 +1688,7 @@ function qPts(){let n=0;for(const w in (S.qd||{}))n+=S.qd[w].reduce((a,x)=>a+(+S
 function qCheck(){try{if(!S.name)return;const w=mon(today);S.qd=S.qd||{};const L=S.qd[w]=S.qd[w]||[];const Q=qWeek();
   for(const q of Q)if(q.v>=q.n&&!L.some(x=>String(x).startsWith(q.id+':'))){L.push(q.id+':'+q.r);save();setTimeout(()=>{const go=()=>{const o=document.createElement('div');o.className='strk qp';o.innerHTML=`<div class="qbig">${ic('check')}</div><small>Quête réussie</small><b>${esc(q.t)}</b><em>+1 balcon sur ton étage</em><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}};$('.strk')?setTimeout(go,2400):go()},1900);break}}catch(e){}}
 function qCard(){const Q=qWeek(),w=mon(today),L=(S.qd||{})[w]||[],d=7-((pd(today).getDay()+6)%7);
-  return `<div class="sec"><h2>Quêtes de la semaine</h2><small>${d>1?'encore '+d+' jours':'dernier jour'}</small></div><div class="qlist">${Q.map(q=>{const ok=L.some(x=>String(x).startsWith(q.id+':'))||q.v>=q.n;return `<div class="qrow${ok?' qdone':''}"><span class="qic">${ok?ic('check'):ic('home')}</span><span class="qtx"><b>${esc(q.t)}</b><i><em style="width:${Math.min(100,Math.round(q.v/q.n*100))}%"></em></i></span><small>${ok?'Fait':Math.min(q.v,q.n)+(q.u?' €':'')+' / '+q.n+(q.u?' €':'')}</small></div>`}).join('')}</div>`}
+  return `<div class="sec"><h2>Quêtes de la semaine</h2><small>${d>1?'encore '+d+' jours':'dernier jour'}</small></div><div class="qlist">${Q.map(q=>{const ok=L.some(x=>String(x).startsWith(q.id+':'))||q.v>=q.n;return `<div class="qrow${ok?' qdone':''}"><span class="qtx"><b>${esc(q.t)}</b><i><em style="width:${Math.min(100,Math.round(q.v/q.n*100))}%"></em></i></span><small>${ok?ic('check'):Math.min(q.v,q.n)+(q.u?' €':'')+' / '+q.n+(q.u?' €':'')}</small></div>`}).join('')}</div>`}
 function chantierCard(){const V=vgState();if(!V||V.def<=0)return '';const M=V.zero?'Journée à 0 €':'Rester sous '+eur0(V.tg);
   return `<button class="chc" data-a="vg"><div class="chh"><span class="chb">Mode chantier</span><b>Retour au vert · ${V.p>=.9?'plus que '+eur0(V.def):V.br+'/10'}</b></div><div class="vgb">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div>
    <div class="chm"><span>${ic('spark')}Mission du jour</span><b>${M}</b></div><div class="chs">${(()=>{const P=vgPlan(V).find(o=>o.k==='win'||o.k==='inc');return P?esc(P.t.replace(/<[^>]+>/g,'')):'Seuil vert : 0 € · encore '+eur0(V.def)+' à remonter'})()}</div></button>`}
@@ -1696,10 +1705,7 @@ function towerHTML(lim){const F=towerFloors(),N=F.length,show=lim?F.slice(-lim):
    ${show.slice().reverse().map((f,i)=>floorRow(f,N-i)).join('')}${lim&&N>lim?`<div class="tmore">+ ${N-lim} étage${N-lim>1?'s':''} en dessous</div>`:''}
    <div class="tgnd"><i class="door"></i></div>${base?`<div class="tbase">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}<span>Sous-sol · retour au vert</span></div>`:''}</div>`}
 function towerStats(){const F=towerFloors(),done=F.filter(f=>!f.cur).length,lit=F.reduce((a,f)=>a+f.lit,0),gold=F.reduce((a,f)=>a+f.gold,0);return{F,done,lit,gold,n:F.length}}
-function tourScr(){const T=towerStats();const x=scr('Ta tour',`<div class="tsky2">${towerSvg(0)}</div>
-   <div class="msum"><div><b>${T.n}</b><small>étage${T.n>1?'s':''}</small></div><div><b>${T.lit}</b><small>fenêtres allumées</small></div><div><b>${T.gold}</b><small>dorées</small></div></div>
-   <p class="tl" style="text-align:center">Chaque jour tenu allume une fenêtre. Une journée à 0 € ou une mission réussie : fenêtre dorée. Chaque dimanche, l’étage est terminé et un nouveau commence. Rien n’est jamais détruit.</p>`);
-  }
+
 function dong(){try{if(!sndOn())return;const a=ac();if(!a)return;tone(392,0,1.6,.09,'sine');tone(784,0,.5,.025,'sine');tone(523.3,.42,1.8,.085,'sine');tone(1046.5,.42,.5,.02,'sine')}catch(e){}}
 function towerCheck(){try{if(!S.name)return;const cur=mon(today);if(!S.twk){S.twk=cur;save();return}if(S.twk===cur)return;
   const F=towerFloors(),prev=F.find(f=>f.w===S.twk)||F.at(-2),n=F.indexOf(prev)+1;S.twk=cur;save();if(!prev)return;
@@ -1752,6 +1758,27 @@ function towerSvg(lim){const F=towerFloors(),N=F.length,V=vgState(),base=V&&V.de
     o+=`<text x="150" y="${by+40}" text-anchor="middle" font-size="10" font-weight="700" fill="#F4E6D6" font-family="-apple-system,system-ui">Sous-sol · encore ${eur0(V.def)} jusqu’au vert</text>`;
     o+=`<line x1="0" y1="${gY+46}" x2="300" y2="${gY+46}" stroke="#30D158" stroke-width="2" stroke-dasharray="5 4"/><rect x="6" y="${gY+36}" width="74" height="18" rx="9" fill="#30D158"/><text x="43" y="${gY+48.5}" text-anchor="middle" font-size="9.5" font-weight="800" fill="#fff" font-family="-apple-system,system-ui">NIVEAU VERT</text>`}
   return o+`</svg>`}
+
+/* ===== Tour épurée (flat) ===== */
+function towerFlat(lim){const F=towerFloors(),N=F.length,show=lim&&N>lim?F.slice(-lim):F,V=vgState(),red=V&&V.def>0;
+  const rows=show.slice().reverse().map(f=>`<div class="frow">${f.days.map((s,k)=>`<i class="fw ${s}${f.cur&&addD(f.w,k)===today&&(s==='on'||s==='gd')?' now':''}"></i>`).join('')}</div>`).join('');
+  return `<div class="ftw"><div class="ffac">${rows}</div>${lim&&N>lim?`<small class="fmore">+ ${N-lim} étage${N-lim>1?'s':''}</small>`:''}<div class="fgnd"></div>
+   ${red?`<div class="fbase">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div><small class="flab">Niveau vert · ${V.br}/10</small>`:''}</div>`}
+function moiTour(){const T=towerStats(),V=vgState(),red=V&&V.def>0,W7=weekBlocks(),L=lvl();
+  let line='',mis='';
+  if(red){const P=vgPlan(V).find(o=>o.k==='win'||o.k==='inc');line=`<div class="tred">${ic('in')}<span>Retour au vert${P&&P.k==='win'?' · '+P.t.replace(/^Le /,'le ').replace(/ : tu repasses au vert$/,''):' · '+V.br+'/10'}</span></div>`;mis=`<div class="tmis"><span>Mission du jour</span><b>${V.zero?'Journée à 0 €':'Rester sous '+eur0(V.tg)}</b></div>`}
+  else if(!eveDone())mis=`<div class="tmis"><span>Ce soir</span><b>Allume ta fenêtre</b></div>`;
+  return `<button class="tcard2" data-a="tour">${towerFlat(4)}<div class="tc2"><b>Étage ${T.n} · ${L.name}</b><span>Cette semaine ${Math.min(W7.ok,7)}/7${jkLeft()?' · joker dispo':''}</span></div>${line}${mis}</button>`}
+function tourScr(){const T=towerStats(),W=vicStats(),BL=badgeList(),V=vgState();
+  const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €'],[eur0(W.kept),'gardés en disant non'],[eur0(W.rb),'de dettes remboursées'],[recordStreak()+' j','plus haute pile']];
+  const x=scr('Ta tour',`<div class="tfull">${towerFlat(0)}</div>
+   <div class="msum"><div><b>${T.n}</b><small>étage${T.n>1?'s':''}</small></div><div><b>${T.lit}</b><small>fenêtres</small></div><div><b>${T.gold}</b><small>dorées</small></div></div>
+   ${V&&V.def>0?`<button class="vpl" data-vg><span class="vpi">${ic('in')}</span><span><b>Ton plan pour le vert</b><small>Mission, salaire, ce qu’on te doit…</small></span>${ic('next')}</button>`:''}
+   <div class="sec"><h2>Tes victoires</h2></div><div class="vic">${vic.map(([v,l])=>`<div><b>${v}</b><small>${l}</small></div>`).join('')}</div>
+   <div class="sec"><h2>Pierres posées</h2><small>${BL.filter(b=>b[1]).length} / ${BL.length}</small></div>
+   <div class="bdgs">${BL.sort((a,b)=>b[1]-a[1]).map(([t,ok,i])=>`<div class="${ok?'on':''}"><span>${ok?ic(i):''}</span><small>${t}</small></div>`).join('')}</div>
+   <p class="tl" style="text-align:center">Chaque jour tenu allume une fenêtre. Journée à 0 € ou mission réussie : fenêtre dorée. Chaque dimanche, l’étage se termine. Rien n’est jamais détruit.</p>`);
+  const g=x.querySelector('[data-vg]');if(g)g.onclick=()=>{buzz();closeScr();vgScr()}}
 
 /* ---------- Réserve ---------- */
 function cofCard(B){const v=cofV(),g=S.cof&&S.cof.g;
