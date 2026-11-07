@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="142" data-theme="dark">
+<html lang="fr" data-build="143" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -738,7 +738,7 @@ function pushItems(){const now=Date.now(),out=[],add=(t,title,body,tag)=>{if(t>n
   for(const x of (S.rin||[]).filter(x=>x.d)){const dt=fxDate(x,YM);if(dt>=today&&!(S.rok||{})[rinKey(x,YM)])add(at(dt,18),Z?'Un revenu est prévu aujourd’hui':x.n+' est arrivé ?','Confirme-le dans Base pour garder ton budget juste.','rin')}
   const dd=S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM);
   if(dd.length)add(at(YM+'-25',18),Z?'Un remboursement prévu ce mois-ci':dd.map(x=>x.p).join(', ')+' attend'+(dd.length>1?'ent':'')+' leur argent',Z?'Ouvre Base pour le régler en une touche.':'Tu avais prévu de rembourser ce mois-ci.','debt');
-  for(let i=eveDone()?1:0;i<14;i++)add(at(addD(today,i),21),'Ton point du soir','Ta journée en 10 secondes.','day');
+  for(let i=eveDone()?1:0;i<14;i++)add(at(addD(today,i),S.eh||21),'Ton point du soir','Ta journée en 10 secondes. Rien du tout, c’est une réponse aussi.','day');
   if(S.vice&&!S.log[today])add(at(addD(today,1),10),'Il manque hier','Note ta journée d’hier pour garder ton compteur juste.','miss');
   if(S.bal)add(at(addD(S.bal.d,7),12),'Ton solde est toujours juste ?','Vérifie en 5 secondes.','bal');
   try{const same=keys().length===2&&streak('j')===streak('c');if(S.vice)for(const k of (same?['j']:keys())){const n=streak(k);let c=0;for(const m of [1,2,3,7,14,21,30,60,90,180,365])if(m>n&&c<2){c++;add(at(addD(today,m-n),11),Z?m+' jour'+(m>1?'s':''):m+' jour'+(m>1?'s':'')+' '+(same?'sans fumer':KN[k]),'Nouveau palier. Chaque jour compte.','smoke')}}}catch(e){}
@@ -780,7 +780,7 @@ function tasks(){const T=[],h=new Date().getHours(),yd=addD(today,-1);if(!S.name
     if(!S.log[yd]&&st<=yd)T.push({i:'smoke',t:'Ta conso d’hier',s:'Pas encore notée',go:()=>flowConso(yd)});
     }
   for(const x of rinDue())T.unshift({i:'in',t:x.n+' est arrivé ?',s:eur(x.v)+' prévu le '+pd(x.dt).getDate(),go:()=>flowRinQ(x)});
-  if(h>=17&&!eveDone())T.push({i:'moon',t:'Ton point du soir',s:'10 secondes pour boucler ta journée',go:flowEve});
+  if(h>=Math.min(17,(S.eh||21)-1)&&!eveDone())T.push({i:'moon',t:'Ton point du soir',s:'10 secondes pour boucler ta journée',go:flowEve});
   for(const w of wishDue())T.unshift({i:'bag',t:'Toujours envie de '+w.n+' ?',s:'Ça fait 24 h. Décide en une touche',go:()=>flowWishQ(w)});
   if(bilanReady())T.unshift({i:'spark',t:'Ton bilan de '+MNL[+bilanPrev().slice(5,7)-1]+' est prêt',s:'Ton mois en 30 secondes',go:()=>bilanScr(bilanPrev())});
   if(S.bal){const age=Math.round((pd(today)-pd(S.bal.d))/864e5),passed=fxThisMonth().some(x=>x.dt>S.bal.d&&x.dt<=today);
@@ -1739,6 +1739,7 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
   {i:'help',l:'Aide',s:'Toutes les réponses à tes questions',one:1,go:()=>{const f=$('.fl');if(f)f.remove();FL=null;helpScr()}},
   {i:'lock',l:'Code de verrouillage',s:S.pin?'Activé':'Pour que personne d’autre ne lise tes comptes',one:1,go:()=>{if(S.pin){delete S.pin;done(['Code retiré',''])}else{closeFl();pinPad('set')}}},
   {i:'bell',l:'Notifications discrètes',s:S.disc!==0?'Oui : rien de perso sur l’écran verrouillé':'Non : montants et noms affichés',one:1,go:()=>{S.disc=S.disc!==0?0:1;pushSoon(300);done([S.disc?'Notifications discrètes':'Notifications détaillées',S.disc?'Rien de perso ne sort de ton téléphone':'Montants et noms visibles sur l’écran verrouillé'])}},
+  {i:'moon',l:'Heure du point du soir',s:(S.eh||21)+' h chaque soir',one:1,go:()=>flow([{k:'eh',q:'Ton point du soir, à quelle heure ?',type:'tiles',opts:[19,20,21,22,23].map(h=>({v:h,i:'moon',l:h+' h'}))}],v=>{S.eh=v.eh;pushSoon(300);return['C’est noté','Chaque soir à '+v.eh+' h']})},
   {i:'moon',l:'Mode calme',s:S.calm?'Activé : juste ton point du soir et tes rappels':'2 notifications par jour maximum',one:1,go:()=>{S.calm=S.calm?0:1;pushSoon(300);done([S.calm?'Mode calme activé':'Mode calme coupé',S.calm?'Juste ton point du soir et tes rappels':'2 notifications par jour maximum'])}},
   {i:'help',l:'Mentions et confidentialité',s:'Ce que Base fait de tes données',one:1,go:()=>{closeFl();legalScr()}},
   {i:'card',l:'Rappel après chaque paiement',s:'Avec Apple Pay et Raccourcis',one:1,go:()=>{closeFl();payTip()}},
@@ -1750,15 +1751,17 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
   {i:'undo',l:'Retour',one:1,go:()=>closeFl()}]}],()=>['',''])}
 
 /* ---------- Premier lancement ---------- */
-function onbApply(v){S.name=v.n;fxSave(v.fx);rinSave(v.rin||[]);accSave(v.acc);S.start=today;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}}
+function onbApply(v){S.name=v.n;fxSave(v.fx);rinSave(v.rin||[]);accSave(v.acc);S.start=today;S.eh=v.eh||21;if(v.ad===0)v.vice='';if(v.vice)S.adult=1;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}}
 function onboard(){const N=v=>esc(v.n||'');flow([
   {k:'n',q:'Comment tu t’appelles ?',sub:'Juste ton prénom.',type:'text',ph:'Ton prénom'},
   {k:'fx',q:v=>`Enchanté ${N(v)}. Qu’est-ce qui sort de ton compte chaque mois ?`,sub:'Forfait, abonnements, assurance… Seulement ce que tu as. Le jour du prélèvement, si tu le connais.',type:'fixes'},
   {...RIN_STEP,q:v=>'Et qu’est-ce qui rentre chaque mois ?'},
   {k:'acc',q:v=>`Et là, tu as combien sur tes comptes, ${N(v)} ?`,sub:'Une ligne par compte, l’app fait le total.',type:'accounts'},
-  {k:'vice',q:'Tu fumes ?',sub:'Pour voir ce que ça te coûte, et ce que tu gardes les jours sans.',type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
+  {k:'ad',q:'Tu as 18 ans ou plus ?',sub:'Une des parties de l’app parle de tabac et de cannabis.',type:'tiles',opts:[{v:1,i:'check',l:'Oui',one:1},{v:0,i:'x',l:'Non',one:1}]},
+  {k:'vice',q:'Tu fumes ?',sub:'Pour voir ce que ça te coûte, et ce que tu gardes les jours sans.',skip:v=>v.ad===0,type:'tiles',opts:[{v:'c',i:'smoke',l:'Des clopes'},{v:'j',i:'leaf',l:'Des joints'},{v:'cj',i:'spark',l:'Les deux',one:1},{v:'',i:'ban',l:'Je ne fume pas',one:1}]},
   {k:'wk',q:'Ça te coûte combien par semaine, à peu près ?',sub:'À peu près, ça suffit.',type:'amount',skip:v=>!v.vice},
-  {k:'nt',q:v=>`Dernière chose, ${N(v)} : je te préviens quand il faut ?`,sub:()=>'La veille d’un prélèvement, et le soir pour noter ta journée.'+(needInstall()?'<br><br>Sur iPhone, les rappels marchent dans l’app installée sur ton écran d’accueil. Tu trouveras comment faire sur l’accueil.':''),type:'tiles',opts:[...(needInstall()?[{i:'check',l:'OK',one:1,v:0}]:[{i:'bell',l:'Oui, préviens-moi',one:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}])]}
+  {k:'eh',q:'Chaque soir, ton point du soir',sub:'10 secondes pour noter ta journée : ce que tu as dépensé, ou « rien du tout ». C’est le seul vrai rendez-vous de Base, et c’est lui qui construit ta maison. Tu le veux à quelle heure ?',type:'tiles',opts:[{v:20,i:'moon',l:'20 h'},{v:21,i:'moon',l:'21 h'},{v:22,i:'moon',l:'22 h'},{v:23,i:'moon',l:'23 h'}]},
+  {k:'nt',q:v=>`Je te le rappelle chaque soir, ${N(v)} ?`,sub:v=>`À ${v.eh||21} h, une notification : « Ton point du soir ». Et la veille d’un prélèvement, pour ne pas être surpris.`+(needInstall()?'<br><br>Sur iPhone, les rappels marchent dans l’app installée sur ton écran d’accueil. Tu trouveras comment faire sur l’accueil.':''),type:'tiles',opts:[...(needInstall()?[{i:'check',l:'OK',one:1,v:0}]:[{i:'bell',l:'Oui, préviens-moi',s:'Recommandé',one:1,cta:1,go:v=>{onbApply(v);save();pushEnable()}},{i:'later',l:'Plus tard',one:1,v:0}])]}
  ],v=>{onbApply(v);return['C’est prêt, '+v.n,S.bal?eur(S.bal.v)+' sur tes comptes · '+eur0(upSum())+' à payer'+(inSum()?' · '+eur0(inSum())+' à recevoir':'')+' ce mois':'']})}
 
 function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoir où.','g'],['Les clopes, les petits achats,','g'],['les prélèvements qu’on oublie.','g'],['À partir d’aujourd’hui,',''],['tu sais.','b']];
