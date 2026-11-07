@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794076293" data-theme="light">
+<html lang="fr" data-build="1794076636" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -299,7 +299,7 @@ label.tile{position:relative;overflow:hidden}.tlink.set .tl{color:var(--ink)!imp
 .cal i.r{background:var(--c-out)!important}.cal i.g{background:var(--c-in)!important}
 .app{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform;display:flex;justify-content:center;padding:4px 12px max(4px,calc(env(safe-area-inset-bottom,0px) - 16px));background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid var(--line)}
-.tabbar .in{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;width:100%;max-width:420px;align-items:center}
+.tabbar .in{display:grid;grid-template-columns:repeat(5,1fr);gap:0;width:100%;max-width:420px;align-items:center}
 .tb{position:relative;border:0;background:none;color:var(--muted);display:grid;place-items:center;height:44px;padding:0;font:inherit}.tb span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .tb svg{width:24px;height:24px;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
 .tb[aria-selected="true"]{color:var(--c)}.tb[aria-selected="true"] svg{transform:scale(1.08)}
@@ -482,6 +482,20 @@ label.tile{position:relative;overflow:hidden}.tlink.set .tl{color:var(--ink)!imp
 .vic b{font-size:28px;font-weight:800;letter-spacing:-.03em}.vic small{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.3}
 .goal{display:grid;gap:10px;padding:18px;border-radius:20px;border:0;background:var(--card);color:var(--ink);font:inherit;text-align:left}
 .goal .gt{display:flex;justify-content:space-between;align-items:baseline}.goal .gt b{font-size:18px}.goal .gt span{font-size:14px;color:var(--muted);font-weight:600}.goal>small{font-size:13px;color:var(--muted);font-weight:500}
+.t-vu{--c:#FF375F}
+.vsub{margin:-2px 2px 14px;color:var(--muted);font-size:14px;line-height:1.4}
+.vchips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.vchip{display:grid;justify-items:center;gap:6px;padding:14px 6px;border:0;border-radius:18px;background:var(--card);color:var(--ink);font:inherit}
+.vchip svg{width:22px;height:22px;color:var(--vc);stroke-width:2}.vchip b{font-size:13px;font-weight:600}
+.vchip:active{transform:scale(.95)}
+.vng{margin-bottom:6px;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,#0A84FF 40%,transparent)}
+.vsug{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px 6px;padding:2px 20px 6px;scrollbar-width:none;overscroll-behavior-x:contain}.vsug::-webkit-scrollbar{display:none}
+.vs{flex:0 0 72%;scroll-snap-align:start;display:grid;gap:6px;align-content:start;padding:16px;border-radius:22px;background:var(--card);background-image:linear-gradient(160deg,color-mix(in srgb,var(--vc) 16%,transparent),transparent 60%)}
+.vst{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--vc);text-transform:uppercase;letter-spacing:.04em}.vst svg{width:14px;height:14px;stroke-width:2.4}
+.vs b{font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.2}.vs small{color:var(--muted);font-size:13px;line-height:1.35;min-height:35px}
+.vsb{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:6px}.vsb button{border:0;border-radius:14px;padding:11px;font:inherit;font-weight:600;font-size:14px;background:var(--vc);color:#fff}.vsb button+button{background:var(--card2);color:var(--muted);width:42px;display:grid;place-items:center;padding:0}.vsb svg{width:16px;height:16px}
+.vli{width:100%;border:0;background:none;font:inherit;color:var(--ink);text-align:left}.vli>svg{width:14px;height:14px;color:var(--muted)}
+.vr{font-size:13px;font-weight:600;color:var(--muted)}
 .gput{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:8px;border:0;border-radius:16px;padding:14px;background:color-mix(in srgb,var(--c-cof) 14%,transparent);color:var(--c-cof);font:inherit;font-size:15px}.gput svg{width:18px;height:18px;stroke-width:2.4} .goal.add{grid-template-columns:auto 1fr auto;align-items:center;gap:14px}.goal.add b{display:block;font-size:16px}.goal.add small{font-size:13px;color:var(--muted)}.goal.add>svg{width:16px;height:16px;color:var(--muted)}
 .goal .gi{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--c-cof) 16%,var(--card));color:var(--c-cof)}
 .bdgs{display:grid;grid-auto-flow:column;grid-auto-columns:84px;gap:10px;overflow-x:auto;padding:2px 2px 8px;margin:0 -20px;padding-left:20px;scrollbar-width:none}.bdgs::-webkit-scrollbar{display:none}
@@ -862,7 +876,8 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   const me=S.debts.filter(x=>x.w==='me').reduce((a,x)=>a+x.v,0),th=S.debts.filter(x=>x.w==='them').reduce((a,x)=>a+x.v,0);
   const dn=its.filter(a=>a.done).length;
   const B=badges();
-  const TB=`<nav class="tabbar" role="tablist"><div class="in">${[['argent','t-out','wallet','Dépenses',(B.dep||0)+(B.inc||0)+(B.bal||0)+(B.debts||0)+(B.cof||0)],['agenda','t-ag','cal','Agenda',B.ag||0],['fab'],['moi','t-moi','user','Moi',(B.set||0)]].map(([k,c,i,l,n])=>k==='fab'?`<button class="fab" id="fab" aria-label="Ajouter">${ic('plus')}</button>`:`<button class="tb ${c}" role="tab" data-tab="${k}" aria-selected="${TAB===k}" aria-label="${l}">${ic(i)}<span>${l}</span></button>`).join('')}</div></nav>`;
+  const TB=`<nav class="tabbar" role="tablist"><div class="in">${[['argent','t-out','wallet','Dépenses',(B.dep||0)+(B.inc||0)+(B.bal||0)+(B.debts||0)+(B.cof||0)],['agenda','t-ag','cal','Agenda',B.ag||0],['fab'],['vu','t-vu','spark','Vécu',0],['moi','t-moi','user','Moi',(B.set||0)]].map(([k,c,i,l,n])=>k==='fab'?`<button class="fab" id="fab" aria-label="Ajouter">${ic('plus')}</button>`:`<button class="tb ${c}" role="tab" data-tab="${k}" aria-selected="${TAB===k}" aria-label="${l}">${ic(i)}<span>${l}</span></button>`).join('')}</div></nav>`;
+  if(TAB==='vu'){$('#app').innerHTML=vuView()+TB;homeBind();vuBind();return}
   if(TAB!=='argent'){$('#app').innerHTML=(TAB==='agenda'?`<div class="ttl ttl2"><span>Agenda</span><button class="ib2" id="agm" aria-label="${agV==='month'?'Retour au jour':'Voir le mois'}">${agV==='month'?ic('x'):ic('cal')}</button></div><div id="agb" style="display:grid;gap:16px"></div>`:moiView(B))+TB;
     homeBind();if(TAB==='agenda'){$('#agm').onclick=()=>{buzz(5);agV=agV==='month'?'day':'month';home()}}
     document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{buzz();({all:setSheet,ics:icsExport,set:settings,push:()=>pushOn()?pushOff():pushEnable(),bk:backup,help:()=>helpScr(),share:shareApp})[b.dataset.m]()});
@@ -1975,22 +1990,27 @@ function cofAdd(a,note){const _p=cofV();S.cof=S.cof||{v:0,h:[]};S.cof.h=S.cof.h|
 const addMd=k=>{const n=+k.slice(1),d=pd(today);d.setMonth(d.getMonth()+n);return iso(d)};
 const goalMonths=d=>{if(!d)return 0;const a=pd(today),b=pd(d);return Math.max(1,(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth())};
 const goalPer=()=>{const g=S.cof&&S.cof.g;if(!g||!g.d)return 0;const left=g.v-cofV();return left>0?Math.ceil(left/goalMonths(g.d)):0};
+const capM=()=>{const rin=(S.rin||[]).reduce((a,x)=>a+(+x.v||0),0),inc=Math.max(incM(),rin);if(!inc)return null;return Math.max(0,Math.round(inc-(S.fixe||0)-avgVar()-debtDue()))};
+const gPer=v=>{const d=gD(v);return d?Math.ceil(Math.max(0,v.v-cofV()-(+v.a||0))/goalMonths(d)):0};
+const gFit=v=>{const per=gPer(v),c=capM();if(c==null)return{per,txt:'Retiré de ton budget dès le début du mois, comme une charge fixe.'};if(per<=c*.5)return{per,c,txt:'Faisable. Il te restera environ '+eur0(c-per)+' par mois pour vivre.'};if(per<=c)return{per,c,txt:'Ça passe, mais c’est serré : il te restera environ '+eur0(c-per)+' par mois.'};const ok=Math.max(10,Math.floor(c*.5/10)*10),n=Math.ceil(Math.max(0,v.v-cofV()-(+v.a||0))/ok),x=pd(today);x.setMonth(x.getMonth()+n);return{per,c,hard:1,ok,alt:iso(x),txt:'Avec ce que tu gagnes et dépenses, '+eur0(per)+' par mois c’est trop. À '+eur0(ok)+' par mois, tu y arrives le '+dShort(iso(x))+'.'}};
 const gD=v=>v.d||(v.dq&&v.dq!=='x'?addMd(v.dq):'');
 function goalFlow(){const g0=S.cof&&S.cof.g,v0=cofV();
   flow([{k:'n',q:'C’est pour quoi ?',type:'text',ph:g0?g0.n:'Ex. vacances, permis, une sécurité'},
    {k:'v',q:'Combien il te faut ?',type:'amount'},
    {k:'dq',q:'Pour quand ?',sub:'Pas obligé. Avec une date, je calcule combien mettre chaque mois.',type:'tiles',opts:[
-     {v:'',i:'x',l:'Pas de date'},{v:'m3',i:'cal',l:'Dans 3 mois'},{v:'m6',i:'cal',l:'Dans 6 mois'},{v:'m12',i:'cal',l:'Dans 1 an'},
+     {v:'',i:'x',l:'Pas de date'},{v:'m2',i:'cal',l:'Dans 2 mois'},{v:'m3',i:'cal',l:'Dans 3 mois'},{v:'m4',i:'cal',l:'Dans 4 mois'},{v:'m6',i:'cal',l:'Dans 6 mois'},{v:'m12',i:'cal',l:'Dans 1 an'},
      {i:'calp',l:'Une date précise',one:1,go:v=>{v.dq='x';nextStep()}}]},
    {k:'d',q:'Quelle date ?',type:'date',far:1,skip:v=>v.dq!=='x'},
    {k:'a',q:v0?'Tu as déjà '+eur0(v0)+' au coffre. Tu en alloues plus ?':'Tu as déjà de l’argent pour ça ?',sub:'Ce que tu alloues est retiré de ce que tu peux dépenser.',type:'tiles',opts:[
      {v:0,i:'x',l:v0?'Non, ça suffit':'Rien pour l’instant'},{v:50,i:'safe',l:eur0(50)},{v:100,i:'safe',l:eur0(100)},{v:200,i:'safe',l:eur0(200)},
      {i:'pen',l:'Autre montant',one:1,go:v=>{v.af=1;nextStep()}}]},
    {k:'a',q:'Combien tu alloues à ton objectif ?',type:'amount',skip:v=>!v.af},
-   {k:'pm',q:v=>'Je mets '+eur0(Math.ceil(Math.max(0,v.v-cofV()-(+v.a||0))/goalMonths(gD(v))))+' de côté chaque mois ?',
-     sub:'Retiré de ton budget dès le début du mois, comme une charge fixe. Comme ça tu y arrives à temps.',type:'tiles',
+   {k:'pm',q:v=>'Il faut '+eur0(gPer(v))+' par mois',
+     sub:v=>gFit(v).txt,type:'tiles',
      skip:v=>!gD(v)||v.v-cofV()-(+v.a||0)<=0,
-     opts:[{v:1,i:'check',l:'Oui, prends-le en compte'},{v:0,i:'x',l:'Non, je mets quand je peux'}]}],
+     opts:v=>{const f=gFit(v);return [{v:1,i:'check',l:f.hard?'Garder ma date ('+eur0(f.per)+' par mois)':'Oui, je mets '+eur0(f.per)+' par mois'},
+       ...(f.hard?[{i:'cal',l:eur0(f.ok)+' par mois, jusqu’au '+dShort(f.alt),one:1,go:v=>{v.d=f.alt;v.dq='x';v.pm=1;nextStep()}}]:[]),
+       {v:0,i:'x',l:'Non, je mets quand je peux'}]}}],
   r=>{S.cof=S.cof||{v:0,h:[]};const d=gD(r);
     S.cof.g={n:(r.n||'').trim()||(g0&&g0.n)||'Mon objectif',v:r.v};if(d)S.cof.g.d=d;
     if(+r.a>0)cofAdd(+r.a);
@@ -1998,10 +2018,83 @@ function goalFlow(){const g0=S.cof&&S.cof.g,v0=cofV();
     const g=S.cof.g,per=goalPer();
     return['Objectif posé',esc(g.n)+' · '+eur0(g.v)+(d?' pour le '+dShort(d):'')+(+r.a>0?' · '+eur0(+r.a)+' alloués':'')+(r.pm&&per?' · '+eur0(per)+' par mois':'')]})}
 function goalPut(){const g=S.cof&&S.cof.g;flow([{k:'v',q:'Combien tu alloues à '+(g?esc(g.n):'ton objectif')+' ?',sub:'Retiré de ce que tu peux dépenser.',type:'tiles',opts:[10,20,50,100].map(n=>({v:n,i:'safe',l:eur0(n)})).concat([{i:'pen',l:'Autre montant',one:1,go:()=>flow([{k:'v',q:'Combien tu alloues ?',type:'amount'}],r=>cofAdd(r.v))}])}],r=>cofAdd(r.v))}
+/* ===== Vécu : films, séries, livres, sorties, restos, activités — il note, dit s'il a aimé, l'app le cerne et suggère ===== */
+const VT={film:['Film','spark','#FF375F'],serie:['Série','moon','#BF5AF2'],livre:['Livre','book','#FF9F0A'],sortie:['Sortie','glass','#0A84FF'],resto:['Resto','resto','#30D158'],act:['Activité','zap','#64D2FF']};
+const VG={a:'Action',c:'Comédie',d:'Émotion',s:'SF / fantastique',h:'Thriller',r:'Romance',o:'Vrai / docu',i:'Animé',m:'Musique',p:'Art / culture',n:'Plein air',f:'Food',g:'Sport',x:'Entre potes',z:'Chill',e:'Découverte',l:'Se développer',t:'Histoire',u:'Argent / business'};
+const VTG={film:'acdshroimt',serie:'acdshroit',livre:'ldsoarthu',sortie:'pmxenzfg',resto:'fxez',act:'ngxzelp'};
+const VR=[[2,'Adoré','spark'],[1,'Bien','check'],[0,'Bof','dots'],[-1,'Pas aimé','x']];
+/* Catalogue local : [type, nom, tags, prix 0 gratuit · 1 petit prix · 2 plus cher] */
+const VC=[
+ ['film','Intouchables','cd',1],['film','Le Fabuleux Destin d’Amélie Poulain','cr',1],['film','Interstellar','sd',1],['film','Inception','sa',1],['film','The Dark Knight','ah',1],['film','Whiplash','dm',1],['film','Parasite','hd',1],['film','La La Land','rm',1],['film','Le Dîner de cons','c',1],['film','Les Évadés','d',1],['film','Spider-Man : New Generation','ia',1],['film','Le Voyage de Chihiro','is',1],['film','Get Out','h',1],['film','Mad Max : Fury Road','a',1],['film','Coco','im',1],['film','La Haine','dx',1],['film','Dune','sa',1],['film','Free Solo','og',1],['film','The Social Network','du',1],['film','Le Loup de Wall Street','cu',1],['film','Le Grand Bain','cg',1],['film','Les Tuche','c',1],['film','En avant','id',1],['film','Le Prénom','cx',1],
+ ['serie','Breaking Bad','hd',1],['serie','Lupin','ac',1],['serie','Stranger Things','sh',1],['serie','The Office','c',1],['serie','Narcos','ho',1],['serie','Ted Lasso','cd',1],['serie','Arcane','ias',1],['serie','Dark','sh',1],['serie','Peaky Blinders','at',1],['serie','Kaamelott','ct',1],['serie','Black Mirror','sd',1],['serie','The Bear','d',1],['serie','Validé','d',1],['serie','Squid Game','ha',1],['serie','Drive to Survive','o',1],['serie','Fleabag','cr',1],
+ ['livre','L’Alchimiste','le',0],['livre','Sapiens','ot',0],['livre','Atomic Habits (Un rien peut tout changer)','l',0],['livre','L’Étranger','d',0],['livre','Dune','sa',0],['livre','Le Petit Prince','dz',0],['livre','Harry Potter à l’école des sorciers','sa',0],['livre','Père riche, père pauvre','u',0],['livre','L’Homme le plus riche de Babylone','ul',0],['livre','Le Comte de Monte-Cristo','at',0],['livre','One Piece (manga)','as',0],['livre','L’Art subtil de s’en foutre','l',0],['livre','Le Silence des agneaux','h',0],['livre','Le Monde de Sophie','ol',0],['livre','La Vérité sur l’affaire Harry Quebert','h',0],
+ ['sortie','Musée gratuit le 1er dimanche du mois','pe',0],['sortie','Expo photo ou galerie en accès libre','p',0],['sortie','Cinéma en séance du matin (moins cher)','x',1],['sortie','Stand-up en scène ouverte','xc',1],['sortie','Concert gratuit ou fête de quartier','mx',0],['sortie','Soirée jeux dans un bar à jeux','xz',1],['sortie','Escape game entre potes','xe',2],['sortie','Bowling','xg',1],['sortie','Karaoké','xm',1],['sortie','Marché ou brocante le week-end','fe',0],['sortie','Bibliothèque ou médiathèque (gratuit)','zp',0],
+ ['resto','Tester une cuisine que tu ne connais pas','fe',1],['resto','Refaire chez toi le plat de ton resto préféré','fz',0],['resto','Street-food au marché','fx',1],['resto','Brunch maison avec des potes','fx',0],
+ ['act','Balade en forêt ou au bord de l’eau','nz',0],['act','Pique-nique au parc','nx',0],['act','Courir 5 km','gn',0],['act','Vélo en libre-service pour explorer un quartier','ne',1],['act','Randonnée à la journée','ng',0],['act','Cuisiner un plat nouveau','fe',0],['act','Séance de sport en plein air','gn',0],['act','Lire 20 min sans téléphone','zl',0],['act','Apprendre un truc sur YouTube (guitare, dessin…)','le',0],['act','Bénévolat une demi-journée','xl',0],['act','Soirée jeux de société à la maison','xz',0]];
+const vuS=()=>{S.vu=S.vu||{it:[],w:[],no:[]};S.vu.it=S.vu.it||[];S.vu.w=S.vu.w||[];S.vu.no=S.vu.no||[];return S.vu};
+const vnorm=t=>String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'');
+function vuTaste(){const V=vuS(),W={},T={};for(const x of V.it){const r=x.r==null?1:x.r,k=r===2?2:r===1?1:r===0?-.3:-2;for(const g of x.g||'')W[g]=(W[g]||0)+k;T[x.t]=(T[x.t]||0)+1}
+  for(const id of V.no){const c=VC.find(c=>c[0]+c[1]===id);if(c)for(const g of c[2])W[g]=(W[g]||0)-.5}return{W,T}}
+const vuTight=()=>{try{const V=vgState();if(V&&V.def>0)return 1;const r=reste(),now=new Date(),left=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1;return r/left<15?1:0}catch(e){return 0}};
+function vuSug(n){const V=vuS(),{W,T}=vuTaste(),tight=vuTight(),seen=new Set([...V.it.map(x=>vnorm(x.n)),...V.w.map(x=>vnorm(x.n))]),no=new Set(V.no),tot=V.it.length||1;
+  const sc=VC.filter(c=>!seen.has(vnorm(c[1]))&&!no.has(c[0]+c[1])).map(c=>{let s=0;for(const g of c[2])s+=W[g]||0;s+=((T[c[0]]||0)/tot)*1.5;if(tight)s-=c[3]*1.6;else s-=c[3]*.3;s+=((c[1].length*7)%10)/40;return{c,s}}).sort((a,b)=>b.s-a.s);
+  const out=[],per={};for(const x of sc){if((per[x.c[0]]||0)>=2)continue;per[x.c[0]]=(per[x.c[0]]||0)+1;out.push(x.c);if(out.length>=n)break}return out}
+function vuWhy(c){const V=vuS(),best=V.it.filter(x=>x.r>=1&&[...(x.g||'')].some(g=>c[2].includes(g))).sort((a,b)=>b.r-a.r||b.d.localeCompare(a.d))[0];
+  const p=c[3]===0?'Gratuit':c[3]===1?'Petit prix':'';return (best?'Parce que tu as aimé '+esc(best.n):[...c[2]].map(g=>VG[g]).slice(0,2).join(' · '))+(p?' · '+p:'')}
+function vuProfile(){const V=vuS(),it=V.it;if(it.length<3)return null;const {W,T}=vuTaste(),L=[];
+  const top=Object.entries(W).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([g])=>VG[g]);if(top.length)L.push(['spark','Ce qui te plaît','Surtout '+top.join(', ')]);
+  const bad=Object.entries(W).filter(([,v])=>v<-1).sort((a,b)=>a[1]-b[1]).slice(0,2).map(([g])=>VG[g]);if(bad.length)L.push(['x','Moins ton truc',bad.join(', ')]);
+  const tt=Object.entries(T).sort((a,b)=>b[1]-a[1])[0];L.push([VT[tt[0]][1],'Ce que tu fais le plus',VT[tt[0]][0]+'s · '+tt[1]+' noté'+(tt[1]>1?'s':'')]);
+  const lk=it.filter(x=>x.r>=1).length;L.push(['check','Tu as aimé',Math.round(lk/it.length*100)+' % de ce que tu as noté']);
+  const fr=it.filter(x=>x.p===0&&x.r!=null),py=it.filter(x=>x.p>0&&x.r!=null),av=a=>a.reduce((s,x)=>s+x.r,0)/a.length;
+  if(fr.length>=2&&py.length>=2){const a=av(fr),b=av(py);L.push(['safe','Gratuit ou payant',a>=b-.2?'Le gratuit te plaît autant que le payant. Bonne nouvelle pour ton budget.':'Tu préfères tes sorties payantes. Garde-leur une petite place dans ton budget.'])}
+  const m=today.slice(0,7),sp=S.e.filter(x=>x.d.startsWith(m)&&(x.c==='sorties'||x.c==='resto')).reduce((a,x)=>a+x.v,0),nb=it.filter(x=>x.d.startsWith(m)).length;
+  L.push(['glass','Ce mois-ci',nb+' chose'+(nb>1?'s':'')+' vécue'+(nb>1?'s':'')+(sp?' · '+eur0(sp)+' en sorties et restos':'')]);
+  const mood=it.filter(x=>x.r===2&&(x.t==='act'||x.t==='sortie')).flatMap(x=>[...(x.g||'')]);if(mood.length>=2){const c={};for(const g of mood)c[g]=(c[g]||0)+1;const g=Object.entries(c).sort((a,b)=>b[1]-a[1])[0][0];L.push(['sun','Ce qui te fait du bien',VG[g]])}
+  return L}
+const vuNudge=()=>{const V=vuS(),from=addD(today,-3);return S.e.filter(e=>(e.c==='sorties'||e.c==='resto')&&e.d>=from&&!e.vu&&!(V.ign||[]).includes(e.id)).sort((a,b)=>b.d.localeCompare(a.d))[0]};
+function vuAdd(pre){const p=pre||{};flow([
+  {k:'t',q:'Tu as fait quoi ?',type:'tiles',skip:v=>!!v.t,opts:Object.entries(VT).map(([v,[l,i]])=>({v,i,l}))},
+  {k:'n',q:v=>({film:'Quel film ?',serie:'Quelle série ?',livre:'Quel livre ?',sortie:'C’était quoi ?',resto:'Quel resto ?',act:'Quelle activité ?'})[v.t],type:'text',ml:60,ph:'Le nom'},
+  {k:'g',q:'C’était plutôt…',sub:'Pour que je te cerne mieux. Plusieurs choix possibles.',type:'multi',opts:v=>[...(VTG[v.t]||'')].map(g=>({v:g,i:'spark',l:VG[g]})),none:'Passer'},
+  {k:'r',q:'Tu as aimé ?',type:'tiles',opts:VR.map(([v,l,i])=>({v,i,l}))},
+  {k:'p',q:'Ça t’a coûté combien ?',type:'tiles',skip:v=>!['sortie','resto','act'].includes(v.t)||v.fe,opts:[{v:0,i:'gift',l:'Gratuit'},{i:'pen',l:'Un montant',one:1,go:v=>{v.pf=1;nextStep()}}]},
+  {k:'p',q:'Combien ?',type:'amount',pd:'out',skip:v=>!v.pf},
+  {k:'ad',q:'Je l’ajoute à tes dépenses ?',sub:'Comme ça ton solde reste juste.',type:'tiles',skip:v=>!v.pf||!(v.p>0),opts:[{v:1,i:'check',l:'Oui, ajoute-la'},{v:0,i:'x',l:'Non, c’est déjà noté'}]}
+ ],v=>{const V=vuS(),id=uid(),x={id,t:v.t,n:String(v.n||'').trim().slice(0,60)||VT[v.t][0],g:String(v.g||''),r:v.r,d:p.d||today};
+   if(v.p!=null&&v.p!=='')x.p=+v.p;else if(v.fe)x.p=v.fe.v;
+   if(v.fe){const e=S.e.find(e=>e.id===v.fe.id);if(e)e.vu=id}
+   if(v.ad&&x.p>0)addE({id:uid(),d:x.d,v:x.p,c:v.t==='resto'?'resto':'sorties',vu:id});
+   V.it.push(x);V.w=V.w.filter(w=>vnorm(w.n)!==vnorm(x.n));TAB='vu';
+   const lb=VR.find(r=>r[0]===x.r);return[x.r>=1?'Bien vécu':'C’est noté',esc(x.n)+' · '+lb[1]+(V.it.length===3?' · je commence à te cerner':'')]},p)}
+function vuItem(id){const V=vuS(),x=V.it.find(x=>x.id===id);if(!x)return;
+  flow([{k:'r',q:esc(x.n),sub:VT[x.t][0]+' · '+dShort(x.d)+' · tu as aimé ?',type:'tiles',opts:[...VR.map(([v,l,i])=>({v,i,l:l+(x.r===v?' ✓':'')})),{i:'trash',l:'Retirer',one:1,go:()=>{V.it=V.it.filter(y=>y.id!==id);save();closeFl()}}]}],r=>{x.r=r.r;return['Mis à jour',esc(x.n)+' · '+VR.find(z=>z[0]===r.r)[1]]})}
+function vuWish(id){const V=vuS(),w=V.w.find(w=>w.id===id);if(!w)return;
+  flow([{k:'x',q:esc(w.n),sub:VT[w.t][0]+' · dans tes envies',type:'tiles',opts:[{i:'check',l:'Je l’ai fait',one:1,go:()=>{closeFl();vuAdd({t:w.t,n:w.n,g:w.g})}},{i:'trash',l:'Plus envie',one:1,go:()=>{V.w=V.w.filter(y=>y.id!==id);save();closeFl()}},{i:'back',l:'Garder',one:1,go:()=>closeFl()}]}],()=>null)}
+function vuView(){const V=vuS(),sg=vuSug(5),pf=vuProfile(),ng=vuNudge(),tight=vuTight();
+  const chip=Object.entries(VT).map(([k,[l,i,c]])=>`<button class="vchip" data-vadd="${k}" style="--vc:${c}">${ic(i)}<b>${l}</b></button>`).join('');
+  return `<div class="ttl ttl2"><span>Vécu</span></div>
+  <p class="vsub">Note ce que tu vois, lis et fais. Je te cerne et je te propose des idées${tight?', surtout gratuites ce mois-ci':''}.</p>
+  <div class="vchips">${chip}</div>
+  ${ng?`<button class="vpl vng" data-vng="${ng.id}"><span class="vpi">${ic(ng.c==='resto'?'resto':'glass')}</span><span><b>${eur0(ng.v)} en ${ng.c==='resto'?'resto':'sortie'} ${ng.d===today?'aujourd’hui':dShort(ng.d)}</b><small>C’était quoi ? Tu as aimé ?</small></span>${ic('next')}</button>`:''}
+  <div class="sec"><h2>Pour toi</h2><small>${V.it.length<3?'Note 3 trucs, je m’affine':'Selon tes goûts'}</small></div>
+  <div class="vsug">${sg.map(c=>`<div class="vs" style="--vc:${VT[c[0]][2]}"><span class="vst">${ic(VT[c[0]][1])}${VT[c[0]][0]}</span><b>${esc(c[1])}</b><small>${vuWhy(c)}</small><div class="vsb"><button data-vok="${esc(c[0]+c[1])}">Ça me tente</button><button data-vno="${esc(c[0]+c[1])}" aria-label="Pas pour moi">${ic('x')}</button></div></div>`).join('')}</div>
+  ${pf?`<div class="sec"><h2>Ton profil</h2><small>${V.it.length} noté${V.it.length>1?'s':''}</small></div><div class="list">${pf.map(([i,t,s])=>`<div class="li"><span class="ck ico">${ic(i)}</span><span class="t">${t}<small>${s}</small></span><span></span></div>`).join('')}</div>`:''}
+  ${V.w.length?`<div class="sec"><h2>Tes envies</h2><small>Touche quand c’est fait</small></div><div class="list">${V.w.slice().reverse().map(w=>`<button class="li vli" data-vw="${w.id}"><span class="ck ico" style="--c:${VT[w.t][2]}">${ic(VT[w.t][1])}</span><span class="t">${esc(w.n)}<small>${VT[w.t][0]}</small></span>${ic('next')}</button>`).join('')}</div>`:''}
+  ${V.it.length?`<div class="sec"><h2>Déjà vécu</h2></div><div class="list">${V.it.slice().sort((a,b)=>b.d.localeCompare(a.d)).slice(0,30).map(x=>`<button class="li vli" data-vi="${x.id}"><span class="ck ico" style="--c:${VT[x.t][2]}">${ic(VT[x.t][1])}</span><span class="t">${esc(x.n)}<small>${VT[x.t][0]} · ${dShort(x.d)}${x.p>0?' · '+eur0(x.p):x.p===0?' · gratuit':''}</small></span><span class="vr">${(VR.find(r=>r[0]===x.r)||VR[1])[1]}</span></button>`).join('')}</div>`:''}`}
+function vuBind(){const V=vuS();
+  document.querySelectorAll('[data-vadd]').forEach(b=>b.onclick=()=>{buzz();vuAdd({t:b.dataset.vadd})});
+  document.querySelectorAll('[data-vi]').forEach(b=>b.onclick=()=>{buzz();vuItem(b.dataset.vi)});
+  document.querySelectorAll('[data-vw]').forEach(b=>b.onclick=()=>{buzz();vuWish(b.dataset.vw)});
+  document.querySelectorAll('[data-vok]').forEach(b=>b.onclick=()=>{const c=VC.find(c=>c[0]+c[1]===b.dataset.vok);if(!c)return;buzz([10,40,10]);V.w.push({id:uid(),t:c[0],n:c[1],g:c[2]});save();home()});
+  document.querySelectorAll('[data-vno]').forEach(b=>b.onclick=()=>{buzz(5);V.no.push(b.dataset.vno);save();home()});
+  const n=$('[data-vng]');if(n)n.onclick=()=>{buzz();const e=S.e.find(e=>e.id===n.dataset.vng);if(!e)return;
+    flow([{k:'x',q:eur0(e.v)+' en '+(e.c==='resto'?'resto':'sortie'),sub:'Tu me dis ce que c’était ?',type:'tiles',opts:[{i:'check',l:'Oui, je le note',one:1,go:()=>{closeFl();vuAdd({t:e.c==='resto'?'resto':'sortie',fe:{id:e.id,v:e.v},d:e.d})}},{i:'x',l:'Pas la peine',one:1,go:()=>{V.ign=V.ign||[];V.ign.push(e.id);save();closeFl()}}]}],()=>null)}}
+
 function cofScr(){const v=cofV(),g=S.cof&&S.cof.g;flow([{k:'x',top:()=>safeSvg(cofRatio(),'mid'),q:v?eur(v)+' de côté':'Ton coffre',sub:v?(g?(v>=g.v?'Objectif « '+esc(g.n)+' » atteint.':'Pour '+esc(g.n)+' : encore '+eur0(g.v-v)+'.'):'Cet argent reste sur ton compte, l’app le met juste de côté pour que tu n’y touches pas.'):'L’argent reste sur ton compte. L’app le retire de ce que tu peux dépenser, pour que tu n’y touches pas.',type:'tiles',opts:[
   {i:'plus',l:'Mettre de côté',one:1,go:()=>flow([{k:'v',q:'Combien tu mets de côté ?',type:'tiles',opts:[5,10,20,50].map(n=>({v:n,i:'safe',l:eur0(n)})).concat([{i:'pen',l:'Autre montant',one:1,go:()=>flow([{k:'v',q:'Combien tu mets de côté ?',type:'amount'}],r=>cofAdd(r.v))}])}],r=>cofAdd(r.v))},
   ...(v>0?[{i:'out',l:'Reprendre',s:'Si tu en as vraiment besoin',one:1,go:()=>flow([{k:'v',q:'Combien tu reprends ?',sub:'Sur '+eur(v)+'. Pas de souci, ça arrive.',type:'amount'}],r=>cofAdd(-Math.min(r.v,cofV())))}]:[]),
-  {i:'gift',l:g?'Changer l’objectif':'Un objectif',s:g?esc(g.n)+' · '+eur0(g.v):'Ex. vacances, permis, une sécurité',one:1,go:goalFlow},
+  {i:'gift',l:g?'Changer l’objectif':'Un objectif',s:g?esc(g.n)+' · '+eur0(g.v)+(g.d?' · '+dShort(g.d):''):'Ex. vacances dans 4 mois, permis, une sécurité',one:1,go:goalFlow},
   {i:'safe',l:'Chaque mois',s:S.cof&&S.cof.m?eur0(S.cof.m)+' par mois, déjà retirés de ton budget':'Un montant retiré de ton budget dès le début du mois',one:1,go:()=>flow([{k:'m',q:'Combien tu mets au coffre chaque mois ?',sub:'Je le retire de ce que tu peux dépenser, comme une charge fixe.',type:'tiles',opts:[25,50,100,200].map(n=>({v:n,i:'safe',l:eur0(n)+' par mois'})).concat([{i:'pen',l:'Autre montant',one:1,go:v=>{v.mf=1;nextStep()}}]).concat(S.cof&&S.cof.m?[{v:0,i:'x',l:'Plus d’objectif mensuel'}]:[])},{k:'m',q:'Combien par mois ?',type:'amount',skip:v=>!v.mf}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.m=r.m||0;return r.m?['C’est noté',eur0(r.m)+' par mois au coffre, déjà retirés']:['Arrêté','Plus d’objectif mensuel']})},
   {i:'cal',l:'Chaque semaine',s:S.cof&&S.cof.w?eur0(S.cof.w)+' le lundi':'Un rappel chaque lundi',one:1,go:()=>flow([{k:'w',q:'Combien chaque semaine ?',sub:'Le lundi, l’app te propose de le mettre de côté en une touche.',type:'tiles',opts:[5,10,20,30,50].map(n=>({v:n,i:'safe',l:eur0(n)+' par semaine',s:'≈ '+eur0(n*52/12)+' par mois'})).concat(S.cof&&S.cof.w?[{v:0,i:'x',l:'Arrêter'}]:[])}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.w=r.w;return r.w?['C’est noté',eur0(r.w)+' chaque lundi']:['Arrêté','Plus de rappel du lundi']})}]}],()=>['',''])}
 const wkMon=(d=today)=>addD(d,-((pd(d).getDay()+6)%7));
