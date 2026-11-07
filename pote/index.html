@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794077000" data-theme="light">
+<html lang="fr" data-build="1794079000" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -679,6 +679,20 @@ body{background:#000}
 .tmore{width:220px;padding:6px;font-size:12px;font-weight:600;color:var(--muted);text-align:center;background:repeating-linear-gradient(180deg,transparent 0 6px,rgba(0,0,0,.04) 6px 7px);border-left:3px solid #D6CEC2;border-right:3px solid #D6CEC2}
 .tsky{padding:30px 0 10px;border-radius:24px;background:linear-gradient(180deg,#0B1E3A 0%,#4A7FC1 35%,#BFDDFF 75%,#EAF4FF 100%)}
 .strk.twp .tower{margin-bottom:18px}.strk.twp .tower .tf{animation:yay .6s cubic-bezier(.2,.9,.3,1.4) both}.strk.twp b{font-size:26px;text-align:center}.strk.twp small{text-align:center;max-width:300px}
+
+/* tour illustrée */
+.tcard{padding:0 0 16px;overflow:hidden;background:var(--card)!important}.tcard .tsvg{display:block;border-radius:24px 24px 0 0}
+.tsky2{border-radius:24px;overflow:hidden}.tsky2 .tsvg{display:block}
+.strk.twp .tower{background:transparent}
+
+/* seuil et plan vert */
+.seuil{display:grid;grid-template-columns:auto auto 1fr;align-items:baseline;gap:8px;padding:14px 16px;border-radius:18px;background:color-mix(in srgb,var(--good) 12%,var(--card));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--good) 40%,transparent)}
+.seuil span{font-size:13px;font-weight:700;color:var(--good)}.seuil b{font-family:var(--num);font-size:22px;color:var(--good)}.seuil em{font-style:normal;justify-self:end;font-size:13px;font-weight:600;color:var(--muted)}
+.vplan{display:grid;gap:8px}.vpl{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px;border:0;border-radius:18px;background:var(--card);font:inherit;color:var(--ink);text-align:left}
+.vpl:disabled{opacity:1}.vpl b{display:block;font-size:15px}.vpl small{display:block;font-size:13px;color:var(--muted);margin-top:2px;line-height:1.35}.vpl>svg{width:16px;height:16px;color:var(--muted)}
+.vpi{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--good) 14%,var(--card));color:var(--good)}.vpi svg{width:18px;height:18px}
+.vpl.win{background:linear-gradient(135deg,#1E7A43,#2E9D57);color:#fff}.vpl.win small{color:rgba(255,255,255,.85)}.vpl.win .vpi{background:rgba(255,255,255,.2);color:#fff}
+.chs{font-size:13px;font-weight:600;opacity:.92;text-align:center}
 </style>
 </head>
 <body>
@@ -1401,7 +1415,7 @@ function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().cha
   const BL=badgeList().map((b,k)=>[...b,k]).sort((a,b)=>(b[1]-a[1])||(a[3]-b[3]));
   const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €','var(--good)'],...(S.vice&&W.fs!=null?[[sans30().n+' / '+sans30().of+' j','jours sans sur les 30 derniers','#64D2FF']]:[[W.agd,'chose'+(W.agd>1?'s':'')+' faite'+(W.agd>1?'s':''),'var(--c-ag)']]),[eur0(W.kept),'gardés grâce à « Envie d’acheter »','var(--c-cof)'],[eur0(W.rb),'de dettes remboursées','var(--c-debt)']];
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
-  ${chantierCard()}${(()=>{const T=towerStats();return `<button class="tcard" data-a="tour">${towerHTML(4)}<div class="tcap"><b>${esc((S.name||'Ta').split(' ')[0])}${S.name?', ta':''} tour · ${T.n} étage${T.n>1?'s':''}</b><span>${T.lit} fenêtre${T.lit>1?'s':''} allumée${T.lit>1?'s':''} · toucher pour voir toute la tour</span></div></button>`})()}
+  ${chantierCard()}${(()=>{const T=towerStats();return `<button class="tcard" data-a="tour">${towerSvg(4)}<div class="tcap"><b>${esc((S.name||'Ta').split(' ')[0])}${S.name?', ta':''} tour · ${T.n} étage${T.n>1?'s':''}</b><span>${T.lit} fenêtre${T.lit>1?'s':''} allumée${T.lit>1?'s':''} · toucher pour voir toute la tour</span></div></button>`})()}
   ${(()=>{const W7=weekBlocks();return `<button class="lvc" data-a="prog"><div class="lvt"><span class="fl4">Étage en cours <b>${Math.min(W7.ok,7)} / 7</b></span><span>${W7.ok>=5?'Objectif de la semaine tenu ✓':'Objectif : 5 fenêtres'}</span></div><div class="wk7">${W7.B}</div><div class="lvt"><span>${xpDays()} jour${xpDays()>1?'s':''} tenu${xpDays()>1?'s':''} au total</span><span>Plus haute pile : ${recordStreak()}</span></div><span class="jkl">${jkIc(jkLeft())}${jkLeft()?'1 joker dispo cette semaine':'Joker utilisé · revient lundi'}</span></button>`})()}
   ${qCard()}
   <div class="sec"><h2>Tes victoires</h2></div>
@@ -1619,12 +1633,26 @@ function vgState(){if(!S.bal)return null;const H=heroNums(),nr=nextRin(),def=Mat
   return{H,nr,def,W,p,br,tg:zero?0:tg,zero,when,moved}}
 function vgPill(){const V=vgState();if(!V||V.def<=0)return '';const M=V.zero?'Journée à 0 €':'≤ '+eur0(V.tg);
   return `<button class="vgp" data-a="vg"><div class="vgb">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div><div class="vgt"><b>Retour au vert · ${V.p>=.9?'plus que '+eur0(V.def):V.br+'/10'}</b><span>${V.when?'À ce rythme, '+V.when:'Chaque journée sous '+eur0(V.tg)+' compte'}</span></div><div class="vgm${V.H.tdS<=V.tg+.5?' ok':''}"><small>Mission</small><b>${M}</b>${V.H.tdS?`<em>${eur0(V.H.tdS)} dépensés</em>`:''}</div></button>`}
+
+/* Le plan pour le vert : des objectifs concrets jusqu'au seuil */
+function vgPlan(V){const L=[];if(!V||V.def<=0)return L;const nr=V.nr;
+  L.push({i:'spark',t:V.zero?'Chaque jour : une journée à 0 €':'Chaque jour : rester sous '+eur0(V.tg),s:'Ta mission. Elle empêche le trou de grandir.',k:'m'});
+  if(nr){const dd=Math.max(0,Math.round((pd(nr.dt)-pd(today))/864e5)),after=V.def+V.tg*dd-nr.v;
+    L.push(after<=0?{i:'in',t:'Le '+pd(nr.dt).getDate()+' '+MN[pd(nr.dt).getMonth()]+' : tu repasses au vert',s:'Avec '+esc(nr.n)+' (+'+eur0(nr.v)+'), si tu tiens ta mission d’ici là.',k:'win'}:{i:'in',t:'Le '+pd(nr.dt).getDate()+' : +'+eur0(nr.v)+' ('+esc(nr.n)+')',s:'Ton trou remonte d’un coup. Il restera environ '+eur0(after)+' à remonter.',k:'inc'})}
+  const th={};S.debts.filter(x=>x.w==='them').forEach(x=>th[x.p]=(th[x.p]||0)+x.v);const tt=Object.entries(th).sort((a,b)=>b[1]-a[1]);
+  if(tt.length)L.push({i:'users',t:'Récupérer ce qu’on te doit : '+eur0(tt.reduce((a,x)=>a+x[1],0)),s:tt.slice(0,3).map(([p,v])=>esc(p)+' '+eur0(v)).join(' · '),k:'debt',go:()=>debtList()});
+  if(S.cof&&S.cof.w>0&&S.cof.sk!==wkMon())L.push({i:'safe',t:'Mettre ta réserve en pause',s:'+'+eur0(S.cof.w)+' par semaine pour remonter plus vite.',k:'cof',go:()=>{S.cof.sk=wkMon();done(['Réserve en pause','Cette semaine, tout va au retour au vert'])}});
+  const fr=S.e.filter(x=>x.c==='frais'&&x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);if(fr>0)L.push({i:'bank',t:'Récupérer tes frais bancaires ('+eur0(fr)+')',s:'Une lettre toute prête pour ta banque.',k:'fr',go:droitsScr});
+  L.push({i:'check',t:'Chaque journée à 0 €',s:V.tg>0?'C’est '+eur0(V.tg)+' de plus vers le vert, et deux briques dorées.':'Deux briques dorées.',k:'z'});
+  return L}
 function vgScr(){const V=vgState();if(!V)return;const gold=S.vgG||0,P=[25,50,75,90],got=S.vgP||[];
   const holes=[...Array(10)].map((_,i)=>{const k=9-i,on=k<V.br;return `<i class="${on?'on':''}${on&&k>=10-Math.min(gold,10)?' gd':''}"></i>`}).join('');
   scr('Fondations',`<div class="fdn"><div class="grass"></div><div class="hole">${holes}</div></div>
    <div class="big2"><small>${V.def>0?'Retour au vert':'Tu es dans le vert'}</small><strong>${V.def>0?(V.p>=.9?'Plus que '+eur0(V.def):V.br+' / 10'):'Au niveau du sol'}</strong><span>${V.def>0?(V.moved?'Le chantier a bougé, tes briques restent. ':'')+(V.when?'À ce rythme, tu y es en '+V.when+'.':'Chaque journée sous '+eur0(V.tg)+' compte.'):'Le trou est rempli. Maintenant, on construit.'}</span></div>
+   ${V.def>0?`<div class="seuil"><span>Seuil vert</span><b>0 €</b><em>Encore ${eur0(V.def)} à remonter</em></div><div class="sec" style="margin-top:2px"><h2>Ton plan pour le vert</h2></div><div class="vplan">${vgPlan(V).map((o,n)=>`<button class="vpl${o.k==='win'?' win':''}" ${o.go?`data-vp="${n}"`:'disabled'}><span class="vpi">${ic(o.i)}</span><span><b>${o.t}</b><small>${o.s}</small></span>${o.go?ic('next'):''}</button>`).join('')}</div>`:''}
    <div class="tipb"><b>Mission du jour</b><p class="tl">${V.zero?'Journée à 0 €. Rien du tout, c’est déjà une victoire.':'Rester sous '+eur0(V.tg)+'. Ça suffit pour que le trou ne grandisse pas.'}${V.H.tdS?' Aujourd’hui : '+eur0(V.H.tdS)+'.':''}</p><p class="tl">Elle se valide à ton point du soir. Réussie : une brique dorée. Journée à 0 € : deux.</p></div>
-   <div class="msum"><div><b>${gold}</b><small>briques dorées</small></div><div><b>${P.filter(x=>got.includes(x)).length} / 4</b><small>paliers</small></div><div><b>${Math.round(V.p*100)} %</b><small>du trou rempli</small></div></div>`)}
+   <div class="msum"><div><b>${gold}</b><small>briques dorées</small></div><div><b>${P.filter(x=>got.includes(x)).length} / 4</b><small>paliers</small></div><div><b>${Math.round(V.p*100)} %</b><small>du trou rempli</small></div></div>`);
+  const PL=vgPlan(V);document.querySelectorAll('[data-vp]').forEach(b=>b.onclick=()=>{buzz();const o=PL[+b.dataset.vp];closeScr();o.go()})}
 function vgEve(msg){try{const V=vgState();if(!V||V.def<=0&&!(V.H.free+V.H.tdS<0))return msg;const sp=V.H.tdS,ok=sp<=V.tg+.5;S.vgM=S.vgM||{};if(S.vgM[today])return msg;S.vgM[today]=ok?1:-1;
   const nl=Math.max(1,V.H.left-1),tm=V.nr?Math.max(0,(V.H.free+V.nr.v)/nl):0;
   if(ok){const n=sp<.5?2:1;S.vgG=(S.vgG||0)+n;return[n>1?'Deux briques dorées':'Brique dorée','+'+(n*3)+' points · '+(V.nr?'demain, ton budget monte à '+eur0(tm)+'.':'le trou ne grandit pas.')]}
@@ -1654,7 +1682,7 @@ function qCard(){const Q=qWeek(),w=mon(today),L=(S.qd||{})[w]||[],d=7-((pd(today
 function chantierCard(){const V=vgState();if(!V||V.def<=0)return '';const M=V.zero?'Journée à 0 €':'Rester sous '+eur0(V.tg);
   return `<button class="chc" data-a="vg"><div class="chh"><span class="chb">Mode chantier</span><b>Retour au vert</b></div><div class="vgb">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div>
    <div class="chg"><div><b>${V.p>=.9?eur0(V.def):V.br+'/10'}</b><small>${V.p>=.9?'plus que':'briques'}</small></div><div><b>${S.vgG||0}</b><small>dorées</small></div><div><b>${(S.vgP||[]).length}/4</b><small>paliers</small></div></div>
-   <div class="chm"><span>${ic('spark')}Mission du jour</span><b>${M}</b></div></button>`}
+   <div class="chm"><span>${ic('spark')}Mission du jour</span><b>${M}</b></div><div class="chs">${(()=>{const P=vgPlan(V).find(o=>o.k==='win'||o.k==='inc');return P?esc(P.t.replace(/<[^>]+>/g,'')):'Seuil vert : 0 € · encore '+eur0(V.def)+' à remonter'})()}</div></button>`}
 
 /* ===== La tour : un étage par semaine, une fenêtre par jour ===== */
 function towerFloors(){const st=mon(S.start||today),cur=mon(today),F=[];
@@ -1668,14 +1696,62 @@ function towerHTML(lim){const F=towerFloors(),N=F.length,show=lim?F.slice(-lim):
    ${show.slice().reverse().map((f,i)=>floorRow(f,N-i)).join('')}${lim&&N>lim?`<div class="tmore">+ ${N-lim} étage${N-lim>1?'s':''} en dessous</div>`:''}
    <div class="tgnd"><i class="door"></i></div>${base?`<div class="tbase">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}<span>Sous-sol · retour au vert</span></div>`:''}</div>`}
 function towerStats(){const F=towerFloors(),done=F.filter(f=>!f.cur).length,lit=F.reduce((a,f)=>a+f.lit,0),gold=F.reduce((a,f)=>a+f.gold,0);return{F,done,lit,gold,n:F.length}}
-function tourScr(){const T=towerStats();const x=scr('Ta tour',`<div class="tsky">${towerHTML(0)}</div>
+function tourScr(){const T=towerStats();const x=scr('Ta tour',`<div class="tsky2">${towerSvg(0)}</div>
    <div class="msum"><div><b>${T.n}</b><small>étage${T.n>1?'s':''}</small></div><div><b>${T.lit}</b><small>fenêtres allumées</small></div><div><b>${T.gold}</b><small>dorées</small></div></div>
    <p class="tl" style="text-align:center">Chaque jour tenu allume une fenêtre. Une journée à 0 € ou une mission réussie : fenêtre dorée. Chaque dimanche, l’étage est terminé et un nouveau commence. Rien n’est jamais détruit.</p>`);
-  const sk=x.querySelector('.tsky');setTimeout(()=>{sk.scrollIntoView({block:'start'})},50)}
+  }
 function dong(){try{if(!sndOn())return;const a=ac();if(!a)return;tone(392,0,1.6,.09,'sine');tone(784,0,.5,.025,'sine');tone(523.3,.42,1.8,.085,'sine');tone(1046.5,.42,.5,.02,'sine')}catch(e){}}
 function towerCheck(){try{if(!S.name)return;const cur=mon(today);if(!S.twk){S.twk=cur;save();return}if(S.twk===cur)return;
   const F=towerFloors(),prev=F.find(f=>f.w===S.twk)||F.at(-2),n=F.indexOf(prev)+1;S.twk=cur;save();if(!prev)return;
   setTimeout(()=>{const go=()=>{const o=document.createElement('div');o.className='strk twp';o.innerHTML=`<div class="tower pop">${floorRow({...prev,cur:false},n)}<div class="tgnd"><i class="door"></i></div></div><small>Étage ${n} terminé</small><b>${prev.lit} fenêtre${prev.lit>1?'s':''} allumée${prev.lit>1?'s':''} sur 7</b><small>${prev.lit>=7?'Étage parfait. Ta tour brille.':prev.lit>=5?'Objectif de la semaine tenu.':'Il tient debout, et le suivant commence.'} Nouvel étage en construction.</small><button>Continuer</button>`;document.body.appendChild(o);dong();buzz([20,120,20]);o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}};$('.strk')||$('#rcp')?setTimeout(go,2500):go()},900)}catch(e){}}
+
+/* ===== La tour, version illustrée ===== */
+function towerSvg(lim){const F=towerFloors(),N=F.length,V=vgState(),base=V&&V.def>0,h=new Date().getHours();
+  const night=h<7||h>=20,dusk=h>=17&&h<20,FH=34,BW=176,X0=62,DEP=16;
+  const show=lim&&N>lim?F.slice(-lim):F,cut=lim&&N>lim;
+  const top=78,floorsH=show.length*FH+(cut?18:0),gY=top+floorsH,H=gY+46+(base?54:0);
+  const sky=night?['#0A1730','#1B3460','#2E4C7E']:dusk?['#3B4A8C','#E58C8A','#FFD3A5']:['#7DB8F5','#BFDDFF','#EAF4FF'];
+  const id='t'+Math.random().toString(36).slice(2,7);
+  let o=`<svg class="tsvg" viewBox="0 0 300 ${H}" width="100%" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><defs>
+   <linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky[0]}"/><stop offset=".55" stop-color="${sky[1]}"/><stop offset="1" stop-color="${sky[2]}"/></linearGradient>
+   <linearGradient id="${id}f" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${night?'#4A5568':'#F7F3EC'}"/><stop offset="1" stop-color="${night?'#3A4352':'#E6DED2'}"/></linearGradient>
+   <linearGradient id="${id}d" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${night?'#2C3442':'#CFC5B6'}"/><stop offset="1" stop-color="${night?'#232A36':'#B9AE9D'}"/></linearGradient>
+   <linearGradient id="${id}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF2C4"/><stop offset="1" stop-color="#FFC24A"/></linearGradient>
+   <linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF8DC"/><stop offset="1" stop-color="#FFA800"/></linearGradient>
+   <filter id="${id}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter></defs>
+   <rect width="300" height="${H}" fill="url(#${id}s)"/>`;
+  if(night){for(let i=0;i<22;i++){const x=(i*53+17)%300,y=(i*29+11)%Math.max(40,gY-60);o+=`<circle cx="${x}" cy="${y}" r="${i%3?0.8:1.3}" fill="#fff" opacity="${.4+((i*7)%5)/10}"/>`}o+=`<circle cx="250" cy="34" r="13" fill="#F4F1E4"/><circle cx="256" cy="30" r="12" fill="${sky[0]}"/>`}
+  else o+=`<circle cx="${dusk?232:246}" cy="${dusk?gY-30:36}" r="${dusk?20:16}" fill="${dusk?'#FFB36B':'#FFE27A'}" opacity=".95"/>`;
+  if(!night){[[30,40],[200,70],[110,24]].forEach(([x,y],i)=>{if(y<gY-20)o+=`<g opacity=".85" fill="#fff"><ellipse cx="${x}" cy="${y}" rx="${22+i*4}" ry="8"/><ellipse cx="${x+12}" cy="${y-5}" rx="13" ry="8"/></g>`})}
+  // silhouettes de la ville
+  const sk=[[0,58],[22,40],[40,72],[248,52],[268,86],[284,44]];sk.forEach(([x,hh])=>{o+=`<rect x="${x}" y="${gY-hh}" width="${x>240?18:20}" height="${hh}" fill="${night?'#13213B':'#9FB6D3'}" opacity="${night?1:.55}"/>`});
+  // grue sur l'étage en cours
+  if(F.at(-1)&&F.at(-1).cur){const cy=top-6;o+=`<g stroke="#FF9F0A" stroke-width="2.4" fill="none" stroke-linecap="round"><path d="M${X0+BW-40} ${cy} V${cy-58} M${X0+BW-40} ${cy-58} H${X0+BW+28} M${X0+BW-40} ${cy-58} H${X0+BW-78} M${X0+BW-40} ${cy-70} L${X0+BW+20} ${cy-58} M${X0+BW-40} ${cy-70} L${X0+BW-74} ${cy-58} M${X0+BW-40} ${cy-70} V${cy-58}"/><path d="M${X0+BW+10} ${cy-58} V${cy-30}" stroke-width="1.2"/></g><rect x="${X0+BW+4}" y="${cy-30}" width="12" height="8" rx="1.5" fill="#FF9F0A"/><rect x="${X0+BW-82}" y="${cy-62}" width="10" height="8" fill="#8E8E93"/>`}
+  // étages (du haut vers le bas)
+  let y=top;const rows=show.slice().reverse();
+  rows.forEach((f,ri)=>{const n=N-ri,cur=f.cur;
+    o+=`<path d="M${X0+BW} ${y} l${DEP} -${DEP*.6} v${FH} l-${DEP} ${DEP*.6}z" fill="url(#${id}d)"/>`;
+    o+=`<rect x="${X0}" y="${y}" width="${BW}" height="${FH}" fill="url(#${id}f)" ${cur?`stroke="#FF9F0A" stroke-dasharray="4 3" stroke-width="1.2"`:''}/>`;
+    if(ri===0)o+=`<path d="M${X0-4} ${y} h${BW+8} l${DEP} -${DEP*.6} h-${BW+8}z" fill="${night?'#556070':'#DAD1C4'}"/>`;
+    o+=`<line x1="${X0}" y1="${y+FH}" x2="${X0+BW}" y2="${y+FH}" stroke="${night?'#2A3240':'#CBBFAE'}" stroke-width="1"/>`;
+    f.days.forEach((st,k)=>{const wx=X0+9+k*23.5,wy=y+8,ww=17,wh=19;
+      if(st==='on'||st==='gd'){o+=`<rect x="${wx-3}" y="${wy-3}" width="${ww+6}" height="${wh+6}" rx="4" fill="${st==='gd'?'#FFB000':'#FFC24A'}" opacity="${night?.75:.45}" filter="url(#${id}b)"/><rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" rx="2.5" fill="url(#${id}${st==='gd'?'g':'w'})"/><line x1="${wx+ww/2}" y1="${wy}" x2="${wx+ww/2}" y2="${wy+wh}" stroke="rgba(160,100,0,.25)"/>${st==='gd'?`<path d="M${wx+ww-4} ${wy+3} l1 2.2 2.2 1 -2.2 1 -1 2.2 -1 -2.2 -2.2 -1 2.2 -1z" fill="#fff"/>`:''}`}
+      else if(st==='fut'||st==='na')o+=`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" rx="2.5" fill="none" stroke="${night?'#5A6474':'#C9BFB0'}" stroke-dasharray="2 2"/>`;
+      else o+=`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" rx="2.5" fill="${night?'#1C2635':'#7E93AD'}" ${st==='td'?'stroke="#FF9F0A" stroke-width="1.6"':''}/><path d="M${wx+2} ${wy+wh-3} l${ww-6} -${wh-6}" stroke="rgba(255,255,255,.25)" stroke-width="2"/>`});
+    for(let k=0;k<Math.min(3,f.deco);k++)o+=`<g transform="translate(${X0+BW-8-k*12} ${y+FH-5})"><rect x="-5" y="0" width="10" height="4" rx="1" fill="#8B5E3C"/><circle cx="0" cy="-2" r="4" fill="#34C759"/></g>`;
+    o+=`<text x="${X0-8}" y="${y+FH/2+4}" text-anchor="end" font-size="10" font-weight="700" fill="${night?'#9FB0C8':'#6C7A8C'}" font-family="-apple-system,system-ui">${n}</text>`;
+    y+=FH;
+    if(cut&&ri===rows.length-1){o+=`<rect x="${X0}" y="${y}" width="${BW}" height="18" fill="url(#${id}f)" opacity=".55"/><path d="M${X0} ${y+9} l12 -5 12 10 12 -10 12 10 12 -10 12 10 12 -10 12 10 12 -10 12 10 12 -10 12 10 12 -10 12 5" stroke="${night?'#9FB0C8':'#A89C8A'}" fill="none" stroke-width="1.2"/><text x="150" y="${y+13}" text-anchor="middle" font-size="9" font-weight="700" fill="${night?'#C8D3E3':'#6C7A8C'}" font-family="-apple-system,system-ui">+ ${N-lim} étages</text>`;y+=18}});
+  // rez-de-chaussée et sol
+  o+=`<rect x="${X0}" y="${gY}" width="${BW}" height="22" fill="${night?'#2F3846':'#D9CFC1'}"/><path d="M${X0+BW} ${gY} l${DEP} -${DEP*.6} v22 l-${DEP} ${DEP*.6}z" fill="url(#${id}d)"/>
+   <rect x="${X0+BW/2-15}" y="${gY+3}" width="30" height="19" rx="3" fill="${night?'#FFD27A':'#5C4433'}"/><path d="M${X0+BW/2-22} ${gY+3} h44 l-4 -5 h-36z" fill="#FF9F0A"/>
+   <rect x="0" y="${gY+22}" width="300" height="24" fill="${night?'#1E2A1E':'#7BC86C'}"/><rect x="0" y="${gY+22}" width="300" height="5" fill="${night?'#3A4A3A':'#9BD88E'}"/>
+   ${[[30,1],[268,1.1],[46,.8]].map(([x,s])=>`<g transform="translate(${x} ${gY+22}) scale(${s})"><rect x="-1.5" y="-12" width="3" height="12" fill="#7A5A3C"/><circle cx="0" cy="-18" r="10" fill="${night?'#24502E':'#34C759'}"/><circle cx="-5" cy="-14" r="6" fill="${night?'#1E4326':'#2EAF4F'}"/></g>`).join('')}
+   <g transform="translate(240 ${gY+22})"><rect x="-1" y="-24" width="2" height="24" fill="#636366"/><circle cx="0" cy="-25" r="3" fill="${night?'#FFE27A':'#C7C7CC'}"/>${night?`<circle cx="0" cy="-25" r="9" fill="#FFE27A" opacity=".35" filter="url(#${id}b)"/>`:''}</g>`;
+  if(base){const by=gY+46;o+=`<rect x="0" y="${by}" width="300" height="${H-by}" fill="${night?'#241B14':'#8A6A50'}"/><rect x="${X0-10}" y="${by+2}" width="${BW+20}" height="48" rx="6" fill="${night?'#3A2C21':'#5A4636'}"/>`;for(let i=0;i<10;i++){const bx=X0-2+i*((BW+4)/10);o+=`<rect x="${bx}" y="${by+8}" width="${(BW+4)/10-3}" height="16" rx="2" fill="${i<V.br?'#FF9F0A':'none'}" stroke="${i<V.br?'none':'rgba(255,255,255,.25)'}"/>`}
+    o+=`<text x="150" y="${by+40}" text-anchor="middle" font-size="10" font-weight="700" fill="#F4E6D6" font-family="-apple-system,system-ui">Sous-sol · encore ${eur0(V.def)} jusqu’au vert</text>`;
+    o+=`<line x1="0" y1="${gY+46}" x2="300" y2="${gY+46}" stroke="#30D158" stroke-width="2" stroke-dasharray="5 4"/><rect x="6" y="${gY+36}" width="74" height="18" rx="9" fill="#30D158"/><text x="43" y="${gY+48.5}" text-anchor="middle" font-size="9.5" font-weight="800" fill="#fff" font-family="-apple-system,system-ui">NIVEAU VERT</text>`}
+  return o+`</svg>`}
 
 /* ---------- Réserve ---------- */
 function cofCard(B){const v=cofV(),g=S.cof&&S.cof.g;
