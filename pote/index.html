@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794075141" data-theme="light">
+<html lang="fr" data-build="1794076293" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -13,8 +13,9 @@
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#F7F7F8;--card:#FFFFFF;--card2:#EFEFF1;--ink:#0B0B0C;--muted:#71747A;--line:#E6E6E9;--good:#16A34A;--bad:#DC2626;color-scheme:light}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 1}
-body{min-height:100dvh}
-html,body{overscroll-behavior:none;overscroll-behavior-y:none}
+html{height:100%;overflow:hidden;overscroll-behavior:none}
+body{height:100%;margin:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
+.scr,.sh,.sh2,.fb{overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
 button{font:inherit;color:inherit;cursor:pointer}
 button{transition:transform .16s cubic-bezier(.3,.7,.4,1),opacity .16s}button:active{transform:scale(.97)}
 :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
@@ -481,7 +482,7 @@ label.tile{position:relative;overflow:hidden}.tlink.set .tl{color:var(--ink)!imp
 .vic b{font-size:28px;font-weight:800;letter-spacing:-.03em}.vic small{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.3}
 .goal{display:grid;gap:10px;padding:18px;border-radius:20px;border:0;background:var(--card);color:var(--ink);font:inherit;text-align:left}
 .goal .gt{display:flex;justify-content:space-between;align-items:baseline}.goal .gt b{font-size:18px}.goal .gt span{font-size:14px;color:var(--muted);font-weight:600}.goal>small{font-size:13px;color:var(--muted);font-weight:500}
-.goal.add{grid-template-columns:auto 1fr auto;align-items:center;gap:14px}.goal.add b{display:block;font-size:16px}.goal.add small{font-size:13px;color:var(--muted)}.goal.add>svg{width:16px;height:16px;color:var(--muted)}
+.gput{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:8px;border:0;border-radius:16px;padding:14px;background:color-mix(in srgb,var(--c-cof) 14%,transparent);color:var(--c-cof);font:inherit;font-size:15px}.gput svg{width:18px;height:18px;stroke-width:2.4} .goal.add{grid-template-columns:auto 1fr auto;align-items:center;gap:14px}.goal.add b{display:block;font-size:16px}.goal.add small{font-size:13px;color:var(--muted)}.goal.add>svg{width:16px;height:16px;color:var(--muted)}
 .goal .gi{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--c-cof) 16%,var(--card));color:var(--c-cof)}
 .bdgs{display:grid;grid-auto-flow:column;grid-auto-columns:84px;gap:10px;overflow-x:auto;padding:2px 2px 8px;margin:0 -20px;padding-left:20px;scrollbar-width:none}.bdgs::-webkit-scrollbar{display:none}
 .bdgs div{display:grid;justify-items:center;gap:8px;text-align:center}.bdgs span{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--card2);color:var(--muted);opacity:.55}
@@ -731,7 +732,7 @@ body{background:#000}
 .frow.fcur .fno:first-child{color:#FF9F0A}.fgoal{font-size:12px;font-weight:700;color:var(--muted);text-align:center;padding:2px 0 6px}
 .ftw.big{width:100%}.tfull{padding:14px 8px 22px}
 .ftw.pop{animation:fwon .5s cubic-bezier(.2,.9,.3,1.4) both}
-.fms{display:flex;align-items:center;gap:6px;margin:4px 0 -4px 31px;font-size:12px;color:var(--ink)}.fms svg{width:13px;height:13px;color:#FF9F0A;stroke-width:2.4}.fms b{font-weight:650}.fms small{color:var(--muted);font-weight:500;font-family:var(--num)}.fms.past{opacity:.55}.fms.own svg{color:#AF52DE}
+.fms{display:flex;align-items:center;gap:6px;margin:4px 0 -4px 31px;font-size:12px;color:var(--ink)}.fms svg{width:13px;height:13px;color:#FF9F0A;stroke-width:2.4}.fms b{font-weight:650}.fms small{color:var(--muted);font-weight:500;font-family:var(--num)}.fms.past{opacity:.55}.fms.own svg{color:#AF52DE}.fms[data-ms="goal"],.fms[data-ms="goal"] svg{color:var(--c-cof)}
 .qrow{grid-template-columns:1fr auto!important;padding:12px 14px!important}.qrow small svg{width:16px;height:16px;color:var(--good);stroke-width:2.6}
 </style>
 </head>
@@ -844,7 +845,7 @@ const people=()=>{const m=new Map();for(const x of S.debts)if(!m.has(pk(x.p)))m.
 
 /* ---------- Accueil ---------- */
 let TAB='argent';
-function tabTo(t){if(t===TAB){scrollTo({top:0,behavior:'smooth'});return}TAB=t;buzz(6);if(t==='agenda'){agD=today}home();scrollTo(0,0)}
+function tabTo(t){if(t===TAB){document.body.scrollTo({top:0,behavior:'smooth'});return}TAB=t;buzz(6);if(t==='agenda'){agD=today}home();document.body.scrollTop=0}
 function addSheet(){const o=document.createElement('div');o.className='shb2';
   const it=[['dep','t-out','out','J’ai dépensé','Une dépense, même petite'],['inc','t-in','in','J’ai reçu','Salaire, aide, virement'],['ag','t-ag','bell','Un rappel','Agenda, heure exacte'],['debt','t-debt','users','Une dette','Je dois ou on me doit'],['wish','t-cof','bag','Envie d’acheter','J’y réfléchis 24 h'],['scan','t-out','cam','Capture ou photo','Notif banque, ticket'],['pro','t-moi','brief','Côté pro','Compte pro, comptable']].filter(([k])=>k==='debt'?mod('d'):k==='wish'?mod('w'):k==='pro'?mod('f'):1);
   o.innerHTML=`<div class="sh2"><div class="grab"></div><div class="g4">${it.map(([k,c,i,l,s])=>`<button class="row4 ${c}" data-k="${k}"><span class="ib">${ic(i)}</span><span><b>${l}</b><small>${s}</small></span></button>`).join('')}</div></div>`;
@@ -875,7 +876,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   ${S.name?proCard():''}<button class="mlink" data-a="data">Mon mois ${ic('next')}</button>`+TB;
   homeBind()}
 function homeBind(){const B=badges();bindCopy($('#app'));try{const n=S.name?tasks().length:0;if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}{const m=$('#mvl');if(m)bindMv(m)}{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
-  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({tour:tourScr,vg:vgScr,rcp:()=>recap(),why:whySheet,bin:binFlow,droits:droitsScr,pay:payScr,wish:flowWish,eve:flowEve,bilan:()=>bilanScr(YM),data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,pro:proScr,bfx:()=>BUD.fx(),brin:()=>BUD.rin(),bbal:()=>flowBal(),wk:()=>wkScr(wkStart())})[b.dataset.a]()});
+  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({tour:tourScr,vg:vgScr,rcp:()=>recap(),why:whySheet,bin:binFlow,droits:droitsScr,pay:payScr,wish:flowWish,eve:flowEve,bilan:()=>bilanScr(YM),data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,gput:goalPut,pro:proScr,bfx:()=>BUD.fx(),brin:()=>BUD.rin(),bbal:()=>flowBal(),wk:()=>wkScr(wkStart())})[b.dataset.a]()});
   document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const a=S.ag.find(x=>x.id===b.dataset.ck);a.done=!a.done;save();buzz(a.done?[10,40,10]:8);home()});
   document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>agItem(b.dataset.ed));
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=e=>{e.stopPropagation();tabTo(b.dataset.tab)});
@@ -1108,7 +1109,7 @@ function agRender(){const b=$('#agb');if(!b)return;b.innerHTML=agV==='day'?agDay
     b.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)<60||Math.abs(dy)>Math.abs(dx))return;buzz(5);const sg=dx<0?1:-1;
       if(agV==='month'){const d=pd(agD);d.setDate(1);d.setMonth(d.getMonth()+sg);agD=iso(d)}else agD=addD(agD,sg*(agV==='week'?7:1));agRender()},{passive:true})}
   b.querySelectorAll('[data-ag]').forEach(x=>x.onclick=()=>{if(Date.now()-bSw<500)return;buzz();agItem(x.dataset.ag)});if(agD<=today)bubSwipe(b)}
-function agScr(v){if(v)agV=v;{const o=$('.scr');if(o){o.remove();document.body.style.overflow=''}const f=$('.fl');if(f){f.remove();FL=null}}TAB='agenda';home();scrollTo(0,0);return;const x=scr('Agenda',`<div class="seg" id="agseg"><button data-v="day">Jour</button><button data-v="week">Semaine</button><button data-v="month">Mois</button></div><div id="agb" style="display:grid;gap:14px"></div>
+function agScr(v){if(v)agV=v;{const o=$('.scr');if(o){o.remove();document.body.style.overflow=''}const f=$('.fl');if(f){f.remove();FL=null}}TAB='agenda';home();document.body.scrollTop=0;return;const x=scr('Agenda',`<div class="seg" id="agseg"><button data-v="day">Jour</button><button data-v="week">Semaine</button><button data-v="month">Mois</button></div><div id="agb" style="display:grid;gap:14px"></div>
   <button class="fxadd" id="agics">${ic('cal')} Mettre dans le calendrier du téléphone</button>`);
   x.querySelectorAll('#agseg [data-v]').forEach(b=>b.onclick=()=>{buzz(5);agV=b.dataset.v;agRender()});
   {const fb=document.createElement('button');fb.className='agfab';fb.setAttribute('aria-label','Ajouter un rappel');fb.innerHTML=ic('plus');x.appendChild(fb);fb.onclick=()=>{buzz();flowAg(agV==='day'&&agD>=today?agD:null)}}x.querySelector('#agics').onclick=()=>{buzz();icsExport()};agRender()}
@@ -1228,8 +1229,8 @@ function tilesUI(st,body){const opts=typeof st.opts==='function'?st.opts(FL.v):s
 function textUI(st,body,btm){body.innerHTML=`<input class="txt" id="tx" placeholder="${esc(st.ph||'')}" maxlength="${st.ml||60}" value="${esc(FL.v[st.k]||'')}" autocomplete="off">`;
   btm.innerHTML=`<button class="go" id="go">Suivant</button>`;const i=body.querySelector('#tx'),g=btm.querySelector('#go');const chk=()=>{if(st.opt){g.disabled=false;g.textContent=i.value.trim()?'Suivant':'Passer'}else g.disabled=!i.value.trim()};chk();i.oninput=chk;
   setTimeout(()=>i.focus(),250);const fin=()=>{if(!i.value.trim()&&!st.opt)return;FL.v[st.k]=i.value.trim();nextStep()};g.onclick=fin;i.onkeydown=e=>{if(e.key==='Enter')fin()}}
-function dateUI(st,body){const o=[[today,'sun','Aujourd’hui'],[addD(today,1),'moon','Demain'],[addD(today,2),'cal',dLab(addD(today,2))]];
-  body.innerHTML=`<div class="tiles">${o.map(([k,i,l])=>`<button class="tile" data-d="${k}"><span class="ib">${ic(i)}</span><b>${l}</b></button>`).join('')}<label class="tile"><span class="ib">${ic('calp')}</span><b>Autre jour</b><input type="date" class="dtin" id="dd" min="${st.past?'':today}"></label>${st.nodate?`<button class="tile one" data-d=""><span class="ib">${ic('pen')}</span><span><b>Pas de date</b><br><small>Dans ma liste, à faire un jour</small></span></button>`:''}</div>`;
+function dateUI(st,body){const o=st.far?[]:[[today,'sun','Aujourd’hui'],[addD(today,1),'moon','Demain'],[addD(today,2),'cal',dLab(addD(today,2))]];
+  body.innerHTML=`<div class="tiles">${o.map(([k,i,l])=>`<button class="tile" data-d="${k}"><span class="ib">${ic(i)}</span><b>${l}</b></button>`).join('')}<label class="tile"><span class="ib">${ic('calp')}</span><b>${st.far?'Choisir la date':'Autre jour'}</b><input type="date" class="dtin" id="dd" min="${st.past?'':today}"></label>${st.nodate?`<button class="tile one" data-d=""><span class="ib">${ic('pen')}</span><span><b>Pas de date</b><br><small>Dans ma liste, à faire un jour</small></span></button>`:''}</div>`;
   body.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{buzz();FL.v[st.k]=b.dataset.d;nextStep()});
   const di=body.querySelector('#dd');
   di.onchange=()=>{if(di.value){FL.v[st.k]=di.value;nextStep()}}}
@@ -1569,7 +1570,7 @@ function moiView(B){const g=S.cof&&S.cof.g,cv=cofV();
   ${budCard()}
   ${qCard()}
   <div class="sec"><h2>Ton objectif</h2></div>
-  ${g?`<button class="goal" data-a="cof"><div class="gt"><b>${esc(g.n)}</b><span>${eur0(cv)} / ${eur0(g.v)}</span></div><div class="pb"><i style="width:${Math.max(3,Math.min(100,cv/g.v*100))}%"></i></div></button>`:`<button class="goal add" data-a="cof"><span class="gi">${ic('gift')}</span><span><b>Fixe-toi un objectif</b><small>Vacances, permis, une sécurité…</small></span>${ic('next')}</button>`}`}
+  ${g?`<button class="goal" data-a="cof"><div class="gt"><b>${esc(g.n)}</b><span>${eur0(cv)} / ${eur0(g.v)}</span></div><div class="pb"><i style="width:${Math.max(3,Math.min(100,cv/g.v*100))}%"></i></div><small>${cv>=g.v?'Atteint':(g.d?'Pour le '+dShort(g.d)+' · ':'Sans date · ')+(goalPer()?eur0(goalPer())+' par mois pour y arriver':'encore '+eur0(g.v-cv))}</small></button>${cv<g.v?`<button class="gput" data-a="gput">${ic('plus')}<b>Allouer de l’argent</b></button>`:''}`:`<button class="goal add" data-a="cof"><span class="gi">${ic('gift')}</span><span><b>Fixe-toi un objectif</b><small>Vacances, permis, une sécurité…</small></span>${ic('next')}</button>`}`}
 
 
 /* ===== Conseil v1 : confiance, justesse, accompagnement ===== */
@@ -1796,7 +1797,7 @@ function vgScr(){const V=vgState();if(!V)return;const gold=S.vgG||0,P=[25,50,75,
   const holes=[...Array(10)].map((_,i)=>{const k=9-i,on=k<V.br;return `<i class="${on?'on':''}${on&&k>=10-Math.min(gold,10)?' gd':''}"></i>`}).join('');
   scr('Fondations',`<div class="fdn"><div class="grass"></div><div class="hole">${holes}</div></div>
    <div class="big2"><small>${V.def>0?'Retour au vert':'Tu es dans le vert'}</small><strong>${V.def>0?(V.p>=.9?'Plus que '+eur0(V.def):V.br+' / 10'):'Au niveau du sol'}</strong><span>${V.def>0?(V.moved?'Le chantier a bougé, tes briques restent. ':'')+(V.when?'À ce rythme, tu y es en '+V.when+'.':'Chaque journée sous '+eur0(V.tg)+' compte.'):'Le trou est rempli. Maintenant, on construit.'}</span></div>
-   ${V.def>0?`<div class="seuil"><span>Seuil vert</span><b>0 €</b><em>Encore ${eur0(V.def)} à remonter</em></div><div class="sec" style="margin-top:2px"><h2>Ton plan pour le vert</h2></div><div class="vplan">${vgPlan(V).map((o,n)=>`<button class="vpl${o.k==='win'?' win':''}" ${o.go?`data-vp="${n}"`:'disabled'}><span class="vpi">${ic(o.i)}</span><span><b>${o.t}</b><small>${o.s}</small></span>${o.go?ic('next'):''}</button>`).join('')}</div>`:''}
+   ${V.def>0?`<div class="seuil"><span>Seuil vert</span><b>0 €</b><em>Encore ${eur0(V.def)} à remonter</em></div><div class="sec" style="margin-top:2px"><h2>Ton retour au positif</h2></div><div class="vplan">${vgPlan(V).map((o,n)=>`<button class="vpl${o.k==='win'?' win':''}" ${o.go?`data-vp="${n}"`:'disabled'}><span class="vpi">${ic(o.i)}</span><span><b>${o.t}</b><small>${o.s}</small></span>${o.go?ic('next'):''}</button>`).join('')}</div>`:''}
    <div class="tipb"><b>Mission du jour</b><p class="tl">${V.zero?'Journée à 0 €. Rien du tout, c’est déjà une victoire.':'Rester sous '+eur0(V.tg)+'. Ça suffit pour que le trou ne grandisse pas.'}${V.H.tdS?' Aujourd’hui : '+eur0(V.H.tdS)+'.':''}</p><p class="tl">Elle se valide à ton point du soir. Réussie : une brique dorée. Journée à 0 € : deux.</p></div>
    <div class="msum"><div><b>${gold}</b><small>briques dorées</small></div><div><b>${P.filter(x=>got.includes(x)).length} / 4</b><small>paliers</small></div><div><b>${Math.round(V.p*100)} %</b><small>du trou rempli</small></div></div>`);
   const PL=vgPlan(V);document.querySelectorAll('[data-vp]').forEach(b=>b.onclick=()=>{buzz();const o=PL[+b.dataset.vp];closeScr();o.go()})}
@@ -1905,7 +1906,7 @@ function lifeCaps(){const L=[],st=mon(S.start||today),end=addD(today,7*60),add=(
   const y=+today.slice(0,4);for(const yy of [y,y+1]){add(yy+'-01-01','Nouvel an','spark');add(yy+'-07-01','L’été','sun');add(yy+'-09-01','La rentrée','brief')}
   const ym=today.slice(0,7);let k=0;for(const x of S.rin||[])if(x.d)for(let m=0;m<3;m++){const Y=new Date(+ym.slice(0,4),+ym.slice(5,7)-1+m,1),YM2=Y.getFullYear()+'-'+String(Y.getMonth()+1).padStart(2,'0'),d=fxDate(x,YM2);if(d>today&&k<4){add(d,x.n||'Revenu','in');k++}}
   const V=vgState();if(V&&V.def>0){const r=nextRin();if(r&&r.dt)add(r.dt,'Retour au vert','check')}
-  const g=S.cof&&S.cof.g;if(g&&S.cof.w>0&&cofV()<g.v)add(addD(today,Math.ceil((g.v-cofV())/S.cof.w)*7),esc(g.n),'safe');
+  const g=S.cof&&S.cof.g;if(g){const cv=cofV(),pm=cofPlan(),t=esc(g.n)+(cv>=g.v?' · atteint':' · '+Math.round(cv/g.v*100)+' %');let d=g.d||'';if(!d&&cv<g.v){if(pm>0){const x=pd(today);x.setMonth(x.getMonth()+Math.ceil((g.v-cv)/pm));d=iso(x)}else if(S.cof.w>0)d=addD(today,Math.ceil((g.v-cv)/S.cof.w)*7)}if(cv>=g.v){let acc=cv;d=today;for(const e of (S.cof.h||[]).slice().reverse()){if(acc-e.v<g.v){d=e.d;break}acc-=e.v}}if(d)add(d<st?today:d,t,'gift','goal')}
   for(const m of S.ms||[])add(m.d,esc(m.t),'flame',m.id);
   return L}
 function fRow(f,n,big){return `<div class="frow${f.scaf?' scaf':''}${f.cur?' fcur':''}"${f.cur?' id="fcur"':''}>${big?`<span class="fno">${n}</span>`:''}${f.days.map((s,k)=>`<i class="fw ${s}${f.cur&&addD(f.w,k)===today&&(s==='on'||s==='gd')?' now':''}"></i>`).join('')}${big?`<span class="fno r">${f.scaf?'⚠︎':''}</span>`:''}</div>`}
@@ -1927,16 +1928,17 @@ function tourScr(){const T=towerStats(),W=vicStats(),BL=badgeList(),V=vgState();
   const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €'],[eur0(W.kept),'gardés en disant non'],[eur0(W.rb),'de dettes remboursées'],[recordStreak()+' j','plus haute pile']];
   const x=scr('Ta tour',`<div class="msum"><div><b>${T.n}</b><small>étage${T.n>1?'s':''}</small></div><div><b>${T.lit}</b><small>fenêtres</small></div><div><b>${T.rp}</b><small>réparées</small></div></div>
    <div class="tfull">${towerFlat(0)}</div>
+   <button class="vpl" data-goal><span class="vpi">${ic('gift')}</span><span><b>${S.cof&&S.cof.g?esc(S.cof.g.n):'Ajouter un objectif'}</b><small>${S.cof&&S.cof.g?Math.min(100,Math.round(cofV()/S.cof.g.v*100))+' %'+(S.cof.g.d?' · pour le '+dShort(S.cof.g.d):' · sans date'):'Il s’affiche sur l’étage où tu l’atteins'}</small></span>${ic('next')}</button>
    <button class="vpl" data-msadd><span class="vpi">${ic('flame')}</span><span><b>Ajouter un moment de ta vie</b><small>Anniversaire, voyage, fête, permis…</small></span>${ic('plus')}</button>
-   ${V&&V.def>0?`<button class="vpl" data-vg><span class="vpi">${ic('in')}</span><span><b>Ton plan pour le vert</b><small>Mission, salaire, ce qu’on te doit…</small></span>${ic('next')}</button>`:''}
+   ${V&&V.def>0?`<button class="vpl" data-vg><span class="vpi">${ic('in')}</span><span><b>Ton retour au positif</b><small>Mission, salaire, ce qu’on te doit…</small></span>${ic('next')}</button>`:''}
    <div class="sec"><h2>Tes victoires</h2></div><div class="vic">${vic.map(([v,l])=>`<div><b>${v}</b><small>${l}</small></div>`).join('')}</div>
    <div class="sec"><h2>Tes trophées</h2><small>${BL.filter(b=>b[1]).length} / ${BL.length}</small></div>
    <div class="bdgs">${BL.sort((a,b)=>b[1]-a[1]).map(([t,ok,i])=>`<div class="${ok?'on':''}"><span>${ok?ic(i):''}</span><small>${t}</small></div>`).join('')}</div>
    <p class="tl" style="text-align:center">Jour tenu : la fenêtre s’allume. Jour raté : elle se fissure, et le jour tenu suivant la répare. 3 fissures dans la semaine : l’étage passe en échafaudage. Ce qui est construit ne tombe jamais.</p>`);
   setTimeout(()=>{const c=x.querySelector('#fcur');if(c)c.scrollIntoView({block:'center'})},30);
   const g=x.querySelector('[data-vg]');if(g)g.onclick=()=>{buzz();closeScr();vgScr()}
-  x.querySelector('[data-msadd]').onclick=()=>{buzz();closeScr();msAdd()};
-  x.querySelectorAll('[data-ms]').forEach(b=>b.onclick=()=>{buzz();const m=(S.ms||[]).find(y=>y.id===b.dataset.ms);if(!m)return;closeScr();
+  x.querySelector('[data-msadd]').onclick=()=>{buzz();closeScr();msAdd()};{const gb=x.querySelector('[data-goal]');if(gb)gb.onclick=()=>{buzz();closeScr();S.cof&&S.cof.g?cofScr():goalFlow()}}
+  x.querySelectorAll('[data-ms]').forEach(b=>b.onclick=()=>{buzz();if(b.dataset.ms==='goal'){closeScr();cofScr();return}const m=(S.ms||[]).find(y=>y.id===b.dataset.ms);if(!m)return;closeScr();
     flow([{k:'x',q:m.t,sub:dShort(m.d),type:'tiles',opts:[{i:'trash',l:'Retirer de ma tour',one:1,go:()=>{S.ms=S.ms.filter(y=>y.id!==m.id);save();closeFl();tourScr()}},{i:'back',l:'Garder',one:1,go:()=>{closeFl();tourScr()}}]}],()=>null)})}
 function msAdd(){flow([{k:'t',q:'Quel moment compte pour toi ?',sub:'Il s’affichera sur l’étage de cette semaine-là.',type:'text',ph:'Anniversaire, Aïd, Noël…'},{k:'d',q:'Quand ?',type:'date',past:1}],v=>{if(!v.t||!v.d)return['Pas ajouté','Il manque le nom ou la date'];
   S.ms=S.ms||[];S.ms.push({id:'m'+Date.now(),t:String(v.t).slice(0,40),d:v.d});save();setTimeout(tourScr,1400);return['Ajouté à ta tour',esc(v.t)+' · '+dShort(v.d)]})}
@@ -1968,10 +1970,38 @@ function cofAnim(c,t,s){const o=document.createElement('div');o.className='cofa'
 function cofAdd(a,note){const _p=cofV();S.cof=S.cof||{v:0,h:[]};S.cof.h=S.cof.h||[];a=Math.round(a*100)/100;S.cof.v=Math.round(((S.cof.v||0)+a)*100)/100;S.cof.h.push({id:uid(),d:today,v:a});const g=S.cof.g;if(a>0)COFA={from:_p,to:S.cof.v};
   if(a>0&&g&&S.cof.v>=g.v&&S.cof.v-a<g.v)return['Objectif atteint',esc(g.n)+' · '+eur(S.cof.v)];
   return a>0?['Mis de côté','Ton coffre : '+eur(S.cof.v)+(g&&S.cof.v<g.v?' · encore '+eur0(g.v-S.cof.v):'')]:['Repris',eur(-a)+' · il reste '+eur(S.cof.v)]}
+
+/* ===== Objectif : date facultative, argent alloué, mensualité prise en compte ===== */
+const addMd=k=>{const n=+k.slice(1),d=pd(today);d.setMonth(d.getMonth()+n);return iso(d)};
+const goalMonths=d=>{if(!d)return 0;const a=pd(today),b=pd(d);return Math.max(1,(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth())};
+const goalPer=()=>{const g=S.cof&&S.cof.g;if(!g||!g.d)return 0;const left=g.v-cofV();return left>0?Math.ceil(left/goalMonths(g.d)):0};
+const gD=v=>v.d||(v.dq&&v.dq!=='x'?addMd(v.dq):'');
+function goalFlow(){const g0=S.cof&&S.cof.g,v0=cofV();
+  flow([{k:'n',q:'C’est pour quoi ?',type:'text',ph:g0?g0.n:'Ex. vacances, permis, une sécurité'},
+   {k:'v',q:'Combien il te faut ?',type:'amount'},
+   {k:'dq',q:'Pour quand ?',sub:'Pas obligé. Avec une date, je calcule combien mettre chaque mois.',type:'tiles',opts:[
+     {v:'',i:'x',l:'Pas de date'},{v:'m3',i:'cal',l:'Dans 3 mois'},{v:'m6',i:'cal',l:'Dans 6 mois'},{v:'m12',i:'cal',l:'Dans 1 an'},
+     {i:'calp',l:'Une date précise',one:1,go:v=>{v.dq='x';nextStep()}}]},
+   {k:'d',q:'Quelle date ?',type:'date',far:1,skip:v=>v.dq!=='x'},
+   {k:'a',q:v0?'Tu as déjà '+eur0(v0)+' au coffre. Tu en alloues plus ?':'Tu as déjà de l’argent pour ça ?',sub:'Ce que tu alloues est retiré de ce que tu peux dépenser.',type:'tiles',opts:[
+     {v:0,i:'x',l:v0?'Non, ça suffit':'Rien pour l’instant'},{v:50,i:'safe',l:eur0(50)},{v:100,i:'safe',l:eur0(100)},{v:200,i:'safe',l:eur0(200)},
+     {i:'pen',l:'Autre montant',one:1,go:v=>{v.af=1;nextStep()}}]},
+   {k:'a',q:'Combien tu alloues à ton objectif ?',type:'amount',skip:v=>!v.af},
+   {k:'pm',q:v=>'Je mets '+eur0(Math.ceil(Math.max(0,v.v-cofV()-(+v.a||0))/goalMonths(gD(v))))+' de côté chaque mois ?',
+     sub:'Retiré de ton budget dès le début du mois, comme une charge fixe. Comme ça tu y arrives à temps.',type:'tiles',
+     skip:v=>!gD(v)||v.v-cofV()-(+v.a||0)<=0,
+     opts:[{v:1,i:'check',l:'Oui, prends-le en compte'},{v:0,i:'x',l:'Non, je mets quand je peux'}]}],
+  r=>{S.cof=S.cof||{v:0,h:[]};const d=gD(r);
+    S.cof.g={n:(r.n||'').trim()||(g0&&g0.n)||'Mon objectif',v:r.v};if(d)S.cof.g.d=d;
+    if(+r.a>0)cofAdd(+r.a);
+    if(r.pm){S.cof.m=goalPer();S.cof.w=0}
+    const g=S.cof.g,per=goalPer();
+    return['Objectif posé',esc(g.n)+' · '+eur0(g.v)+(d?' pour le '+dShort(d):'')+(+r.a>0?' · '+eur0(+r.a)+' alloués':'')+(r.pm&&per?' · '+eur0(per)+' par mois':'')]})}
+function goalPut(){const g=S.cof&&S.cof.g;flow([{k:'v',q:'Combien tu alloues à '+(g?esc(g.n):'ton objectif')+' ?',sub:'Retiré de ce que tu peux dépenser.',type:'tiles',opts:[10,20,50,100].map(n=>({v:n,i:'safe',l:eur0(n)})).concat([{i:'pen',l:'Autre montant',one:1,go:()=>flow([{k:'v',q:'Combien tu alloues ?',type:'amount'}],r=>cofAdd(r.v))}])}],r=>cofAdd(r.v))}
 function cofScr(){const v=cofV(),g=S.cof&&S.cof.g;flow([{k:'x',top:()=>safeSvg(cofRatio(),'mid'),q:v?eur(v)+' de côté':'Ton coffre',sub:v?(g?(v>=g.v?'Objectif « '+esc(g.n)+' » atteint.':'Pour '+esc(g.n)+' : encore '+eur0(g.v-v)+'.'):'Cet argent reste sur ton compte, l’app le met juste de côté pour que tu n’y touches pas.'):'L’argent reste sur ton compte. L’app le retire de ce que tu peux dépenser, pour que tu n’y touches pas.',type:'tiles',opts:[
   {i:'plus',l:'Mettre de côté',one:1,go:()=>flow([{k:'v',q:'Combien tu mets de côté ?',type:'tiles',opts:[5,10,20,50].map(n=>({v:n,i:'safe',l:eur0(n)})).concat([{i:'pen',l:'Autre montant',one:1,go:()=>flow([{k:'v',q:'Combien tu mets de côté ?',type:'amount'}],r=>cofAdd(r.v))}])}],r=>cofAdd(r.v))},
   ...(v>0?[{i:'out',l:'Reprendre',s:'Si tu en as vraiment besoin',one:1,go:()=>flow([{k:'v',q:'Combien tu reprends ?',sub:'Sur '+eur(v)+'. Pas de souci, ça arrive.',type:'amount'}],r=>cofAdd(-Math.min(r.v,cofV())))}]:[]),
-  {i:'gift',l:g?'Changer l’objectif':'Un objectif',s:g?esc(g.n)+' · '+eur0(g.v):'Ex. vacances, permis, une sécurité',one:1,go:()=>flow([{k:'n',q:'C’est pour quoi ?',type:'text',ph:'Ex. vacances, permis, une sécurité'},{k:'v',q:'Combien il te faut ?',type:'amount'}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.g={n:r.n.trim()||'Mon objectif',v:r.v};return['C’est noté',S.cof.g.n+' · '+eur0(r.v)]})},
+  {i:'gift',l:g?'Changer l’objectif':'Un objectif',s:g?esc(g.n)+' · '+eur0(g.v):'Ex. vacances, permis, une sécurité',one:1,go:goalFlow},
   {i:'safe',l:'Chaque mois',s:S.cof&&S.cof.m?eur0(S.cof.m)+' par mois, déjà retirés de ton budget':'Un montant retiré de ton budget dès le début du mois',one:1,go:()=>flow([{k:'m',q:'Combien tu mets au coffre chaque mois ?',sub:'Je le retire de ce que tu peux dépenser, comme une charge fixe.',type:'tiles',opts:[25,50,100,200].map(n=>({v:n,i:'safe',l:eur0(n)+' par mois'})).concat([{i:'pen',l:'Autre montant',one:1,go:v=>{v.mf=1;nextStep()}}]).concat(S.cof&&S.cof.m?[{v:0,i:'x',l:'Plus d’objectif mensuel'}]:[])},{k:'m',q:'Combien par mois ?',type:'amount',skip:v=>!v.mf}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.m=r.m||0;return r.m?['C’est noté',eur0(r.m)+' par mois au coffre, déjà retirés']:['Arrêté','Plus d’objectif mensuel']})},
   {i:'cal',l:'Chaque semaine',s:S.cof&&S.cof.w?eur0(S.cof.w)+' le lundi':'Un rappel chaque lundi',one:1,go:()=>flow([{k:'w',q:'Combien chaque semaine ?',sub:'Le lundi, l’app te propose de le mettre de côté en une touche.',type:'tiles',opts:[5,10,20,30,50].map(n=>({v:n,i:'safe',l:eur0(n)+' par semaine',s:'≈ '+eur0(n*52/12)+' par mois'})).concat(S.cof&&S.cof.w?[{v:0,i:'x',l:'Arrêter'}]:[])}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.w=r.w;return r.w?['C’est noté',eur0(r.w)+' chaque lundi']:['Arrêté','Plus de rappel du lundi']})}]}],()=>['',''])}
 const wkMon=(d=today)=>addD(d,-((pd(d).getDay()+6)%7));
