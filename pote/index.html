@@ -722,6 +722,7 @@ body{background:#000}
 .frow.fcur .fno:first-child{color:#FF9F0A}.fgoal{font-size:12px;font-weight:700;color:var(--muted);text-align:center;padding:2px 0 6px}
 .ftw.big{width:100%}.tfull{padding:14px 8px 22px}
 .ftw.pop{animation:fwon .5s cubic-bezier(.2,.9,.3,1.4) both}
+.fms{display:flex;align-items:center;gap:6px;margin:4px 0 -4px 31px;font-size:12px;color:var(--ink)}.fms svg{width:13px;height:13px;color:#FF9F0A;stroke-width:2.4}.fms b{font-weight:650}.fms small{color:var(--muted);font-weight:500;font-family:var(--num)}.fms.past{opacity:.55}.fms.own svg{color:#AF52DE}
 .qrow{grid-template-columns:1fr auto!important;padding:12px 14px!important}.qrow small svg{width:16px;height:16px;color:var(--good);stroke-width:2.6}
 </style>
 </head>
@@ -1776,10 +1777,21 @@ function towerSvg(lim){const F=towerFloors(),N=F.length,V=vgState(),base=V&&V.de
   return o+`</svg>`}
 
 /* ===== Tour épurée (flat) ===== */
+const MNs=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+const dShort=d=>{const x=pd(d);return x.getDate()+' '+MNs[x.getMonth()]};
+function lifeCaps(){const L=[],st=mon(S.start||today),end=addD(today,7*60),add=(d,t,i,id)=>{if(d&&d>=st&&d<=end)L.push({d,t,i,id})};
+  const y=+today.slice(0,4);for(const yy of [y,y+1]){add(yy+'-01-01','Nouvel an','spark');add(yy+'-07-01','L’été','sun');add(yy+'-09-01','La rentrée','brief')}
+  const ym=today.slice(0,7);let k=0;for(const x of S.rin||[])if(x.d)for(let m=0;m<3;m++){const Y=new Date(+ym.slice(0,4),+ym.slice(5,7)-1+m,1),YM2=Y.getFullYear()+'-'+String(Y.getMonth()+1).padStart(2,'0'),d=fxDate(x,YM2);if(d>today&&k<4){add(d,x.n||'Revenu','in');k++}}
+  const V=vgState();if(V&&V.def>0){const r=nextRin();if(r&&r.dt)add(r.dt,'Retour au vert','check')}
+  const g=S.cof&&S.cof.g;if(g&&S.cof.w>0&&cofV()<g.v)add(addD(today,Math.ceil((g.v-cofV())/S.cof.w)*7),esc(g.n),'safe');
+  for(const m of S.ms||[])add(m.d,esc(m.t),'flame',m.id);
+  return L}
 function fRow(f,n,big){return `<div class="frow${f.scaf?' scaf':''}${f.cur?' fcur':''}"${f.cur?' id="fcur"':''}>${big?`<span class="fno">${n}</span>`:''}${f.days.map((s,k)=>`<i class="fw ${s}${f.cur&&addD(f.w,k)===today&&(s==='on'||s==='gd')?' now':''}"></i>`).join('')}${big?`<span class="fno r">${f.scaf?'⚠︎':''}</span>`:''}</div>`}
 function towerFlat(lim){const F=towerFloors(),N=F.length,show=lim&&N>lim?F.slice(-lim):F,V=vgState(),red=V&&V.def>0,big=lim===0;
-  let ghost='';if(big){const G=[52,104,208,520].find(x=>x>N)||N+52;for(let n=G;n>N;n--)ghost+=`<div class="frow gh">${n===G||n%10===0?`<span class="fno">${n}</span>`:'<span class="fno"></span>'}${'<i class="fw"></i>'.repeat(7)}<span class="fno r"></span></div>`;ghost=`<div class="fgoal">Sommet visé · étage ${G}${G===52?' · 1 an':''}</div>`+ghost}
-  const rows=show.slice().reverse().map((f,i)=>fRow(f,N-i,big)).join('');
+  const st=mon(S.start||today),fl=d=>Math.floor((pd(mon(d))-pd(st))/6048e5+.5)+1,C={};if(big)for(const c of lifeCaps())(C[fl(c.d)]=C[fl(c.d)]||[]).push(c);
+  const cap=n=>(C[n]||[]).sort((a,b)=>b.d.localeCompare(a.d)).map(c=>`<div class="fms${c.d<today?' past':''}${c.id?' own':''}"${c.id?` data-ms="${c.id}"`:''}>${ic(c.i)}<b>${c.t}</b><small>${dShort(c.d)}</small></div>`).join('');
+  let ghost='';if(big){const G=[52,104,208,520].find(x=>x>N)||N+52;for(let n=G;n>N;n--)ghost+=cap(n)+`<div class="frow gh">${n===G||n%10===0||C[n]?`<span class="fno">${n}</span>`:'<span class="fno"></span>'}${'<i class="fw"></i>'.repeat(7)}<span class="fno r"></span></div>`;ghost=`<div class="fgoal">Sommet visé · étage ${G}${G===52?' · 1 an':''}</div>`+ghost}
+  const rows=show.slice().reverse().map((f,i)=>cap(N-i)+fRow(f,N-i,big)).join('');
   return `<div class="ftw${big?' big':''}"><div class="ffac">${ghost}${rows}</div>${lim&&N>lim?`<small class="fmore">+ ${N-lim} étage${N-lim>1?'s':''}</small>`:''}<div class="fgnd"></div>
    ${big?`<small class="flab">Fondations · semaine du ${(()=>{const d=pd(F[0].w);return d.getDate()+' '+['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'][d.getMonth()]})()}</small>`:''}${red?`<div class="fbase">${[...Array(10)].map((_,i)=>`<i class="${i<V.br?'on':''}"></i>`).join('')}</div><small class="flab">Niveau vert · ${V.br}/10</small>`:''}</div>`}
 function moiTour(){const T=towerStats(),V=vgState(),red=V&&V.def>0,W7=weekBlocks(),L=lvl();
@@ -1793,13 +1805,19 @@ function tourScr(){const T=towerStats(),W=vicStats(),BL=badgeList(),V=vgState();
   const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €'],[eur0(W.kept),'gardés en disant non'],[eur0(W.rb),'de dettes remboursées'],[recordStreak()+' j','plus haute pile']];
   const x=scr('Ta tour',`<div class="msum"><div><b>${T.n}</b><small>étage${T.n>1?'s':''}</small></div><div><b>${T.lit}</b><small>fenêtres</small></div><div><b>${T.rp}</b><small>réparées</small></div></div>
    <div class="tfull">${towerFlat(0)}</div>
+   <button class="vpl" data-msadd><span class="vpi">${ic('flame')}</span><span><b>Ajouter un moment de ta vie</b><small>Anniversaire, voyage, fête, permis…</small></span>${ic('plus')}</button>
    ${V&&V.def>0?`<button class="vpl" data-vg><span class="vpi">${ic('in')}</span><span><b>Ton plan pour le vert</b><small>Mission, salaire, ce qu’on te doit…</small></span>${ic('next')}</button>`:''}
    <div class="sec"><h2>Tes victoires</h2></div><div class="vic">${vic.map(([v,l])=>`<div><b>${v}</b><small>${l}</small></div>`).join('')}</div>
    <div class="sec"><h2>Pierres posées</h2><small>${BL.filter(b=>b[1]).length} / ${BL.length}</small></div>
    <div class="bdgs">${BL.sort((a,b)=>b[1]-a[1]).map(([t,ok,i])=>`<div class="${ok?'on':''}"><span>${ok?ic(i):''}</span><small>${t}</small></div>`).join('')}</div>
    <p class="tl" style="text-align:center">Jour tenu : la fenêtre s’allume. Jour raté : elle se fissure, et le jour tenu suivant la répare. 3 fissures dans la semaine : l’étage passe en échafaudage. Ce qui est construit ne tombe jamais.</p>`);
   setTimeout(()=>{const c=x.querySelector('#fcur');if(c)c.scrollIntoView({block:'center'})},30);
-  const g=x.querySelector('[data-vg]');if(g)g.onclick=()=>{buzz();closeScr();vgScr()}}
+  const g=x.querySelector('[data-vg]');if(g)g.onclick=()=>{buzz();closeScr();vgScr()}
+  x.querySelector('[data-msadd]').onclick=()=>{buzz();closeScr();msAdd()};
+  x.querySelectorAll('[data-ms]').forEach(b=>b.onclick=()=>{buzz();const m=(S.ms||[]).find(y=>y.id===b.dataset.ms);if(!m)return;closeScr();
+    flow([{k:'x',q:m.t,sub:dShort(m.d),type:'tiles',opts:[{i:'trash',l:'Retirer de ma tour',one:1,go:()=>{S.ms=S.ms.filter(y=>y.id!==m.id);save();closeFl();tourScr()}},{i:'back',l:'Garder',one:1,go:()=>{closeFl();tourScr()}}]}],()=>null)})}
+function msAdd(){flow([{k:'t',q:'Quel moment compte pour toi ?',sub:'Il s’affichera sur l’étage de cette semaine-là.',type:'text',ph:'Anniversaire, Aïd, Noël…'},{k:'d',q:'Quand ?',type:'date',past:1}],v=>{if(!v.t||!v.d)return['Pas ajouté','Il manque le nom ou la date'];
+  S.ms=S.ms||[];S.ms.push({id:'m'+Date.now(),t:String(v.t).slice(0,40),d:v.d});save();setTimeout(tourScr,1400);return['Ajouté à ta tour',esc(v.t)+' · '+dShort(v.d)]})}
 
 /* ---------- Réserve ---------- */
 function cofCard(B){const v=cofV(),g=S.cof&&S.cof.g;
