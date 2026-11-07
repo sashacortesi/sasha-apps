@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794073071" data-theme="light">
+<html lang="fr" data-build="1794073305" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -795,7 +795,7 @@ const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));if(S.vn)CN.conso[2]=S.vn;
 const VK=[['c','smoke','Clopes'],['j','leaf','Cannabis'],['v','wind','Vape / puff'],['a','glass','Alcool'],['p','zap','Paris, jeux d’argent'],['l','fast','Livraisons de repas'],['o','bag','Achats impulsifs'],['x','pen','Autre chose']];
 const vkL=k=>k==='x'?(S.vxn||'Autre chose'):(VK.find(x=>x[0]===k)||[,,k])[2],vkI=k=>(VK.find(x=>x[0]===k)||[,'dots'])[1];
 const FALL=[{v:'clopes',k:'c',i:'smoke',l:'Clopes'},{v:'shit',k:'j',i:'hex',l:'Shit'},{v:'beuh',k:'j',i:'leaf',l:'Beuh'},{v:'vape',k:'v',i:'wind',l:'Vape / puff'},{v:'alcool',k:'a',i:'glass',l:'Alcool'},{v:'paris',k:'p',i:'zap',l:'Paris, jeux'},{v:'livraison',k:'l',i:'fast',l:'Livraison'},{v:'achats',k:'o',i:'bag',l:'Achat impulsif'},{v:'autre',k:'x',i:'pen',l:'Autre'}];
-const fsub=()=>{const L=FALL.filter(o=>S.vice&&S.vice.includes(o.k));return (L.length?L:FALL).map(o=>o.k==='x'?{...o,l:S.vxn||'Autre'}:o)};
+const fsub=()=>{const L=FALL.filter(o=>S.vice&&S.vice.includes(o.k));return [...L.map(o=>o.k==='x'?{...o,l:S.vxn||'Autre'}:o),{i:'pen',l:'Modifier ma liste',s:'Choisir ce que je veux suivre',one:1,go:()=>{closeFl();flowVice()}}]};
 const FL2=new Proxy({},{get:(t,k)=>{const o=FALL.find(x=>x.v===k);return o?(o.k==='x'?(S.vxn||'Autre'):o.l):k}});
 const FSUB=null;CN.dette=['dette','users','Dette remboursée'];
 const PCOL=['#0A84FF','#64D2FF','#FF6B35','#BF5AF2','#FF453A','#30B0C7','#FFD60A'];
@@ -840,7 +840,7 @@ function catsCard(){const m={};let t=0;for(const x of S.e.filter(x=>x.d.startsWi
   const L=Object.entries(m).sort((a,b)=>b[1]-a[1]);
   return `<div class="cats"><div class="hd"><b>Où part ton argent</b><span>${MNL[+YM.slice(5,7)-1]}</span></div><div class="bar">${L.map(([c,v])=>`<i style="width:${v/t*100}%;background:${CCOL[c]||'#8E8E93'}"></i>`).join('')}</div>${L.slice(0,5).map(([c,v])=>`<div class="cr"><span class="dot" style="background:${CCOL[c]||'#8E8E93'}"></span><span>${esc(CN[c]?CN[c][2]:'Autre')}<small>${Math.round(v/t*100)} %</small></span><b>${eur(v)}</b></div>`).join('')}${m.conso?`<div class="dnote" style="text-align:left;padding:0">${esc(CN.conso[2])} : ${eur0(m.conso)} ce mois, soit ${eur0(m.conso/Math.max(1,+today.slice(8))*30)} sur un mois entier à ce rythme.</div>`:''}</div>`}
 async function shareApp(){const u=location.origin+location.pathname,t='Base : l’app qui m’aide à tenir mon argent et mes journées. Gratuite, sans compte.';try{if(navigator.share){await navigator.share({title:'Base',text:t,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t+' '+u);done(['Lien copié','Colle-le à qui tu veux'])}catch(e){done(['Le lien',u])}}
-function setSheet(){const T=[['spark','Mon Base · ce qu’il fait pour toi',()=>pfFlow()],...(mod('f')?[['brief','Mon côté pro',proScr]]:[]),...(S.vice?[['leaf','Ma conso : '+CN.conso[2],fumeScr]]:[]),...(mod('b')||S.bin?[['users',S.bin?'Mon binôme · '+S.bin:'Un binôme pour me suivre',binFlow]]:[]),['bank','Mes droits et mes frais',droitsScr],['sun','Apparence : '+({light:'clair',dark:'nuit',auto:'comme l’iPhone'}[S.theme||'light']),themeFlow],['gear','Mon profil et mon budget',settings],['bell',pushOn()?'Rappels : activés':'Activer les rappels',()=>pushOn()?pushOff():pushEnable()],['folder','Sauvegarder mes données',backup],['cal','Calendrier du téléphone',icsExport],['help','Aide',()=>helpScr()],['share','Partager Base',shareApp]];
+function setSheet(){const T=[['spark','Mon Base · ce qu’il fait pour toi',()=>pfFlow()],['leaf','Ce que je veux réduire · '+(S.vice?[...S.vice].map(vkL).join(', '):'rien'),flowVice],...(mod('f')?[['brief','Mon côté pro',proScr]]:[]),...(S.vice?[['leaf','Ma conso : '+CN.conso[2],fumeScr]]:[]),...(mod('b')||S.bin?[['users',S.bin?'Mon binôme · '+S.bin:'Un binôme pour me suivre',binFlow]]:[]),['bank','Mes droits et mes frais',droitsScr],['sun','Apparence : '+({light:'clair',dark:'nuit',auto:'comme l’iPhone'}[S.theme||'light']),themeFlow],['gear','Mon profil et mon budget',settings],['bell',pushOn()?'Rappels : activés':'Activer les rappels',()=>pushOn()?pushOff():pushEnable()],['folder','Sauvegarder mes données',backup],['cal','Calendrier du téléphone',icsExport],['help','Aide',()=>helpScr()],['share','Partager Base',shareApp]];
   flow([{k:'x',q:'Réglages',sub:'Tes données restent sur ce téléphone.',type:'tiles',opts:T.map(([i,l,f])=>({i,l,one:1,go:()=>{closeFl();f()}}))}],()=>['',''])}
 function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x.v||0),0)*100)/100;try{snapBal()}catch(e){}const r=reste(),now=new Date(),left=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1;
   const its=S.ag.filter(a=>a.d===today).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'));
@@ -2080,14 +2080,14 @@ function fumeScr(){const lg=S.log[today],zero=lg&&keys().every(k=>lg[k]===0),rs=
   x.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{buzz();const a=b.dataset.f;if(a==='sos')return openSOS();if(a==='gains')return gainsScr();leave(a==='lg0'?logZero:flowSmoked)});
   x.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{buzz();leave(()=>flowFume(b.dataset.buy))})}
 function logZero(){S.log[today]={};keys().forEach(k=>S.log[today][k]=0);done(['Noté',best()+' jour'+(best()>1?'s':'')+' sans'])}
-function flowVice(){flow([
+function flowVice(){const fv=flow;flow([
   {k:'ad',q:'Tu as 18 ans ou plus ?',sub:'Ce suivi parle d’alcool, de tabac, de cannabis et de jeux d’argent.',type:'tiles',skip:()=>!!S.adult,opts:[{v:1,i:'check',l:'Oui',one:1},{v:0,i:'x',l:'Non',one:1}]},
   {k:'vice',q:'Qu’est-ce que tu aimerais réduire ?',sub:'Choisis tout ce qui compte pour toi. Personne d’autre ne le voit.',skip:v=>v.ad===0,type:'multi',none:'Rien de tout ça',opts:VK.map(([v,i,l])=>({v,i,l}))},
   {k:'vxn',q:'C’est quoi, « autre chose » ?',type:'text',ph:'Ex. Les sodas, le jeu vidéo…',skip:v=>!(v.vice||'').includes('x')},
   {k:'wk',q:'Combien ça te coûte par semaine, en tout ?',sub:'À peu près. Ça sert à calculer l’argent que tu économises.',type:'amount',skip:v=>!v.vice},
   {k:'vn',q:'Comment tu veux l’appeler ?',sub:'C’est ton app, c’est ton mot. Personne d’autre ne le voit.',type:'tiles',skip:v=>!v.vice,opts:[{v:'Conso',l:'Conso'},{v:'Perso',l:'Perso'},{v:'Fumette',l:'Fumette'},{v:'Dépense nocive',l:'Dépense nocive'},{i:'pen',l:'Autre nom',one:1,go:v=>{v.vn='';v.vnf=1;nextStep()}}]},
   {k:'vn',q:'Ton mot à toi',type:'text',ph:'Ex. Mes petits plaisirs',skip:v=>!v.vnf}
- ],v=>{if(v.vxn)S.vxn=v.vxn.trim().slice(0,24);if(v.ad===0)return['Pas pour l’instant','Pour en parler, gratuitement et sans jugement : Drogues Info Service, 0 800 23 13 13'];S.adult=1;if(v.vn){S.vn=v.vn.trim().slice(0,24)||'Conso';CN.conso[2]=S.vn}S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=S.vstart||today;return['C’est en place','Chaque jour sans compte']}return['Noté','']})}
+ ],v=>{if(v.vxn)S.vxn=v.vxn.trim().slice(0,24);if(v.ad===0)return['Pas pour l’instant','Pour en parler, gratuitement et sans jugement : Drogues Info Service, 0 800 23 13 13'];S.adult=1;if(v.vn){S.vn=v.vn.trim().slice(0,24)||'Conso';CN.conso[2]=S.vn}S.vice=v.vice;applyMods();if(v.vice){if(v.wk)S.wk=v.wk;S.vstart=S.vstart||today;return['C’est en place',[...v.vice].map(vkL).join(', ')]}return['C’est retiré','Plus rien à suivre de ce côté']},{vice:S.vice||'',...(S.wk?{wk:S.wk}:{}),...(S.vn?{vn:S.vn}:{})})}
 function flowSmoked(){flow([
   {k:'w',q:'C’était quoi ?',type:'multi',none:'Rien finalement',skip:()=>keys().length<2,opts:keys().map(k=>({v:k,i:vkI(k),l:vkL(k)}))},
   {k:'c',q:'Combien de clopes ?',type:'tiles',skip:v=>!has('c')||!pick(v).includes('c'),opts:[{v:1,l:'1'},{v:3,l:'2 à 5'},{v:7,l:'5 à 10'},{v:12,l:'Plus de 10'}]},
@@ -2247,7 +2247,7 @@ function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
   {i:'undo',l:'Retour',one:1,go:()=>closeFl()}]}],()=>['',''])}
 
 /* ---------- Premier lancement ---------- */
-function onbApply(v){S.name=v.n;try{pfApply(v)}catch(e){}fxSave(v.fx);rinSave(v.rin||[]);accSave(v.acc);S.start=today;S.eh=v.eh||21;if(v.vxn)S.vxn=v.vxn.trim().slice(0,24);if(v.ad===0)v.vice='';if(v.vice)S.adult=1;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}}
+function onbApply(v){S.name=v.n;try{pfApply(v)}catch(e){}fxSave(v.fx);rinSave(v.rin||[]);accSave(v.acc);S.start=today;S.eh=v.eh||21;if(v.vxn)S.vxn=v.vxn.trim().slice(0,24);if(v.ad===0)v.vice='';if(v.vice)S.adult=1;S.vice=v.vice;if(v.vice){S.wk=v.wk;S.vstart=today}try{applyMods()}catch(e){}}
 function onboard(){const N=v=>esc(v.n||'');flow([
   {k:'n',q:'Comment tu t’appelles ?',sub:'Juste ton prénom.',type:'text',ph:'Ton prénom'},
   {k:'fx',q:v=>`Enchanté ${N(v)}. Qu’est-ce qui sort de ton compte chaque mois ?`,sub:'Forfait, abonnements, assurance… Seulement ce que tu as. Le jour du prélèvement, si tu le connais.',type:'fixes'},
@@ -2286,7 +2286,7 @@ function pfApply(v){const o=S.pf||{};const was=mod('f')&&!!S.pf;S.pf={...o,sit:v
   applyMods();if(!was&&(v.mods||'').includes('f'))setTimeout(proIntro,2300)}
 function proIntro(n){if(FL||$('.fl')||$('.ok')||$('.strk')){if((n||0)<8)setTimeout(()=>proIntro((n||0)+1),1200);return}
   flow([{k:'x',q:'Ton côté pro est prêt',sub:'Prends en photo tes factures, tes tickets, ou fais une capture de la notif de ta banque pro : je lis le montant et je range tout, à part de ton argent perso. Chaque début de mois, j’envoie le tout à ton comptable, photos comprises.',type:'tiles',opts:[{i:'cam',l:'Essayer maintenant',s:'Une facture, un ticket, une capture',one:1,cta:1,go:()=>scanPick('pro')},{i:'brief',l:'Voir mon côté pro',one:1,go:()=>{closeFl();proScr()}},{i:'later',l:'Plus tard',one:1,go:()=>closeFl()}]}],()=>['',''])}
-function applyMods(){const i=CATS.findIndex(c=>c[0]==='pro');if(mod('f')&&i<0){CATS.splice(CATS.length-1,0,['pro','brief','Pro']);CN.pro=CATS.find(c=>c[0]==='pro')}else if(!mod('f')&&i>=0)CATS.splice(i,1);if(!CCOL.pro)CCOL.pro='#5E5CE6'}
+function applyMods(){{const j=CATS.findIndex(c=>c[0]==='conso');if(!S.vice&&j>=0)CATS.splice(j,1);else if(S.vice&&j<0)CATS.splice(Math.max(0,CATS.findIndex(c=>c[0]==='shopping')),0,CN.conso)}const i=CATS.findIndex(c=>c[0]==='pro');if(mod('f')&&i<0){CATS.splice(CATS.length-1,0,['pro','brief','Pro']);CN.pro=CATS.find(c=>c[0]==='pro')}else if(!mod('f')&&i>=0)CATS.splice(i,1);if(!CCOL.pro)CCOL.pro='#5E5CE6'}
 function pfFlow(first){flow(PF_STEPS(),v=>{pfApply(v);const n=(v.mods||'').length;return[first?'Ton Base est prêt':'C’est réglé',n?n+' fonction'+(n>1?'s':'')+' rien que pour toi':'Juste l’essentiel']},S.pf?{sit:S.pf.sit,mods:S.pf.mods,pa:S.pro&&S.pro.acc?'y':undefined}:null)}
 function pfAsk(){if(!S.name||S.pf||(S.pfLater&&S.pfLater>addD(today,-3)))return;setTimeout(()=>{if(FL||$('.fl')||$('.scr')||$('#intro')||$('.strk'))return;
   flow([{k:'x',q:'Base s’adapte à toi',sub:'Dis-moi ce que tu fais dans la vie, je prépare les fonctions qui te servent vraiment. 30 secondes, rien n’est effacé.',type:'tiles',opts:[{i:'spark',l:'C’est parti',one:1,cta:1,go:()=>pfFlow(1)},{i:'later',l:'Plus tard',one:1,go:()=>{S.pfLater=today;closeFl();save()}}]}],()=>['',''])},2500)}
