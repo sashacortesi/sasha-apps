@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794070000" data-theme="light">
+<html lang="fr" data-build="1794071000" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -591,6 +591,33 @@ body{background:#000}
 [data-theme="light"] .nud,[data-theme="light"] .tile,[data-theme="light"] .mm,[data-theme="light"] .solr,[data-theme="light"] .lvc,[data-theme="light"] .vic div,[data-theme="light"] .goal,[data-theme="light"] .list,[data-theme="light"] .mrow2,[data-theme="light"] .wish,[data-theme="light"] .tipb{box-shadow:0 1px 2px rgba(0,0,0,.04)}
 [data-theme="light"] .rcs{color:#E07800}[data-theme="light"] .rcs svg{fill:#FF9500}
 [data-theme="light"] .wr.tot b,[data-theme="light"] .wnote,[data-theme="light"] .inx{color:#1FA34A}
+
+/* ===== Bulles modernes : orbes vivantes, reflet, profondeur ===== */
+.rb,.bub:not(.add){--g:var(--bc,var(--pc));color:#fff;background:
+  radial-gradient(90% 70% at 30% 18%,rgba(255,255,255,.55),rgba(255,255,255,0) 55%),
+  radial-gradient(120% 120% at 70% 100%,color-mix(in srgb,var(--g) 70%,#000) 0%,transparent 60%),
+  linear-gradient(155deg,color-mix(in srgb,var(--g) 80%,#fff) 0%,var(--g) 55%,color-mix(in srgb,var(--g) 78%,#000) 100%)!important;
+  box-shadow:inset 0 1px 1.5px rgba(255,255,255,.7),inset 0 -10px 18px rgba(0,0,0,.18),0 14px 30px -14px color-mix(in srgb,var(--g) 85%,transparent),0 2px 6px -2px rgba(0,0,0,.18)!important}
+.bub:not(.add){--g:var(--pc)}
+.rb b,.bub:not(.add) b{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.18)}
+.rb small,.bub:not(.add) .bt{color:rgba(255,255,255,.9)!important;font-family:var(--num);font-weight:700}
+.rbi{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.35);margin-bottom:3px}.rbi svg{width:15px;height:15px;stroke-width:2;color:#fff}
+.rb[style*="74px"] .rbi{width:20px;height:20px}.rb[style*="74px"] .rbi svg{width:12px;height:12px}.rb[data-more] .rbi{display:none}
+.rb.big .rbi{width:40px;height:40px}.rb.big .rbi svg{width:22px;height:22px}
+.c-gr{--bc:#A1A1A6}.rb.c-gr{--g:#A1A1A6}
+.rb .rdot{top:6px;right:10px;width:12px;height:12px;background:#FF3B30;box-shadow:0 0 0 2.5px #fff}
+.rb.tap,.bub:active{transform:scale(.92)}
+.bub.done:not(.add){--g:#8E8E93;opacity:.55}.bub.done b{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.7)}
+.bub.arm{--g:#30D158!important}
+.bub.add{outline-color:var(--sep)}
+#rcp .rbs{position:relative}
+#rcp::before,#rcp::after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;filter:blur(70px);opacity:.35;pointer-events:none;z-index:-1}
+#rcp::before{background:#0A84FF;top:28%;left:-90px;animation:aur 14s ease-in-out infinite alternate}#rcp::after{background:#BF5AF2;top:45%;right:-110px;animation:aur 17s ease-in-out infinite alternate-reverse}
+[data-theme="light"] #rcp::before,[data-theme="light"] #rcp::after{opacity:.22}
+#rcp{isolation:isolate;overflow:hidden}
+@keyframes aur{to{transform:translate(40px,-30px) scale(1.15)}}
+#rcp.rm::before,#rcp.rm::after{animation:none}
+[data-theme="light"] .rb b{color:#fff!important}
 </style>
 </head>
 <body>
@@ -1492,10 +1519,10 @@ function recap(back){if(!S.name||needInstall()||$('#rcp')&&!back)return;const ol
   const h=new Date().getHours(),greet=(h>=5&&h<18?'Bonjour':'Bonsoir')+', '+esc(S.name.split(' ')[0]),dl=JN[new Date().getDay()].replace(/^./,c=>c.toUpperCase())+' '+new Date().getDate()+' '+MNL[new Date().getMonth()];
   let fig='';if(S.bal&&H){if(H.free+H.tdS>=0)fig=H.rest>=-.5?`<span class="rcf"><small>${H.tdS?'Il te reste':'Pour aujourd’hui'}</small><b>${eur0(Math.max(0,H.rest))}</b></span>`:`<span class="rcf"><small>Journée bouclée · demain</small><b>${eur0(Math.max(0,H.left>1?H.free/(H.left-1):0))}</b></span>`;else if(nr)fig=`<span class="rcf"><small>Pour aujourd’hui, maximum</small><b>${eur0(Math.max(0,(H.free+H.tdS+nr.v)/H.left-H.tdS))}</b></span>`;else fig=`<span class="rcf"><small>En route vers le vert</small></span>`}
   const st=okStreak(),rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const bub=(x,i)=>`<button class="rb c-${x.c}" data-rb="${i}" style="--z:${x.z}px;--d:${i*70}ms;--fx:${(i%2?-1:1)*2}px;--fy:${4}px;--t:${5+((i*37)%20)/10}s;--o:${-(i*1.3)}s" aria-label="${esc(x.t)}${x.s?' à '+esc(x.s):''}">${x.late?'<i class="rdot"></i>':''}<b>${esc(x.t)}</b>${x.s?`<small>${esc(x.s)}</small>`:''}</button>`;
+  const RIC={ag:'cal',mo:'bank',ev:'moon',dt:'users',wi:'safe',bi:'spark',gr:'folder',ok:'check'};const bub=(x,i)=>`<button class="rb c-${x.c}" data-rb="${i}" style="--z:${x.z}px;--d:${i*70}ms;--fx:${(i%2?-1:1)*2}px;--fy:${4}px;--t:${5+((i*37)%20)/10}s;--o:${-(i*1.3)}s" aria-label="${esc(x.t)}${x.s?' à '+esc(x.s):''}">${x.late?'<i class="rdot"></i>':''}<span class="rbi">${ic(x.c==='ag'&&x.s?'later':RIC[x.c]||'dots')}</span><b>${esc(x.t)}</b>${x.s?`<small>${esc(x.s)}</small>`:''}</button>`;
   const o=document.createElement('div');o.id='rcp';if(rm)o.classList.add('rm');
   o.innerHTML=`<div class="rch"><h1>${greet}</h1><p>${dl} · ${L.length?L.length+' chose'+(L.length>1?'s':'')+' aujourd’hui':'tout est à jour'}${st?` · <span class="rcs">${ic('flame')}${st}</span>`:''}</p>${fig}</div>
-   <div class="rbs">${show.length?show.map(bub).join('')+(more>0?`<button class="rb c-gr" data-more style="--z:60px;--d:${show.length*70}ms;--t:6s;--o:-2s"><b>+${more}</b></button>`:''):`<div class="rb c-ok big" style="--z:132px;--d:0ms;--t:6s;--o:0s"><b>Rien à faire</b></div>`}${gone.map((g,i)=>`<div class="rb c-ok gone" style="--z:80px">${ic('check')}</div>`).join('')}</div>
+   <div class="rbs">${show.length?show.map(bub).join('')+(more>0?`<button class="rb c-gr" data-more style="--z:60px;--d:${show.length*70}ms;--t:6s;--o:-2s"><b>+${more}</b></button>`:''):`<div class="rb c-ok big" style="--z:140px;--d:0ms;--t:6s;--o:0s"><span class="rbi">${ic('check')}</span><b>Rien à faire</b></div>`}${gone.map((g,i)=>`<div class="rb c-ok gone" style="--z:80px">${ic('check')}</div>`).join('')}</div>
    ${show.length?'':'<p class="rce">Tout est à jour. Profite.</p>'}
    <button class="rcin">${ic('back')}<span>Entrer</span></button>`;
   document.body.appendChild(o);document.body.style.overflow='hidden';if(gone.length)setTimeout(()=>{try{sfx('ok');buzz([10,40,10])}catch(e){}},200);
