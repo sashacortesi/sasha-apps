@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="140" data-theme="dark">
+<html lang="fr" data-build="141" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -540,6 +540,12 @@ body{background:#000}
 .wnote{margin:0;font-size:13.5px;color:var(--good);font-weight:600}.wlk{justify-self:start;border:0;background:none;color:#0A84FF;font-weight:600;font-size:14px;padding:0}
 .wi{background:var(--card2);border-radius:16px;padding:16px;display:grid;gap:12px}.wi p{margin:0;font-size:16px;line-height:1.4;font-weight:500}.wi.c{background:rgba(48,209,88,.12)}
 .wgo{height:46px;border:0;border-radius:14px;background:#0A84FF;color:#fff;font-weight:700;font-size:16px}.wl2{display:flex;justify-content:space-between}.wl2 button{border:0;background:none;color:var(--muted);font-weight:600;font-size:14px;padding:4px 0}
+
+/* ===== Brique joker ===== */
+.jki{width:26px;height:16px;flex:0 0 auto}.jki rect{fill:#FF9F0A}.jki path{fill:#fff}.jki.off rect{fill:none;stroke:#8E8E93;stroke-width:2;stroke-dasharray:4 3}.jki.off path{fill:#8E8E93}
+.jkl{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.wk7 i.jk{background:transparent;display:grid;place-items:center}.wk7 i.jk .jki{width:100%;height:16px}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:60;max-width:488px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:#2C2C2E;color:#fff;font-size:14.5px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:okin .3s ease-out;transition:opacity .4s}.toast.out{opacity:0}
 </style>
 </head>
 <body>
@@ -1246,7 +1252,7 @@ function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().cha
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
   <div class="me"><button class="house" data-a="prog" aria-label="Ma maison">${houseSvg(V.n)}</button>
   <b class="nm">${esc(S.name||'Moi')}</b><span class="lvl">Étape ${V.n} sur 7 · ${V.name}</span></div>
-  ${(()=>{const W7=weekBlocks();return `<button class="lvc" data-a="prog"><div class="lvt"><span class="fl4">Cette semaine <b>${Math.min(W7.ok,7)} / 5</b></span><span>${W7.ok>=5?'Objectif tenu ✓':'Encore '+(5-W7.ok)+' jour'+(5-W7.ok>1?'s':'')}</span></div><div class="wk7">${W7.B}</div><div class="lvt"><span>${xpDays()} jours tenus au total</span><span>Plus haute pile : ${recordStreak()}</span></div><div class="pb"><i style="width:${Math.max(4,Math.round(V.p*100))}%"></i></div><small class="lvn">${nx?'Encore '+V.left+' points pour « '+nx[1]+' »':'Ta maison est terminée'} · étai ${jkLeft()?'dispo cette semaine':'utilisé cette semaine'}</small></button>`})()}
+  ${(()=>{const W7=weekBlocks();return `<button class="lvc" data-a="prog"><div class="lvt"><span class="fl4">Cette semaine <b>${Math.min(W7.ok,7)} / 5</b></span><span>${W7.ok>=5?'Objectif tenu ✓':'Encore '+(5-W7.ok)+' jour'+(5-W7.ok>1?'s':'')}</span></div><div class="wk7">${W7.B}</div><div class="lvt"><span>${xpDays()} jours tenus au total</span><span>Plus haute pile : ${recordStreak()}</span></div><div class="pb"><i style="width:${Math.max(4,Math.round(V.p*100))}%"></i></div><small class="lvn">${nx?'Encore '+V.left+' points pour « '+nx[1]+' »':'Ta maison est terminée'}</small><span class="jkl">${jkIc(jkLeft())}${jkLeft()?'1 joker dispo cette semaine':'Joker utilisé · revient lundi'}</span></button>`})()}
   <div class="sec"><h2>Tes victoires</h2></div>
   <div class="vic">${vic.map(([v,l,c])=>`<div><b style="color:${c}">${v}</b><small>${l}</small></div>`).join('')}</div>
   <div class="sec"><h2>Ton objectif</h2></div>
@@ -1361,7 +1367,9 @@ function houseSvg(n){const on=k=>n>=k,G='rgba(255,255,255,.14)',O='#FF9F0A',lit=
    ${on(6)?`<rect x="76" y="34" width="9" height="16" rx="1.5" fill="${O}"/>`:''}
    ${lit?`<circle cx="104" cy="84" r="8" fill="#30D158"/><rect x="103" y="90" width="2.5" height="10" fill="#8E8E93"/>`:''}
   </svg>`}
-function weekBlocks(){const m=mon(today);let ok=0;const B=[...Array(7)].map((_,i)=>{const d=addD(m,i),o=d<=today&&dayOk(d);if(o)ok++;return `<i class="${o?'on':d===today?'td':d<today?'miss':''}"></i>`}).join('');return{B,ok}}
+function weekBlocks(){const m=mon(today),used=!jkLeft()&&okStreak()>0;let ok=0,jd=null;if(used)for(let d=addD(today,-1);d>=m;d=addD(d,-1))if(!dayOk(d)){if(dayOk(addD(d,-1)))jd=d;break}const B=[...Array(7)].map((_,i)=>{const d=addD(m,i),o=d<=today&&dayOk(d);if(o)ok++;if(d===jd)return `<i class="jk">${jkIc(1)}</i>`;return `<i class="${o?'on':d===today?'td':d<today?'miss':''}"></i>`}).join('');return{B,ok}}
+const jkIc=on=>`<svg class="jki${on?'':' off'}" viewBox="0 0 44 26" aria-hidden="true"><rect x="2" y="2" width="40" height="22" rx="5"/><path d="M22 6.5l1.6 4.9 4.9 1.6-4.9 1.6L22 19.5l-1.6-4.9-4.9-1.6 4.9-1.6z"/></svg>`;
+function jkToast(){try{const yd=addD(today,-1),st=okStreak();if(!S.name||dayOk(yd)||!st||!(S.start<yd)||S.jkT===today||dayOk(addD(yd,-1))===false)return;S.jkT=today;save();setTimeout(()=>{const t=document.createElement('div');t.className='toast';t.innerHTML=`${jkIc(1)}<span>Hier est couvert par ton joker. Ta série continue : ${st} jour${st>1?'s':''}.</span>`;document.body.appendChild(t);setTimeout(()=>t.classList.add('out'),4200);setTimeout(()=>t.remove(),4600);t.onclick=()=>t.remove()},900)}catch(e){}}
 function levelCheck(ms=1800){try{if(!S.name)return;const n=lvl().n;if(S.lvN==null||n<S.lvN){S.lvN=n;return}if(n>S.lvN){S.lvN=n;save();setTimeout(()=>{const go=()=>{const o=document.createElement('div');o.className='strk lvp';o.innerHTML=`<div class="hsw">${houseSvg(n)}</div><small>Ta maison avance</small><b>${LV[n-1][1]}</b><small>${LV[n]?'Prochaine étape : '+LV[n][1]:'Elle est terminée. Elle est à toi.'}</small><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}};$('.strk')?setTimeout(go,2400):go()},ms)}}catch(e){}}
 function sans30(k){const ks=k?[k]:keys();if(!ks.length)return{n:0,of:0};const st=S.vstart&&S.vstart>addD(today,-29)?S.vstart:addD(today,-29);let n=0,of=0;
   for(let d=st;d<=today;d=addD(d,1)){of++;const l=S.log[d];if(l&&ks.every(x=>l[x]===0))n++}return{n,of}}
@@ -1762,7 +1770,7 @@ function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoi
 function countUp(){const el=$('#balc strong');if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=liveBal();if(L==null)return;const t0=performance.now(),D=900;
   const f=t=>{const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=eur(Math.round(L*e*100)/100);if(k<1)requestAnimationFrame(f);else el.textContent=eur(L)};requestAnimationFrame(f)}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
-home();lockCheck();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();0}
+home();lockCheck();jkToast();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();0}
 </script>
 <script>
 (()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;let busy=0;
