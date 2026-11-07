@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="139" data-theme="dark">
+<html lang="fr" data-build="140" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -530,6 +530,16 @@ body{background:#000}
 .wk7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.wk7 i{height:16px;border-radius:5px;background:var(--card2)}.wk7 i.on{background:#FF9F0A}.wk7 i.td{box-shadow:inset 0 0 0 1.5px #FF9F0A}.wk7 i.miss{background:transparent;box-shadow:inset 0 0 0 1px var(--card2)}
 .fl4 b{font-size:16px}
 .bdgs span:empty{background:transparent;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.18);opacity:1;border-radius:50%}
+
+/* ===== Ton chiffre du jour ===== */
+.h2[data-a]{cursor:pointer}.howc{font-size:13px;font-weight:600;color:var(--muted);margin-top:10px}
+.sh2.why{display:grid;gap:12px;max-height:88vh;overflow-y:auto}.why h3{margin:2px 0 0;font-size:20px}.why h4{margin:8px 0 0;font-size:15px;color:var(--muted);font-weight:600}
+.wcalc,.wev{background:var(--card2);border-radius:16px;padding:4px 14px}.wr{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;font-size:15px}.wr+.wr{border-top:.5px solid var(--sep)}
+.wr span{display:grid}.wr small{font-size:12.5px;color:var(--muted);font-weight:500}.wr b{font-family:var(--num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.wr.tot b{color:var(--good);font-size:17px}.wr.in b{color:var(--good)}.wr.debt b{color:#BF5AF2}.wr.out b{color:var(--ink)}
+.wnote{margin:0;font-size:13.5px;color:var(--good);font-weight:600}.wlk{justify-self:start;border:0;background:none;color:#0A84FF;font-weight:600;font-size:14px;padding:0}
+.wi{background:var(--card2);border-radius:16px;padding:16px;display:grid;gap:12px}.wi p{margin:0;font-size:16px;line-height:1.4;font-weight:500}.wi.c{background:rgba(48,209,88,.12)}
+.wgo{height:46px;border:0;border-radius:14px;background:#0A84FF;color:#fff;font-weight:700;font-size:16px}.wl2{display:flex;justify-content:space-between}.wl2 button{border:0;background:none;color:var(--muted);font-weight:600;font-size:14px;padding:4px 0}
 </style>
 </head>
 <body>
@@ -658,7 +668,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   <button class="mlink" data-a="data">Mon mois ${ic('next')}</button>`+TB;
   homeBind()}
 function homeBind(){const B=badges();bindCopy($('#app'));try{const n=S.name?tasks().length:0;if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}{const m=$('#mvl');if(m)bindMv(m)}{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
-  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({bin:binFlow,droits:droitsScr,pay:payScr,wish:flowWish,eve:flowEve,bilan:()=>bilanScr(YM),data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,wk:()=>wkScr(wkStart())})[b.dataset.a]()});
+  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({why:whySheet,bin:binFlow,droits:droitsScr,pay:payScr,wish:flowWish,eve:flowEve,bilan:()=>bilanScr(YM),data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,wk:()=>wkScr(wkStart())})[b.dataset.a]()});
   document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const a=S.ag.find(x=>x.id===b.dataset.ck);a.done=!a.done;save();buzz(a.done?[10,40,10]:8);home()});
   document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>agItem(b.dataset.ed));
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=e=>{e.stopPropagation();tabTo(b.dataset.tab)});
@@ -675,12 +685,12 @@ function heroCard(){if(!S.bal)return balCard();
   const L=liveBal(),up=upSum(),now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1,free=L-up-cofV(),tdS=S.e.filter(x=>x.d===today).reduce((a,x)=>a+x.v,0),nr=nextRin();
   const inx=nr?`<em class="inx">+${eur0(nr.v)} attendus le ${pd(nr.dt).getDate()} (${esc(nr.n)}), comptés quand ils arrivent</em>`:'';
   if(free+tdS>=0){delete S.low;const base=(free+tdS)/left,rest=base-tdS;
-    if(rest>=-.5)return `<div class="h2"><small>${tdS?'Il te reste aujourd’hui':'Pour aujourd’hui'}</small><strong>${eur0(Math.max(0,rest))}</strong><span>${tdS?'sur '+eur0(base)+' pour la journée':'Tu restes dans le vert jusqu’au '+ld+' '+MNL[now.getMonth()]+'.'}</span>${inx}</div>`;
-    const tm=left>1?free/(left-1):0;return `<div class="h2"><small>Aujourd’hui</small><strong class="hv over">+${eur0(-rest)}</strong><span>de plus que prévu. Pas grave : à partir de demain, ${tm>0?eur0(tm)+' par jour.':'on lève le pied.'}</span>${inx}</div>`}
+    if(rest>=-.5)return `<div class="h2" data-a="why"><small>${tdS?'Il te reste aujourd’hui':'Pour aujourd’hui'}</small><strong>${eur0(Math.max(0,rest))}</strong><span>${tdS?'sur '+eur0(base)+' pour la journée':'Tu restes dans le vert jusqu’au '+ld+' '+MNL[now.getMonth()]+'.'}</span>${inx}<span class="howc">Comment c’est calculé ›</span></div>`;
+    const tm=left>1?free/(left-1):0;return `<div class="h2" data-a="why"><small>Aujourd’hui</small><strong class="hv over">+${eur0(-rest)}</strong><span>de plus que prévu. Pas grave : à partir de demain, ${tm>0?eur0(tm)+' par jour.':'on lève le pied.'}</span>${inx}<span class="howc">Comment c’est calculé ›</span></div>`}
   const D=-free;if(S.low==null||free<S.low)S.low=free;const pr=Math.max(0,Math.min(1,1-D/(-S.low)));
   const M=(S.rin||[]).reduce((a,x)=>a+x.v,0)-fxDated().reduce((a,x)=>a+x.v,0)-avgVar();let when='Chaque jour sans dépense t’en rapproche.';
   if(M>20){const d=new Date(now.getFullYear(),now.getMonth()+Math.ceil(D/M),1);when='À ce rythme, tu y es en '+MNL[d.getMonth()]+'.'}
-  return `<div class="h2"><small>Ton cap</small><strong class="hv">Retour au vert</strong><span>${when}</span><div class="pb"><i style="width:${Math.max(4,Math.round(pr*100))}%"></i></div>${inx}</div>`}
+  return `<div class="h2" data-a="why"><small>Ton cap</small><strong class="hv">Retour au vert</strong><span>${when}</span><div class="pb"><i style="width:${Math.max(4,Math.round(pr*100))}%"></i></div>${inx}<span class="howc">Comment c’est calculé ›</span></div>`}
 const stepT=()=>{const L=(S.sk||{})[today]||[];return tasks().filter(t=>!L.includes(t.t))};
 function stepCard(){const T=stepT();if(!T.length)return '';const t=T[0];
   return `<div class="nud"><span><b>${esc(t.t)}</b>${t.s?`<small>${esc(t.s)}</small>`:''}</span><div><button id="stlat" aria-label="Plus tard">${ic('x')}</button><button class="p" id="stgo">${ic('next')}</button></div></div>`}
@@ -1358,6 +1368,54 @@ function sans30(k){const ks=k?[k]:keys();if(!ks.length)return{n:0,of:0};const st
 function legalScr(){scr('Mentions et confidentialité',`<div class="tipb"><b>Ce qu’est Base</b><p class="tl">Un outil de suivi personnel, pour t’aider à y voir clair. Ce n’est pas un conseil financier, juridique ou médical. Pour une aide personnalisée : les Points conseil budget (gratuits) ou ton médecin.</p></div>
  <div class="tipb"><b>Tes données</b><p class="tl">Tout ce que tu notes reste sur ton téléphone. Personne d’autre, pas même nous, n’y a accès. Si tu actives les notifications, seuls des horaires et des textes génériques (« Ton point du soir ») sont envoyés au service qui les déclenche (Cloudflare). Rien sur ton argent ni ta conso, sauf si tu désactives le mode discret. « Tout effacer » supprime tout, ici et sur ce service.</p></div>
  <div class="tipb"><b>Éditeur</b><p class="tl">Sasha Cortesi, projet personnel en test. Hébergement : GitHub Pages (GitHub Inc.).</p></div>`)}
+
+/* ===== Ton chiffre du jour : pourquoi, ce qui arrive, une idée ===== */
+function heroNums(){const L=liveBal(),up=upSum(),cv=cofV(),now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1,tdS=S.e.filter(x=>x.d===today).reduce((a,x)=>a+x.v,0),free=L-up-cv;
+  return{L,up,cv,left,ld,tdS,free,base:(free+tdS)/left,rest:(free+tdS)/left-tdS}}
+function sgRules(){const H=heroNums(),R=[],yd=addD(today,-1),pm=addM(YM,-1),day=+today.slice(8),W7=weekBlocks();
+  const age=S.bal?Math.round((pd(today)-pd(S.bal.d))/864e5):0;
+  if(S.bal&&age>3)R.push({id:1,t:`Ton solde date de ${age} jours. Un coup d’œil à ta banque et ton chiffre sera juste.`,b:'Vérifier mon solde',go:flowCheckBal});
+  const rd=rinDue()[0];if(rd)R.push({id:2,t:`${rd.n} devait arriver le ${pd(rd.dt).getDate()}. S’il est là, tu passes à ${eur0((H.free+rd.v)/H.left)} par jour.`,b:'Il est arrivé',go:()=>flowRinQ(rd)});
+  if(S.start&&S.start<=yd&&!dayOk(yd))R.push({id:3,t:'Hier n’est pas rempli. 10 secondes et tout est à jour.',b:'Remplir hier',go:()=>flow([{k:'x',q:'Hier, tu as dépensé quelque chose ?',type:'tiles',opts:[{i:'check',l:'Rien du tout',one:1,cta:1,go:()=>{S.nos=S.nos||{};S.nos[yd]=1;done(['Hier est à jour','Journée à 0 €'])}},{i:'out',l:'Oui, je note',one:1,go:()=>flowDep(yd)}]}],()=>['',''])});
+  const th=S.debts.filter(x=>x.w==='them'&&x.pm&&x.pm<=YM)[0];if(th){const l=S.debts.filter(x=>pk(x.p)===pk(th.p)),o={n:th.p,l,net:l.reduce((a,x)=>a+(x.w==='them'?x.v:-x.v),0)};if(o.net>0)R.push({id:4,t:`${th.p} te doit ${eur0(o.net)}${th.pm<YM?' depuis '+MNL[+th.pm.slice(5,7)-1]:''}. Un petit message ?`,b:'Lui écrire',go:()=>debtMsg(o)})}
+  const ks=(S.wish||[]).filter(w=>w.st==='skip'&&!w.cof),kv=ks.reduce((a,w)=>a+w.v,0);if(kv>=5)R.push({id:5,t:`Tu as gardé ${eur0(kv)} en disant non.${H.base>0?' C’est '+Math.max(1,Math.round(kv/H.base))+' jours de budget.':''}`,b:'Les mettre dans ta réserve',go:()=>{ks.forEach(w=>w.cof=1);done(cofAdd(kv))}});
+  const wd=wishDue()[0];if(wd)R.push({id:6,t:`Tu hésitais pour ${wd.n} (${eur0(wd.v)}). Toujours envie ?`,b:'Décider',go:()=>flowWishQ(wd)});
+  const fr=S.e.filter(x=>x.c==='frais'&&x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);if(fr>0)R.push({id:7,t:`La banque a pris ${eur0(fr)} de frais ce mois-ci. Ces frais peuvent être plafonnés, et parfois remboursés.`,b:'Voir comment',go:droitsScr});
+  {const cur={},prv={};for(const x of S.e){if(x.c==='dette'||x.c==='conso'||x.gap)continue;if(x.d.startsWith(YM))cur[x.c]=(cur[x.c]||0)+x.v;else if(x.d.startsWith(pm)&&+x.d.slice(8)<=day)prv[x.c]=(prv[x.c]||0)+x.v}
+    const up=Object.keys(cur).map(c=>[c,cur[c],prv[c]||0]).filter(([c,a,b])=>b>=15&&a>b*1.3&&a-b>=10).sort((p,q)=>(q[1]-q[2])-(p[1]-p[2]))[0];
+    if(up&&CN[up[0]]){const g=Math.max(1,Math.round(up[1]/day*.5*H.left/H.left));R.push({id:8,t:`${CN[up[0]][2]} monte un peu ce mois-ci. En lever un peu le pied jusqu’au ${H.ld} : environ +${eur0(g)} par jour.`,b:'Voir le détail',go:histScr})}}
+  if(S.vice){const c=S.e.filter(x=>x.c==='conso'&&x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);if(c>0)R.push({id:9,t:`Ta conso, c’est environ ${eur0(c/day)} par jour ce mois-ci. Chaque jour sans, ils restent à toi.`,b:'Mes raisons',go:fumeScr})}
+  if(H.base<10&&S.cof&&S.cof.w>0&&S.cof.sk!==wkMon())R.push({id:10,t:`Mois serré : tu peux sauter ta réserve cette semaine. Ça te laisse ${eur0(S.cof.w)} de plus.`,b:'Sauter cette semaine',go:()=>{S.cof.sk=wkMon();done(['C’est noté','La semaine prochaine, on reprend'])}});
+  const m=mon(today),z=[...Array(7)].map((_,i)=>addD(m,i)).filter(d=>d<=today&&dayOk(d)&&!S.e.some(x=>x.d===d&&x.c!=='dette')).length;if(z>=2)R.push({id:11,t:`${z} journées à 0 € cette semaine : c’est exactement ce qui fait monter ton chiffre.`,c:1});
+  if(W7.ok>=5)R.push({id:12,t:`${W7.ok} jours sur 7 : ton chiffre est fiable parce que tu le tiens.`,c:1});
+  return R}
+function sgPick(){const R=sgRules(),G=S.sg=S.sg||{m:{},n:{},l:{},o:0},now=Date.now(),yd=addD(today,-1);
+  const ok=R.filter(r=>!(G.m[r.id]>now)&&!(r.id>3&&G.l[r.id]===yd));
+  const habit=ok.filter(r=>r.id>=8&&r.id<=10).slice(0,1),cele=ok.filter(r=>r.c),prio=ok.filter(r=>!r.c&&!(r.id>=8&&r.id<=10));
+  let L=[...prio,...habit,...cele];G.o=(G.o||0)+1;if(G.o%3===0&&cele.length)L=[cele[0],...L.filter(r=>r!==cele[0])];return L}
+function sgSeen(r){const G=S.sg;if(G.l[r.id]===today)return;G.l[r.id]=today;G.n[r.id]=(G.n[r.id]||0)+1;if(G.n[r.id]>=3&&!r.c&&r.id>3){G.m[r.id]=Date.now()+7*864e5;G.n[r.id]=0}}
+function whySheet(){const H=heroNums(),ev=[];
+  for(const x of fxUpcoming())ev.push({d:x.dt,t:x.n,v:-x.v,k:'out'});
+  for(const x of S.debts.filter(x=>x.pm&&x.pm<=YM))ev.push({d:x.dd||'',t:(x.w==='me'?'Rembourser ':'')+x.p+(x.w==='them'?' te rend':''),v:x.w==='me'?-x.v:x.v,k:'debt'});
+  for(const x of rinMonth().filter(x=>!x.ok&&x.dt&&x.dt>=today))ev.push({d:x.dt,t:x.n,v:x.v,k:'in'});
+  ev.sort((a,b)=>(a.d||'9').localeCompare(b.d||'9'));
+  const neg=H.free+H.tdS<0,pct=neg&&S.low?Math.max(0,Math.min(100,Math.round((1-(-H.free)/(-S.low))*100))):0;
+  const row=(l,v,c='')=>`<div class="wr ${c}"><span>${l}</span><b>${v}</b></div>`;
+  const L=sgPick();let k=0;
+  const o=document.createElement('div');o.className='shb2';
+  const sug=()=>{const r=L[k];if(!r)return `<div class="wi c"><p>Tout est en ordre. Continue comme ça.</p></div>`;sgSeen(r);save();
+    return `<div class="wi${r.c?' c':''}"><p>${esc(r.t)}</p>${r.b?`<button class="wgo" data-sgo>${esc(r.b)}</button>`:''}<div class="wl2">${L.length>1&&k<Math.min(2,L.length-1)?'<button data-sn>Autre idée</button>':'<span></span>'}${r.c?'':'<button data-sx>Pas pour moi</button>'}</div></div>`};
+  o.innerHTML=`<div class="sh2 why"><div class="grab"></div><h3>Ton chiffre du jour</h3>
+   <div class="wcalc">${row('Sur ton compte ce matin'+(S.bal?'<small>vérifié '+(S.bal.d===today?'aujourd’hui':dLab(S.bal.d).toLowerCase())+'</small>':''),eur0(H.L+H.tdS))}${H.up?row('Encore à payer ce mois','− '+eur0(H.up)):''}${H.cv?row('Mis de côté pour toi','− '+eur0(H.cv)):''}
+   ${neg?row('Ton cap','Tu es à '+pct+' % du chemin','tot'):row(eur0(H.free+H.tdS)+' pour '+H.left+' jour'+(H.left>1?'s':''),'= '+eur0(H.base)+' par jour','tot')}${!neg&&H.tdS?row('Déjà noté aujourd’hui','− '+eur0(H.tdS)+' → reste '+eur0(Math.max(0,H.rest))):''}</div>
+   ${(()=>{const nr=nextRin();return nr?`<p class="wnote">+${eur0(nr.v)} attendus le ${pd(nr.dt).getDate()} (${esc(nr.n)}), comptés dès que tu confirmes.</p>`:''})()}
+   <h4>Une idée</h4><div id="wsg">${sug()}</div>
+   ${ev.length?`<h4>À venir</h4><div class="wev">${ev.slice(0,3).map(e=>`<div class="wr ${e.k}"><span>${esc(e.t)}<small>${e.d?dLab(e.d):'Ce mois-ci'}</small></span><b>${e.v<0?'− ':'+ '}${eur0(Math.abs(e.v))}</b></div>`).join('')}</div><button class="wlk" data-ag>Tout voir dans l’agenda</button>`:''}</div>`;
+  document.body.appendChild(o);buzz(6);const close=()=>o.remove();o.onclick=e=>{if(e.target===o)close()};
+  const bind=()=>{const b=o.querySelector('[data-sgo]');if(b)b.onclick=()=>{const r=L[k];buzz();close();S.sg.n[r.id]=0;r.go()};
+    const n=o.querySelector('[data-sn]');if(n)n.onclick=()=>{buzz(5);k++;o.querySelector('#wsg').innerHTML=sug();bind()};
+    const x=o.querySelector('[data-sx]');if(x)x.onclick=()=>{buzz(5);S.sg.m[L[k].id]=Date.now()+30*864e5;save();L.splice(k,1);if(k>=L.length)k=Math.max(0,L.length-1);o.querySelector('#wsg').innerHTML=sug();bind()}};bind();
+  const ag=o.querySelector('[data-ag]');if(ag)ag.onclick=()=>{close();agV='month';tabTo('agenda')}}
 
 /* ---------- Réserve ---------- */
 function cofCard(B){const v=cofV(),g=S.cof&&S.cof.g;
