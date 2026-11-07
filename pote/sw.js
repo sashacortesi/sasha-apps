@@ -1,4 +1,4 @@
-// Base — notifications + toujours la dernière version (v2)
+// Base — notifications + toujours la dernière version + hors ligne (v3)
 self.addEventListener('install',()=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
 self.addEventListener('push',e=>{let d={};try{d=e.data.json()}catch(_){d={title:'Base',body:e.data?e.data.text():''}}
@@ -8,4 +8,4 @@ self.addEventListener('notificationclick',e=>{e.notification.close();const url=(
   e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(l=>{for(const c of l)if(c.url.startsWith(self.registration.scope)&&'focus' in c)return c.focus();return self.clients.openWindow(url)}))});
 
 self.addEventListener('fetch',e=>{const r=e.request;if(r.mode!=='navigate')return;
-  e.respondWith(fetch(r,{cache:'no-store'}).catch(()=>caches.match(r)))});
+  e.respondWith(fetch(r,{cache:'no-store'}).then(res=>{if(res&&res.ok){const c=res.clone();caches.open('base-v1').then(x=>x.put(self.registration.scope,c)).catch(()=>{})}return res}).catch(()=>caches.match(self.registration.scope).then(m=>m||caches.match(r,{ignoreSearch:true}))))});
