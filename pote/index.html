@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="141" data-theme="dark">
+<html lang="fr" data-build="142" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -546,6 +546,10 @@ body{background:#000}
 .jkl{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--muted)}
 .wk7 i.jk{background:transparent;display:grid;place-items:center}.wk7 i.jk .jki{width:100%;height:16px}
 .toast{position:fixed;left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:60;max-width:488px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:#2C2C2E;color:#fff;font-size:14.5px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:okin .3s ease-out;transition:opacity .4s}.toast.out{opacity:0}
+
+/* ===== Corrections AG ===== */
+.big strong.neg,.big .aft b.neg,.li .r.neg,.hero strong.neg,.neg,.solr b.neg{color:#FF9F0A}
+.house{height:200px}.h2 .cap{width:70%;display:grid;gap:6px;justify-items:center;margin-top:14px}.h2 .cap span{font-size:13px;font-weight:600;color:var(--good)}.h2 .cap small{font-size:12.5px;font-weight:500;color:var(--muted);letter-spacing:0}.h2 .cap .pb{width:100%;margin:0}
 </style>
 </head>
 <body>
@@ -562,7 +566,7 @@ const today=iso(new Date()),YM=today.slice(0,7);
 const pd=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
 const addD=(k,n)=>{const d=pd(k);d.setDate(d.getDate()+n);return iso(d)};
 const nYM=(()=>{const d=new Date(+YM.slice(0,4),+YM.slice(5,7),1);return iso(d).slice(0,7)})();
-const eur=n=>(Math.round(n*100)/100).toLocaleString('fr-FR',{maximumFractionDigits:2})+' €';
+const eur=n=>{const r=Math.round(n*100)/100;return r.toLocaleString('fr-FR',r%1?{minimumFractionDigits:2,maximumFractionDigits:2}:{maximumFractionDigits:0})+' €'};
 const eur0=n=>Math.round(n).toLocaleString('fr-FR')+' €';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 /* ---------- Sons ---------- */
@@ -607,7 +611,7 @@ if(!S.log||typeof S.log!=='object')S.log={};if(!Array.isArray(S.wish))S.wish=[];
 if(S.fixe==null)S.fixe=null;
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}pushSoon()};
 
-const CATS=[['courses','cart','Courses'],['resto','resto','Resto'],['ff','fast','Fast-food'],['sorties','glass','Sorties'],['transport','train','Transport'],['conso','folder','Conso'],['shopping','bag','Shopping'],['frais','bank','Frais bancaires'],['autre','dots','Autre']];
+const CATS=[['courses','cart','Courses'],['resto','resto','Resto'],['ff','fast','Fast-food'],['sorties','glass','Sorties'],['transport','train','Transport'],['conso','leaf','Conso'],['shopping','bag','Shopping'],['frais','bank','Frais bancaires'],['autre','dots','Autre']];
 const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));if(S.vn)CN.conso[2]=S.vn;
 const FSUB=[{v:'shit',i:'hex',l:'Shit'},{v:'beuh',i:'leaf',l:'Beuh'},{v:'clopes',i:'smoke',l:'Clopes'}];const FL2=Object.fromEntries(FSUB.map(o=>[o.v,o.l]));CN.dette=['dette','users','Dette remboursée'];
 const PCOL=['#0A84FF','#64D2FF','#FF6B35','#BF5AF2','#FF453A','#30B0C7','#FFD60A'];
@@ -692,11 +696,12 @@ function heroCard(){if(!S.bal)return balCard();
   const inx=nr?`<em class="inx">+${eur0(nr.v)} attendus le ${pd(nr.dt).getDate()} (${esc(nr.n)}), comptés quand ils arrivent</em>`:'';
   if(free+tdS>=0){delete S.low;const base=(free+tdS)/left,rest=base-tdS;
     if(rest>=-.5)return `<div class="h2" data-a="why"><small>${tdS?'Il te reste aujourd’hui':'Pour aujourd’hui'}</small><strong>${eur0(Math.max(0,rest))}</strong><span>${tdS?'sur '+eur0(base)+' pour la journée':'Tu restes dans le vert jusqu’au '+ld+' '+MNL[now.getMonth()]+'.'}</span>${inx}<span class="howc">Comment c’est calculé ›</span></div>`;
-    const tm=left>1?free/(left-1):0;return `<div class="h2" data-a="why"><small>Aujourd’hui</small><strong class="hv over">+${eur0(-rest)}</strong><span>de plus que prévu. Pas grave : à partir de demain, ${tm>0?eur0(tm)+' par jour.':'on lève le pied.'}</span>${inx}<span class="howc">Comment c’est calculé ›</span></div>`}
+    const tm=left>1?free/(left-1):0;return `<div class="h2" data-a="why"><small>Aujourd’hui, au-dessus de ta journée</small><strong class="hv over">${eur0(-rest)}</strong><span>Pas grave : à partir de demain, ${tm>0?eur0(tm)+' par jour.':'on lève le pied.'}</span>${inx}<span class="howc">Comment c’est calculé ›</span></div>`}
   const D=-free;if(S.low==null||free<S.low)S.low=free;const pr=Math.max(0,Math.min(1,1-D/(-S.low)));
   const M=(S.rin||[]).reduce((a,x)=>a+x.v,0)-fxDated().reduce((a,x)=>a+x.v,0)-avgVar();let when='Chaque jour sans dépense t’en rapproche.';
   if(M>20){const d=new Date(now.getFullYear(),now.getMonth()+Math.ceil(D/M),1);when='À ce rythme, tu y es en '+MNL[d.getMonth()]+'.'}
-  return `<div class="h2" data-a="why"><small>Ton cap</small><strong class="hv">Retour au vert</strong><span>${when}</span><div class="pb"><i style="width:${Math.max(4,Math.round(pr*100))}%"></i></div>${inx}<span class="howc">Comment c’est calculé ›</span></div>`}
+  const dj=nr?Math.max(0,(free+tdS+nr.v)/left):0,rj=Math.max(0,dj-tdS);
+  return `<div class="h2" data-a="why"><small>${nr?(tdS?'Il te reste aujourd’hui':'Pour aujourd’hui'):'Aujourd’hui'}</small><strong>${eur0(nr?rj:0)}</strong><span>${nr?(dj>0?'maximum, en comptant les '+eur0(nr.v)+' du '+pd(nr.dt).getDate()+'. Comme ça, tu ne creuses pas.':'Le mieux aujourd’hui : rien de plus. '+esc(nr.n)+' arrive le '+pd(nr.dt).getDate()+'.'):'Chaque journée à 0 € te rapproche du vert.'}</span><div class="cap"><span>Retour au vert</span><div class="pb"><i style="width:${Math.max(4,Math.round(pr*100))}%"></i></div><small>${when}</small></div><span class="howc">Comment c’est calculé ›</span></div>`}
 const stepT=()=>{const L=(S.sk||{})[today]||[];return tasks().filter(t=>!L.includes(t.t))};
 function stepCard(){const T=stepT();if(!T.length)return '';const t=T[0];
   return `<div class="nud"><span><b>${esc(t.t)}</b>${t.s?`<small>${esc(t.s)}</small>`:''}</span><div><button id="stlat" aria-label="Plus tard">${ic('x')}</button><button class="p" id="stgo">${ic('next')}</button></div></div>`}
@@ -1085,7 +1090,7 @@ function balNote(d,k){if(!S.bal||d===today)return '';const b=S.bal.d,bl='le '+pd
   if(d>b)return 'Ton solde '+(k==='in'?'monte':'baisse')+' : c’est après ta dernière mise à jour ('+bl+').';
   return 'Le jour de ta mise à jour du solde : on te demande juste après.'}
 function nbFor(d,ans){if(!S.bal)return 0;if(d<S.bal.d)return 1;if(d>S.bal.d)return 0;return ans==='y'?1:0}
-const SAMEQ=k=>({k:'sb',q:'Ton solde tient déjà compte de '+(k==='in'?'cette rentrée':'cette dépense')+' ?',sub:v=>'Tu as mis ton solde à jour '+dLab(v.d||today).toLowerCase()+'. Si c’était après '+(k==='in'?'l’arrivée':'le paiement')+', il est déjà dedans.',type:'tiles',skip:v=>!S.bal||(v.d||today)!==S.bal.d,opts:[{v:'y',i:'check',l:'Oui, déjà compté',s:'Mon solde ne bouge pas'},{v:'n',i:'bank',l:k==='in'?'Non, ajoute-le':'Non, retire-le',s:'Mon solde s’ajuste'}]});
+const SAMEQ=k=>({k:'sb',q:'Ton solde tient déjà compte de '+(k==='in'?'cette rentrée':'cette dépense')+' ?',sub:v=>'Tu as mis ton solde à jour '+dLab(v.d||today).toLowerCase()+'. Si c’était après '+(k==='in'?'l’arrivée':'le paiement')+', il est déjà dedans.',type:'tiles',skip:v=>!S.bal||(v.d||today)!==S.bal.d||S.start===today,opts:[{v:'y',i:'check',l:'Oui, déjà compté',s:'Mon solde ne bouge pas'},{v:'n',i:'bank',l:k==='in'?'Non, ajoute-le':'Non, retire-le',s:'Mon solde s’ajuste'}]});
 const dSuf=d=>d&&d!==today?' · '+dLab(d):'';
 function flowInc(pre){flow([
   {k:'v',q:'Combien tu as reçu ?',type:'amount',pd:'in'},
@@ -1248,11 +1253,11 @@ function badgeCheck(ms=1800){try{if(!S.name)return;const on=badgeList().filter(b
 function badgePop([t,,i]){const o=document.createElement('div');o.className='strk bp';o.innerHTML=`<div class="bdx">${ic(i)}</div><small>Nouvelle pierre posée</small><b>${esc(t)}</b><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
 function moiView(B){const V=lvl(),st=okStreak(),ini=esc((S.name||'?').trim().charAt(0).toUpperCase()),R=56,C=+(2*Math.PI*R).toFixed(1),nx=LV[V.n],W=vicStats(),g=S.cof&&S.cof.g,cv=cofV();
   const BL=badgeList().map((b,k)=>[...b,k]).sort((a,b)=>(b[1]-a[1])||(a[3]-b[3]));
-  const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €','var(--good)'],...(S.vice&&W.fs!=null?[[sans30().n+' / '+sans30().of+' j','sans fumer sur les 30 derniers','var(--c-noc)']]:[[W.agd,'chose'+(W.agd>1?'s':'')+' faite'+(W.agd>1?'s':''),'var(--c-ag)']]),[eur0(W.kept),'gardés grâce à « Envie d’acheter »','var(--c-cof)'],[eur0(W.rb),'de dettes remboursées','var(--c-debt)']];
+  const vic=[[W.z,'journée'+(W.z>1?'s':'')+' à 0 €','var(--good)'],...(S.vice&&W.fs!=null?[[sans30().n+' / '+sans30().of+' j','sans fumer sur les 30 derniers','#64D2FF']]:[[W.agd,'chose'+(W.agd>1?'s':'')+' faite'+(W.agd>1?'s':''),'var(--c-ag)']]),[eur0(W.kept),'gardés grâce à « Envie d’acheter »','var(--c-cof)'],[eur0(W.rb),'de dettes remboursées','var(--c-debt)']];
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
   <div class="me"><button class="house" data-a="prog" aria-label="Ma maison">${houseSvg(V.n)}</button>
   <b class="nm">${esc(S.name||'Moi')}</b><span class="lvl">Étape ${V.n} sur 7 · ${V.name}</span></div>
-  ${(()=>{const W7=weekBlocks();return `<button class="lvc" data-a="prog"><div class="lvt"><span class="fl4">Cette semaine <b>${Math.min(W7.ok,7)} / 5</b></span><span>${W7.ok>=5?'Objectif tenu ✓':'Encore '+(5-W7.ok)+' jour'+(5-W7.ok>1?'s':'')}</span></div><div class="wk7">${W7.B}</div><div class="lvt"><span>${xpDays()} jours tenus au total</span><span>Plus haute pile : ${recordStreak()}</span></div><div class="pb"><i style="width:${Math.max(4,Math.round(V.p*100))}%"></i></div><small class="lvn">${nx?'Encore '+V.left+' points pour « '+nx[1]+' »':'Ta maison est terminée'}</small><span class="jkl">${jkIc(jkLeft())}${jkLeft()?'1 joker dispo cette semaine':'Joker utilisé · revient lundi'}</span></button>`})()}
+  ${(()=>{const W7=weekBlocks();return `<button class="lvc" data-a="prog"><div class="lvt"><span class="fl4">Cette semaine <b>${Math.min(W7.ok,7)} / 5</b></span><span>${W7.ok>=5?'Objectif tenu ✓':'Encore '+(5-W7.ok)+' jour'+(5-W7.ok>1?'s':'')}</span></div><div class="wk7">${W7.B}</div><div class="lvt"><span>${xpDays()} jour${xpDays()>1?'s':''} tenu${xpDays()>1?'s':''} au total</span><span>Plus haute pile : ${recordStreak()}</span></div><div class="pb"><i style="width:${Math.max(4,Math.round(V.p*100))}%"></i></div><small class="lvn">${nx?'Encore '+V.left+' points pour « '+nx[1]+' »':'Ta maison est terminée'}</small><span class="jkl">${jkIc(jkLeft())}${jkLeft()?'1 joker dispo cette semaine':'Joker utilisé · revient lundi'}</span></button>`})()}
   <div class="sec"><h2>Tes victoires</h2></div>
   <div class="vic">${vic.map(([v,l,c])=>`<div><b style="color:${c}">${v}</b><small>${l}</small></div>`).join('')}</div>
   <div class="sec"><h2>Ton objectif</h2></div>
@@ -1414,8 +1419,8 @@ function whySheet(){const H=heroNums(),ev=[];
   const sug=()=>{const r=L[k];if(!r)return `<div class="wi c"><p>Tout est en ordre. Continue comme ça.</p></div>`;sgSeen(r);save();
     return `<div class="wi${r.c?' c':''}"><p>${esc(r.t)}</p>${r.b?`<button class="wgo" data-sgo>${esc(r.b)}</button>`:''}<div class="wl2">${L.length>1&&k<Math.min(2,L.length-1)?'<button data-sn>Autre idée</button>':'<span></span>'}${r.c?'':'<button data-sx>Pas pour moi</button>'}</div></div>`};
   o.innerHTML=`<div class="sh2 why"><div class="grab"></div><h3>Ton chiffre du jour</h3>
-   <div class="wcalc">${row('Sur ton compte ce matin'+(S.bal?'<small>vérifié '+(S.bal.d===today?'aujourd’hui':dLab(S.bal.d).toLowerCase())+'</small>':''),eur0(H.L+H.tdS))}${H.up?row('Encore à payer ce mois','− '+eur0(H.up)):''}${H.cv?row('Mis de côté pour toi','− '+eur0(H.cv)):''}
-   ${neg?row('Ton cap','Tu es à '+pct+' % du chemin','tot'):row(eur0(H.free+H.tdS)+' pour '+H.left+' jour'+(H.left>1?'s':''),'= '+eur0(H.base)+' par jour','tot')}${!neg&&H.tdS?row('Déjà noté aujourd’hui','− '+eur0(H.tdS)+' → reste '+eur0(Math.max(0,H.rest))):''}</div>
+   <div class="wcalc">${row('Sur ton compte'+(S.bal?'<small>vérifié '+(S.bal.d===today?'aujourd’hui':dLab(S.bal.d).toLowerCase())+'</small>':''),eur0(H.L))}${H.tdS?row('Dépensé aujourd’hui<small>remis pour calculer ta journée</small>','+ '+eur0(H.tdS)):''}${H.up?row('Encore à payer ce mois','− '+eur0(H.up)):''}${H.cv?row('Mis de côté pour toi','− '+eur0(H.cv)):''}
+   ${neg?(()=>{const nr=nextRin();return nr?row('Avec les '+eur0(nr.v)+' du '+pd(nr.dt).getDate()+'<small>'+eur0(H.free+H.tdS+nr.v)+' pour '+H.left+' jours</small>','= '+eur0(Math.max(0,(H.free+H.tdS+nr.v)/H.left))+' par jour','tot'):row('Ton cap',pct>=10?'Déjà '+pct+' % du chemin':'Chaque jour à 0 € compte','tot')})():row(eur0(H.free+H.tdS)+' pour '+H.left+' jour'+(H.left>1?'s':''),'= '+eur0(H.base)+' par jour','tot')}${!neg&&H.tdS?row('Déjà noté aujourd’hui','− '+eur0(H.tdS)+' → reste '+eur0(Math.max(0,H.rest))):''}</div>
    ${(()=>{const nr=nextRin();return nr?`<p class="wnote">+${eur0(nr.v)} attendus le ${pd(nr.dt).getDate()} (${esc(nr.n)}), comptés dès que tu confirmes.</p>`:''})()}
    <h4>Une idée</h4><div id="wsg">${sug()}</div>
    ${ev.length?`<h4>À venir</h4><div class="wev">${ev.slice(0,3).map(e=>`<div class="wr ${e.k}"><span>${esc(e.t)}<small>${e.d?dLab(e.d):'Ce mois-ci'}</small></span><b>${e.v<0?'− ':'+ '}${eur0(Math.abs(e.v))}</b></div>`).join('')}</div><button class="wlk" data-ag>Tout voir dans l’agenda</button>`:''}</div>`;
@@ -1559,12 +1564,12 @@ const keys=()=>['j','c'].filter(has);
 function streak(k){let n=0;const x=new Date();const t=S.log[iso(x)];if(t&&t[k]>0)return 0;if(!(t&&t[k]===0))x.setDate(x.getDate()-1);
   while(true){const d=S.log[iso(x)];if(d&&d[k]===0){n++;x.setDate(x.getDate()-1)}else break}return n}
 const best=()=>Math.max(0,...keys().map(streak));
-const saved=()=>{if(!S.vstart)return 0;const days=Math.max(1,Math.round((pd(today)-pd(S.vstart))/864e5)+1);const c=S.e.filter(x=>x.c==='conso'&&x.d>=S.vstart).reduce((a,x)=>a+x.v,0);return Math.max(0,(S.wk||0)/7*days-c)};
+const saved=()=>{if(!S.vstart||!keys().length)return 0;let f=0;for(let d=S.vstart;d<=today;d=addD(d,1)){const l=S.log[d];if(l)f+=keys().filter(k=>l[k]===0).length/keys().length}return Math.round((S.wk||0)/7*f)};
 const KN={j:'sans joint',c:'sans clope'};
 function smokeCard(){if(!S.name)return'';
   if(!S.vice)return S.vice===''?'':`<button class="vset" data-a="vset"><span class="ib">${ic('smoke')}</span><span><b>Suivre ma conso</b><small>Clopes, joints : jours sans fumer et argent économisé</small></span></button>`;
   const lg=S.log[today];
-  return `<button class="vset fold" data-a="fume">${S.name&&tasks().some(t=>t.i==='smoke')?`<i class="bdg">${tasks().filter(t=>t.i==='smoke').length}</i>`:''}<span class="ib">${ic('folder')}</span><span><b>${esc(CN.conso[2])}</b><small>${(()=>{const q=sans30();return q.n+' j sans sur '+q.of})()}${lg?'':' · note ta journée'}</small></span></button>`}
+  return `<button class="vset fold" data-a="fume">${S.name&&tasks().some(t=>t.i==='smoke')?`<i class="bdg">${tasks().filter(t=>t.i==='smoke').length}</i>`:''}<span class="ib">${ic('leaf')}</span><span><b>${esc(CN.conso[2])}</b><small>${(()=>{const q=sans30();return q.n+' j sans sur '+q.of})()}${lg?'':' · note ta journée'}</small></span></button>`}
 function fumeScr(){const lg=S.log[today],zero=lg&&keys().every(k=>lg[k]===0),rs=RS(),[rk,rt]=rs[rI%rs.length];
   const nx=(k)=>{const n=streak(k),m=BODY[k==='c'?'tabac':'cannabis'].find(([d])=>n<d);return m?`<div class="rc"><small>${KN[k].replace(/^./,c=>c.toUpperCase())} · ${n} j · encore ${m[0]-n} j</small><p>${m[2]}</p></div>`:''};
   const x=scr(esc(CN.conso[2]),`<div class="st3">${keys().map(k=>{const q=sans30(k);return `<div><b>${q.n}/${q.of} j</b><small>${KN[k]}</small></div>`}).join('')}<div><b>${eur0(saved())}</b><small>économisés</small></div></div>
