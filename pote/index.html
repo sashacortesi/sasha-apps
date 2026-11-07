@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="145" data-theme="dark">
+<html lang="fr" data-build="1794060765" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -676,7 +676,7 @@ function catsCard(){const m={};let t=0;for(const x of S.e.filter(x=>x.d.startsWi
   const L=Object.entries(m).sort((a,b)=>b[1]-a[1]);
   return `<div class="cats"><div class="hd"><b>Où part ton argent</b><span>${MNL[+YM.slice(5,7)-1]}</span></div><div class="bar">${L.map(([c,v])=>`<i style="width:${v/t*100}%;background:${CCOL[c]||'#8E8E93'}"></i>`).join('')}</div>${L.slice(0,5).map(([c,v])=>`<div class="cr"><span class="dot" style="background:${CCOL[c]||'#8E8E93'}"></span><span>${esc(CN[c]?CN[c][2]:'Autre')}<small>${Math.round(v/t*100)} %</small></span><b>${eur(v)}</b></div>`).join('')}${m.conso?`<div class="dnote" style="text-align:left;padding:0">${esc(CN.conso[2])} : ${eur0(m.conso)} ce mois, soit ${eur0(m.conso/Math.max(1,+today.slice(8))*30)} sur un mois entier à ce rythme.</div>`:''}</div>`}
 async function shareApp(){const u=location.origin+location.pathname,t='Base : l’app qui m’aide à tenir mon argent et mes journées. Gratuite, sans compte.';try{if(navigator.share){await navigator.share({title:'Base',text:t,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t+' '+u);done(['Lien copié','Colle-le à qui tu veux'])}catch(e){done(['Le lien',u])}}
-function setSheet(){const T=[['gear','Mon profil et mon budget',settings],['bell',pushOn()?'Rappels : activés':'Activer les rappels',()=>pushOn()?pushOff():pushEnable()],['folder','Sauvegarder mes données',backup],['cal','Calendrier du téléphone',icsExport],['help','Aide',()=>helpScr()],['share','Partager Base',shareApp]];
+function setSheet(){const T=[['in','Importer Plan Budget',()=>pbPaste()],['gear','Mon profil et mon budget',settings],['bell',pushOn()?'Rappels : activés':'Activer les rappels',()=>pushOn()?pushOff():pushEnable()],['folder','Sauvegarder mes données',backup],['cal','Calendrier du téléphone',icsExport],['help','Aide',()=>helpScr()],['share','Partager Base',shareApp]];
   flow([{k:'x',q:'Réglages',sub:'Tes données restent sur ce téléphone.',type:'tiles',opts:T.map(([i,l,f])=>({i,l,one:1,go:()=>{closeFl();f()}}))}],()=>['',''])}
 function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x.v||0),0)*100)/100;try{snapBal()}catch(e){}const r=reste(),now=new Date(),left=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1;
   const its=S.ag.filter(a=>a.d===today).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'));
@@ -1038,7 +1038,7 @@ function tilesUI(st,body){const opts=typeof st.opts==='function'?st.opts(FL.v):s
    const lb=w.querySelector('.tlink'),ti=w.querySelector('#tt'),tl=w.querySelector('.tl');
    lb.onclick=e=>{if(e.target.closest('.tv')){e.preventDefault();if(ti.value){buzz();FL.v[st.k]=ti.value;nextStep()}return}if(e.target!==ti){e.preventDefault();try{ti.showPicker()}catch(_){ti.focus();ti.click()}}};
    const upd=()=>{if(ti.value){tl.textContent='À '+hl(ti.value);lb.classList.add('set')}};ti.oninput=upd;ti.onchange=upd}}
-function textUI(st,body,btm){body.innerHTML=`<input class="txt" id="tx" placeholder="${esc(st.ph||'')}" maxlength="60" value="${esc(FL.v[st.k]||'')}" autocomplete="off">`;
+function textUI(st,body,btm){body.innerHTML=`<input class="txt" id="tx" placeholder="${esc(st.ph||'')}" maxlength="${st.ml||60}" value="${esc(FL.v[st.k]||'')}" autocomplete="off">`;
   btm.innerHTML=`<button class="go" id="go">Suivant</button>`;const i=body.querySelector('#tx'),g=btm.querySelector('#go');const chk=()=>g.disabled=!i.value.trim();chk();i.oninput=chk;
   setTimeout(()=>i.focus(),250);const fin=()=>{if(!i.value.trim())return;FL.v[st.k]=i.value.trim();nextStep()};g.onclick=fin;i.onkeydown=e=>{if(e.key==='Enter')fin()}}
 function dateUI(st,body){const o=[[today,'sun','Aujourd’hui'],[addD(today,1),'moon','Demain'],[addD(today,2),'cal',dLab(addD(today,2))]];
@@ -1784,7 +1784,28 @@ function helpScr(){const sm=!!S.vice,norm=t=>(t||'').toLowerCase().normalize('NF
   draw('');const si=x.querySelector('#hS');si.oninput=()=>draw(si.value)}
 
 /* ---------- Réglages ---------- */
+/* ---------- Import depuis Plan Budget (bouton « Base » dans Plan Budget → copie → ici) ---------- */
+function pbParse(s){s=String(s||'').trim();const i=s.indexOf('BASE-IMPORT:');if(i<0)return null;try{const P=JSON.parse(decodeURIComponent(escape(atob(s.slice(i+12).split(/\s/)[0]))));return P&&P.app==='planbudget'?P:null}catch(e){return null}}
+async function pbPaste(){let P=null;try{P=pbParse(await navigator.clipboard.readText())}catch(e){}
+  if(P)return pbImport(P);
+  flow([{k:'t',q:'Colle le code de Plan Budget',sub:'Dans Plan Budget, touche « Base » en haut : ça le copie. Puis colle-le ici.',type:'text',ml:20000}],v=>{const Q=pbParse(v.t);if(!Q)return['Code non reconnu','Recopie-le depuis Plan Budget'];setTimeout(()=>pbImport(Q),50);return null})}
+function pbImport(P){if(!S.name){S.name=P.name||'Moi';S.start=today}
+  const r2=v=>Math.round(v*100)/100;
+  S.fx=Array.isArray(S.fx)?S.fx:[];for(const x of P.fx||[]){const f=S.fx.find(y=>pk(y.n||'')===pk(x.n));if(f){f.v=x.v;if(x.d)f.d=x.d}else{const o={n:x.n,v:x.v};if(x.d)o.d=x.d;S.fx.push(o)}}
+  S.fixe=r2(S.fx.reduce((t,x)=>t+(x.v||0),0));
+  if(P.bal&&typeof P.bal.v==='number')S.bal={v:P.bal.v,d:today,ts:Date.now(),acc:[{n:'Mes comptes',v:P.bal.v}]};
+  for(const x of P.e||[]){const o=S.e.find(y=>y.id===x.id);if(o){o.v=x.v;o.nb=1}else S.e.push({...x})}
+  const agIds=new Set((P.ag||[]).map(x=>x.id));
+  for(const x of P.ag||[])if(!S.ag.some(y=>y.id===x.id))S.ag.push({id:x.id,t:x.t,d:x.d||'',h:'',rem:false,done:false});
+  for(const a of S.ag)if(String(a.id).startsWith('pb-')&&!agIds.has(a.id))a.done=true;
+  const dIds=new Set([...(P.them||[]),...(P.me||[])].map(x=>x.id));
+  S.debts=S.debts.filter(x=>!String(x.id).startsWith('pb-')||dIds.has(x.id));
+  for(const[w,L]of[['them',P.them],['me',P.me]])for(const x of L||[]){const o=S.debts.find(y=>y.id===x.id);if(o)o.v=x.v;else S.debts.push({id:x.id,p:x.p,t:x.t||'',v:x.v,w,pm:YM,d:today})}
+  if(P.goal){S.cof=S.cof||{v:0,h:[]};if(!S.cof.g)S.cof.g={n:P.goal.n,v:P.goal.v}}
+  S.pbAt=Date.now();save();buzz([10,40,10]);
+  done(['Plan Budget importé',(P.fx||[]).length+' charges'+(P.bal?' · solde '+eur(P.bal.v):'')+' · '+(P.ag||[]).length+' tâches'])}
 function settings(){flow([{k:'x',q:'Réglages',type:'tiles',opts:[
+  {i:'in',l:'Importer Plan Budget',s:S.pbAt?'Dernier import le '+pd(iso(new Date(S.pbAt))).getDate()+' '+MN[pd(iso(new Date(S.pbAt))).getMonth()]:'Charges, solde, dépenses, tâches',one:1,go:()=>pbPaste()},
   {i:'home',l:'Mes charges fixes',s:fxSub(),one:1,go:()=>flow([{k:'fx',q:'Tes charges fixes',sub:'Ajoute, renomme ou supprime ce que tu paies chaque mois.',type:'fixes'}],v=>{fxSave(v.fx);return['Enregistré',eur0(S.fixe)+' par mois']})},
   {i:'bank',l:'Mon solde',s:S.bal?eur(liveBal())+' · mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'Pas encore renseigné',one:1,go:()=>flowBal()},
   {i:'in',l:'Mes revenus réguliers',s:rinSub(),one:1,go:()=>flow([{...RIN_STEP,q:'Ce qui rentre chaque mois'}],v=>{rinSave(v.rin);return['Enregistré',rinSub()]})},
