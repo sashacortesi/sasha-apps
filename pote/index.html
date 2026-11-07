@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794074837" data-theme="light">
+<html lang="fr" data-build="1794075141" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -307,6 +307,10 @@ label.tile{position:relative;overflow:hidden}.tlink.set .tl{color:var(--ink)!imp
 .scanw{display:grid;grid-template-rows:1fr;place-items:center}.scbox{display:grid;justify-items:center;gap:8px;text-align:center}.scbox b{font-size:20px}.scbox small{color:var(--muted);font-size:14px}.scsp{width:72px;height:72px;border-radius:24px;display:grid;place-items:center;background:color-mix(in srgb,var(--c-out) 14%,transparent);color:var(--c-out);margin-bottom:6px;animation:scp 1.2s ease-in-out infinite}.scsp svg{width:32px;height:32px}@keyframes scp{50%{transform:scale(.9);opacity:.6}}
 
 .bud{background:var(--card);border-radius:20px;overflow:hidden}.bdr{display:grid;grid-template-columns:36px 1fr auto 16px;align-items:center;gap:12px;width:100%;border:0;background:none;padding:13px 14px;text-align:left;font:inherit;color:var(--ink)}.bdr+.bdr{border-top:.5px solid var(--line)}.bdr .ib{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}.bdr .ib svg{width:19px;height:19px}.bdr .bl{display:grid;min-width:0}.bdr .bl b{font-size:16px;font-weight:600}.bdr .bl small{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bdr .bv{font-weight:700;font-size:16px}.bdr>svg{width:14px;height:14px;color:var(--muted)}
+.ftop{display:flex;justify-content:center;margin:4px 0 14px}.safe.mid{width:120px;height:128px}.safe .sfd{transition:transform .9s}.safe .sfd.spin{transform:translate(120px,70px) rotate(300deg)}
+.cofa{position:fixed;inset:0;z-index:70;display:grid;place-content:center;justify-items:center;gap:8px;background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);animation:fd .2s ease-out;text-align:center;padding:24px}.cofa.out{opacity:0;transition:opacity .3s}.cofa b{font-size:24px;letter-spacing:-.02em;margin-top:10px}.cofa small{color:var(--muted);font-size:15px;max-width:300px}
+.cfw{position:relative;width:190px;height:204px}.safe.big{width:190px;height:204px}.cfc{position:absolute;left:50%;top:-10px;width:0;height:0;z-index:2}.cfc i{position:absolute;left:calc(-13px + var(--x));top:-80px;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFF1A8,#F5B700 70%);box-shadow:inset 0 0 0 2.5px #D99A00;opacity:0;animation:coin .62s cubic-bezier(.5,0,.8,.6) var(--d) forwards}@keyframes coin{0%{opacity:0;transform:translateY(0) scale(.9)}15%{opacity:1}80%{opacity:1;transform:translateY(118px) scale(.85)}100%{opacity:0;transform:translateY(132px) scale(.6)}}
+@media (prefers-reduced-motion:reduce){.cfc i{animation:none}}
 .thd{grid-column:1/-1;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:18px 6px 2px}.thd:first-child{margin-top:0}
 .shb2{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;animation:fd .18s ease-out}
 @keyframes fd{from{opacity:0}to{opacity:1}}@keyframes su{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
@@ -825,7 +829,10 @@ function liveBal(){const b=S.bal;if(!b)return null;let v=b.v;
     const y=+ym.slice(0,4),m=+ym.slice(5,7);ym=m===12?(y+1)+'-01':y+'-'+String(m+1).padStart(2,'0')}
   return Math.round(v*100)/100}
 const upSum=()=>fxUpcoming().reduce((a,x)=>a+x.v,0)+debtDue();
-const flowBal=()=>{const L0=S.bal?liveBal():null;flow([{k:'acc',q:'Combien tu as sur tes comptes ?',sub:'Une ligne par compte (banque, Revolut, Lydia…). L’app fait le total et le tient à jour toute seule.',type:'accounts'}],v=>{accSave(v.acc);const g=L0!=null?Math.round(L0-S.bal.v):0;if(g>=5)setTimeout(()=>{if(!FL)gapFlow(g)},1900);return['Solde à jour',eur(S.bal.v)]})};
+const DDC_STEPS=()=>[{k:'ddq',q:'Tu as une carte à débit différé ?',sub:'Tes paiements carte partent en une fois, en fin de mois. Ta banque les montre à part, en « encours » ou « opérations à venir ».',type:'tiles',skip:()=>S.ddc!=null,opts:[{v:1,i:'card',l:'Oui',s:'Je te demanderai ton encours'},{v:0,i:'x',l:'Non',s:'Ou je ne sais pas'}]},
+  {k:'enc',q:'Ton encours carte, là maintenant ?',sub:'Le total des paiements pas encore débités, écrit dans ton appli bancaire. Je le retire de ton solde pour que ton chiffre soit juste.',type:'amount',idk:'Rien en ce moment',skip:v=>!(v.ddq===1||(v.ddq==null&&S.ddc))}];
+const encApply=v=>{if(v.ddq!=null)S.ddc=v.ddq;const e=S.ddc&&v.enc>0?Math.round(v.enc*100)/100:0;if(S.bal){S.bal.enc=e;if(e)S.bal.v=Math.round((S.bal.v-e)*100)/100}return e};
+const flowBal=()=>{const L0=S.bal?liveBal():null;flow([{k:'acc',q:'Combien tu as sur tes comptes ?',sub:'Une ligne par compte (banque, Revolut, Lydia…). L’app fait le total et le tient à jour toute seule.'+(S.ddc?' Écris le solde, sans retirer l’encours carte : je te le demande juste après.':''),type:'accounts'},...DDC_STEPS()],v=>{accSave(v.acc);const enc=encApply(v);const g=L0!=null?Math.round(L0-S.bal.v):0;if(g>=5)setTimeout(()=>{if(!FL)gapFlow(g)},1900);return['Solde à jour',eur(S.bal.v)+(enc?' · encours carte de '+eur0(enc)+' déduit':'')]})};
 const reste=()=>incM()-(S.fixe||0)-spentM()-debtDue()-Math.max(cofM(),cofPlan());
 const addM=(ym,k)=>{const d=new Date(+ym.slice(0,4),+ym.slice(5,7)-1+k,1);return iso(d).slice(0,7)};
 const cofV=()=>S.cof?Math.round((S.cof.v||0)*100)/100:0;
@@ -1000,7 +1007,7 @@ function flowConso(dk){const lab=dk===today?'Aujourd’hui':'Hier';flow([
   {k:'j',q:'Combien de joints ?',type:'tiles',skip:v=>v.z!=='1'||!has('j')||!pick(v).includes('j'),opts:[{v:1,l:'1'},{v:2,l:'2'},{v:3,l:'3'},{v:5,l:'4 ou plus'}]}
  ],v=>{const o=v.z==='1'?logOf(v):Object.fromEntries(keys().map(k=>[k,0]));S.log[dk]=o;return keys().every(k=>!o[k])?['Noté',best()+' jour'+(best()>1?'s':'')+' sans']:['Noté','Ce n’est pas grave. On repart.']})}
 function flowDay(){flowEve()}
-function flowCheckBal(){const L=liveBal();flow([{k:'x',q:'Tu as '+eur(L)+((S.bal.acc||[]).length>1?' sur tes comptes ?':' sur ton compte ?'),sub:'Vérifie dans ton appli bancaire.',type:'tiles',opts:[{i:'check',l:'Oui, c’est juste',one:1,go:()=>{S.bal={v:L,d:today,ts:Date.now()};done(['Solde confirmé',eur(L)])}},{i:'pen',l:'Non, je corrige',one:1,go:()=>flowBal()}]}],()=>['',''])}
+function flowCheckBal(){const L=liveBal();flow([{k:'x',q:'Tu as '+eur(L)+((S.bal.acc||[]).length>1?' sur tes comptes ?':' sur ton compte ?'),sub:S.ddc?'Dans ton appli bancaire : ton solde moins ton encours carte.':'Vérifie dans ton appli bancaire.',type:'tiles',opts:[{i:'check',l:'Oui, c’est juste',one:1,go:()=>{S.bal={v:L,d:today,ts:Date.now()};done(['Solde confirmé',eur(L)])}},{i:'pen',l:'Non, je corrige',one:1,go:()=>flowBal()}]}],()=>['',''])}
 function grpOf(p){const l=S.debts.filter(x=>pk(x.p)===pk(p));return{n:l.length?l[0].p:p,l,net:l.reduce((a,x)=>a+(x.w==='them'?x.v:-x.v),0)}}
 function flowDebtQ(x){const me=x.w==='me';flow([{k:'x',q:me?'Tu as remboursé '+esc(x.p)+' ?':esc(x.p)+' t’a rendu ton argent ?',sub:eur(x.v)+(x.dd?' · '+esc(x.t||'échéance'):' prévu ce mois-ci.'),type:'tiles',opts:[
   {i:'check',l:'Oui, '+eur(x.v),one:1,go:()=>flowPay(grpOf(x.p),1,x.v)},
@@ -1163,7 +1170,7 @@ function prevStep(){if(FL.i===0)return closeFl();FL.dir=-1;FL.i--;let st;while(F
 let tPrev=null;
 const OVS=['fl','scr','shb','ok'],isOv=n=>n.nodeType===1&&OVS.some(c=>n.classList.contains(c));
 new MutationObserver(rs=>{let gone=false;const add=[];rs.forEach(r=>{r.removedNodes.forEach(n=>{if(isOv(n))gone=true});r.addedNodes.forEach(n=>{if(isOv(n))add.push(n)})});if(!add.length)return;add.forEach(n=>{const other=[...document.body.children].some(x=>x!==n&&isOv(x)&&!x.classList.contains('out')&&!add.includes(x));if(gone||other)n.classList.add('keep')})}).observe(document.body,{childList:true});
-function done([t,s]){const f=$('.fl');if(f)f.remove();FL=null;save();
+function done([t,s]){const f=$('.fl');if(f)f.remove();FL=null;save();if(COFA&&t){const c=COFA;COFA=null;document.body.style.overflow='';return cofAnim(c,t,s)}COFA=null;
   if(!t){home();rcBack();return}
   let n=0;try{n=S.name?tasks().length:0}catch(e){}const all=tPrev>0&&n===0;tPrev=n;
   const big=all||/jours? sans fumer|Bienvenue|C’est prêt|Bien reçu|Réglé|Mis de côté|Objectif atteint|C’est planifié/.test(t+' '+(s||''));
@@ -1177,7 +1184,7 @@ function done([t,s]){const f=$('.fl');if(f)f.remove();FL=null;save();
 function draw(){const st=FL.steps[FL.i],n=FL.steps.filter(s=>!(s.skip&&s.skip(FL.v))).length,pos=FL.steps.slice(0,FL.i+1).filter(s=>!(s.skip&&s.skip(FL.v))).length;
   let f=$('.fl');const had=!!f,pw=had&&f.querySelector('.prog i')?f.querySelector('.prog i').style.width:'';if(!had){f=document.createElement('div');f.className='fl'}document.body.style.overflow='hidden';
   const q=typeof st.q==='function'?st.q(FL.v):st.q;
-  f.innerHTML=`<div class="ft"><button class="back" aria-label="Retour">${ic('back')}</button><div class="prog"><i style="width:${had&&pw?pw:pos/n*100+'%'}"></i></div><span></span></div><div class="fb"><h1 class="q">${q}</h1>${st.sub?`<p class="qs">${typeof st.sub==='function'?st.sub(FL.v):st.sub}</p>`:''}<div class="body"></div></div><div class="fbtm"></div>`;
+  f.innerHTML=`<div class="ft"><button class="back" aria-label="Retour">${ic('back')}</button><div class="prog"><i style="width:${had&&pw?pw:pos/n*100+'%'}"></i></div><span></span></div><div class="fb"><h1 class="q">${q}</h1>${st.sub?`<p class="qs">${typeof st.sub==='function'?st.sub(FL.v):st.sub}</p>`:''}${st.top?`<div class="ftop">${typeof st.top==='function'?st.top(FL.v):st.top}</div>`:''}<div class="body"></div></div><div class="fbtm"></div>`;
   if(had){const c=FL.dir<0?'slb':'sl';f.querySelector('.fb').classList.add(c);f.querySelector('.fbtm').classList.add(c);const pi=f.querySelector('.prog i');void pi.offsetWidth;pi.style.width=pos/n*100+'%'}FL.dir=0;
   if(!had)document.body.appendChild(f);bindCopy(f);f.querySelector('.back').onclick=()=>{buzz();prevStep()};if(st.k==='n'&&!S.name)f.querySelector('.back').style.visibility='hidden';
   const body=f.querySelector('.body'),btm=f.querySelector('.fbtm');
@@ -1555,7 +1562,7 @@ function badgeCheck(ms=1800){try{if(!S.name)return;const on=badgeList().filter(b
 function badgePop([t,,i]){const o=document.createElement('div');o.className='strk bp';o.innerHTML=`<div class="bdx">${ic(i)}</div><small>Nouveau trophée</small><b>${esc(t)}</b><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
 function budCard(){const fx=S.fixe||0,ri=(S.rin||[]).reduce((a,x)=>a+(x.v||0),0),lb=S.bal?liveBal():null,pb=mod('f')?proBal():null;
   const row=(a,i,c,l,v,sub)=>`<button class="bdr" data-a="${a}"><span class="ib ${c}">${ic(i)}</span><span class="bl"><b>${l}</b><small>${sub}</small></span><span class="bv">${v}</span>${ic('next')}</button>`;
-  return `<div class="sec"><h2>Ton budget</h2></div><div class="bud">${row('bfx','home','t-out','Charges fixes',eur0(fx),(S.fx||[]).length?(S.fx.length+' par mois'):'Loyer, forfait, abonnements…')}${row('brin','in','t-in','Revenus réguliers',eur0(ri),(S.rin||[]).length?(S.rin.length+' par mois'):'Salaire, aides…')}${row('bbal','bank','t-ag','Mes comptes',lb!=null?eur0(lb):'—',S.bal&&S.bal.acc&&S.bal.acc.length?S.bal.acc.map(a=>a.n).join(', '):S.bal?'Mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'À renseigner')}${row('cof','safe','t-cof','Coffre',cofPlan()?eur0(cofPlan()):eur0(cofV()),cofPlan()?(cofTodo()?'Encore '+eur0(cofTodo())+' ce mois':'Fait ce mois-ci')+(S.cof&&S.cof.g?' · '+esc(S.cof.g.n):''):cofV()?'De côté'+(S.cof.g?' pour '+esc(S.cof.g.n):''):'Rien de prévu · touche pour un objectif')}${mod('f')?row('pro','brief','t-moi','Côté pro',pb!=null?eur0(pb):'',pb!=null?'Compte pro':'Dépenses pro, comptable'):''}</div>`}
+  return `<div class="sec"><h2>Ton budget</h2></div><div class="bud">${row('bfx','home','t-out','Charges fixes',eur0(fx),(S.fx||[]).length?(S.fx.length+' par mois'):'Loyer, forfait, abonnements…')}${row('brin','in','t-in','Revenus réguliers',eur0(ri),(S.rin||[]).length?(S.rin.length+' par mois'):'Salaire, aides…')}${row('bbal','bank','t-ag','Mes comptes',lb!=null?eur0(lb):'—',(S.bal&&S.bal.acc&&S.bal.acc.length?S.bal.acc.map(a=>a.n).join(', '):S.bal?'Mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'À renseigner')+(S.bal&&S.bal.enc?' · encours déduit':''))}${row('cof','safe','t-cof','Coffre',cofPlan()?eur0(cofPlan()):eur0(cofV()),cofPlan()?(cofTodo()?'Encore '+eur0(cofTodo())+' ce mois':'Fait ce mois-ci')+(S.cof&&S.cof.g?' · '+esc(S.cof.g.n):''):cofV()?'De côté'+(S.cof.g?' pour '+esc(S.cof.g.n):''):'Rien de prévu · touche pour un objectif')}${mod('f')?row('pro','brief','t-moi','Côté pro',pb!=null?eur0(pb):'',pb!=null?'Compte pro':'Dépenses pro, comptable'):''}</div>`}
 function moiView(B){const g=S.cof&&S.cof.g,cv=cofV();
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
   ${moiTour()}
@@ -1937,10 +1944,31 @@ function msAdd(){flow([{k:'t',q:'Quel moment compte pour toi ?',sub:'Il s’affi
 /* ---------- Réserve ---------- */
 function cofCard(B){const v=cofV(),g=S.cof&&S.cof.g;
   return `<button class="cof" data-a="cof">${bd(B,'cof')}<span class="ib">${ic('safe')}</span><span class="t"><b>Coffre</b><small>${!S.cof?'Mets de l’argent à côté, sans y toucher':g?(v>=g.v?'Objectif atteint : '+esc(g.n):'Pour '+esc(g.n)+' · '+Math.round(v/g.v*100)+' %'):S.cof.w?eur0(S.cof.w)+' chaque semaine':'De côté, à ne pas toucher'}</small></span><b>${eur0(v)}</b>${g?`<div class="mbar"><i style="width:${Math.min(100,v/g.v*100)}%"></i></div>`:''}</button>`}
-function cofAdd(a,note){S.cof=S.cof||{v:0,h:[]};S.cof.h=S.cof.h||[];a=Math.round(a*100)/100;S.cof.v=Math.round(((S.cof.v||0)+a)*100)/100;S.cof.h.push({id:uid(),d:today,v:a});const g=S.cof.g;
+/* ---------- Le coffre qui se remplit ---------- */
+let COFA=null;
+const cofRatio=(v)=>{v=v==null?cofV():v;const g=S.cof&&S.cof.g;if(g&&g.v>0)return Math.min(1,v/g.v);const p=cofPlan();if(p)return Math.min(1,(cofM()+(v-cofV()))/p);return v>0?Math.min(.85,.25+v/1000):0};
+function safeSvg(r,cls){r=Math.max(0,Math.min(1,r||0));const h=Math.round(70*r);
+  return `<svg class="safe ${cls||''}" viewBox="0 0 140 150" aria-hidden="true"><defs><clipPath id="sfw"><rect x="34" y="34" width="72" height="72" rx="14"/></clipPath><linearGradient id="sfg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE27A"/><stop offset="1" stop-color="#F5B700"/></linearGradient></defs>
+  <rect x="14" y="14" width="112" height="112" rx="26" fill="var(--card)" stroke="var(--ink)" stroke-width="3"/>
+  <rect x="34" y="34" width="72" height="72" rx="14" fill="var(--card2)"/>
+  <g clip-path="url(#sfw)"><rect class="sfl" x="34" y="${106-h}" width="72" height="${h+2}" fill="url(#sfg)" style="--h0:${h}px"/><path class="sfwv" d="M30 ${106-h} q9 -5 18 0 t18 0 t18 0 t18 0 t18 0 v6 h-90z" fill="#FFE27A" opacity=".9"/></g>
+  <rect x="34" y="34" width="72" height="72" rx="14" fill="none" stroke="var(--ink)" stroke-width="2.5"/>
+  <g class="sfd" transform="translate(120 70)"><circle r="9" fill="var(--card)" stroke="var(--ink)" stroke-width="2.5"/><path d="M0 -9v5M9 0h-5M0 9v-5M-9 0h5" stroke="var(--ink)" stroke-width="2"/></g>
+  <rect x="30" y="126" width="16" height="10" rx="3" fill="var(--ink)"/><rect x="94" y="126" width="16" height="10" rx="3" fill="var(--ink)"/>
+  <rect x="58" y="20" width="24" height="5" rx="2.5" fill="var(--ink)" opacity=".85"/></svg>`}
+function cofAnim(c,t,s){const o=document.createElement('div');o.className='cofa';const r0=cofRatio(c.from),r1=cofRatio(c.to),h0=Math.round(70*r0),h1=Math.round(70*r1);
+  const coins=Math.max(1,Math.min(5,Math.ceil((c.to-c.from)/20)));
+  o.innerHTML=`<div class="cfw"><div class="cfc">${Array.from({length:coins},(_,i)=>`<i style="--d:${i*.16}s;--x:${(i%2?1:-1)*(i*4)}px"></i>`).join('')}</div>${safeSvg(r0,'big')}</div><b>${esc(t)}</b>${s?`<small>${esc(s)}</small>`:''}`;
+  document.body.appendChild(o);const fl=o.querySelector('.sfl'),wv=o.querySelector('.sfwv');
+  setTimeout(()=>{buzz(8);sfx('stamp')},450+(coins-1)*160);
+  setTimeout(()=>{fl.style.transition='y .9s cubic-bezier(.3,1.3,.5,1),height .9s cubic-bezier(.3,1.3,.5,1)';fl.setAttribute('y',106-h1);fl.setAttribute('height',h1+2);wv.style.transition='transform .9s cubic-bezier(.3,1.3,.5,1)';wv.style.transform=`translateY(${h0-h1}px)`;o.querySelector('.sfd').classList.add('spin');buzz([10,40,10]);sfx(r1>=1?'big':'ok')},600+(coins-1)*160);
+  const end=()=>{o.classList.add('out');setTimeout(()=>{o.remove();home();try{vgCheck();qCheck()}catch(e){}},300)};
+  setTimeout(end,2600+(coins-1)*160);o.onclick=end;home()}
+
+function cofAdd(a,note){const _p=cofV();S.cof=S.cof||{v:0,h:[]};S.cof.h=S.cof.h||[];a=Math.round(a*100)/100;S.cof.v=Math.round(((S.cof.v||0)+a)*100)/100;S.cof.h.push({id:uid(),d:today,v:a});const g=S.cof.g;if(a>0)COFA={from:_p,to:S.cof.v};
   if(a>0&&g&&S.cof.v>=g.v&&S.cof.v-a<g.v)return['Objectif atteint',esc(g.n)+' · '+eur(S.cof.v)];
   return a>0?['Mis de côté','Ton coffre : '+eur(S.cof.v)+(g&&S.cof.v<g.v?' · encore '+eur0(g.v-S.cof.v):'')]:['Repris',eur(-a)+' · il reste '+eur(S.cof.v)]}
-function cofScr(){const v=cofV(),g=S.cof&&S.cof.g;flow([{k:'x',q:v?eur(v)+' de côté':'Ton coffre',sub:v?(g?(v>=g.v?'Objectif « '+esc(g.n)+' » atteint.':'Pour '+esc(g.n)+' : encore '+eur0(g.v-v)+'.'):'Cet argent reste sur ton compte, l’app le met juste de côté pour que tu n’y touches pas.'):'L’argent reste sur ton compte. L’app le retire de ce que tu peux dépenser, pour que tu n’y touches pas.',type:'tiles',opts:[
+function cofScr(){const v=cofV(),g=S.cof&&S.cof.g;flow([{k:'x',top:()=>safeSvg(cofRatio(),'mid'),q:v?eur(v)+' de côté':'Ton coffre',sub:v?(g?(v>=g.v?'Objectif « '+esc(g.n)+' » atteint.':'Pour '+esc(g.n)+' : encore '+eur0(g.v-v)+'.'):'Cet argent reste sur ton compte, l’app le met juste de côté pour que tu n’y touches pas.'):'L’argent reste sur ton compte. L’app le retire de ce que tu peux dépenser, pour que tu n’y touches pas.',type:'tiles',opts:[
   {i:'plus',l:'Mettre de côté',one:1,go:()=>flow([{k:'v',q:'Combien tu mets de côté ?',type:'tiles',opts:[5,10,20,50].map(n=>({v:n,i:'safe',l:eur0(n)})).concat([{i:'pen',l:'Autre montant',one:1,go:()=>flow([{k:'v',q:'Combien tu mets de côté ?',type:'amount'}],r=>cofAdd(r.v))}])}],r=>cofAdd(r.v))},
   ...(v>0?[{i:'out',l:'Reprendre',s:'Si tu en as vraiment besoin',one:1,go:()=>flow([{k:'v',q:'Combien tu reprends ?',sub:'Sur '+eur(v)+'. Pas de souci, ça arrive.',type:'amount'}],r=>cofAdd(-Math.min(r.v,cofV())))}]:[]),
   {i:'gift',l:g?'Changer l’objectif':'Un objectif',s:g?esc(g.n)+' · '+eur0(g.v):'Ex. vacances, permis, une sécurité',one:1,go:()=>flow([{k:'n',q:'C’est pour quoi ?',type:'text',ph:'Ex. vacances, permis, une sécurité'},{k:'v',q:'Combien il te faut ?',type:'amount'}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.g={n:r.n.trim()||'Mon objectif',v:r.v};return['C’est noté',S.cof.g.n+' · '+eur0(r.v)]})},
@@ -2244,6 +2272,7 @@ function setSheet(){const H=t=>({hd:t}),G=(i,l,s,f)=>({i,l,s,one:1,go:()=>{close
   {i:'in',l:'Mes revenus réguliers',s:rinSub(),one:1,go:()=>flow([{...RIN_STEP,q:'Ce qui rentre chaque mois'}],v=>{rinSave(v.rin);return['Enregistré',rinSub()]})},
   {i:'bank',l:'Mon solde',s:S.bal?eur(liveBal())+' · mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'Pas encore renseigné',one:1,go:()=>flowBal()},
   ...(mod('f')?[G('brief','Mon côté pro',proBal()!=null?'Compte pro : '+eur(proBal()):'Dépenses pro, paiements clients, comptable',proScr)]:[]),
+  {i:'card',l:'Carte à débit différé',s:S.ddc?'Oui : je te demande ton encours à chaque mise à jour du solde':'Non',one:1,go:()=>{S.ddc=S.ddc?0:1;done([S.ddc?'Débit différé activé':'Débit différé retiré',S.ddc?'Ton encours sera demandé avec ton solde':''])}},
   G('bank','Mes droits et mes frais','Aides, frais bancaires',droitsScr),
   H('Mon Base'),
   G('spark','Mes fonctions','Ce que Base fait pour toi',()=>pfFlow()),
@@ -2271,12 +2300,13 @@ function setSheet(){const H=t=>({hd:t}),G=(i,l,s,f)=>({i,l,s,one:1,go:()=>{close
   {i:'help',l:'Mentions et confidentialité',s:'Ce que Base fait de tes données',one:1,go:()=>{closeFl();legalScr()}},
   {i:'trash',l:'Tout effacer',s:'Repartir de zéro',one:1,go:()=>flow([{k:'x',q:'Tout effacer ?',sub:'Tes dépenses, dettes et ton agenda seront supprimés.',type:'tiles',opts:[{i:'trash',l:'Oui, tout effacer',one:1,go:async()=>{try{if(S.pid)await fetch(PUSH+'/unsub',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:S.pid})})}catch(e){}try{const r=swReg||await navigator.serviceWorker.getRegistration();const sb=r&&await r.pushManager.getSubscription();if(sb)await sb.unsubscribe()}catch(e){}try{if(navigator.clearAppBadge)navigator.clearAppBadge()}catch(e){}try{localStorage.removeItem(K)}catch(e){}location.reload()}},{i:'undo',l:'Non, garder',one:1,go:()=>closeFl()}]}],()=>['',''])}]}],()=>['',''])}
 /* ---------- Premier lancement ---------- */
-function onbApply(v){S.name=v.n;try{pfApply(v)}catch(e){}fxSave(v.fx);rinSave(v.rin||[]);accSave(v.acc);S.start=today;S.eh=v.eh||21;if(v.vxn)S.vxn=v.vxn.trim().slice(0,24);if(v.ad===0)v.vice='';if(v.vice)S.adult=1;S.vice=v.vice;if(v.vice){wkApply(v);S.vstart=today}try{applyMods()}catch(e){}}
+function onbApply(v){S.name=v.n;try{pfApply(v)}catch(e){}fxSave(v.fx);rinSave(v.rin||[]);accSave(v.acc);try{encApply(v)}catch(e){}S.start=today;S.eh=v.eh||21;if(v.vxn)S.vxn=v.vxn.trim().slice(0,24);if(v.ad===0)v.vice='';if(v.vice)S.adult=1;S.vice=v.vice;if(v.vice){wkApply(v);S.vstart=today}try{applyMods()}catch(e){}}
 function onboard(){const N=v=>esc(v.n||'');flow([
   {k:'n',q:'Comment tu t’appelles ?',sub:'Juste ton prénom.',type:'text',ph:'Ton prénom'},
   {k:'fx',q:v=>`Enchanté ${N(v)}. Qu’est-ce qui sort de ton compte chaque mois ?`,sub:'Forfait, abonnements, assurance… Seulement ce que tu as. Le jour du prélèvement, si tu le connais.',type:'fixes'},
   {...RIN_STEP,q:v=>'Et qu’est-ce qui rentre chaque mois ?'},
   {k:'acc',q:v=>`Et là, tu as combien sur tes comptes, ${N(v)} ?`,sub:'Une ligne par compte, l’app fait le total.',type:'accounts'},
+  ...DDC_STEPS(),
   ...PF_STEPS(),
   {k:'ad',q:'Tu as 18 ans ou plus ?',sub:'Une des parties de l’app parle d’alcool, de tabac, de cannabis et de jeux d’argent.',type:'tiles',opts:[{v:1,i:'check',l:'Oui',one:1},{v:0,i:'x',l:'Non',one:1}]},
   {k:'vice',q:'Qu’est-ce que tu aimerais réduire ?',sub:'Choisis tout ce qui compte pour toi. Personne d’autre ne le voit.',skip:v=>v.ad===0,type:'multi',none:'Rien de tout ça',opts:VK.map(([v,i,l])=>({v,i,l}))},
