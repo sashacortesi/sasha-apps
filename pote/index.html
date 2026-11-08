@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794164528" data-theme="light">
+<html lang="fr" data-build="1794167719" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -859,6 +859,42 @@ body.rcon .strk,body.rcon .toast{visibility:hidden!important}
 .rb{padding:12px}
 .rb1 .rbi{width:32px;height:32px}.rb1 .rbi svg{width:17px;height:17px}
 .rbs{gap:12px 10px}
+
+/* Bienvenue */
+#wtour{position:fixed;inset:0;min-height:100lvh;z-index:75;background:var(--bg);color:var(--ink);display:grid;grid-template-rows:auto 1fr auto auto;justify-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) 28px calc(26px + env(safe-area-inset-bottom,0px));transition:opacity .3s}
+#wtour.out{opacity:0}
+.wsk{justify-self:end;border:0;background:none;color:var(--muted);font:inherit;font-size:15px;font-weight:600;padding:8px}
+.wbody{align-self:center;display:grid;justify-items:center;text-align:center;gap:10px;max-width:330px;animation:fu .45s ease both}
+.wbody h2{font-size:28px;font-weight:750;letter-spacing:-.025em;margin:26px 0 0;line-height:1.15}.wbody p{font-size:16px;color:var(--muted);line-height:1.45;margin:0}
+.wdots{display:flex;gap:7px;margin:22px 0}.wdots i{width:7px;height:7px;border-radius:4px;background:var(--line);transition:width .3s,background .3s}.wdots i.on{width:22px;background:var(--ink)}
+.wgo{width:100%;max-width:420px;height:56px;border:0;border-radius:16px;background:var(--ink);color:var(--bg);font:inherit;font-size:17px;font-weight:700}
+.wtv{display:grid;justify-items:center;gap:2px;width:290px;padding:26px 16px 22px;border-radius:26px;background:var(--card)}.wtv small{font-size:13px;color:var(--muted);font-weight:600;order:2}.wtv strong{font-size:52px;font-weight:750;letter-spacing:-.04em;line-height:1}
+.wtp{order:3;position:relative;width:240px;height:6px;border-radius:3px;background:var(--card2);margin:26px 0 8px;background-image:linear-gradient(var(--ink),var(--ink));background-size:30% 100%;background-repeat:no-repeat;animation:wtf 1.6s cubic-bezier(.32,.72,0,1) .3s both}
+@keyframes wtf{from{background-size:0 100%}}
+.wtp i{position:absolute;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 1.5px var(--line),0 0 0 3px var(--card);display:grid;place-items:center}
+.wtp .a{left:0;width:10px;height:10px;margin:-5px 0 0 -5px;background:var(--ink);box-shadow:none}.wtp .b{left:17%;background:var(--ink);box-shadow:0 0 0 3px var(--card)}.wtp .c{left:33%;box-shadow:inset 0 0 0 2px var(--ink),0 0 0 3px var(--card);animation:gnx 2.4s ease-in-out infinite}
+.wtp .g{left:50%;width:32px;height:32px;margin:-16px 0 0 -16px;background:var(--good);color:#fff;box-shadow:0 0 0 3px var(--card)}.wtp .g svg{width:15px;height:15px;stroke-width:3}.wtp .d{left:90%;opacity:.5}
+.wti{width:140px;height:140px;border-radius:50%;display:grid;place-items:center;align-content:center;gap:4px;background:color-mix(in srgb,var(--c) 12%,var(--card));color:var(--c);animation:yay .6s cubic-bezier(.2,.9,.3,1.4) both}.wti svg{width:46px;height:46px;stroke-width:1.8}.wti b{font-size:22px;font-weight:750;color:var(--ink)}
+.wtplus{width:72px;height:72px;border-radius:20px;background:var(--ink);color:var(--bg);display:grid;place-items:center}.wtplus svg{width:36px;height:36px;stroke-width:2.4;color:var(--bg)}
+.wtt{display:grid;gap:5px;width:150px;padding:14px;border-radius:22px;background:var(--card)}.wtt i{height:30px;border-radius:7px;background:linear-gradient(90deg,#FFD60A,#FF9F0A);animation:fu .5s ease var(--d) both}.wtt i:first-child{opacity:.35;background:var(--card2)}
+/* Intro dans la DA claire */
+#intro{background:var(--bg)!important;color:var(--ink)!important}#intro .ln.g,#intro .tg,#intro .sk,#intro .tap small{color:var(--muted)!important}#intro .bar{background:var(--ink)!important}#intro .st{background:var(--ink)!important;color:var(--bg)!important}
+#intro .glow{background:radial-gradient(circle,color-mix(in srgb,var(--good) 14%,transparent),transparent 60%)!important}
+
+#gpty{position:fixed;inset:0;min-height:100lvh;z-index:90;display:grid;place-items:center;overflow:hidden;background:var(--bg);transition:opacity .4s}
+#gpty.out{opacity:0}
+.gflood{position:absolute;left:50%;top:42%;width:40px;height:40px;margin:-20px;border-radius:50%;background:var(--good);animation:gfl 1.1s cubic-bezier(.65,0,.35,1) forwards}
+@keyframes gfl{0%{transform:scale(0)}55%{transform:scale(60)}100%{transform:scale(60);opacity:.14}}
+.gconf{position:absolute;inset:0;pointer-events:none}
+.gconf i{position:absolute;top:-20px;left:var(--x);width:var(--w);height:calc(var(--w)*1.6);border-radius:2px;background:var(--c);animation:gcf var(--t) cubic-bezier(.3,.6,.5,1) calc(.7s + var(--d)) forwards;opacity:0}
+@keyframes gcf{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:1;transform:translateY(110vh) rotate(var(--r))}}
+.gin{position:relative;z-index:2;display:grid;justify-items:center;gap:8px;text-align:center;padding:0 28px;color:var(--ink)}
+.gck svg{width:116px;height:116px;fill:none}.gck circle{fill:var(--good);stroke:none;transform-origin:center;animation:yay .7s cubic-bezier(.2,.9,.3,1.4) .55s both}
+.gck path{stroke:#fff;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;animation:gdr .5s ease 1s forwards}@keyframes gdr{to{stroke-dashoffset:0}}
+.gam{font-size:56px;font-weight:800;letter-spacing:-.04em;color:var(--good);font-variant-numeric:tabular-nums;margin-top:10px;animation:fu .5s ease .7s both}
+.gin b{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-top:6px;animation:fu .5s ease .9s both}
+.gin small{font-size:16px;color:var(--muted);line-height:1.45;max-width:300px;animation:fu .5s ease 1.05s both}
+.gin button{margin-top:28px;min-width:220px;height:56px;border:0;border-radius:16px;background:var(--ink);color:var(--bg);font:inherit;font-size:17px;font-weight:700;animation:fu .5s ease 1.4s both}
 </style>
 </head>
 <body>
@@ -2062,12 +2098,21 @@ function vgEve(msg){try{const V=vgState();if(!V||V.def<=0&&!(V.H.free+V.H.tdS<0)
   if(ok){const n=sp<.5?2:1;S.vgG=(S.vgG||0)+n;return[sp<.5?'Journée à 0 €':'Journée tenue',V.nr?'Demain : '+eur0(tm)+' maximum.':'Tu te rapproches du vert.']}
   return['C’est noté',`Aujourd’hui c’était ${eur0(sp)}. C’est déjà ça. Demain : ${eur0(tm)} maximum, et on continue.`]}catch(e){return msg}}
 function vgCheck(){try{const V=vgState();if(!V)return;
-  if(S.vgWin){delete S.vgWin;if(S.vgT){S.ms=S.ms||[];S.ms.push({id:'m'+Date.now(),t:'Retour au vert'+(today<=S.vgT.d?' · objectif tenu':''),d:today});delete S.vgT}S.vgPts=(S.vgPts||0)+50;S.vgW=0;S.vgBr=0;S.vgP=[];S.vgSt=today;save();return vgPop('Tu es dans le vert','Bravo. Maintenant, ta tour monte.',1)}
+  {const bv=S.bal?+S.bal.v:null;if(bv!=null){const was=S.bNeg;S.bNeg=bv<0?1:0;if(was&&bv>=0&&V.def>0){save();greenParty('Sorti du découvert','Ton compte est repassé au-dessus de 0. Prochaine étape : le vert, charges du mois comprises.',bv);return}}}
+  if(!S.vgWin&&(S.vgLastDef||0)>0&&V.def<=0)S.vgWin=1;
+  if(S.vgWin){delete S.vgWin;if(S.vgT){S.ms=S.ms||[];S.ms.push({id:'m'+Date.now(),t:'Retour au vert'+(today<=S.vgT.d?' · objectif tenu':''),d:today});delete S.vgT}S.vgPts=(S.vgPts||0)+50;S.vgW=0;S.vgBr=0;S.vgP=[];S.vgSt=today;S.vgLastDef=0;save();return greenParty('Tu es dans le vert','Toutes tes charges du mois sont couvertes. Maintenant, ta tour monte.',S.bal?+S.bal.v:null)}
   if(V.def>0){S.vgLastDef=V.def;if(V.br>(S.vgBr||0)){S.vgBr=V.br}const fresh=S.bal&&S.bal.d>=addD(today,-3);S.vgP=S.vgP||[];
     const hit=[25,50,75,90].filter(x=>V.p*100>=x&&!S.vgP.includes(x));if(hit.length&&fresh){const x=hit.at(-1);S.vgP.push(...hit);S.vgPts=(S.vgPts||0)+20*hit.length;save();const t={25:'Un quart du chemin vers le vert',50:'La moitié du chemin vers le vert',75:'Les trois quarts du chemin',90:'La dernière ligne droite'}[x];
       return vgPop(t,x===90?'Plus que '+eur0(V.def)+'. Tu y es presque.':'Les '+eur0(V.W-V.def)+' qui manquaient en moins, c’est toi qui les as remontés.')}
     save()}
   else if(S.vgSt){const n=Math.round((pd(today)-pd(S.vgSt))/864e5);if(n>=7&&!S.vgSd){S.vgSd=1;save();vgPop('7 jours dans le vert','Ta tour peut monter tranquille.',1)}}}catch(e){}}
+/* ===== Le grand moment : repasser au vert / sortir du découvert ===== */
+function greenParty(t,sub,amt){if($('#gpty'))return;const o=document.createElement('div');o.id='gpty';
+  const C=['#30D158','#FFD60A','#0A84FF','#FF375F','#BF5AF2','#FF9F0A'];const conf=[...Array(46)].map((_,i)=>`<i style="--x:${Math.round(Math.random()*100)}%;--r:${Math.round(Math.random()*720-360)}deg;--d:${(Math.random()*.6).toFixed(2)}s;--t:${(2.2+Math.random()*1.6).toFixed(2)}s;--c:${C[i%C.length]};--w:${6+Math.round(Math.random()*6)}px"></i>`).join('');
+  o.innerHTML=`<div class="gflood"></div><div class="gconf">${conf}</div><div class="gin"><div class="gck"><svg viewBox="0 0 104 104"><circle cx="52" cy="52" r="48"/><path d="M33 53l13 13 25-27"/></svg></div>${amt!=null?`<strong class="gam">0 €</strong>`:''}<b>${esc(t)}</b><small>${esc(sub)}</small><button>Continuer</button></div>`;
+  document.body.appendChild(o);buzz([20,80,20,80,40]);try{sfx('big');setTimeout(()=>sfx('logo'),500)}catch(e){}
+  if(amt!=null){const el=o.querySelector('.gam'),T0=performance.now(),D=1300;const step=n=>{const k=Math.min(1,(n-T0)/D),e=1-Math.pow(1-k,3);el.textContent=(amt>=0?'+':'')+eur0(amt*e);if(k<1)requestAnimationFrame(step)};setTimeout(()=>requestAnimationFrame(step),700)}
+  const c=()=>{o.classList.add('out');setTimeout(()=>{o.remove();home()},400)};o.querySelector('button').onclick=e=>{e.stopPropagation();buzz();c()}}
 function vgPop(t,s,big){if($('.strk'))return;const o=document.createElement('div');o.className='strk vgw'+(big?' big':'');const pp=(()=>{try{const V=vgState();return V&&V.def>0?Math.round(V.p*100):100}catch(e){return 100}})();o.innerHTML=`<div class="vgpb"><i style="width:${Math.min(50,pp/2)}%"></i><span></span></div><b>${esc(t)}</b><small>${esc(s)}</small><button>Continuer</button>`;
   document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
 
@@ -2763,6 +2808,7 @@ function setSheet(){const H=t=>({hd:t}),G=(i,l,s,f)=>({i,l,s,one:1,go:()=>{close
   {i:'sun',l:'Page du jour',s:S.rcOff?'Coupée':'À la 1re ouverture de la journée',one:1,go:()=>{S.rcOff=S.rcOff?0:1;done([S.rcOff?'Page du jour coupée':'Page du jour activée',S.rcOff?'Tu peux la revoir en touchant « Bonjour » sur l’accueil':'Elle t’accueille chaque matin'])}},
   {i:'lock',l:'Code de verrouillage',s:S.pin?'Activé':'Pour que personne d’autre ne lise tes comptes',one:1,go:()=>{if(S.pin){delete S.pin;done(['Code retiré',''])}else{closeFl();pinPad('set')}}},
   {i:'card',l:'Paiements Apple Pay automatiques',s:S.payOn?'Activés':'Tes paiements s’ajoutent tout seuls',one:1,go:()=>{closeFl();setTimeout(apScr,50)}},
+  {i:'help',l:'Revoir la présentation',s:'Base en 4 écrans',one:1,go:()=>{closeFl();setTimeout(()=>welcomeTour(),50)}},
   H('Mes données'),
   {i:'undo',l:'Annuler une action',s:(()=>{const L=unGet();return L.length?'Dernière : '+L[0].l:'Rien à annuler pour l’instant'})(),one:1,go:()=>{closeFl();setTimeout(unList,50)}},
   {i:'folder',l:'Sauvegarder mes données',s:S.bk?'Dernière le '+pd(S.bk).getDate()+' '+MN[pd(S.bk).getMonth()]:'Au cas où tu changes de téléphone',one:1,go:()=>backup()},
@@ -2862,6 +2908,18 @@ function proScr(){const P=proD(),b=proBal(),R=proRows(YM),ein=R.filter(r=>r[4]>0
     ...(P.acc?[{i:'bank',l:'Mettre à jour le compte pro',s:'Ce que dit ta banque pro',one:1,go:()=>flow([{k:'pacc',q:'Ton compte pro, il a combien ?',type:'accounts',def:()=>P.acc.map(x=>({n:x.n,v:null,neg:false,ph:x.v}))}],v=>{const acc=v.pacc.filter(x=>x.v!=null).map(x=>({n:x.n||'Compte pro',v:x.v}));if(acc.length){P.acc=acc;P.d=today;P.v=Math.round(acc.reduce((a,x)=>a+x.v,0)*100)/100}return['Compte pro à jour',eur(P.v)]})}]:[]),
     {i:'gear',l:'Régler mon côté pro',s:'Compte pro, comptable, URSSAF',one:1,go:()=>pfFlow()}]}],()=>['',''])}
 
+/* ===== Bienvenue : comprendre Base en 4 écrans, avant de se lancer ===== */
+function welcomeTour(next){const P=[
+  {v:`<div class="wtv"><small>à remonter</small><strong>320 €</strong><div class="wtp"><i class="a on"></i><i class="b on"></i><i class="c nx"></i><i class="g">${ic('check')}</i><i class="d"></i></div></div>`,t:'Ton chemin jusqu’au vert',s:'Base te montre où tu en es, et les étapes pour remonter. Une à la fois.'},
+  {v:`<div class="wti" style="--c:#5E5CE6">${ic('moon')}<b>21 h</b></div>`,t:'Un seul rendez-vous, le soir',s:'30 secondes pour noter ta journée. Rien dépensé ? Une touche. C’est tout.'},
+  {v:`<div class="wti" style="--c:var(--ink)"><span class="wtplus">${ic('plus')}</span></div>`,t:'Tout part du bouton +',s:'Une dépense, un revenu, un rappel, une dette. En bas, au milieu, toujours.'},
+  {v:`<div class="wtt">${[...Array(4)].map((_,i)=>`<i style="--d:${(3-i)*120}ms"></i>`).join('')}</div>`,t:'Ta tour monte',s:'Chaque semaine tenue ajoute un étage. Et Moments garde ce que tu vis : films, sorties, restos.'}];
+  let i=0;const o=document.createElement('div');o.id='wtour';
+  const paint=()=>{const x=P[i];o.innerHTML=`<button class="wsk">Passer</button><div class="wbody" key="${i}">${x.v}<h2>${x.t}</h2><p>${x.s}</p></div><div class="wdots">${P.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div><button class="wgo">${i<P.length-1?'Suivant':'C’est parti'}</button>`;
+    o.querySelector('.wgo').onclick=()=>{buzz();if(i<P.length-1){i++;paint()}else end()};o.querySelector('.wsk').onclick=()=>{buzz();end()}};
+  const end=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300);S.wt=1;try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}if(next)next()};
+  let sx=null;o.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});o.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(dx<-50&&i<P.length-1){i++;buzz(4);paint()}else if(dx>50&&i>0){i--;buzz(4);paint()}});
+  paint();document.body.appendChild(o)}
 function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoir où.','g'],['Les clopes, les petits achats,','g'],['les prélèvements qu’on oublie.','g'],['À partir d’aujourd’hui,',''],['tu sais.','b']];
   const o=document.createElement('div');o.id='intro';o.innerHTML=`<div class="glow"></div>${L.map(([t,c])=>`<div class="ln ${c}">${t}</div>`).join('')}<div class="fin"><div class="bar"></div><div class="logo">Base</div><div class="tg">Ton argent, ta conso, tes journées.<br>Tout au même endroit, toujours à jour.</div></div><button class="st">Commencer</button><button class="sk">Passer</button>`;
   o.insertAdjacentHTML('beforeend','<div class="tap"><span class="pd"></span><small>Touche l’écran</small></div>');o.querySelector('.sk').style.display='none';
@@ -2872,7 +2930,7 @@ function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoi
     ts.push(setTimeout(fin,500+ls.length*1250+200))};
   o.querySelector('.sk').onclick=e=>{e.stopPropagation();fin()};
   o.onclick=e=>{if(e.target.closest('.st'))return;if(!started)go();else fin()};
-  o.querySelector('.st').onclick=e=>{e.stopPropagation();buzz();padStop();o.style.transition='opacity .5s';o.style.opacity='0';setTimeout(()=>o.remove(),500);onboard()}}
+  o.querySelector('.st').onclick=e=>{e.stopPropagation();buzz();padStop();o.style.transition='opacity .5s';o.style.opacity='0';setTimeout(()=>o.remove(),500);welcomeTour(onboard)}}
 function countUp(){const el=$('#balc strong');if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=liveBal();if(L==null)return;const t0=performance.now(),D=900;
   const f=t=>{const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=eur(Math.round(L*e*100)/100);if(k<1)requestAnimationFrame(f);else el.textContent=eur(L)};requestAnimationFrame(f)}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
