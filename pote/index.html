@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794147767" data-theme="light">
+<html lang="fr" data-build="1794147968" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -1479,7 +1479,7 @@ function agEdit(a,what){const fin=r=>{if($('#agb'))agRender();return r};
   if(what==='d')return flow([{k:'d',q:'Quel jour ?',type:'date',nodate:1,past:1}],v=>{a.d=v.d;if(!a.d)a.h='';a.done=false;agD=a.d||agD;return fin(['Déplacé',a.d?dLab(a.d):'Dans ta liste'])});
   if(what==='t')return flow([{k:'t',q:'Renommer',type:'text',ph:a.t}],v=>{a.t=v.t;return fin(['Renommé',a.t])})}
 function agItem(id){const a=S.ag.find(x=>x.id===id);flow([
-  {k:'x',q:esc(a.t),sub:a.d?dLab(a.d)+(a.h?' · '+hl(a.h):''):'Dans ta liste',type:'tiles',opts:[a.done?{i:'undo',l:'Pas encore fait',s:'Remettre dans ta journée',one:1,go:()=>{a.done=false;done(['Remis',a.t])}}:{i:'check',l:'C’est fait',s:'Bravo, un de moins',one:1,cta:1,go:()=>{a.done=true;a.d=a.d<today?a.d:today;done(['Fait',a.t])}},{i:'later',l:a.h?'Changer l’heure ('+hl(a.h)+')':'Mettre une heure',s:'Matin, soir ou l’heure exacte',one:1,go:()=>agEdit(a,'h')},{i:'cal',l:'Changer le jour',s:a.d?dLab(a.d):'Pas encore de date',one:1,go:()=>agEdit(a,'d')},{i:'pen',l:'Renommer',one:1,go:()=>agEdit(a,'t')},{i:'next',l:a.d?'Décaler à demain':'Le prévoir demain',one:1,go:()=>{a.d=addD(a.d&&a.d>today?a.d:today,1);done(['Décalé',dLab(a.d)])}},{i:'trash',l:'Supprimer',one:1,go:()=>{S.ag=S.ag.filter(x=>x!==a);done(['Supprimé',''])}},{i:'undo',l:'Garder',one:1,go:()=>closeFl()}]}],()=>['',''])}
+  {k:'x',q:esc(a.t),sub:a.d?dLab(a.d)+(a.h?' · '+hl(a.h):''):'Dans ta liste',type:'tiles',opts:[a.done?{i:'undo',l:'Pas encore fait',s:'Remettre dans ta journée',one:1,go:()=>{a.done=false;done(['Remis',a.t])}}:{i:'check',l:'C’est fait',s:'Bravo, un de moins',one:1,cta:1,go:()=>{a.done=true;a.d=a.d<today?a.d:today;done(['Fait',a.t])}},{i:'later',l:a.h?'Changer l’heure ('+hl(a.h)+')':'Mettre une heure',s:'Matin, soir ou l’heure exacte',one:1,go:()=>agEdit(a,'h')},{i:'cal',l:'Changer le jour',s:a.d?dLab(a.d):'Pas encore de date',one:1,go:()=>agEdit(a,'d')},{i:'pen',l:'Renommer',one:1,go:()=>agEdit(a,'t')},...(a.d?[agMarq(a)?{i:'flame',l:'Dans ta tour',s:'Moment marquant · touche pour le retirer',one:1,go:()=>{a.tw=-1;done(['Retiré de ta tour','Il reste dans ton agenda'])}}:{i:'flame',l:'Mettre dans ma tour',s:'Un moment qui compte',one:1,go:()=>{a.tw=1;done(['Dans ta tour',esc(a.t)+' · '+dShort(a.d)])}}]:[]),{i:'next',l:a.d?'Décaler à demain':'Le prévoir demain',one:1,go:()=>{a.d=addD(a.d&&a.d>today?a.d:today,1);done(['Décalé',dLab(a.d)])}},{i:'trash',l:'Supprimer',one:1,go:()=>{S.ag=S.ag.filter(x=>x!==a);done(['Supprimé',''])}},{i:'undo',l:'Garder',one:1,go:()=>closeFl()}]}],()=>['',''])}
 
 
 /* ---------- La phrase du moment ---------- */
@@ -2034,12 +2034,27 @@ function towerSvg(lim){const F=towerFloors(),N=F.length,V=vgState(),base=V&&V.de
 /* ===== Tour épurée (flat) ===== */
 const MNs=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 const dShort=d=>{const x=pd(d);return x.getDate()+' '+MNs[x.getMonth()]};
+/* Repère tout seul les événements marquants de l'agenda (aucune donnée ne part du téléphone) */
+const AGM=[[/anniv|birthday/,'gift'],[/mariage|fian[cç]ailles|bapt[eê]me|naissance|accouche|c[ée]r[ée]monie/,'spark'],
+  [/voyage|vacances|s[ée]jour|week-?end [àa]|\bvol\b|avion|a[ée]roport|valise|road ?trip/,'sun'],[/d[ée]m[ée]nag|emm[ée]nag|[ée]tat des lieux|signature du bail|nouvel? appart|cl[ée]s de l/,'home'],
+  [/entretien|embauche|premier jour|nouveau (job|travail|taf|poste)|contrat|stage|signature|d[ée]mission|promo(tion)?\b/,'brief'],
+  [/examen|\bexam|partiel|concours|permis|code de la route|dipl[ôo]me|soutenance|r[ée]sultats|bac\b|brevet/,'book'],
+  [/concert|festival|spectacle|th[ée][âa]tre|match|finale|tournoi|comp[ée]tition|marathon|semi|course |show|expo /,'zap'],
+  [/no[ëe]l|nouvel an|r[ée]veillon|a[iï]d|ramadan|p[âa]ques|hanouk|f[êe]te|soir[ée]e|cr[ée]maill[èe]re|pot de d[ée]part|teuf/,'glass'],
+  [/objectif|d[ée]fi|record|premi[èe]re fois|enfin|grand jour|important/,'flame']];
+const AGX=/rappel|payer|paye |rembours|virement|pr[ée]l[èe]vement|mettre .*de c[ôo]t[ée]|coffre|facture|courses|m[ée]nage|lessive|poubelle|d[ée]fi de la semaine|point du soir/;
+function agMarq(a){if(!a||!a.d||a.tw===-1)return null;if(a.tw===1)return{i:'flame'};const t=String(a.t||'').toLowerCase();
+  if(a.gc||(AGX.test(t)&&!/anniv|voyage|d[ée]m[ée]nag/.test(t)))return null;if(a.vu)return null;
+  for(const [r,i] of AGM)if(r.test(t))return{i};return null}
 function lifeCaps(){const L=[],st=mon(S.start||today),end=addD(today,7*60),add=(d,t,i,id)=>{if(d&&d>=st&&d<=end)L.push({d,t,i,id})};
   const y=+today.slice(0,4);for(const yy of [y,y+1]){add(yy+'-01-01','Nouvel an','spark');add(yy+'-07-01','L’été','sun');add(yy+'-09-01','La rentrée','brief')}
   const ym=today.slice(0,7);let k=0;for(const x of S.rin||[])if(x.d)for(let m=0;m<3;m++){const Y=new Date(+ym.slice(0,4),+ym.slice(5,7)-1+m,1),YM2=Y.getFullYear()+'-'+String(Y.getMonth()+1).padStart(2,'0'),d=fxDate(x,YM2);if(d>today&&k<4){add(d,x.n||'Revenu','in');k++}}
   const V=vgState();if(V&&V.def>0){const r=nextRin();if(r&&r.dt)add(r.dt,'Retour au vert','check')}
   const g=S.cof&&S.cof.g;if(g){const cv=cofV(),pm=cofPlan(),t=esc(g.n)+(cv>=g.v?' · atteint':' · '+Math.round(cv/g.v*100)+' %');let d=g.d||'';if(!d&&cv<g.v){if(pm>0){const x=pd(today);x.setMonth(x.getMonth()+Math.ceil((g.v-cv)/pm));d=iso(x)}else if(S.cof.w>0)d=addD(today,Math.ceil((g.v-cv)/S.cof.w)*7)}if(cv>=g.v){let acc=cv;d=today;for(const e of (S.cof.h||[]).slice().reverse()){if(acc-e.v<g.v){d=e.d;break}acc-=e.v}}if(d)add(d<st?today:d,t,'gift','goal')}
   for(const m of S.ms||[])add(m.d,esc(m.t),'flame',m.id);
+  for(const a of S.ag){const M=agMarq(a);if(M)add(a.d,esc(a.t),M.i,'ag:'+a.id)}
+  for(const x of (S.vu&&S.vu.it)||[])if(x.r===2)add(x.d,esc(x.n)+' · adoré','spark','vu:'+x.id);
+  for(const x of S.dsol||[])if(x.v>=20)add(x.d,'Dette soldée'+(x.p?' · '+esc(x.p):''),'check');
   return L}
 function fRow(f,n,big){return `<div class="frow${f.scaf?' scaf':''}${f.cur?' fcur':''}"${f.cur?' id="fcur"':''}>${big?`<span class="fno">${n}</span>`:''}${f.days.map((s,k)=>`<i class="fw ${s}${f.cur&&addD(f.w,k)===today&&(s==='on'||s==='gd')?' now':''}"></i>`).join('')}${big?`<span class="fno r">${f.scaf?'⚠︎':''}</span>`:''}</div>`}
 function towerFlat(lim){const F=towerFloors(),N=F.length,show=lim&&N>lim?F.slice(-lim):F,V=vgState(),red=V&&V.def>0,big=lim===0;
@@ -2061,7 +2076,7 @@ function tourScr(){const T=towerStats(),W=vicStats(),BL=badgeList(),V=vgState();
   const x=scr('Ta tour',`<div class="msum"><div><b>${T.n}</b><small>étage${T.n>1?'s':''}</small></div><div><b>${T.lit}</b><small>fenêtres</small></div><div><b>${T.rp}</b><small>réparées</small></div></div>
    <div class="tfull">${towerFlat(0)}</div>
    <button class="vpl" data-goal><span class="vpi">${ic('gift')}</span><span><b>${S.cof&&S.cof.g?esc(S.cof.g.n):'Ajouter un objectif'}</b><small>${S.cof&&S.cof.g?Math.min(100,Math.round(cofV()/S.cof.g.v*100))+' %'+(S.cof.g.d?' · pour le '+dShort(S.cof.g.d):' · sans date'):'Il s’affiche sur l’étage où tu l’atteins'}</small></span>${ic('next')}</button>
-   <button class="vpl" data-msadd><span class="vpi">${ic('flame')}</span><span><b>Ajouter un moment de ta vie</b><small>Anniversaire, voyage, fête, permis…</small></span>${ic('plus')}</button>
+   <button class="vpl" data-msadd><span class="vpi">${ic('flame')}</span><span><b>Ajouter un moment de ta vie</b><small>Les grands moments de ton agenda s’y mettent tout seuls</small></span>${ic('plus')}</button>
    ${V&&V.def>0?`<button class="vpl" data-vg><span class="vpi">${ic('in')}</span><span><b>Ton retour au positif</b><small>Mission, salaire, ce qu’on te doit…</small></span>${ic('next')}</button>`:''}
    <div class="sec"><h2>Tes victoires</h2></div><div class="vic">${vic.map(([v,l])=>`<div><b>${v}</b><small>${l}</small></div>`).join('')}</div>
    <div class="sec"><h2>Tes trophées</h2><small>${BL.filter(b=>b[1]).length} / ${BL.length}</small></div>
@@ -2070,7 +2085,10 @@ function tourScr(){const T=towerStats(),W=vicStats(),BL=badgeList(),V=vgState();
   setTimeout(()=>{const c=x.querySelector('#fcur');if(c)c.scrollIntoView({block:'center'})},30);
   const g=x.querySelector('[data-vg]');if(g)g.onclick=()=>{buzz();closeScr();vgScr()}
   x.querySelector('[data-msadd]').onclick=()=>{buzz();closeScr();msAdd()};{const gb=x.querySelector('[data-goal]');if(gb)gb.onclick=()=>{buzz();closeScr();S.cof&&S.cof.g?cofScr():goalFlow()}}
-  x.querySelectorAll('[data-ms]').forEach(b=>b.onclick=()=>{buzz();if(b.dataset.ms==='goal'){closeScr();cofScr();return}const m=(S.ms||[]).find(y=>y.id===b.dataset.ms);if(!m)return;closeScr();
+  x.querySelectorAll('[data-ms]').forEach(b=>b.onclick=()=>{buzz();if(b.dataset.ms==='goal'){closeScr();cofScr();return}
+    if(b.dataset.ms.startsWith('vu:')){closeScr();vuItem(b.dataset.ms.slice(3));return}
+    if(b.dataset.ms.startsWith('ag:')){const a=S.ag.find(y=>y.id===b.dataset.ms.slice(3));if(!a)return;closeScr();
+      flow([{k:'x',q:esc(a.t),sub:dLab(a.d)+' · repéré dans ton agenda',type:'tiles',opts:[{i:'back',l:'Garder dans ma tour',one:1,go:()=>{a.tw=1;save();closeFl();tourScr()}},{i:'trash',l:'Retirer de ma tour',s:'Il reste dans ton agenda',one:1,go:()=>{a.tw=-1;save();closeFl();tourScr()}}]}],()=>null);return}const m=(S.ms||[]).find(y=>y.id===b.dataset.ms);if(!m)return;closeScr();
     flow([{k:'x',q:m.t,sub:dShort(m.d),type:'tiles',opts:[{i:'trash',l:'Retirer de ma tour',one:1,go:()=>{S.ms=S.ms.filter(y=>y.id!==m.id);save();closeFl();tourScr()}},{i:'back',l:'Garder',one:1,go:()=>{closeFl();tourScr()}}]}],()=>null)})}
 function msAdd(){flow([{k:'t',q:'Quel moment compte pour toi ?',sub:'Il s’affichera sur l’étage de cette semaine-là.',type:'text',ph:'Anniversaire, Aïd, Noël…'},{k:'d',q:'Quand ?',type:'date',past:1}],v=>{if(!v.t||!v.d)return['Pas ajouté','Il manque le nom ou la date'];
   S.ms=S.ms||[];S.ms.push({id:'m'+Date.now(),t:String(v.t).slice(0,40),d:v.d});save();setTimeout(tourScr,1400);return['Ajouté à ta tour',esc(v.t)+' · '+dShort(v.d)]})}
