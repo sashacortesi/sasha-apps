@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794154282" data-theme="light">
+<html lang="fr" data-build="1794155021" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -1288,6 +1288,31 @@ function prevStep(){if(FL.i===0)return closeFl();FL.dir=-1;FL.i--;let st;while(F
 let tPrev=null;
 const OVS=['fl','scr','shb','ok'],isOv=n=>n.nodeType===1&&OVS.some(c=>n.classList.contains(c));
 new MutationObserver(rs=>{let gone=false;const add=[];rs.forEach(r=>{r.removedNodes.forEach(n=>{if(isOv(n))gone=true});r.addedNodes.forEach(n=>{if(isOv(n))add.push(n)})});if(!add.length)return;add.forEach(n=>{const other=[...document.body.children].some(x=>x!==n&&isOv(x)&&!x.classList.contains('out')&&!add.includes(x));if(gone||other)n.classList.add('keep')})}).observe(document.body,{childList:true});
+/* ===== Paiements Apple Pay automatiques : un raccourci iPhone envoie chaque paiement, Base le récupère ===== */
+const PAYW='https://base-pay.sashacortesi.workers.dev';
+const payK=()=>{if(!S.payK){const a=new Uint8Array(18);crypto.getRandomValues(a);S.payK=[...a].map(x=>x.toString(36).padStart(2,'0')).join('').slice(0,28);save()}return S.payK};
+function payCat(m){const t=String(m||'').toLowerCase(),R=[[/carrefour|monoprix|franprix|lidl|auchan|leclerc|intermarch|casino|picard|aldi|super|u express|g20|naturalia|biocoop|bio c|epicerie|boulang/,'courses'],
+  [/mcdo|mcdonald|burger|kfc|quick|o'tacos|tacos|uber ?eats|deliveroo|just ?eat|subway|five guys|pizza|kebab|domino/,'ff'],
+  [/ratp|sncf|navigo|uber|bolt|heetch|g7|taxi|total|esso|shell|bp |lime|velib|blablacar|ouigo|air france|transavia|easyjet/,'transport'],
+  [/zara|h&m|h & m|uniqlo|nike|adidas|primark|zalando|amazon|fnac|darty|apple|sephora|decathlon|vinted|shein|asos/,'shopping'],
+  [/bar|pub|cin[ée]|ugc|path[ée]|mk2|concert|fnac spect|ticket|club|bowling|karaok|mus[ée]e/,'sorties'],
+  [/tabac|bureau de tabac|civette/,'conso'],[/restaurant|resto|caf[ée]|brasserie|bistro|sushi|starbucks|columbus|paul |pret a manger|cojean|big mamma/,'resto']];
+  for(const [r,c] of R)if(r.test(t))return c;return 'autre'}
+let PAYB=0;async function payPull(){if(!S.payK||!S.payOn||PAYB)return;PAYB=1;try{const r=await fetch(PAYW+'/pull?k='+S.payK,{cache:'no-store'});const L=await r.json();if(Array.isArray(L)&&L.length){FLB=JSON.stringify(S);
+    let t=0;for(const x of L){const v=Math.round((+x.a||0)*100)/100;if(!(v>0))continue;const d=iso(new Date(x.t||Date.now()));addE({id:uid(),d:d>today?today:d,v,c:payCat(x.m),s:String(x.m||'Apple Pay').slice(0,40),ap:1});t+=v}
+    save();home();unPush(L.length+' paiement'+(L.length>1?'s':'')+' Apple Pay ajouté'+(L.length>1?'s':'')+' · '+eur(t))}}catch(e){}PAYB=0}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(payPull,800)});setTimeout(payPull,2500);
+function apScr(){const k=payK(),u=PAYW+'/add?k='+k+'&a=';const x=scr('Paiements automatiques',`<div style="display:grid;gap:14px">
+  <div class="mm"><small>Apple Pay → Base</small><strong style="font-size:30px">${S.payOn?'Activé':'À installer'}</strong><span>Chaque paiement Apple Pay s’ajoute tout seul à tes dépenses, avec la bonne catégorie.</span></div>
+  <div class="sec"><h2>Une seule fois, sur ton iPhone</h2></div>
+  <div class="list">${[['1','Ouvre l’app Raccourcis','Onglet Automatisation, puis +, puis « Transaction ».'],['2','Choisis ta carte','Coche ta carte bancaire, puis « Exécuter immédiatement ».'],['3','Ajoute « Obtenir le contenu de l’URL »','Colle le lien ci-dessous dans le champ URL.'],['4','Complète le lien','Juste après le lien, ajoute la variable « Montant ». Tape &m= puis ajoute la variable « Commerçant ».'],['5','Touche OK','C’est fini : paie avec Apple Pay, rouvre Base, la dépense est là.']].map(([n,a,b])=>`<div class="li"><span class="ck pv" style="font-size:13px;font-weight:700;color:var(--ink)">${n}</span><span class="t">${a}<small>${b}</small></span><span class="r"></span></div>`).join('')}</div>
+  <button class="vng" id="pcp">${ic('share')}<span><b>Copier le lien</b><br><small style="color:var(--muted);word-break:break-all">${esc(u)}</small></span>${ic('next')}</button>
+  <a class="vng" href="shortcuts://" style="text-decoration:none">${ic('next')}<span><b>Ouvrir Raccourcis</b></span>${ic('next')}</a>
+  <button class="vng" id="pon">${ic(S.payOn?'x':'check')}<span><b>${S.payOn?'Couper les paiements automatiques':'J’ai installé le raccourci'}</b></span>${ic('next')}</button>
+  <button class="vng" id="pts">${ic('zap')}<span><b>Tester</b> · ajoute un faux paiement de 1 €</span>${ic('next')}</button></div>`);
+  x.querySelector('#pcp').onclick=async()=>{buzz();try{await navigator.clipboard.writeText(u);done(['Lien copié','Colle-le dans Raccourcis'])}catch(e){prompt('Copie ce lien',u)}};
+  x.querySelector('#pon').onclick=()=>{buzz();S.payOn=S.payOn?0:1;save();closeScr();done([S.payOn?'Activé':'Coupé',S.payOn?'Tes paiements Apple Pay arriveront tout seuls':'Plus d’ajout automatique'])};
+  x.querySelector('#pts').onclick=async()=>{buzz();try{const r=await fetch(u+'1&m=Test%20Base');if(!r.ok)throw 0;S.payOn=1;save();closeScr();setTimeout(payPull,400)}catch(e){done(['Le serveur ne répond pas','Vérifie qu’il est bien créé et déployé'])}}}
 /* ===== Annuler : on garde une photo de l'app avant chaque action ===== */
 let FLB=null,UBT=null;const UK='librePote:undo';
 const unGet=()=>{try{return JSON.parse(localStorage.getItem(UK))||[]}catch(e){return[]}};
@@ -2728,6 +2753,7 @@ function setSheet(){const H=t=>({hd:t}),G=(i,l,s,f)=>({i,l,s,one:1,go:()=>{close
   {i:'zap',l:'Sons',s:sndOn()?'Activés':'Coupés',one:1,go:()=>{S.snd=sndOn()?0:1;save();if(S.snd)sfx('ok');done(['Sons '+(S.snd?'activés':'coupés'),''])}},
   {i:'sun',l:'Page du jour',s:S.rcOff?'Coupée':'À la 1re ouverture de la journée',one:1,go:()=>{S.rcOff=S.rcOff?0:1;done([S.rcOff?'Page du jour coupée':'Page du jour activée',S.rcOff?'Tu peux la revoir en touchant « Bonjour » sur l’accueil':'Elle t’accueille chaque matin'])}},
   {i:'lock',l:'Code de verrouillage',s:S.pin?'Activé':'Pour que personne d’autre ne lise tes comptes',one:1,go:()=>{if(S.pin){delete S.pin;done(['Code retiré',''])}else{closeFl();pinPad('set')}}},
+  {i:'card',l:'Paiements Apple Pay automatiques',s:S.payOn?'Activés':'Tes paiements s’ajoutent tout seuls',one:1,go:()=>{closeFl();setTimeout(apScr,50)}},
   H('Mes données'),
   {i:'undo',l:'Annuler une action',s:(()=>{const L=unGet();return L.length?'Dernière : '+L[0].l:'Rien à annuler pour l’instant'})(),one:1,go:()=>{closeFl();setTimeout(unList,50)}},
   {i:'folder',l:'Sauvegarder mes données',s:S.bk?'Dernière le '+pd(S.bk).getDate()+' '+MN[pd(S.bk).getMonth()]:'Au cas où tu changes de téléphone',one:1,go:()=>backup()},
