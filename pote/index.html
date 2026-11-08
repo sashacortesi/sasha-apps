@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794152998" data-theme="light">
+<html lang="fr" data-build="1794153162" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -716,10 +716,12 @@ body.rcon .strk,body.rcon .toast{visibility:hidden!important}
 .hzn{display:grid;border-radius:20px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
 .hzr{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:14px 16px}.hzr+.hzr{box-shadow:inset 0 1px 0 var(--line)}
 .hzr b{display:block;font-size:17px;font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums}.hzr small{display:block;font-size:13px;color:var(--muted);line-height:1.35;margin-top:2px}
-#unb{position:fixed;left:16px;right:16px;bottom:calc(58px + env(safe-area-inset-bottom,0px));z-index:65;max-width:488px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:8px 8px 8px 16px;border-radius:16px;background:#1C1C1E;color:#fff;font-size:14.5px;font-weight:500;box-shadow:0 10px 30px -10px rgba(0,0,0,.45);animation:su .3s cubic-bezier(.2,.8,.2,1);transition:opacity .3s,transform .3s}
-#unb.out{opacity:0;transform:translateY(12px)}#unb>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:8px}#unb>span svg{width:16px;height:16px;color:#4ADE80;flex:none}
-#unb button{display:flex;align-items:center;gap:6px;border:0;border-radius:11px;background:#fff;color:#000;font:inherit;font-size:14px;font-weight:700;padding:9px 13px}#unb button svg{width:15px;height:15px}
-#unb.okd{padding:14px 16px}
+#unb{position:fixed;left:50%;bottom:calc(58px + env(safe-area-inset-bottom,0px));z-index:65;transform:translateX(-50%);display:flex;align-items:center;gap:4px;max-width:calc(100% - 40px);padding:5px 5px 5px 14px;border-radius:999px;background:color-mix(in srgb,var(--card) 88%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 0 0 1px var(--line),0 6px 20px -10px rgba(0,0,0,.25);color:var(--muted);font-size:13px;font-weight:500;animation:unin .3s cubic-bezier(.2,.8,.2,1);transition:opacity .3s}
+@keyframes unin{from{opacity:0;transform:translate(-50%,8px)}}
+#unb.out{opacity:0}#unb>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px}#unb>span svg{width:14px;height:14px;color:var(--good);flex:none}
+#unb button{display:flex;align-items:center;gap:5px;border:0;border-radius:999px;background:none;color:var(--ink);font:inherit;font-size:13px;font-weight:700;padding:7px 10px}#unb button svg{width:14px;height:14px;stroke-width:2.2}
+#unb.okd{padding:9px 14px}
+.unh{width:36px;height:36px;border-radius:50%;border:0;display:grid;place-items:center;background:var(--card);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line);margin-left:auto;margin-right:8px}.unh svg{width:16px;height:16px;stroke-width:2}
 .rvo{width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;margin-top:20px;padding:14px 16px;border:0;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);font:inherit;color:var(--ink);text-align:left}
 .rvo em{font-style:normal;font-size:13.5px;font-weight:600;color:var(--ink);padding:7px 12px;border-radius:999px;background:var(--card2)}
 .rvm{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline;margin-top:10px;padding:14px 16px;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
@@ -965,7 +967,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
     document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{buzz();({all:setSheet,ics:icsExport,set:settings,push:()=>pushOn()?pushOff():pushEnable(),bk:backup,help:()=>helpScr(),share:shareApp})[b.dataset.m]()});
     return}
   $('#app').innerHTML=`
-  <div class="hi"><span data-a="rcp"><b>${new Date().getHours()<18?'Bonjour':'Bonsoir'}${S.name?', '+esc(S.name):''}</b></span>${fireChip()}</div>
+  <div class="hi"><span data-a="rcp"><b>${new Date().getHours()<18?'Bonjour':'Bonsoir'}${S.name?', '+esc(S.name):''}</b></span>${unGet().length?`<button class="unh" data-un aria-label="Annuler une action">${ic('undo')}</button>`:''}${fireChip()}</div>
   ${heroCard()}
   ${momentCard()}
   <div class="duo"><button class="t-out" data-a="dep">${ic('out')}J’ai dépensé</button><button class="t-in" data-a="inc">${ic('in')}J’ai reçu</button></div>
@@ -2373,7 +2375,7 @@ function vuBind(){const V=vuS();setTimeout(vuPosters,400);
 
 /* Quand un rappel lié est coché (n'importe où), on enchaîne */
 let AGH=0;
-document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('[data-vgg]');if(g){e.stopPropagation();e.preventDefault();buzz();vgGoal();return}const b=e.target.closest&&e.target.closest('[data-qch]');if(b){e.stopPropagation();buzz();qChoose()}},true);
+document.addEventListener('click',e=>{{const u=e.target.closest&&e.target.closest('[data-un]');if(u){e.stopPropagation();buzz();unList();return}}const g=e.target.closest&&e.target.closest('[data-vgg]');if(g){e.stopPropagation();e.preventDefault();buzz();vgGoal();return}const b=e.target.closest&&e.target.closest('[data-qch]');if(b){e.stopPropagation();buzz();qChoose()}},true);
 function agHook(){if(FL||$('.scr')||$('.ok')||$('.strk')||$('#rcp'))return;
   const a=S.ag.find(a=>a.done&&!a.hk&&(a.gc||a.vu));if(!a)return;a.hk=1;save();
   if(a.gc){const g=S.cof&&S.cof.g;flow([{k:'x',q:'Tu as mis '+eur0(a.gc)+' de côté ?',sub:g?'Pour '+esc(g.n)+'. Je l’ajoute à ton coffre.':'',type:'tiles',opts:[
@@ -2385,6 +2387,7 @@ const _home0=home;home=function(){_home0.apply(this,arguments);clearTimeout(AGH)
 function cofScr(){const v=cofV(),g=S.cof&&S.cof.g;flow([{k:'x',top:()=>safeSvg(cofRatio(),'mid'),q:v?eur(v)+' de côté':'Ton coffre',sub:v?(g?(v>=g.v?'Objectif « '+esc(g.n)+' » atteint.':'Pour '+esc(g.n)+' : encore '+eur0(g.v-v)+'.'):'Cet argent reste sur ton compte, l’app le met juste de côté pour que tu n’y touches pas.'):'L’argent reste sur ton compte. L’app le retire de ce que tu peux dépenser, pour que tu n’y touches pas.',type:'tiles',opts:[
   {i:'plus',l:'Mettre de côté',one:1,go:()=>flow([{k:'v',q:'Combien tu mets de côté ?',type:'tiles',opts:[5,10,20,50].map(n=>({v:n,i:'safe',l:eur0(n)})).concat([{i:'pen',l:'Autre montant',one:1,go:()=>flow([{k:'v',q:'Combien tu mets de côté ?',type:'amount'}],r=>cofAdd(r.v))}])}],r=>cofAdd(r.v))},
   ...(v>0?[{i:'out',l:'Reprendre',s:'Si tu en as vraiment besoin',one:1,go:()=>flow([{k:'v',q:'Combien tu reprends ?',sub:'Sur '+eur(v)+'. Pas de souci, ça arrive.',type:'amount'}],r=>cofAdd(-Math.min(r.v,cofV())))}]:[]),
+  ...((S.cof&&S.cof.h||[]).length?[{i:'undo',l:'Corriger un mouvement',s:'Retirer un montant mis par erreur',one:1,go:()=>{const H=(S.cof.h||[]).slice(-8).reverse();flow([{k:'x',q:'Lequel retirer ?',sub:'Il disparaît du coffre, comme s’il n’avait jamais été fait.',type:'tiles',opts:H.map(h=>({i:h.v>0?'in':'out',l:(h.v>0?'+':'')+eur(h.v),s:dShort(h.d),one:1,go:()=>{S.cof.h=S.cof.h.filter(y=>y!==h);S.cof.v=Math.round(((S.cof.v||0)-h.v)*100)/100;done(['Retiré',(h.v>0?'+':'')+eur(h.v)+' · coffre : '+eur(S.cof.v)])}}))}],()=>['',''])}}]:[]),
   {i:'gift',l:g?'Changer l’objectif':'Un objectif',s:g?esc(g.n)+' · '+eur0(g.v)+(g.d?' · '+dShort(g.d):''):'Ex. vacances dans 4 mois, permis, une sécurité',one:1,go:goalFlow},
   {i:'safe',l:'Chaque mois',s:S.cof&&S.cof.m?eur0(S.cof.m)+' par mois, déjà retirés de ton budget':'Un montant retiré de ton budget dès le début du mois',one:1,go:()=>flow([{k:'m',q:'Combien tu mets au coffre chaque mois ?',sub:'Je le retire de ce que tu peux dépenser, comme une charge fixe.',type:'tiles',opts:[25,50,100,200].map(n=>({v:n,i:'safe',l:eur0(n)+' par mois'})).concat([{i:'pen',l:'Autre montant',one:1,go:v=>{v.mf=1;nextStep()}}]).concat(S.cof&&S.cof.m?[{v:0,i:'x',l:'Plus d’objectif mensuel'}]:[])},{k:'m',q:'Combien par mois ?',type:'amount',skip:v=>!v.mf}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.m=r.m||0;return r.m?['C’est noté',eur0(r.m)+' par mois au coffre, déjà retirés']:['Arrêté','Plus d’objectif mensuel']})},
   {i:'cal',l:'Chaque semaine',s:S.cof&&S.cof.w?eur0(S.cof.w)+' le lundi':'Un rappel chaque lundi',one:1,go:()=>flow([{k:'w',q:'Combien chaque semaine ?',sub:'Le lundi, l’app te propose de le mettre de côté en une touche.',type:'tiles',opts:[5,10,20,30,50].map(n=>({v:n,i:'safe',l:eur0(n)+' par semaine',s:'≈ '+eur0(n*52/12)+' par mois'})).concat(S.cof&&S.cof.w?[{v:0,i:'x',l:'Arrêter'}]:[])}],r=>{S.cof=S.cof||{v:0,h:[]};S.cof.w=r.w;return r.w?['C’est noté',eur0(r.w)+' chaque lundi']:['Arrêté','Plus de rappel du lundi']})}]}],()=>['',''])}
