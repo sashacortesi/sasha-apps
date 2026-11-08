@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794151640" data-theme="light">
+<html lang="fr" data-build="1794151994" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -665,6 +665,7 @@ body.rcon .strk,body.rcon .toast{visibility:hidden!important}
 .gauge{width:100%;display:grid;justify-items:center;gap:22px;padding:38px 0 14px;border:0;background:none;font:inherit;color:var(--ink);text-align:center}
 .gc{display:grid;justify-items:center;gap:2px}.gc strong{font-size:64px;font-weight:750;letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums}.gc small{font-size:14px;font-weight:600;color:var(--muted)}
 .gtr{position:relative;width:calc(100% - 36px);height:6px;border-radius:3px;background:var(--card2);margin:14px 0 18px}
+.gst0{position:absolute;left:0;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--ink)}
 .gfl{position:absolute;left:0;top:0;bottom:0;border-radius:3px;overflow:hidden;background:var(--ink);transition:width 1.4s cubic-bezier(.32,.72,0,1)}
 .gsh{position:absolute;inset:0;background:linear-gradient(100deg,transparent 35%,color-mix(in srgb,var(--bg) 45%,transparent) 50%,transparent 65%);background-size:250% 100%;animation:gsh 3.2s ease-in-out infinite}
 @keyframes gsh{0%{background-position:150% 0}60%,100%{background-position:-50% 0}}
@@ -682,13 +683,16 @@ body.rcon .strk,body.rcon .toast{visibility:hidden!important}
 .gnd.pop{animation:gpop .7s cubic-bezier(.3,1.6,.5,1)}@keyframes gpop{0%{transform:scale(.4)}60%{transform:scale(1.5)}100%{transform:scale(1)}}
 .gnx{display:inline-flex;align-items:center;gap:8px;font-size:14.5px;color:var(--muted);padding:10px 14px 10px 12px;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);margin-top:6px}
 .gni{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:700;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}.gni.g{background:var(--good);color:#fff;box-shadow:none}.gni svg{width:12px;height:12px;stroke-width:3}.gnx>svg:last-child{width:14px;height:14px;stroke-width:2.4;color:var(--muted)}.gnx b{color:var(--ink);font-weight:700}
-.gset{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--ink);margin-top:-10px}.gset svg{width:15px;height:15px}
+.gset{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--ink);margin-top:-10px}.gset svg{width:15px;height:15px}.gset b{font-weight:700;margin-left:4px}
 .gle .g0{position:absolute;left:50%;transform:translateX(-50%);color:var(--good);font-weight:600}
 .rv{display:grid;justify-items:center;text-align:center;gap:4px;padding:18px 4px 6px}.rv small{font-size:13px;font-weight:600;color:var(--muted)}
 .rv strong{font-size:56px;font-weight:750;letter-spacing:-.045em;line-height:1.05;font-variant-numeric:tabular-nums}.rv>span{font-size:14px;color:var(--muted)}
 .rvb{width:100%;height:6px;border-radius:3px;background:var(--card2);margin-top:18px;overflow:hidden}.rvb i{display:block;height:100%;border-radius:3px;background:var(--ink)}
 .rvl{width:100%;display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}.rvl span:last-child{color:var(--good);font-weight:600}
 .vgpb{position:relative;width:180px;height:12px;border-radius:6px;background:rgba(255,255,255,.18);margin:6px auto 18px;overflow:hidden}.vgpb i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:#fff;animation:vgpi 1.2s cubic-bezier(.32,.72,0,1) both}@keyframes vgpi{from{width:0}}.vgpb span{position:absolute;left:50%;top:0;bottom:0;width:2px;background:#4ADE80}
+.hzn{display:grid;border-radius:20px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.hzr{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:14px 16px}.hzr+.hzr{box-shadow:inset 0 1px 0 var(--line)}
+.hzr b{display:block;font-size:17px;font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums}.hzr small{display:block;font-size:13px;color:var(--muted);line-height:1.35;margin-top:2px}
 .rvo{width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;margin-top:20px;padding:14px 16px;border:0;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);font:inherit;color:var(--ink);text-align:left}
 .rvo em{font-style:normal;font-size:13.5px;font-weight:600;color:var(--ink);padding:7px 12px;border-radius:999px;background:var(--card2)}
 .rvm{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline;margin-top:10px;padding:14px 16px;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
@@ -1871,15 +1875,19 @@ function gaugeData(D){const W=Math.max(S.vgW||0,D,1),step=niceStep(W/3),P=[];
   const pct=v=>v<0?Math.max(0,50*(v-lo)/(-lo)):Math.min(100,50+50*v/hi);
   const next=P.find(x=>x.v>pos),done=P.filter(x=>x.v<=pos).length;
   return{W,step,P,M,inc,fx,av,pos,eta,pct,next,done}}
-function gaugeCard(D,tdS,nr,rj){const G=gaugeData(D),nx=G.next,gap=Math.round(nx.v-G.pos),cur=G.pct(G.pos);
+/* Plateau : étapes espacées régulièrement (pas selon les montants), le vert pile au milieu */
+function gaugeEven(G){const L=G.P.filter(x=>x.v<0),R=G.P.filter(x=>x.v>0),A=[{v:-G.W,x:0}];
+  L.forEach((x,i)=>A.push({v:x.v,x:50*(i+1)/(L.length+1)}));A.push({v:0,x:50});R.forEach((x,i)=>A.push({v:x.v,x:50+44*(i+1)/R.length}));
+  return v=>{if(v<=A[0].v)return 0;for(let i=1;i<A.length;i++)if(v<=A[i].v){const a=A[i-1],b=A[i];return a.x+(b.x-a.x)*(v-a.v)/Math.max(1e-9,b.v-a.v)}return A.at(-1).x}}
+function gaugeCard(D,tdS,nr,rj){const G=gaugeData(D);G.pct=gaugeEven(G);const nx=G.next,gap=Math.round(nx.v-G.pos),cur=G.pct(G.pos);
   const last=S.gLast!=null?S.gLast:Math.max(0,cur-8),from=Math.min(last,cur),tg=Math.round(-G.pos),E=vgEta(tg);
-  let np=0;const nodes=G.P.map(x=>{const on=x.v<=G.pos,isn=x===nx,lab=x.k==='p'?String(++np):'';return `<span class="gnd${on?' on':''}${isn?' nx':''} k-${x.k}" style="left:${G.pct(x.v)}%">${on&&x.k!=='g'?ic('check'):lab?`<b>${lab}</b>`:ic(x.k==='g'?'check':x.k==='b'?'in':x.k==='o'?'gift':'safe')}${x.k==='g'&&E?`<em class="gdt ${E.late?'lt':'okd'}">${vgDate(E.d)}</em>`:''}</span>`}).join('');
+  let np=0;const nodes=G.P.map(x=>{const on=x.v<=G.pos,isn=x===nx,lab=x.k==='p'?String(++np):'';return `<span class="gnd${on?' on':''}${isn?' nx':''} k-${x.k}" style="left:${G.pct(x.v)}%">${on&&x.k!=='g'?ic('check'):lab?`<b>${lab}</b>`:ic(x.k==='g'?'check':x.k==='b'?'in':x.k==='o'?'gift':'safe')}${x.k==='g'&&E?`<em class="gdt ${E.late?'lt':'okd'}">J-${E.n} · ${vgDate(E.d)}</em>`:''}</span>`}).join('');
   setTimeout(()=>gaugeAnim(cur,G),60);
   return `<button class="gauge" data-a="vg" id="gge" aria-label="Ta progression">
    <div class="gc"><strong>${eur0(tg)}</strong><small>à remonter</small></div>
-   <div class="gtr"><i class="gfl" style="width:${from}%"><i class="gsh"></i></i>${nodes}</div>
+   <div class="gtr"><i class="gst0"></i><i class="gfl" style="width:${from}%"><i class="gsh"></i></i>${nodes}</div>
    <span class="gnx">${nx.k==='g'?`<i class="gni g">${ic('check')}</i>`:`<i class="gni">${np?G.P.filter(x=>x.k==='p').indexOf(nx)+1:''}</i>`}<span>${nx.k==='g'?'Le vert':'Étape '+(G.P.filter(x=>x.k==='p').indexOf(nx)+1)} dans <b>${eur0(gap)}</b></span>${ic('next')}</span>
-   ${!E?`<span class="gset" data-vgg>${ic('cal')}Fixe-toi une date</span>`:''}</button>`}
+   ${!E?`<span class="gset" data-vgg>${ic('cal')}Fixe-toi une date</span>`:(()=>{const Hz=vgHorizon(tg);return Hz.noinc||!(Hz.days||Hz.cover)?'':`<span class="gset">Pour tenir : <b>${Hz.maxD>0?'max '+eur0(Hz.maxD)+' / jour':'0 € / jour'}</b></span>`})()}</button>`}
 function gaugeAnim(cur,G){const f=document.querySelector('#gge .gfl');if(!f)return;requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.width=Math.max(cur,1.5)+'%'}));
   const prev=S.gDone;S.gLast=cur;S.gDone=G.done;try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
   if(prev!=null&&G.done>prev){const x=G.P[G.done-1];setTimeout(()=>{const n=document.querySelectorAll('#gge .gnd')[G.done-1];if(n)n.classList.add('pop');buzz([12,60,18]);sfx('big');
@@ -1927,15 +1935,30 @@ function vgIdeas(V){const L=[],nr=V.nr,d30=addD(today,-30);
   L.push({i:'zap',a:'+50 à 150 €',t:'Un extra ponctuel',s:'Une mission d’un jour, du baby-sitting, un coup de main payé. Ça remonte vite.'});
   L.push({i:'check',a:V.tg>0?'+'+eur0(V.tg)+'/jour':'',t:'Des journées à 0 €',s:V.tg>0?'Chaque journée sans dépense te rapproche de '+eur0(V.tg)+'.':'Elles empêchent le trou de grandir. Les autres pistes le remplissent.'});
   return L}
+/* Horizon : ce qu'il faut tenir, selon ses revenus et ses charges, pour être au vert à la date */
+function vgHorizon(def){const inc=(S.rin||[]).reduce((a,x)=>a+(+x.v||0),0),fx=S.fixe||fxDated().reduce((a,x)=>a+x.v,0),E=vgEta(def);
+  if(!(inc>0))return{noinc:1,E};const days=E?Math.max(1,E.n):null,needD=days?def/days:0,maxD=Math.floor((inc-fx)/30-needD),needM=Math.ceil(needD*30);
+  let nx=null;for(const x of S.rin||[]){if(!x.d||!(x.v>0))continue;let dt=fxDate(x,YM);if(dt<=today)dt=fxDate(x,nYM);if(!nx||dt<nx.dt)nx={n:x.n||'Revenu',v:+x.v,dt}}
+  const p=vgPace(),xtra=200,xd=p>.2?Math.ceil(Math.max(0,def-xtra)/p):null;let cover=0,md=maxD;
+  if(nx&&nx.v>def&&(!E||nx.dt<=E.d)){cover=1;md=Math.floor((nx.v-def)/Math.max(1,dIn(nx.dt)))}
+  return{inc,fx,E,days,maxD:md,needM,nx,xd,xtra,p,cover}}
 function vgScr(){const V=vgState();if(!V)return;if(V.def<=0){done(['Tu es dans le vert','Maintenant, on construit']);return}
   const L=vgIdeas(V),pc=Math.round(V.p*100);
   const x=scr('Comment remonter',`<div class="rv"><small>Il te manque</small><strong>${eur0(V.def)}</strong><span>pour revenir au vert${V.when?' · à ce rythme, en '+V.when:''}</span>
     <div class="rvb"><i style="width:${Math.max(3,pc)}%"></i></div><div class="rvl"><span>${pc} % déjà remonté</span><span>0 €</span></div></div>
    ${(()=>{const E=vgEta(V.def);return `<button class="rvo" data-rvo><span class="rvc">${ic('cal')}</span><span class="rvt"><b>${E?(E.obj?'Objectif : vert le ':'À ton rythme : vert le ')+vgDate(E.d):'Fixe-toi une date'}</b><small>${E?(E.obj?'≈ '+eur0(E.wk)+' à remonter par semaine · '+(E.late?'en retard de '+eur0(E.late):E.ahead?'en avance de '+eur0(E.ahead):'dans les temps'):'Dans '+E.n+' jours, en gardant ton rythme. Tu veux viser plus tôt ?'):'Je calcule le rythme et je te dis si tu es dans les temps.'}</small></span><em>${E&&E.obj?'Changer':'Choisir'}</em></button>`})()}
-   <div class="rvm"><small>Aujourd’hui</small><b>${V.zero?'Journée à 0 €':'Maximum '+eur0(V.tg)}</b><span>${V.H.tdS?eur0(V.H.tdS)+' dépensés':'Rien dépensé pour l’instant'}</span></div>
+   ${(()=>{const Hz=vgHorizon(V.def);if(Hz.noinc)return `<div class="vh" style="margin-top:22px"><b>Ton horizon</b></div><button class="rvo" data-rvin><span class="rvc">${ic('in')}</span><span class="rvt"><b>Ajoute ce qui rentre chaque mois</b><small>Salaire, aides… Je calcule ce que tu peux dépenser par jour pour revenir au vert à temps.</small></span><em>Ajouter</em></button>`;
+     const R=[];if(Hz.E)R.push([ic('cal'),'J-'+Hz.E.n,(Hz.E.obj?'Objectif : vert le ':'À ton rythme : vert le ')+vgDate(Hz.E.d)]);
+     if(Hz.cover){R.push([ic('in'),'Le '+pd(Hz.nx.dt).getDate()+' '+MN[pd(Hz.nx.dt).getMonth()]+' · J-'+dIn(Hz.nx.dt),esc(Hz.nx.n)+' (+'+eur0(Hz.nx.v)+') te remet au vert, si tu dépenses moins de '+eur0(Hz.nx.v-V.def)+' d’ici là.']);
+       R.push([ic('out'),Hz.maxD>0?'Max '+eur0(Hz.maxD)+' / jour':'0 € / jour','D’ici le '+pd(Hz.nx.dt).getDate()+', hors charges fixes.'])}
+     else{if(Hz.days)R.push([ic('out'),Hz.maxD>0?'Max '+eur0(Hz.maxD)+' / jour':'0 € / jour',Hz.maxD>0?'Hors charges fixes. C’est ça qui te ramène au vert à temps.':'Même à 0 € par jour, la date est trop proche. Recule-la ou ajoute un extra.']);
+       if(Hz.nx&&Hz.days)R.push([ic('in'),'Le '+pd(Hz.nx.dt).getDate()+' '+MN[pd(Hz.nx.dt).getMonth()]+' · J-'+dIn(Hz.nx.dt),esc(Hz.nx.n)+' arrive (+'+eur0(Hz.nx.v)+'). Garde-en '+eur0(Math.min(Hz.nx.v,Hz.needM))+' de côté direct.'])}
+     if(Hz.xd!=null)R.push([ic('zap'),'+'+eur0(Hz.xtra)+' d’extra','Et tu es au vert le '+vgDate(addD(today,Hz.xd))+(Hz.E?' au lieu du '+vgDate(Hz.E.d):'')]);
+     return `<div class="vh" style="margin-top:22px"><b>Ton horizon</b><small>${eur0(Hz.inc)} qui rentrent · ${eur0(Hz.fx)} de charges</small></div><div class="hzn">${R.map(([i,a,b])=>`<div class="hzr"><span class="rvc">${i}</span><span><b>${a}</b><small>${b}</small></span></div>`).join('')}</div>`})()}
+   <div class="rvm"><small>Aujourd’hui</small><b>${(()=>{const Hz=vgHorizon(V.def);const m=!Hz.noinc&&(Hz.days||Hz.cover)?Math.max(0,Hz.maxD):(V.zero?0:V.tg);return m>0?'Maximum '+eur0(m):'Journée à 0 €'})()}</b><span>${V.H.tdS?eur0(V.H.tdS)+' dépensés':'Rien dépensé pour l’instant'}</span></div>
    <div class="vh" style="margin-top:22px"><b>Tes pistes</b><small>Touche pour agir</small></div>
    <div class="rvi">${L.map((o,n)=>`<button class="rvx${o.win?' win':''}" data-ri="${n}" ${o.go||o.href?'':'data-off="1"'}><span class="rvc">${ic(o.i)}</span><span class="rvt"><b>${o.t}</b><small>${o.s}</small></span>${o.a?`<em>${o.a}</em>`:''}</button>`).join('')}</div>`);
-  {const ob=x.querySelector('[data-rvo]');if(ob)ob.onclick=()=>{buzz();closeScr();vgGoal()}}
+  {const ob=x.querySelector('[data-rvo]');if(ob)ob.onclick=()=>{buzz();closeScr();vgGoal()}}{const ri=x.querySelector('[data-rvin]');if(ri)ri.onclick=()=>{buzz();closeScr();BUD.rin()}}
   x.querySelectorAll('[data-ri]').forEach(b=>b.onclick=()=>{const o=L[+b.dataset.ri];if(o.href){buzz();window.open(o.href,'_blank');return}if(!o.go){buzz(4);b.classList.add('rvp');setTimeout(()=>b.classList.remove('rvp'),400);return}buzz();closeScr();o.go()})}
 function vgEve(msg){try{const V=vgState();if(!V||V.def<=0&&!(V.H.free+V.H.tdS<0))return msg;const sp=V.H.tdS,ok=sp<=V.tg+.5;S.vgM=S.vgM||{};if(S.vgM[today])return msg;S.vgM[today]=ok?1:-1;
   const nl=Math.max(1,V.H.left-1),tm=V.nr?Math.max(0,(V.H.free+V.nr.v)/nl):0;
