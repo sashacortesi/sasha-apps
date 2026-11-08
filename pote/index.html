@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794151551" data-theme="light">
+<html lang="fr" data-build="1794151640" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -590,7 +590,8 @@ body{background:#000}
 
 /* ===== Récap du jour ===== */
 #rcp{position:fixed;inset:0;z-index:80;background:radial-gradient(120% 70% at 50% 0%,#1C1C1E 0%,#000 65%);display:grid;grid-template-rows:auto 1fr auto auto;padding:calc(34px + env(safe-area-inset-top,0px)) 24px calc(22px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;animation:okin .3s ease-out;transition:transform .32s cubic-bezier(.3,.7,.3,1),opacity .32s}
-#rcp.up{transform:translateY(-100%);opacity:0}
+#rcp.up{transform:translateY(-100%);opacity:0;pointer-events:none}
+body.rcon .strk,body.rcon .toast{visibility:hidden!important}
 .rch h1{margin:0;font-size:34px;font-weight:700;letter-spacing:-.025em}.rch p{margin:6px 0 0;font-size:15px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .rcs{display:inline-flex;align-items:center;gap:4px;color:#FF9F0A;font-weight:700}.rcs svg{width:16px;height:16px;fill:#FF9F0A;stroke:none}
 .rcf{display:flex;align-items:baseline;gap:8px;margin-top:14px}.rcf small{font-size:14px;color:var(--muted);font-weight:600}.rcf b{font-family:var(--num);font-size:28px;font-weight:700}
@@ -1813,7 +1814,7 @@ function rcItems(){const now=new Date(),nm=now.getHours()*60+now.getMinutes(),L=
   {const EH=S.eh||21,mm=nm-EH*60;if(mm>=0&&!eveDone()&&!stepT().some(t=>t.i==='moon'))L.push({id:'eve',t:'C’est l’heure de ton point',s:mm<30?'encore '+(30-mm)+' min':'',c:'ev',z:96,o:0,go:flowEve})}
   for(const t of stepT()){if(t.i==='cal')continue;const m=MAP[t.i]||['gr',null];let lab=m[1]||t.t;
     if(t.i==='bank')lab=S.bal?'Vérifier mon solde':'Ajouter mon solde';if(t.i==='users')lab=t.t.replace(/\s*[\d\s.,]+ ?€.*$/,'').replace(/ t’a rendu.*$/,' t’a rendu ?');if(t.i==='in')lab=t.t;
-    L.push({id:'t'+t.i+lab,t:lab,s:'',c:m[0],z:['gr'].includes(m[0])?74:84,o:{mo:3,dt:4,ev:5,wi:6,bi:7,gr:9}[m[0]]||8,go:t.go})}
+    L.push({id:'t'+t.i+lab,t:lab,s:'',c:m[0],z:84,o:{mo:3,dt:4,ev:5,wi:6,bi:7,gr:9}[m[0]]||8,go:t.go})}
   return L.sort((a,b)=>a.o-b.o)}
 function recap(back){if(!S.name||needInstall()||$('#rcp')&&!back)return;const old=$('#rcp');if(old)old.remove();
   const H=heroNums?heroNums():null,nr=nextRin(),L=rcItems(),show=L.slice(0,5),more=L.length-show.length,gone=RCprev.filter(id=>!L.some(x=>x.id===id));RCprev=L.map(x=>x.id);
@@ -1826,10 +1827,10 @@ function recap(back){if(!S.name||needInstall()||$('#rcp')&&!back)return;const ol
    <div class="rbs">${show.length?show.map(bub).join('')+(more>0?`<button class="rb c-gr" data-more style="--z:60px;--d:${show.length*70}ms;--t:6s;--o:-2s"><b>+${more}</b></button>`:''):`<div class="rb c-ok big" style="--z:140px;--d:0ms;--t:6s;--o:0s"><span class="rbi">${ic('check')}</span><b>Rien à faire</b></div>`}${gone.map((g,i)=>`<div class="rb c-ok gone" style="--z:80px">${ic('check')}</div>`).join('')}</div>
    ${show.length?'':'<p class="rce">Tout est à jour. Profite.</p>'}
    <button class="rcin">${ic('back')}<span>Entrer</span></button>`;
-  document.body.appendChild(o);document.body.style.overflow='hidden';if(gone.length)setTimeout(()=>{try{sfx('ok');buzz([10,40,10])}catch(e){}},200);
-  const enter=()=>{o.classList.add('up');document.body.style.overflow='';setTimeout(()=>o.remove(),320);buzz(6)};
+  document.body.appendChild(o);document.body.style.overflow='hidden';document.body.classList.add('rcon');if(gone.length)setTimeout(()=>{try{sfx('ok');buzz([10,40,10])}catch(e){}},200);
+  const enter=()=>{if(o.classList.contains('up'))return;o.classList.add('up');document.body.style.overflow='';window.scrollTo(0,0);document.body.scrollTop=0;setTimeout(()=>o.remove(),340);setTimeout(()=>{document.querySelectorAll('.strk,.toast').forEach(e=>{e.style.animation='none';void e.offsetWidth;e.style.animation=''});document.body.classList.remove('rcon')},650);buzz(6)};
   o.querySelector('.rcin').onclick=enter;{const m=o.querySelector('[data-more]');if(m)m.onclick=enter}
-  o.querySelectorAll('[data-rb]').forEach(b=>b.onclick=()=>{const x=show[+b.dataset.rb];buzz(8);b.classList.add('tap');setTimeout(()=>{o.remove();document.body.style.overflow='';RC=1;x.go()},160)});
+  o.querySelectorAll('[data-rb]').forEach(b=>b.onclick=()=>{const x=show[+b.dataset.rb];buzz(8);b.classList.add('tap');setTimeout(()=>{o.remove();document.body.style.overflow='';document.body.classList.remove('rcon');RC=1;x.go()},160)});
   let y0=null;o.addEventListener('touchstart',e=>{y0=e.touches[0].clientY},{passive:true});o.addEventListener('touchend',e=>{if(y0!=null&&e.changedTouches[0].clientY-y0<-70)enter();y0=null},{passive:true});
   S.rcS=rcKey();try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
 function rcMaybe(){if(S.rcOff||!S.name||FL||$('.scr')||$('#rcp'))return;if(S.rcS!==rcKey()||rcItems().length)recap()}
