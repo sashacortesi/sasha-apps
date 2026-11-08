@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794148223" data-theme="light">
+<html lang="fr" data-build="1794150941" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -298,13 +298,13 @@ label.tile{position:relative;overflow:hidden}.tlink.set .tl{color:var(--ink)!imp
 .li .ck.ico.b{background:color-mix(in srgb,var(--c-ag) 14%,transparent);color:var(--c-ag)}
 .cal i.r{background:var(--c-out)!important}.cal i.g{background:var(--c-in)!important}
 .app{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform;display:flex;justify-content:center;padding:4px 12px max(4px,calc(env(safe-area-inset-bottom,0px) - 16px));background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid var(--line)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform;display:flex;justify-content:center;padding:2px 12px max(2px,calc(env(safe-area-inset-bottom,0px) - 26px));background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid var(--line)}
 .tabbar .in{display:grid;grid-template-columns:repeat(5,1fr);gap:0;width:100%;max-width:420px;align-items:center}
-.tb{position:relative;border:0;background:none;color:var(--muted);display:grid;place-items:center;height:44px;padding:0;font:inherit}.tb span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.tb svg{width:24px;height:24px;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.tb{position:relative;border:0;background:none;color:var(--muted);display:grid;place-items:center;height:38px;padding:0;font:inherit}.tb span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.tb svg{width:22px;height:22px;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
 .tb[aria-selected="true"]{color:var(--c)}.tb[aria-selected="true"] svg{transform:scale(1.08)}
 .tb .bdg{top:4px;right:calc(50% - 22px);min-width:16px;height:16px;font-size:10px;padding:0 4px;background:var(--c-out);color:#fff}
-.fab{justify-self:center;width:40px;height:40px;border-radius:13px;border:0;background:var(--ink);color:var(--bg);display:grid;place-items:center;box-shadow:none;transition:transform .2s}.fab:active{transform:scale(.92)}.fab svg{width:22px;height:22px}
+.fab{justify-self:center;width:34px;height:34px;border-radius:11px;border:0;background:var(--ink);color:var(--bg);display:grid;place-items:center;box-shadow:none;transition:transform .2s}.fab:active{transform:scale(.92)}.fab svg{width:19px;height:19px}
 .scanw{display:grid;grid-template-rows:1fr;place-items:center}.scbox{display:grid;justify-items:center;gap:8px;text-align:center}.scbox b{font-size:20px}.scbox small{color:var(--muted);font-size:14px}.scsp{width:72px;height:72px;border-radius:24px;display:grid;place-items:center;background:color-mix(in srgb,var(--c-out) 14%,transparent);color:var(--c-out);margin-bottom:6px;animation:scp 1.2s ease-in-out infinite}.scsp svg{width:32px;height:32px}@keyframes scp{50%{transform:scale(.9);opacity:.6}}
 
 .bud{background:var(--card);border-radius:20px;overflow:hidden}.bdr{display:grid;grid-template-columns:36px 1fr auto 16px;align-items:center;gap:12px;width:100%;border:0;background:none;padding:13px 14px;text-align:left;font:inherit;color:var(--ink)}.bdr+.bdr{border-top:.5px solid var(--line)}.bdr .ib{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}.bdr .ib svg{width:19px;height:19px}.bdr .bl{display:grid;min-width:0}.bdr .bl b{font-size:16px;font-weight:600}.bdr .bl small{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bdr .bv{font-weight:700;font-size:16px}.bdr>svg{width:14px;height:14px;color:var(--muted)}
@@ -999,7 +999,7 @@ function pushItems(){const now=Date.now(),out=[],add=(t,title,body,tag)=>{if(t>n
   for(const x of (S.rin||[]).filter(x=>x.d)){const dt=fxDate(x,YM);if(dt>=today&&!(S.rok||{})[rinKey(x,YM)])add(at(dt,18),Z?'Un revenu est prévu aujourd’hui':x.n+' est arrivé ?','Confirme-le dans Base pour garder ton budget juste.','rin')}
   const dd=S.debts.filter(x=>x.w==='me'&&x.pm&&x.pm<=YM);
   if(dd.length)add(at(YM+'-25',18),Z?'Un remboursement prévu ce mois-ci':dd.map(x=>x.p).join(', ')+' attend'+(dd.length>1?'ent':'')+' leur argent',Z?'Ouvre Base pour le régler en une touche.':'Tu avais prévu de rembourser ce mois-ci.','debt');
-  for(let i=eveDone()?1:0;i<14;i++)add(at(addD(today,i),S.eh||21),'Ton point du soir','Ta journée en 10 secondes. Rien du tout, c’est une réponse aussi.','day');
+  for(let i=eveDone()?1:0;i<14;i++)add(at(addD(today,i),S.eh||21),'C’est l’heure de ton point','Note tes dépenses du jour en 30 secondes. Rien dépensé ? Une touche.','day');
   if(S.vice&&!S.log[today])add(at(addD(today,1),10),'Il manque hier','Note ta journée d’hier pour garder ton compteur juste.','miss');
   if(S.bal)add(at(addD(S.bal.d,7),12),'Ton solde est toujours juste ?','Vérifie en 5 secondes.','bal');
   try{const same=keys().length===2&&streak('j')===streak('c');if(S.vice)for(const k of (same?['j']:keys())){const n=streak(k);let c=0;for(const m of [1,2,3,7,14,21,30,60,90,180,365])if(m>n&&c<2){c++;add(at(addD(today,m-n),11),Z?m+' jour'+(m>1?'s':''):m+' jour'+(m>1?'s':'')+' '+(same?'sans':KN[k]),'Nouveau palier. Chaque jour compte.','smoke')}}}catch(e){}
@@ -1041,7 +1041,7 @@ function tasks(){const T=[],h=new Date().getHours(),yd=addD(today,-1);if(!S.name
     if(!S.log[yd]&&st<=yd)T.push({i:'smoke',t:'Ta conso d’hier',s:'Pas encore notée',go:()=>flowConso(yd)});
     }
   for(const x of rinDue())T.unshift({i:'in',t:x.n+' est arrivé ?',s:eur(x.v)+' prévu le '+pd(x.dt).getDate(),go:()=>flowRinQ(x)});
-  if(h>=Math.min(17,(S.eh||21)-1)&&!eveDone())T.push({i:'moon',t:'Ton point du soir',s:'10 secondes pour boucler ta journée',go:flowEve});
+  if(h>=(S.eh||21)&&!eveDone())T.push({i:'moon',t:'C’est l’heure de ton point',s:'Tes dépenses du jour en 30 secondes',go:flowEve});
   for(const w of wishDue())T.unshift({i:'bag',t:'Toujours envie de '+w.n+' ?',s:'Ça fait 24 h. Décide en une touche',go:()=>flowWishQ(w)});
   if(bilanReady())T.unshift({i:'spark',t:'Ton bilan de '+MNL[+bilanPrev().slice(5,7)-1]+' est prêt',s:'Ton mois en 30 secondes',go:()=>bilanScr(bilanPrev())});
   if(S.bal){const age=Math.round((pd(today)-pd(S.bal.d))/864e5),passed=fxThisMonth().some(x=>x.dt>S.bal.d&&x.dt<=today);
@@ -1503,7 +1503,7 @@ function momentCard(){const m=MO=moment();if(!m)return '';if(!m.go&&!m.task){try
 
 /* ---------- Le point du soir ---------- */
 const eveDone=()=>!!(S.eve||{})[today]||((S.e.some(x=>x.d===today)||!!(S.nos||{})[today])&&(!S.vice||!!S.log[today]));
-function eveEnd(msg){S.eve=S.eve||{};S.eve={[today]:1};msg=vgEve(msg);if(S.vice&&!S.log[today]){save();return flowConso(today)}done(msg)}
+function eveEnd(msg){S.eve=S.eve||{};S.eve={[today]:1};{const n=new Date(),mm=n.getHours()*60+n.getMinutes()-(S.eh||21)*60;if(mm>=0&&mm<30&&Array.isArray(msg)){S.ot=(S.ot||0)+1;msg=[msg[0],(msg[1]?msg[1]+' · ':'')+'Fait à l’heure'+(S.ot>1?' ('+S.ot+' fois)':'')]}}msg=vgEve(msg);if(S.vice&&!S.log[today]){save();return flowConso(today)}done(msg)}
 function flowEve(){const P=S.name?S.name.split(' ')[0]:'',L=S.e.filter(x=>x.d===today&&x.c!=='dette'),t=L.reduce((a,x)=>a+x.v,0);
   const saveE=v=>{if(v.ok)return;v.ok=1;const e={id:uid(),d:today,v:v.v,c:v.c};if(v.s)e.s=v.s;if(nbFor(today,v.sb))e.nb=1;addE(e,v.pa)};
   const sumT=()=>S.e.filter(x=>x.d===today&&x.c!=='dette').reduce((a,x)=>a+x.v,0);
@@ -1616,7 +1616,7 @@ function dataScr(){const B=badges(),m={};let t=0;for(const x of S.e.filter(x=>x.
 function payScr(){scr('À payer',`<div style="display:grid;gap:14px">${payCard()||'<p class="emp2">Rien à payer ce mois-ci.</p>'}</div>`)}
 
 /* ---------- Moi = ma progression ---------- */
-function vicStats(){let z=0,d=S.start||today;for(let k=0;k<500&&d<=today;k++){if(dayOk(d)&&!S.e.some(x=>x.d===d&&x.c!=='dette'))z++;d=addD(d,1)}
+function vicStats(){let z=0,d=S.start||today;for(let k=0;k<500&&d<=today;k++){if((S.nos||{})[d]&&!S.e.some(x=>x.d===d&&x.c!=='dette'))z++;d=addD(d,1)}
   const kept=(S.wish||[]).filter(w=>w.st==='skip').reduce((a,w)=>a+w.v,0),rb=S.e.filter(x=>x.c==='dette').reduce((a,x)=>a+x.v,0),fs=S.vice&&keys().length?Math.max(...keys().map(streak)):null,agd=S.ag.filter(a=>a.done).length;
   return{z,kept,rb,fs,agd,cof:cofV(),best:okBest()}}
 function badgeList(){const V=vicStats(),g=S.cof&&S.cof.g,cv=cofV(),b=Math.max(V.best,okStreak(),S.rec||0);
@@ -1683,7 +1683,7 @@ function payTip(){scr('Après chaque paiement',`<div class="tipb"><p class="tl">
 
 /* Binôme : quelqu'un que tu choisis, qui ne voit jamais tes montants */
 function binText(){const st=okStreak(),m=mon(today);let ok=0,n=0;for(let d=addD(m,-7);d<m;d=addD(d,1)){n++;if(dayOk(d))ok++}
-  const z=[...Array(7)].map((_,i)=>addD(m,-7+i)).filter(d=>dayOk(d)&&!S.e.some(x=>x.d===d&&x.c!=='dette')).length;
+  const z=[...Array(7)].map((_,i)=>addD(m,-7+i)).filter(d=>(S.nos||{})[d]&&!S.e.some(x=>x.d===d&&x.c!=='dette')).length;
   return `Mon point Base de la semaine 🔥\n· Série : ${st} jour${st>1?'s':''}\n· Jours tenus : ${ok} sur ${n}\n· Journées à 0 € : ${z}\n(Aucun montant partagé, juste mes efforts 🙏)`}
 async function binSend(){const t=binText();S.binS=today;save();try{if(navigator.share){await navigator.share({text:t});done(['Envoyé',S.bin?'À '+S.bin:''])
       ;return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t);done(['Copié','Colle-le dans ta conversation avec '+(S.bin||'ton binôme')])}catch(e){location.href='sms:&body='+encodeURIComponent(t)}}
@@ -1771,7 +1771,7 @@ function sgRules(){const H=heroNums(),R=[],yd=addD(today,-1),pm=addM(YM,-1),day=
     if(up&&CN[up[0]]){const g=Math.max(1,Math.round(up[1]/day*.5*H.left/H.left));R.push({id:8,t:`${CN[up[0]][2]} monte un peu ce mois-ci. En lever un peu le pied jusqu’au ${H.ld} : environ +${eur0(g)} par jour.`,b:'Voir le détail',go:histScr})}}
   if(S.vice){const c=S.e.filter(x=>x.c==='conso'&&x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);if(c>0)R.push({id:9,t:`Ta conso, c’est environ ${eur0(c/day)} par jour ce mois-ci. Chaque jour sans, ils restent à toi.`,b:'Mes raisons',go:fumeScr})}
   if(H.base<10&&S.cof&&S.cof.w>0&&S.cof.sk!==wkMon())R.push({id:10,t:`Mois serré : tu peux sauter ton coffre cette semaine. Ça te laisse ${eur0(S.cof.w)} de plus.`,b:'Sauter cette semaine',go:()=>{S.cof.sk=wkMon();done(['C’est noté','La semaine prochaine, on reprend'])}});
-  const m=mon(today),z=[...Array(7)].map((_,i)=>addD(m,i)).filter(d=>d<=today&&dayOk(d)&&!S.e.some(x=>x.d===d&&x.c!=='dette')).length;if(z>=2)R.push({id:11,t:`${z} journées à 0 € cette semaine : c’est exactement ce qui fait monter ton chiffre.`,c:1});
+  const m=mon(today),z=[...Array(7)].map((_,i)=>addD(m,i)).filter(d=>d<=today&&(S.nos||{})[d]&&!S.e.some(x=>x.d===d&&x.c!=='dette')).length;if(z>=2)R.push({id:11,t:`${z} journées à 0 € cette semaine : c’est exactement ce qui fait monter ton chiffre.`,c:1});
   if(W7.ok>=5)R.push({id:12,t:`${W7.ok} jours sur 7 : ton chiffre est fiable parce que tu le tiens.`,c:1});
   return R}
 function sgPick(){const R=sgRules(),G=S.sg=S.sg||{m:{},n:{},l:{},o:0},now=Date.now(),yd=addD(today,-1);
@@ -1810,7 +1810,7 @@ function rcItems(){const now=new Date(),nm=now.getHours()*60+now.getMinutes(),L=
   for(const a of S.ag.filter(a=>!a.done&&a.d===today).sort((x,y)=>(x.h||'99').localeCompare(y.h||'99'))){const m=a.h?(+a.h.slice(0,2))*60+(+a.h.slice(3)):null,soon=m!=null&&m-nm<=120&&m-nm>=-30;
     L.push({id:'ag'+a.id,t:a.t,s:a.h?hl(a.h):'',c:'ag',late:m!=null&&m<nm-30,z:soon||(m!=null&&m<nm)?96:80,o:soon?0:2,go:()=>agItem(a.id)})}
   const MAP={moon:['ev','Faire le point'],bank:['mo',null],in:['mo',null],users:['dt',null],safe:['wi','Mon coffre'],bag:['wi','Toujours envie ?'],spark:['bi','Mon bilan est prêt'],folder:['gr','Sauver mes données'],bell:['gr','Activer les rappels'],smoke:['ev','Noter ma conso'],out:['ev','Faire le point']};
-  if(!eveDone()&&!stepT().some(t=>t.i==='moon'))L.push({id:'eve',t:now.getHours()<17?'Noter ma journée':'Faire le point',s:'',c:'ev',z:84,o:5,go:flowEve});
+  {const EH=S.eh||21,mm=nm-EH*60;if(mm>=0&&!eveDone()&&!stepT().some(t=>t.i==='moon'))L.push({id:'eve',t:'C’est l’heure de ton point',s:mm<30?'encore '+(30-mm)+' min':'',c:'ev',z:96,o:0,go:flowEve})}
   for(const t of stepT()){if(t.i==='cal')continue;const m=MAP[t.i]||['gr',null];let lab=m[1]||t.t;
     if(t.i==='bank')lab=S.bal?'Vérifier mon solde':'Ajouter mon solde';if(t.i==='users')lab=t.t.replace(/\s*[\d\s.,]+ ?€.*$/,'').replace(/ t’a rendu.*$/,' t’a rendu ?');if(t.i==='in')lab=t.t;
     L.push({id:'t'+t.i+lab,t:lab,s:'',c:m[0],z:['gr'].includes(m[0])?74:84,o:{mo:3,dt:4,ev:5,wi:6,bi:7,gr:9}[m[0]]||8,go:t.go})}
@@ -1955,7 +1955,7 @@ function vgPop(t,s,big){if($('.strk'))return;const o=document.createElement('div
 
 /* ===== Le jeu : quêtes de la semaine + chantier dans Moi ===== */
 function qPool(){const m=mon(today),ds=[];for(let d=m;d<=today;d=addD(d,1))ds.push(d);const V=vgState(),red=V&&V.def>0;
-  const zero=ds.filter(d=>dayOk(d)&&!S.e.some(x=>x.d===d&&x.c!=='dette')).length,eves=ds.filter(d=>(S.eve||{})[d]||dayOk(d)).length;
+  const zero=ds.filter(d=>(S.nos||{})[d]&&!S.e.some(x=>x.d===d&&x.c!=='dette')).length,eves=ds.filter(d=>(S.eve||{})[d]||dayOk(d)).length;
   const mis=Object.entries(S.vgM||{}).filter(([d,v])=>d>=m&&v===1).length,cof=S.cof?(S.cof.h||[]).filter(x=>x.d>=m&&x.v>0).reduce((a,x)=>a+x.v,0):0;
   const vu=(S.vu&&S.vu.it||[]).filter(x=>x.d>=m),fr=vu.filter(x=>x.p===0&&['sortie','act','resto'].includes(x.t)).length,agd=S.ag.filter(a=>a.done&&a.d>=m&&a.d<=today).length;
   const evn=ds.filter(d=>(S.eve||{})[d]).length,g=S.cof&&S.cof.g,gw=g?Math.max(10,Math.round((S.cof.m>0?S.cof.m/4:20)/5)*5):20;
@@ -2600,7 +2600,7 @@ function setSheet(){const H=t=>({hd:t}),G=(i,l,s,f)=>({i,l,s,one:1,go:()=>{close
   {i:'user',l:'Mon prénom',s:S.name||'',one:1,go:()=>flow([{k:'n',q:'Ton prénom ?',type:'text',ph:'Prénom'}],v=>{S.name=v.n;return['Enregistré',v.n]})},
   H('Rappels'),
   {i:'bell',l:'Notifications',s:pushOn()?'Activées':'Désactivées',one:1,go:()=>pushOn()?pushOff():pushEnable()},
-  {i:'moon',l:'Heure du point du soir',s:(S.eh||21)+' h chaque soir',one:1,go:()=>flow([{k:'eh',q:'Ton point du soir, à quelle heure ?',type:'tiles',opts:[19,20,21,22,23].map(h=>({v:h,i:'moon',l:h+' h'}))}],v=>{S.eh=v.eh;pushSoon(300);return['C’est noté','Chaque soir à '+v.eh+' h']})},
+  {i:'moon',l:'Heure de ton point',s:'Chaque soir à '+(S.eh||21)+' h',one:1,go:()=>flow([{k:'eh',q:'Ton rendez-vous du soir, à quelle heure ?',type:'tiles',opts:[19,20,21,22,23].map(h=>({v:h,i:'moon',l:h+' h'}))}],v=>{S.eh=v.eh;pushSoon(300);return['C’est noté','Chaque soir à '+v.eh+' h']})},
   {i:'moon',l:'Mode calme',s:S.calm?'Activé : juste ton point du soir et tes rappels':'2 notifications par jour maximum',one:1,go:()=>{S.calm=S.calm?0:1;pushSoon(300);done([S.calm?'Mode calme activé':'Mode calme coupé',S.calm?'Juste ton point du soir et tes rappels':'2 notifications par jour maximum'])}},
   {i:'bell',l:'Notifications discrètes',s:S.disc!==0?'Oui : rien de perso sur l’écran verrouillé':'Non : montants et noms affichés',one:1,go:()=>{S.disc=S.disc!==0?0:1;pushSoon(300);done([S.disc?'Notifications discrètes':'Notifications détaillées',S.disc?'Rien de perso ne sort de ton téléphone':'Montants et noms visibles sur l’écran verrouillé'])}},
   {i:'card',l:'Rappel après chaque paiement',s:'Avec Apple Pay et Raccourcis',one:1,go:()=>{closeFl();payTip()}},
