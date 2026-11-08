@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794148036" data-theme="light">
+<html lang="fr" data-build="1794148223" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -678,13 +678,19 @@ body{background:#000}
 @keyframes gnx{50%{transform:scale(1.35)}}
 .gnd.pop{animation:gpop .7s cubic-bezier(.3,1.6,.5,1)}@keyframes gpop{0%{transform:scale(.4)}60%{transform:scale(1.9)}100%{transform:scale(1)}}
 .gle{position:relative;height:16px;margin-top:8px;font-size:12.5px}
+.geta{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:4px 8px;font-size:14px;color:var(--muted);padding:10px 14px;border-radius:14px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);margin-top:-4px}
+.geta b{color:var(--ink);font-weight:650}.geta em{font-style:normal;font-size:12.5px;font-weight:600;padding:3px 8px;border-radius:999px}.geta em.ok{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}.geta em.lt{color:#C2410C;background:color-mix(in srgb,#F97316 12%,transparent)}
+.geta.none{color:var(--ink);font-weight:600}
 .gpl{font-size:13.5px;color:var(--muted);margin-top:-6px}.gpl b{color:var(--ink);font-weight:650}
 .gle .g0{position:absolute;left:50%;transform:translateX(-50%);color:var(--good);font-weight:600}
 .rv{display:grid;justify-items:center;text-align:center;gap:4px;padding:18px 4px 6px}.rv small{font-size:13px;font-weight:600;color:var(--muted)}
 .rv strong{font-size:56px;font-weight:750;letter-spacing:-.045em;line-height:1.05;font-variant-numeric:tabular-nums}.rv>span{font-size:14px;color:var(--muted)}
 .rvb{width:100%;height:6px;border-radius:3px;background:var(--card2);margin-top:18px;overflow:hidden}.rvb i{display:block;height:100%;border-radius:3px;background:var(--ink)}
 .rvl{width:100%;display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}.rvl span:last-child{color:var(--good);font-weight:600}
-.rvm{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline;margin-top:20px;padding:14px 16px;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
+.vgpb{position:relative;width:180px;height:12px;border-radius:6px;background:rgba(255,255,255,.18);margin:6px auto 18px;overflow:hidden}.vgpb i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:#fff;animation:vgpi 1.2s cubic-bezier(.32,.72,0,1) both}@keyframes vgpi{from{width:0}}.vgpb span{position:absolute;left:50%;top:0;bottom:0;width:2px;background:#4ADE80}
+.rvo{width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;margin-top:20px;padding:14px 16px;border:0;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);font:inherit;color:var(--ink);text-align:left}
+.rvo em{font-style:normal;font-size:13.5px;font-weight:600;color:var(--ink);padding:7px 12px;border-radius:999px;background:var(--card2)}
+.rvm{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline;margin-top:10px;padding:14px 16px;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
 .rvm small{font-size:13px;color:var(--muted)}.rvm b{font-size:15px;font-weight:650;text-align:right}.rvm span{grid-column:1/-1;font-size:12.5px;color:var(--muted)}
 .rvi{display:grid;border-radius:20px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
 .rvx{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:15px 16px;border:0;background:none;font:inherit;color:var(--ink);text-align:left;transition:background .2s}
@@ -1831,6 +1837,22 @@ function rcBack(){if(!RC)return;RC=0;setTimeout(()=>{if(!FL&&!$('.scr')&&!$('.ok
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')hidT=Date.now();else if(hidT&&Date.now()-hidT>45e3&&!$('.lock'))rcMaybe()});
 
 
+/* ===== Objectif « retour au vert » : une date, un rythme, et où il en est ===== */
+const dIn=d=>Math.max(0,Math.round((pd(d)-pd(today))/864e5));
+function vgPace(){const inc=(S.rin||[]).reduce((a,x)=>a+(+x.v||0),0),fx=S.fixe||fxDated().reduce((a,x)=>a+x.v,0);return(inc-fx-avgVar())/30}
+function vgEta(def){if(!(def>0))return null;const T=S.vgT;
+  if(T&&T.d){const tot=Math.max(1,(pd(T.d)-pd(T.s))/864e5),el=Math.max(0,(pd(today)-pd(T.s))/864e5),exp=Math.max(0,T.f*(1-Math.min(1,el/tot))),diff=Math.round(def-exp),left=dIn(T.d);
+    return{d:T.d,n:left,obj:1,wk:Math.ceil(def/Math.max(1,left/7)),late:diff>5?diff:0,ahead:diff<-5?-diff:0}}
+  const p=vgPace();if(p>.2){const n=Math.ceil(def/p);if(n<=730)return{d:addD(today,n),n,wk:Math.round(p*7)}}return null}
+function vgDate(d){const x=pd(d);return x.getDate()+' '+MN[x.getMonth()]}
+function vgGoal(){const V=vgState();if(!V||V.def<=0){done(['Tu es dans le vert','Pas besoin d’objectif']);return}const def=V.def,p=vgPace(),eom=iso(new Date(new Date().getFullYear(),new Date().getMonth()+1,0));
+  const opt=(d,l)=>{const n=Math.max(1,dIn(d));return{v:d,i:'cal',l,s:vgDate(d)+' · ≈ '+eur0(Math.ceil(def/Math.max(1,n/7)))+' à remonter par semaine'}};
+  const O=[];if(p>.2){const n=Math.ceil(def/p);if(n<=365)O.push({v:addD(today,n),i:'zap',l:'À mon rythme actuel',s:vgDate(addD(today,n))+' · sans rien changer'})}
+  if(dIn(eom)>=7)O.push(opt(eom,'D’ici la fin du mois'));O.push(opt(addD(today,30),'Dans 1 mois'),opt(addD(today,61),'Dans 2 mois'),opt(addD(today,91),'Dans 3 mois'));
+  O.push({i:'calp',l:'Choisir la date',one:1,go:v=>{v.cd=1;nextStep()}});if(S.vgT)O.push({v:'x',i:'x',l:'Retirer mon objectif'});
+  flow([{k:'d',q:'Tu veux revenir au vert quand ?',sub:'Il te manque '+eur0(def)+'. Je calcule le rythme et je te dis si tu es dans les temps.',type:'tiles',opts:O},{k:'d',q:'Quel jour ?',type:'date',skip:v=>!v.cd}],
+   r=>{if(r.d==='x'){delete S.vgT;return['Objectif retiré','Je garde l’estimation à ton rythme']}if(!r.d||r.d<=today)return['Pas enregistré','Choisis une date à venir'];
+     S.vgT={d:r.d,s:today,f:def};const n=Math.max(1,dIn(r.d));return['Objectif fixé','Vert le '+vgDate(r.d)+' · ≈ '+eur0(Math.ceil(def/Math.max(1,n/7)))+' par semaine']})}
 /* ===== Jauge à paliers : du rouge jusqu'au bénéfice, puis l'objectif ===== */
 const niceStep=x=>[25,50,100,150,200,250,300,500,750,1000,1500,2000,2500,5000].find(n=>n>=x)||Math.ceil(x/1000)*1000;
 function gaugeData(D){const W=Math.max(S.vgW||0,D,1),step=niceStep(W/3),P=[];
@@ -1853,10 +1875,12 @@ function gaugeCard(D,tdS,nr,rj){const G=gaugeData(D),nx=G.next,gap=Math.round(nx
   const ticks=G.P.map(x=>{const on=x.v<=G.pos;return `<i class="gnd${on?' on':''}${x===nx?' nx':''} k-${x.k}" style="left:${G.pct(x.v)}%"></i>`}).join('');
   setTimeout(()=>gaugeAnim(cur,G),60);
   return `<button class="gauge" data-a="vg" id="gge" aria-label="Ta progression">
-   <div class="gc"><small>Il te manque</small><strong>${eur0(tg)}</strong><span>pour revenir au vert${d!=null&&nx.k==='g'?' · '+(d<=1?'demain':'≈ '+d+' j'):''}</span></div>
+   <div class="gc"><small>Il te manque</small><strong>${eur0(tg)}</strong><span>pour revenir au vert</span></div>
    <div class="gbar"><div class="gtr"><i class="gfl" style="width:${from}%"><i class="gsh"></i></i>${ticks}</div>
     <div class="gle"><span class="g0">0 €</span></div></div>
    <div class="gpl">Niveau ${G.done} · ${nx.k!=='g'?`« ${esc(nl)} » dans <b>${eur0(gap)}</b>`:'<b>dernière ligne droite</b>'}</div>
+   ${(()=>{const E=vgEta(tg);if(!E)return `<div class="geta none" data-vgg><span>Fixe-toi une date pour revenir au vert</span></div>`;
+     return `<div class="geta"><span class="gd1">${E.obj?'Objectif':'À ce rythme'}</span><b>vert le ${vgDate(E.d)}</b><span class="gd2">dans ${E.n} j</span>${E.obj?`<em class="${E.late?'lt':'ok'}">${E.late?'En retard de '+eur0(E.late):E.ahead?'En avance de '+eur0(E.ahead):'Dans les temps'}</em>`:''}</div>`})()}
    <span class="gcta">Comment remonter ${ic('next')}</span></button>`}
 function gaugeAnim(cur,G){const f=document.querySelector('#gge .gfl');if(!f)return;requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.width=Math.max(cur,1.5)+'%'}));
   const prev=S.gDone;S.gLast=cur;S.gDone=G.done;try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
@@ -1909,22 +1933,24 @@ function vgScr(){const V=vgState();if(!V)return;if(V.def<=0){done(['Tu es dans l
   const L=vgIdeas(V),pc=Math.round(V.p*100);
   const x=scr('Comment remonter',`<div class="rv"><small>Il te manque</small><strong>${eur0(V.def)}</strong><span>pour revenir au vert${V.when?' · à ce rythme, en '+V.when:''}</span>
     <div class="rvb"><i style="width:${Math.max(3,pc)}%"></i></div><div class="rvl"><span>${pc} % déjà remonté</span><span>0 €</span></div></div>
+   ${(()=>{const E=vgEta(V.def);return `<button class="rvo" data-rvo><span class="rvc">${ic('cal')}</span><span class="rvt"><b>${E?(E.obj?'Objectif : vert le ':'À ton rythme : vert le ')+vgDate(E.d):'Fixe-toi une date'}</b><small>${E?(E.obj?'≈ '+eur0(E.wk)+' à remonter par semaine · '+(E.late?'en retard de '+eur0(E.late):E.ahead?'en avance de '+eur0(E.ahead):'dans les temps'):'Dans '+E.n+' jours, en gardant ton rythme. Tu veux viser plus tôt ?'):'Je calcule le rythme et je te dis si tu es dans les temps.'}</small></span><em>${E&&E.obj?'Changer':'Choisir'}</em></button>`})()}
    <div class="rvm"><small>Aujourd’hui</small><b>${V.zero?'Journée à 0 €':'Maximum '+eur0(V.tg)}</b><span>${V.H.tdS?eur0(V.H.tdS)+' dépensés':'Rien dépensé pour l’instant'}</span></div>
    <div class="vh" style="margin-top:22px"><b>Tes pistes</b><small>Touche pour agir</small></div>
    <div class="rvi">${L.map((o,n)=>`<button class="rvx${o.win?' win':''}" data-ri="${n}" ${o.go||o.href?'':'data-off="1"'}><span class="rvc">${ic(o.i)}</span><span class="rvt"><b>${o.t}</b><small>${o.s}</small></span>${o.a?`<em>${o.a}</em>`:''}</button>`).join('')}</div>`);
+  {const ob=x.querySelector('[data-rvo]');if(ob)ob.onclick=()=>{buzz();closeScr();vgGoal()}}
   x.querySelectorAll('[data-ri]').forEach(b=>b.onclick=()=>{const o=L[+b.dataset.ri];if(o.href){buzz();window.open(o.href,'_blank');return}if(!o.go){buzz(4);b.classList.add('rvp');setTimeout(()=>b.classList.remove('rvp'),400);return}buzz();closeScr();o.go()})}
 function vgEve(msg){try{const V=vgState();if(!V||V.def<=0&&!(V.H.free+V.H.tdS<0))return msg;const sp=V.H.tdS,ok=sp<=V.tg+.5;S.vgM=S.vgM||{};if(S.vgM[today])return msg;S.vgM[today]=ok?1:-1;
   const nl=Math.max(1,V.H.left-1),tm=V.nr?Math.max(0,(V.H.free+V.nr.v)/nl):0;
   if(ok){const n=sp<.5?2:1;S.vgG=(S.vgG||0)+n;return[n>1?'Deux briques dorées':'Brique dorée','+'+(n*3)+' points · '+(V.nr?'demain, ton budget monte à '+eur0(tm)+'.':'le trou ne grandit pas.')]}
   return['C’est noté',`Aujourd’hui c’était ${eur0(sp)}. C’est déjà ça. Demain : ${eur0(tm)} maximum, et on continue.`]}catch(e){return msg}}
 function vgCheck(){try{const V=vgState();if(!V)return;
-  if(S.vgWin){delete S.vgWin;S.vgPts=(S.vgPts||0)+50;S.vgW=0;S.vgBr=0;S.vgP=[];S.vgSt=today;save();return vgPop('Tu es au niveau du sol','Le trou est rempli. Maintenant, on construit. Étape 1 : Terrain.',1)}
+  if(S.vgWin){delete S.vgWin;if(S.vgT){S.ms=S.ms||[];S.ms.push({id:'m'+Date.now(),t:'Retour au vert'+(today<=S.vgT.d?' · objectif tenu':''),d:today});delete S.vgT}S.vgPts=(S.vgPts||0)+50;S.vgW=0;S.vgBr=0;S.vgP=[];S.vgSt=today;save();return vgPop('Tu es au niveau du sol','Le trou est rempli. Maintenant, on construit. Étape 1 : Terrain.',1)}
   if(V.def>0){S.vgLastDef=V.def;if(V.br>(S.vgBr||0)){S.vgBr=V.br}const fresh=S.bal&&S.bal.d>=addD(today,-3);S.vgP=S.vgP||[];
-    const hit=[25,50,75,90].filter(x=>V.p*100>=x&&!S.vgP.includes(x));if(hit.length&&fresh){const x=hit.at(-1);S.vgP.push(...hit);S.vgPts=(S.vgPts||0)+20*hit.length;save();const t={25:'Un quart du trou est rempli',50:'La moitié du trou est remplie',75:'Les trois quarts sont remplis',90:'La dernière ligne droite'}[x];
+    const hit=[25,50,75,90].filter(x=>V.p*100>=x&&!S.vgP.includes(x));if(hit.length&&fresh){const x=hit.at(-1);S.vgP.push(...hit);S.vgPts=(S.vgPts||0)+20*hit.length;save();const t={25:'Un quart du chemin vers le vert',50:'La moitié du chemin vers le vert',75:'Les trois quarts du chemin',90:'La dernière ligne droite'}[x];
       return vgPop(t,x===90?'Plus que '+eur0(V.def)+'. Tu y es presque.':'Les '+eur0(V.W-V.def)+' qui manquaient en moins, c’est toi qui les as remontés.')}
     save()}
   else if(S.vgSt){const n=Math.round((pd(today)-pd(S.vgSt))/864e5);if(n>=7&&!S.vgSd){S.vgSd=1;save();vgPop('Terrain stable','7 jours au-dessus de 0. Ta maison a un vrai sol maintenant.',1)}}}catch(e){}}
-function vgPop(t,s,big){if($('.strk'))return;const o=document.createElement('div');o.className='strk vgw'+(big?' big':'');o.innerHTML=`<div class="fdn sm"><div class="grass${big?' up':''}"></div><div class="hole">${[...Array(10)].map((_,i)=>`<i class="on"></i>`).join('')}</div></div><b>${esc(t)}</b><small>${esc(s)}</small><button>Continuer</button>`;
+function vgPop(t,s,big){if($('.strk'))return;const o=document.createElement('div');o.className='strk vgw'+(big?' big':'');const pp=(()=>{try{const V=vgState();return V&&V.def>0?Math.round(V.p*100):100}catch(e){return 100}})();o.innerHTML=`<div class="vgpb"><i style="width:${pp}%"></i><span></span></div><b>${esc(t)}</b><small>${esc(s)}</small><button>Continuer</button>`;
   document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
 
 /* ===== Le jeu : quêtes de la semaine + chantier dans Moi ===== */
@@ -2045,7 +2071,7 @@ function agMarq(a){if(!a||!a.d||a.tw===-1)return null;if(a.tw===1)return{i:'flam
 function lifeCaps(){const L=[],st=mon(S.start||today),end=addD(today,7*60),add=(d,t,i,id)=>{if(d&&d>=st&&d<=end)L.push({d,t,i,id})};
   const y=+today.slice(0,4);for(const yy of [y,y+1]){add(yy+'-01-01','Nouvel an','spark');add(yy+'-07-01','L’été','sun');add(yy+'-09-01','La rentrée','brief')}
   const ym=today.slice(0,7);let k=0;for(const x of S.rin||[])if(x.d)for(let m=0;m<3;m++){const Y=new Date(+ym.slice(0,4),+ym.slice(5,7)-1+m,1),YM2=Y.getFullYear()+'-'+String(Y.getMonth()+1).padStart(2,'0'),d=fxDate(x,YM2);if(d>today&&k<4){add(d,x.n||'Revenu','in');k++}}
-  const V=vgState();if(V&&V.def>0){const r=nextRin();if(r&&r.dt)add(r.dt,'Retour au vert','check')}
+  const V=vgState();if(V&&V.def>0){const E=vgEta(V.def);if(E)add(E.d,E.obj?'Objectif : retour au vert':'Retour au vert prévu','check');else{const r=nextRin();if(r&&r.dt)add(r.dt,'Retour au vert','check')}}
   const g=S.cof&&S.cof.g;if(g){const cv=cofV(),pm=cofPlan(),t=esc(g.n)+(cv>=g.v?' · atteint':' · '+Math.round(cv/g.v*100)+' %');let d=g.d||'';if(!d&&cv<g.v){if(pm>0){const x=pd(today);x.setMonth(x.getMonth()+Math.ceil((g.v-cv)/pm));d=iso(x)}else if(S.cof.w>0)d=addD(today,Math.ceil((g.v-cv)/S.cof.w)*7)}if(cv>=g.v){let acc=cv;d=today;for(const e of (S.cof.h||[]).slice().reverse()){if(acc-e.v<g.v){d=e.d;break}acc-=e.v}}if(d)add(d<st?today:d,t,'gift','goal')}
   for(const m of S.ms||[])add(m.d,esc(m.t),'flame',m.id);
   for(const a of S.ag){const M=agMarq(a);if(M)add(a.d,esc(a.t),M.i,'ag:'+a.id)}
@@ -2251,7 +2277,7 @@ function vuBind(){const V=vuS();
 
 /* Quand un rappel lié est coché (n'importe où), on enchaîne */
 let AGH=0;
-document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-qch]');if(b){e.stopPropagation();buzz();qChoose()}},true);
+document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('[data-vgg]');if(g){e.stopPropagation();e.preventDefault();buzz();vgGoal();return}const b=e.target.closest&&e.target.closest('[data-qch]');if(b){e.stopPropagation();buzz();qChoose()}},true);
 function agHook(){if(FL||$('.scr')||$('.ok')||$('.strk')||$('#rcp'))return;
   const a=S.ag.find(a=>a.done&&!a.hk&&(a.gc||a.vu));if(!a)return;a.hk=1;save();
   if(a.gc){const g=S.cof&&S.cof.g;flow([{k:'x',q:'Tu as mis '+eur0(a.gc)+' de côté ?',sub:g?'Pour '+esc(g.n)+'. Je l’ajoute à ton coffre.':'',type:'tiles',opts:[
