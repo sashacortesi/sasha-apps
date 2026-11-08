@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794152533" data-theme="light">
+<html lang="fr" data-build="1794152998" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -716,6 +716,10 @@ body.rcon .strk,body.rcon .toast{visibility:hidden!important}
 .hzn{display:grid;border-radius:20px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
 .hzr{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:14px 16px}.hzr+.hzr{box-shadow:inset 0 1px 0 var(--line)}
 .hzr b{display:block;font-size:17px;font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums}.hzr small{display:block;font-size:13px;color:var(--muted);line-height:1.35;margin-top:2px}
+#unb{position:fixed;left:16px;right:16px;bottom:calc(58px + env(safe-area-inset-bottom,0px));z-index:65;max-width:488px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:8px 8px 8px 16px;border-radius:16px;background:#1C1C1E;color:#fff;font-size:14.5px;font-weight:500;box-shadow:0 10px 30px -10px rgba(0,0,0,.45);animation:su .3s cubic-bezier(.2,.8,.2,1);transition:opacity .3s,transform .3s}
+#unb.out{opacity:0;transform:translateY(12px)}#unb>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:8px}#unb>span svg{width:16px;height:16px;color:#4ADE80;flex:none}
+#unb button{display:flex;align-items:center;gap:6px;border:0;border-radius:11px;background:#fff;color:#000;font:inherit;font-size:14px;font-weight:700;padding:9px 13px}#unb button svg{width:15px;height:15px}
+#unb.okd{padding:14px 16px}
 .rvo{width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;margin-top:20px;padding:14px 16px;border:0;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);font:inherit;color:var(--ink);text-align:left}
 .rvo em{font-style:normal;font-size:13.5px;font-weight:600;color:var(--ink);padding:7px 12px;border-radius:999px;background:var(--card2)}
 .rvm{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline;margin-top:10px;padding:14px 16px;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
@@ -1256,14 +1260,28 @@ function progScr(){const st=okStreak(),best=okBest(),tr=balTrend(60),sv=S.vice?s
 
 /* ---------- Moteur : un écran = une action ---------- */
 let FL=null;
-function flow(steps,onDone,init){FL={steps,i:0,v:init?{...init}:{},onDone};while(FL.steps[FL.i]&&FL.steps[FL.i].skip&&FL.steps[FL.i].skip(FL.v))FL.i++;draw()}
-function closeFl(){const f=$('.fl');if(f)f.remove();FL=null;document.body.style.overflow='';home();rcBack()}
+function flow(steps,onDone,init){if(FLB==null)FLB=JSON.stringify(S);FL={steps,i:0,v:init?{...init}:{},onDone};while(FL.steps[FL.i]&&FL.steps[FL.i].skip&&FL.steps[FL.i].skip(FL.v))FL.i++;draw()}
+function closeFl(){const f=$('.fl');if(f)f.remove();FL=null;document.body.style.overflow='';try{save()}catch(e){}unPush('');home();rcBack()}
 function nextStep(){FL.dir=1;FL.i++;let st;while((st=FL.steps[FL.i])&&st.skip&&st.skip(FL.v))FL.i++;if(FL.i>=FL.steps.length){const r=FL.onDone(FL.v);done(r);return}draw()}
 function prevStep(){if(FL.i===0)return closeFl();FL.dir=-1;FL.i--;let st;while(FL.i>0&&(st=FL.steps[FL.i])&&st.skip&&st.skip(FL.v))FL.i--;draw()}
 let tPrev=null;
 const OVS=['fl','scr','shb','ok'],isOv=n=>n.nodeType===1&&OVS.some(c=>n.classList.contains(c));
 new MutationObserver(rs=>{let gone=false;const add=[];rs.forEach(r=>{r.removedNodes.forEach(n=>{if(isOv(n))gone=true});r.addedNodes.forEach(n=>{if(isOv(n))add.push(n)})});if(!add.length)return;add.forEach(n=>{const other=[...document.body.children].some(x=>x!==n&&isOv(x)&&!x.classList.contains('out')&&!add.includes(x));if(gone||other)n.classList.add('keep')})}).observe(document.body,{childList:true});
-function done([t,s]){const f=$('.fl');if(f)f.remove();FL=null;save();if(COFA&&t){const c=COFA;COFA=null;document.body.style.overflow='';return cofAnim(c,t,s)}COFA=null;
+/* ===== Annuler : on garde une photo de l'app avant chaque action ===== */
+let FLB=null,UBT=null;const UK='librePote:undo';
+const unGet=()=>{try{return JSON.parse(localStorage.getItem(UK))||[]}catch(e){return[]}};
+function unPush(l){if(FLB==null)return;const now=JSON.stringify(S),b=FLB;FLB=null;if(b===now)return;const L=unGet();L.unshift({snap:b,l:String(l||'Dernière action').slice(0,60),t:Date.now()});
+  try{localStorage.setItem(UK,JSON.stringify(L.slice(0,6)))}catch(e){try{localStorage.setItem(UK,JSON.stringify(L.slice(0,2)))}catch(e2){}}unBar(l)}
+function unBar(l){clearTimeout(UBT);const old=$('#unb');if(old)old.remove();const o=document.createElement('div');o.id='unb';o.innerHTML=`<span>${esc(l||'Action enregistrée')}</span><button>${ic('undo')}Annuler</button>`;
+  setTimeout(()=>document.body.appendChild(o),l?1500:0);o.querySelector('button').onclick=e=>{e.stopPropagation();unDo(0)};UBT=setTimeout(()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)},l?9500:8000)}
+function unDo(i){const L=unGet(),x=L[i];if(!x)return;try{const back=JSON.parse(x.snap);for(const k of Object.keys(S))delete S[k];Object.assign(S,back)}catch(e){return}
+  L.splice(0,i+1);try{localStorage.setItem(UK,JSON.stringify(L))}catch(e){}const b=$('#unb');if(b)b.remove();clearTimeout(UBT);try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}buzz([8,40,8]);
+  FLB=null;const f=$('.fl');if(f)f.remove();FL=null;const sc=$('.scr');if(sc)sc.remove();document.body.style.overflow='';home();
+  const t=document.createElement('div');t.id='unb';t.className='okd';t.innerHTML=`<span>${ic('check')}Annulé · ${esc(x.l)}</span>`;document.body.appendChild(t);setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),300)},2200)}
+function unList(){const L=unGet();if(!L.length){done(['Rien à annuler','Tes dernières actions apparaîtront ici']);return}
+  const ago=t=>{const m=Math.round((Date.now()-t)/6e4);return m<1?'à l’instant':m<60?'il y a '+m+' min':m<1440?'il y a '+Math.round(m/60)+' h':'il y a '+Math.round(m/1440)+' j'};
+  flow([{k:'x',q:'Annuler une action',sub:'Tout revient comme juste avant. Si tu remontes plus loin, ce qui a suivi est annulé aussi.',type:'tiles',opts:L.map((x,i)=>({i:'undo',l:x.l,s:ago(x.t)+(i?' · et les '+i+' suivante'+(i>1?'s':''):''),one:1,go:()=>unDo(i)}))}],()=>['',''])}
+function done([t,s]){const f=$('.fl');if(f)f.remove();FL=null;save();unPush(t||'');if(COFA&&t){const c=COFA;COFA=null;document.body.style.overflow='';return cofAnim(c,t,s)}COFA=null;
   if(!t){home();rcBack();return}
   let n=0;try{n=S.name?tasks().length:0}catch(e){}const all=tPrev>0&&n===0;tPrev=n;
   const big=all||/jours? sans fumer|Bienvenue|C’est prêt|Bien reçu|Réglé|Mis de côté|Objectif atteint|C’est planifié/.test(t+' '+(s||''));
@@ -2689,6 +2707,7 @@ function setSheet(){const H=t=>({hd:t}),G=(i,l,s,f)=>({i,l,s,one:1,go:()=>{close
   {i:'sun',l:'Page du jour',s:S.rcOff?'Coupée':'À la 1re ouverture de la journée',one:1,go:()=>{S.rcOff=S.rcOff?0:1;done([S.rcOff?'Page du jour coupée':'Page du jour activée',S.rcOff?'Tu peux la revoir en touchant « Bonjour » sur l’accueil':'Elle t’accueille chaque matin'])}},
   {i:'lock',l:'Code de verrouillage',s:S.pin?'Activé':'Pour que personne d’autre ne lise tes comptes',one:1,go:()=>{if(S.pin){delete S.pin;done(['Code retiré',''])}else{closeFl();pinPad('set')}}},
   H('Mes données'),
+  {i:'undo',l:'Annuler une action',s:(()=>{const L=unGet();return L.length?'Dernière : '+L[0].l:'Rien à annuler pour l’instant'})(),one:1,go:()=>{closeFl();setTimeout(unList,50)}},
   {i:'folder',l:'Sauvegarder mes données',s:S.bk?'Dernière le '+pd(S.bk).getDate()+' '+MN[pd(S.bk).getMonth()]:'Au cas où tu changes de téléphone',one:1,go:()=>backup()},
   {i:'undo',l:'Restaurer une sauvegarde',s:'Depuis un fichier',one:1,go:()=>restore()},
   {i:'help',l:'Aide',s:'Toutes les réponses à tes questions',one:1,go:()=>{const f=$('.fl');if(f)f.remove();FL=null;helpScr()}},
