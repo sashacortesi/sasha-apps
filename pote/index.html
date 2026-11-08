@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794150941" data-theme="light">
+<html lang="fr" data-build="1794151404" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -679,7 +679,7 @@ body{background:#000}
 .gnd.pop{animation:gpop .7s cubic-bezier(.3,1.6,.5,1)}@keyframes gpop{0%{transform:scale(.4)}60%{transform:scale(1.9)}100%{transform:scale(1)}}
 .gle{position:relative;height:16px;margin-top:8px;font-size:12.5px}
 .geta{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:4px 8px;font-size:14px;color:var(--muted);padding:10px 14px;border-radius:14px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);margin-top:-4px}
-.geta b{color:var(--ink);font-weight:650}.geta em{font-style:normal;font-size:12.5px;font-weight:600;padding:3px 8px;border-radius:999px}.geta em.ok{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}.geta em.lt{color:#C2410C;background:color-mix(in srgb,#F97316 12%,transparent)}
+.geta b{color:var(--ink);font-weight:650}.geta .gst{font-style:normal;font-size:12.5px;font-weight:600;padding:3px 8px;border-radius:999px}.geta .gst.gok{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}.geta .gst.lt{color:#C2410C;background:color-mix(in srgb,#F97316 12%,transparent)}
 .geta.none{color:var(--ink);font-weight:600}
 .gpl{font-size:13.5px;color:var(--muted);margin-top:-6px}.gpl b{color:var(--ink);font-weight:650}
 .gle .g0{position:absolute;left:50%;transform:translateX(-50%);color:var(--good);font-weight:600}
@@ -1880,7 +1880,7 @@ function gaugeCard(D,tdS,nr,rj){const G=gaugeData(D),nx=G.next,gap=Math.round(nx
     <div class="gle"><span class="g0">0 €</span></div></div>
    <div class="gpl">Niveau ${G.done} · ${nx.k!=='g'?`« ${esc(nl)} » dans <b>${eur0(gap)}</b>`:'<b>dernière ligne droite</b>'}</div>
    ${(()=>{const E=vgEta(tg);if(!E)return `<div class="geta none" data-vgg><span>Fixe-toi une date pour revenir au vert</span></div>`;
-     return `<div class="geta"><span class="gd1">${E.obj?'Objectif':'À ce rythme'}</span><b>vert le ${vgDate(E.d)}</b><span class="gd2">dans ${E.n} j</span>${E.obj?`<em class="${E.late?'lt':'ok'}">${E.late?'En retard de '+eur0(E.late):E.ahead?'En avance de '+eur0(E.ahead):'Dans les temps'}</em>`:''}</div>`})()}
+     return `<div class="geta"><span class="gd1">${E.obj?'Objectif':'À ce rythme'}</span><b>vert le ${vgDate(E.d)}</b><span class="gd2">dans ${E.n} j</span>${E.obj?`<em class="${E.late?'gst lt':'gst gok'}">${E.late?'En retard de '+eur0(E.late):E.ahead?'En avance de '+eur0(E.ahead):'Dans les temps'}</em>`:''}</div>`})()}
    <span class="gcta">Comment remonter ${ic('next')}</span></button>`}
 function gaugeAnim(cur,G){const f=document.querySelector('#gge .gfl');if(!f)return;requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.width=Math.max(cur,1.5)+'%'}));
   const prev=S.gDone;S.gLast=cur;S.gDone=G.done;try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
