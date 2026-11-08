@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794152273" data-theme="light">
+<html lang="fr" data-build="1794152533" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -484,6 +484,25 @@ label.tile{position:relative;overflow:hidden}.tlink.set .tl{color:var(--ink)!imp
 .goal .gt{display:flex;justify-content:space-between;align-items:baseline}.goal .gt b{font-size:18px}.goal .gt span{font-size:14px;color:var(--muted);font-weight:600}.goal>small{font-size:13px;color:var(--muted);font-weight:500}
 .t-vu{--c:#FF375F}
 .vplus{background:var(--ink)!important;color:var(--bg)!important}
+.srl{display:grid;gap:6px;margin-top:16px}
+.sri{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding:8px;border:0;border-radius:14px;background:var(--card);font:inherit;color:var(--ink);text-align:left;animation:fu .25s ease both}
+.sri img,.srph{width:44px;height:62px;border-radius:8px;object-fit:cover;background:var(--card2)}.srph{display:grid;place-items:center;color:var(--vc,var(--muted))}.srph svg{width:18px;height:18px}
+.srfree .srph{height:44px;border-radius:50%}
+.sri b{display:block;font-size:15.5px;font-weight:650;line-height:1.25}.sri small{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.3}
+.srld{display:flex;gap:5px;justify-content:center;padding:12px}.srld i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:srb 1s ease-in-out infinite}.srld i:nth-child(2){animation-delay:.15s}.srld i:nth-child(3){animation-delay:.3s}@keyframes srb{50%{opacity:.2;transform:translateY(-3px)}}
+.vtro{display:flex;gap:10px;overflow-x:auto;margin:0 -20px;padding:2px 20px;scrollbar-width:none}.vtro::-webkit-scrollbar{display:none}
+.vtr{flex:0 0 112px;display:grid;justify-items:start;gap:3px;padding:14px;border:0;border-radius:20px;background:var(--card);font:inherit;color:var(--ink);text-align:left}
+.vtr>span{position:relative;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--card2);color:var(--muted);margin-bottom:6px}.vtr>span svg{width:19px;height:19px}
+.vtr.on>span{background:color-mix(in srgb,var(--vc) 16%,var(--card));color:var(--vc)}
+.vtr>span i{position:absolute;right:-4px;bottom:-4px;min-width:20px;height:20px;border-radius:10px;background:var(--vc);color:#fff;font-style:normal;font-size:11px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 2px var(--card)}
+.vtr b{font-size:13.5px;font-weight:700}.vtr small{font-size:11.5px;color:var(--muted)}
+.vtr em{display:block;width:100%;height:4px;border-radius:2px;background:var(--card2);margin-top:6px;overflow:hidden}.vtr em i{display:block;height:100%;background:var(--vc);border-radius:2px}
+.vcar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 8px}
+.vcd{position:relative;display:grid;gap:6px;border:0;background:none;padding:0;font:inherit;color:var(--ink);text-align:left}
+.vcd img,.vcp{width:100%;aspect-ratio:2/3;border-radius:12px;object-fit:cover;background:color-mix(in srgb,var(--vc) 14%,var(--card));box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.vcp{display:grid;align-content:center;justify-items:center;gap:8px;padding:10px;color:var(--vc);text-align:center}.vcp svg{width:24px;height:24px}.vcp b{font-size:12px;font-weight:650;color:var(--ink);line-height:1.2;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.vcd small{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vhe{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--vc);color:#fff;display:grid;place-items:center;box-shadow:0 1px 4px rgba(0,0,0,.2)}.vhe svg{width:12px;height:12px;stroke-width:3}
 .vti{background:color-mix(in srgb,var(--vc) 15%,var(--card))!important;color:var(--vc)!important;width:36px!important;height:36px!important;border-radius:50%!important}.vti svg{width:17px!important;height:17px!important}
 .vli{font:inherit;color:var(--ink);border-bottom:0!important}.vs{box-shadow:none!important}.vsug .vsb button:first-child{box-shadow:none;background:var(--card2)}.vli .r svg{color:var(--muted)}.vli .r.vfav{color:var(--ink);font-weight:600}
 .vrn{grid-template-columns:repeat(3,1fr);gap:16px 8px;margin:4px 0}
@@ -1265,6 +1284,7 @@ function draw(){const st=FL.steps[FL.i],n=FL.steps.filter(s=>!(s.skip&&s.skip(FL
   if(st.type==='amount')amountUI(st,body,btm);
   else if(st.type==='tiles')tilesUI(st,body);
   else if(st.type==='text')textUI(st,body,btm);
+  else if(st.type==='search')searchUI(st,body,btm);
   else if(st.type==='date')dateUI(st,body);
   else if(st.type==='pdate')pdateUI(st,body);
   else if(st.type==='fixes')fixesUI(st,body,btm);
@@ -2246,20 +2266,49 @@ function vuProfile(){const V=vuS(),it=V.it;if(it.length<3)return null;const {W,T
   const mood=it.filter(x=>x.r===2&&(x.t==='act'||x.t==='sortie')).flatMap(x=>[...(x.g||'')]);if(mood.length>=2){const c={};for(const g of mood)c[g]=(c[g]||0)+1;const g=Object.entries(c).sort((a,b)=>b[1]-a[1])[0][0];L.push(['sun','Ce qui te fait du bien',VG[g]])}
   return L}
 const vuNudge=()=>{const V=vuS(),from=addD(today,-3);return S.e.filter(e=>(e.c==='sorties'||e.c==='resto')&&e.d>=from&&!e.vu&&!(V.ign||[]).includes(e.id)).sort((a,b)=>b.d.localeCompare(a.d))[0]};
+/* ===== Recherche en direct : vraies bases (films : Wikipédia, séries : TVmaze, livres : Google Books) ===== */
+const VSC={};
+function vgTags(txt){const t=String(txt||'').toLowerCase(),M=[['com[ée]d|comedy','c'],['action|aventure|adventure','a'],['science-fiction|science fiction|fantas|sci-fi','s'],['thriller|policier|crime|horreur|horror|suspense|mystery','h'],['romanti|romance|amour','r'],['documentaire|documentary|essai|histoire vraie|biograph','o'],['animation|anim[ée]|anime|manga|bande dessin','i'],['musical|music','m'],['drame|drama|roman\\b','d'],['histor','t'],['d[ée]veloppement personnel|self-help|psycholog','l'],['business|[ée]conom|finance|argent','u']];
+  let g='';for(const [r,k] of M)if(new RegExp(r).test(t)&&!g.includes(k))g+=k;return g.slice(0,3)}
+const tmo=(u,ms=6000)=>{const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);return fetch(u,{signal:c.signal}).finally(()=>clearTimeout(t))};
+async function vuSearch(t,q){q=q.trim();if(q.length<2)return[];const key=t+'|'+q.toLowerCase();if(VSC[key])return VSC[key];let R=[];
+  try{if(t==='film'){const j=await (await tmo('https://fr.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrlimit=10&gsrsearch='+encodeURIComponent(q+' film')+'&prop=pageimages|description&piprop=thumbnail&pithumbsize=220')).json();
+      R=Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index).filter(x=>/film|long métrage|court métrage/i.test(x.description||'')).map(x=>({n:x.title.replace(/ \((film|film,? \d{4})\)$/,''),s:(x.description||'').replace(/^film /,'Film ').slice(0,70),img:x.thumbnail&&x.thumbnail.source,g:vgTags(x.description)}))}
+    else if(t==='serie'){const j=await (await tmo('https://api.tvmaze.com/search/shows?q='+encodeURIComponent(q))).json();
+      R=j.slice(0,10).map(({show:x})=>({n:x.name,s:'Série'+(x.premiered?' · '+x.premiered.slice(0,4):'')+(x.network&&x.network.name?' · '+x.network.name:x.webChannel&&x.webChannel.name?' · '+x.webChannel.name:''),img:x.image&&(x.image.medium||'').replace('http:','https:'),g:vgTags((x.genres||[]).join(' '))}))}
+    else if(t==='livre'){const j=await (await tmo('https://www.googleapis.com/books/v1/volumes?maxResults=10&printType=books&langRestrict=fr&q='+encodeURIComponent(q))).json();
+      R=(j.items||[]).map(({volumeInfo:x})=>({n:x.title+(x.subtitle&&x.title.length<26?' : '+x.subtitle:''),s:[(x.authors||[]).slice(0,2).join(', '),(x.publishedDate||'').slice(0,4)].filter(Boolean).join(' · '),img:x.imageLinks&&(x.imageLinks.thumbnail||x.imageLinks.smallThumbnail||'').replace('http:','https:'),g:vgTags((x.categories||[]).join(' ')+' '+(x.description||'').slice(0,300))}))}}catch(e){R=null}
+  if(R){const seen=new Set();R=R.filter(x=>{const k=vnorm(x.n);if(!x.n||seen.has(k))return false;seen.add(k);return true}).slice(0,8);VSC[key]=R}return R||[]}
+function vuLocal(t,q){const n=vnorm(q);if(n.length<2)return[];return VC.filter(c=>c[0]===t&&vnorm(c[1]).includes(n)).slice(0,4).map(c=>({n:c[1],s:VT[t][0],g:c[2]}))}
+function searchUI(st,body,btm){const t=FL.v.t;body.innerHTML=`<input class="txt" id="tx" placeholder="${esc(typeof st.ph==='function'?st.ph(FL.v):st.ph||'')}" maxlength="${st.ml||60}" value="${esc(FL.v[st.k]||'')}" autocomplete="off" autocorrect="off" spellcheck="false"><div class="srl" id="srl"></div>`;
+  btm.innerHTML=`<button class="go" id="go" disabled>Suivant</button>`;const i=body.querySelector('#tx'),L=body.querySelector('#srl'),g=btm.querySelector('#go');let tok=0,TM=null,cur=[];
+  const pick=x=>{buzz(6);FL.v[st.k]=x.n;FL.v.img=x.img||'';FL.v.sub=x.s||'';if(x.g&&!FL.v.g)FL.v.g=x.g;nextStep()};
+  const paint=(R,load)=>{cur=R;const v=i.value.trim();L.innerHTML=R.map((x,k)=>`<button class="sri" data-k="${k}">${x.img?`<img src="${esc(x.img)}" alt="" loading="lazy">`:`<span class="srph" style="--vc:${VT[t][2]}">${ic(VT[t][1])}</span>`}<span><b>${esc(x.n)}</b>${x.s?`<small>${esc(x.s)}</small>`:''}</span></button>`).join('')+(load?`<div class="srld"><i></i><i></i><i></i></div>`:'')+(v&&!load&&!R.some(x=>vnorm(x.n)===vnorm(v))?`<button class="sri srfree" data-free="1"><span class="srph">${ic('pen')}</span><span><b>« ${esc(v)} »</b><small>Utiliser ce nom</small></span></button>`:'');
+    L.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>pick(cur[+b.dataset.k]));const fr=L.querySelector('[data-free]');if(fr)fr.onclick=()=>pick({n:i.value.trim()})};
+  const run=()=>{const v=i.value.trim();g.disabled=!v;clearTimeout(TM);const loc=vuLocal(t,v);if(v.length<2){paint([],0);return}paint(loc,['film','serie','livre'].includes(t));
+    if(!['film','serie','livre'].includes(t))return;const my=++tok;TM=setTimeout(async()=>{const R=await vuSearch(t,v);if(my!==tok)return;const all=[...R,...loc.filter(l=>!R.some(r=>vnorm(r.n)===vnorm(l.n)))];paint(all,0)},280)};
+  i.oninput=run;run();setTimeout(()=>i.focus(),250);const fin=()=>{const v=i.value.trim();if(!v)return;const ex=cur.find(x=>vnorm(x.n)===vnorm(v));pick(ex||{n:v})};g.onclick=fin;i.onkeydown=e=>{if(e.key==='Enter')fin()}}
+/* Retrouve l'affiche d'un moment déjà noté (une seule fois) */
+async function vuPosters(){const V=vuS();let ch=0;for(const x of V.it.concat(V.w)){if(x.img||x.ni||!['film','serie','livre'].includes(x.t))continue;x.ni=1;const R=await vuSearch(x.t,x.n);const m=R.find(r=>vnorm(r.n)===vnorm(x.n))||R[0];if(m&&m.img){x.img=m.img;x.sub=x.sub||m.s;ch=1}}
+  if(ch){save();if(TAB==='vu'&&!FL&&!$('.scr'))home()}}
+/* Trophées du carnet */
+const VTR={film:['Cinéphile','films'],serie:['Binge-watcheur','séries'],livre:['Lecteur','livres'],sortie:['Explorateur','sorties'],resto:['Gourmet','restos'],act:['Aventurier','activités']},VLV=[1,5,10,25,50,100];
+function vuLvl(t){const n=vuS().it.filter(x=>x.t===t).length;let l=0;while(l<VLV.length&&n>=VLV[l])l++;return{n,l,nx:VLV[l]||null,pv:l?VLV[l-1]:0}}
 function vuAdd(pre){const p=pre||{};flow([
   {k:'t',q:'Tu as fait quoi ?',type:'tiles',skip:v=>!!v.t,opts:Object.entries(VT).map(([v,[l,i]])=>({v,i,l}))},
-  {k:'n',q:v=>({film:'Quel film ?',serie:'Quelle série ?',livre:'Quel livre ?',sortie:'C’était quoi ?',resto:'Quel resto ?',act:'Quelle activité ?'})[v.t],type:'text',ml:60,ph:'Le nom',skip:v=>!!(v.ag&&v.n)},
+  {k:'n',q:v=>({film:'Quel film ?',serie:'Quelle série ?',livre:'Quel livre ?',sortie:'C’était quoi ?',resto:'Quel resto ?',act:'Quelle activité ?'})[v.t],type:'search',ml:60,ph:v=>({film:'Tape le titre…',serie:'Tape le titre…',livre:'Titre ou auteur…'})[v.t]||'Le nom',skip:v=>!!(v.ag&&v.n)},
   {k:'g',q:'C’était plutôt…',sub:'Plusieurs choix possibles.',type:'multi',opts:v=>[...(VTG[v.t]||'')].map(g=>({v:g,i:'spark',l:VG[g]})),none:'Passer',skip:v=>!!(v.ag&&v.g)},
   {k:'r',q:v=>v.ag?esc(v.n)+' : tu as aimé ?':'Tu as aimé ?',type:'tiles',opts:VR.map(([v,l,i])=>({v,i,l}))},
   {k:'p',q:'Ça t’a coûté combien ?',type:'tiles',skip:v=>!['sortie','resto','act'].includes(v.t)||v.fe,opts:[{v:0,i:'gift',l:'Gratuit'},{i:'pen',l:'Un montant',one:1,go:v=>{v.pf=1;nextStep()}}]},
   {k:'p',q:'Combien ?',type:'amount',skip:v=>!v.pf},
   {k:'ad',q:'Je l’ajoute à tes dépenses ?',sub:'Comme ça ton solde reste juste.',type:'tiles',skip:v=>!v.pf||!(v.p>0),opts:[{v:1,i:'check',l:'Oui, ajoute-la'},{v:0,i:'x',l:'Non, c’est déjà noté'}]}
- ],v=>{const V=vuS(),id=uid(),x={id,t:v.t,n:String(v.n||'').trim().slice(0,60)||VT[v.t][0],g:String(v.g||''),r:v.r,d:p.d&&p.d<=today?p.d:today};
+ ],v=>{const V=vuS(),id=uid(),L0=vuLvl(v.t),x={id,t:v.t,n:String(v.n||'').trim().slice(0,60)||VT[v.t][0],g:String(v.g||''),r:v.r,d:p.d&&p.d<=today?p.d:today};if(v.img)x.img=v.img;if(v.sub)x.sub=String(v.sub).slice(0,80);
    if(v.p!=null&&v.p!=='')x.p=+v.p;else if(v.fe)x.p=v.fe.v;
    if(v.fe){const e=S.e.find(e=>e.id===v.fe.id);if(e)e.vu=id}
    if(v.ad&&x.p>0)addE({id:uid(),d:x.d,v:x.p,c:v.t==='resto'?'resto':'sorties',vu:id});
    V.it.push(x);V.w=V.w.filter(w=>vnorm(w.n)!==vnorm(x.n));
-   const lb=VR.find(r=>r[0]===x.r);return[x.r>=1?'Bien vécu':'C’est noté',esc(x.n)+' · '+lb[1]]},p)}
+   {const L1=vuLvl(x.t);if(L1.l>L0.l)setTimeout(()=>{if(!$('.strk'))badgePop([VTR[x.t][0]+' · niveau '+L1.l,,VT[x.t][1]])},1700)}
+   const lb=VR.find(r=>r[0]===x.r);return[x.r>=1?'Ajouté au carnet':'C’est noté',esc(x.n)+' · '+lb[1]]},p)}
 function vuItem(id){const V=vuS(),x=V.it.find(x=>x.id===id);if(!x)return;
   flow([{k:'r',q:esc(x.n),sub:VT[x.t][0]+' · '+dShort(x.d)+' · tu as aimé ?',type:'tiles',opts:[...VR.map(([v,l,i])=>({v,i,l:l+(x.r===v?' ✓':'')})),{i:'trash',l:'Retirer',one:1,go:()=>{V.it=V.it.filter(y=>y.id!==id);save();closeFl()}}]}],r=>{x.r=r.r;return['Mis à jour',esc(x.n)+' · '+VR.find(z=>z[0]===r.r)[1]]})}
 const vuPlanned=()=>S.ag.filter(a=>a.vu&&!a.done).sort((a,b)=>(a.d||'9').localeCompare(b.d||'9'));
@@ -2291,9 +2340,10 @@ function vuView(){const V=vuS(),sg=vuSug(6),ng=vuNudge(),tight=vuTight();
   <div class="rnd vrn">${Object.entries(VT).map(([k,[l,i,c]])=>`<button data-vadd="${k}" style="--c:${c}"><span>${ic(i)}</span><small>${l}</small></button>`).join('')}</div>
   <div class="sec"><h2>Pour toi</h2><span class="lk">${V.it.length<3?'Note 3 trucs, je m’affine':tight?'Surtout du gratuit ce mois-ci':'Selon tes goûts'}</span></div>
   <div class="vsug">${sg.map(c=>`<div class="vs"><span class="vst"><span class="dot" style="background:${VT[c[0]][2]}"></span>${VT[c[0]][0]}${c[3]===0?' · Gratuit':''}</span><b>${esc(c[1])}</b><small>${vuWhy(c).replace(/ · (Gratuit|Petit prix)$/,'')}</small><div class="vsb"><button data-vno="${esc(c[0]+c[1])}" aria-label="Pas pour moi">${ic('x')}</button><button data-vok="${esc(c[0]+c[1])}" aria-label="Ça me tente">${ic('cal')}<span>Ça me tente</span></button></div></div>`).join('')}</div>
-  ${V.it.length?`<div class="sec"><h2>Déjà vécus</h2></div><div class="list">${V.it.slice().sort((a,b)=>b.d.localeCompare(a.d)).slice(0,30).map(x=>`<button class="li vli" data-vi="${x.id}">${tico(x.t)}<span class="t">${esc(x.n)}<small>${VT[x.t][0]} · ${dShort(x.d)}</small></span><span class="r${x.r===2?' vfav':''}">${VRE[x.r]||''}</span></button>`).join('')}</div>`:''}
+  <div class="sec"><h2>Tes trophées</h2></div><div class="vtro">${Object.keys(VT).map(t=>{const L=vuLvl(t);return `<button class="vtr${L.l?' on':''}" data-vadd="${t}" style="--vc:${VT[t][2]}"><span>${ic(VT[t][1])}${L.l?`<i>${L.l}</i>`:''}</span><b>${VTR[t][0]}</b><small>${L.nx?L.n+' / '+L.nx+' '+VTR[t][1]:'Max'}</small><em><i style="width:${L.nx?Math.round((L.n-L.pv)/(L.nx-L.pv)*100):100}%"></i></em></button>`}).join('')}</div>
+  ${V.it.length?`<div class="sec"><h2>Ton carnet</h2><span class="lk">${V.it.length} moment${V.it.length>1?'s':''}</span></div><div class="vcar">${V.it.slice().sort((a,b)=>b.d.localeCompare(a.d)).slice(0,60).map(x=>`<button class="vcd" data-vi="${x.id}" style="--vc:${VT[x.t][2]}">${x.img?`<img src="${esc(x.img)}" alt="" loading="lazy">`:`<span class="vcp">${ic(VT[x.t][1])}<b>${esc(x.n)}</b></span>`}${x.r===2?`<i class="vhe">${ic('check')}</i>`:''}${x.img?`<small>${esc(x.n)}</small>`:''}</button>`).join('')}</div>`:''}
   </div>`}
-function vuBind(){const V=vuS();
+function vuBind(){const V=vuS();setTimeout(vuPosters,400);
   const nw=$('[data-vnew]');if(nw)nw.onclick=()=>{buzz();vuAdd({})};{const n2=$('[data-vnew2]');if(n2)n2.onclick=()=>{buzz();vuAdd({})}}
   document.querySelectorAll('[data-vadd]').forEach(b=>b.onclick=()=>{buzz();vuAdd({t:b.dataset.vadd})});
   document.querySelectorAll('[data-vi]').forEach(b=>b.onclick=()=>{buzz();vuItem(b.dataset.vi)});
