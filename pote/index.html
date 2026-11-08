@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794155021" data-theme="light">
+<html lang="fr" data-build="1794164528" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -853,6 +853,12 @@ body.rcon .strk,body.rcon .toast{visibility:hidden!important}
 .nud .mi,.nud .ib{background:var(--card2)!important;color:var(--ink)!important}
 .mlink{color:var(--ink)!important;font-weight:600}
 .shb2 .sh2 .ib,.shb2 .ib{background:var(--card2)!important;color:var(--ink)!important}
+
+/* Bulles du jour : la taille suit l'importance et le texte */
+.rb b{font-size:var(--fs,13.5px)!important;-webkit-line-clamp:4!important;word-break:normal;overflow-wrap:normal;hyphens:none;padding:0 4px}
+.rb{padding:12px}
+.rb1 .rbi{width:32px;height:32px}.rb1 .rbi svg{width:17px;height:17px}
+.rbs{gap:12px 10px}
 </style>
 </head>
 <body>
@@ -1913,7 +1919,10 @@ function recap(back){if(!S.name||needInstall()||$('#rcp')&&!back)return;const ol
   const h=new Date().getHours(),greet=(h>=5&&h<18?'Bonjour':'Bonsoir')+', '+esc(S.name.split(' ')[0]),dl=JN[new Date().getDay()].replace(/^./,c=>c.toUpperCase())+' '+new Date().getDate()+' '+MNL[new Date().getMonth()];
   let fig='';if(S.bal&&H){if(H.free+H.tdS>=0)fig=H.rest>=-.5?`<span class="rcf"><small>${H.tdS?'Il te reste':'Pour aujourd’hui'}</small><b>${eur0(Math.max(0,H.rest))}</b></span>`:`<span class="rcf"><small>Journée bouclée · demain</small><b>${eur0(Math.max(0,H.left>1?H.free/(H.left-1):0))}</b></span>`;else if(nr)fig=`<span class="rcf"><small>Pour aujourd’hui, maximum</small><b>${eur0(Math.max(0,(H.free+H.tdS+nr.v)/H.left-H.tdS))}</b></span>`;else fig=`<span class="rcf"><small>En route vers le vert</small></span>`}
   const st=okStreak(),rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const RIC={ag:'cal',mo:'bank',ev:'moon',dt:'users',wi:'safe',bi:'spark',gr:'folder',ok:'check'};const bub=(x,i)=>`<button class="rb c-${x.c}" data-rb="${i}" style="--z:${x.z}px;--d:${i*70}ms;--fx:${(i%2?-1:1)*2}px;--fy:${4}px;--t:${5+((i*37)%20)/10}s;--o:${-(i*1.3)}s" aria-label="${esc(x.t)}${x.s?' à '+esc(x.s):''}">${x.late?'<i class="rdot"></i>':''}<span class="rbi">${ic(x.c==='ag'&&x.s?'later':RIC[x.c]||'dots')}</span><b>${esc(x.t)}</b>${x.s?`<small>${esc(x.s)}</small>`:''}</button>`;
+  const RIC={ag:'cal',mo:'bank',ev:'moon',dt:'users',wi:'safe',bi:'spark',gr:'folder',ok:'check'};const bsz=(x,i)=>{const t=String(x.t||''),lw=Math.max(...t.split(/\s+/).map(w=>w.length),0),base=i===0?128:i===1?112:i<3?100:92,fs=i===0?15.5:i===1?14.5:13.5,cw=fs*.56;
+    let z=base;for(;z<176;z+=4){const w=z*.62,cpl=Math.floor(w/cw),lines=Math.ceil((t.length+2)/Math.max(1,cpl)),h=30+lines*fs*1.2+(x.s?16:0);if(lw+1<=cpl&&lines<=3&&h<=z*.7)break}
+    return{z:Math.min(176,z),fs}};
+  const bub=(x,i)=>{const B=bsz(x,i);return `<button class="rb c-${x.c}${i===0?' rb1':''}" data-rb="${i}" style="--z:${B.z}px;--fs:${B.fs}px;--d:${i*70}ms;--fx:${(i%2?-1:1)*2}px;--fy:${4}px;--t:${5+((i*37)%20)/10}s;--o:${-(i*1.3)}s" aria-label="${esc(x.t)}${x.s?' à '+esc(x.s):''}">${x.late?'<i class="rdot"></i>':''}<span class="rbi">${ic(x.c==='ag'&&x.s?'later':RIC[x.c]||'dots')}</span><b>${esc(x.t)}</b>${x.s?`<small>${esc(x.s)}</small>`:''}</button>`};
   const o=document.createElement('div');o.id='rcp';if(rm)o.classList.add('rm');
   o.innerHTML=`<div class="rch"><h1>${greet}</h1><p>${dl} · ${L.length?L.length+' chose'+(L.length>1?'s':'')+' aujourd’hui':'tout est à jour'}${st?` · <span class="rcs">${ic('flame')}${st}</span>`:''}</p>${fig}</div>
    <div class="rbs">${show.length?show.map(bub).join('')+(more>0?`<button class="rb c-gr" data-more style="--z:60px;--d:${show.length*70}ms;--t:6s;--o:-2s"><b>+${more}</b></button>`:''):`<div class="rb c-ok big" style="--z:140px;--d:0ms;--t:6s;--o:0s"><span class="rbi">${ic('check')}</span><b>Rien à faire</b></div>`}${gone.map((g,i)=>`<div class="rb c-ok gone" style="--z:80px">${ic('check')}</div>`).join('')}</div>
