@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794143104" data-theme="light">
+<html lang="fr" data-build="1794147767" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -674,10 +674,25 @@ body{background:#000}
 .gnd.pop{animation:gpop .7s cubic-bezier(.3,1.6,.5,1)}@keyframes gpop{0%{transform:scale(.4)}60%{transform:scale(1.8)}100%{transform:scale(1)}}
 .gc{position:absolute;left:0;right:0;bottom:0;display:grid;justify-items:center;gap:4px}
 .gc small{font-size:13px;font-weight:600;color:var(--muted)}
+.gar{display:inline-grid;vertical-align:middle;margin:-6px 4px 0 -6px;color:var(--good)}.gar svg{width:26px;height:26px;stroke-width:2.6}
+.gcta{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:600;color:var(--ink);padding:9px 16px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);background:var(--card);margin-top:2px}.gcta svg{width:14px;height:14px;stroke-width:2.4}
 .gc strong{font-size:58px;font-weight:750;letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums}
 .gc span{font-size:14px;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.gft{display:flex;gap:14px;align-items:center;font-size:13.5px;color:var(--muted)}.gft b{color:var(--ink);font-weight:650;margin-left:4px}
+.gft{display:flex;gap:14px;align-items:center;font-size:13.5px;color:var(--muted)}.gft b{color:var(--ink);font-weight:650}
 .gft span+span{padding-left:14px;border-left:1px solid var(--line)}
+.rv{display:grid;justify-items:center;text-align:center;gap:4px;padding:18px 4px 6px}.rv small{font-size:13px;font-weight:600;color:var(--muted)}
+.rv strong{font-size:56px;font-weight:750;letter-spacing:-.045em;line-height:1.05;font-variant-numeric:tabular-nums}.rv>span{font-size:14px;color:var(--muted)}
+.rvb{width:100%;height:6px;border-radius:3px;background:var(--card2);margin-top:18px;overflow:hidden}.rvb i{display:block;height:100%;border-radius:3px;background:var(--ink)}
+.rvl{width:100%;display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}.rvl span:last-child{color:var(--good);font-weight:600}
+.rvm{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline;margin-top:20px;padding:14px 16px;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
+.rvm small{font-size:13px;color:var(--muted)}.rvm b{font-size:15px;font-weight:650;text-align:right}.rvm span{grid-column:1/-1;font-size:12.5px;color:var(--muted)}
+.rvi{display:grid;border-radius:20px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.rvx{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:15px 16px;border:0;background:none;font:inherit;color:var(--ink);text-align:left;transition:background .2s}
+.rvx+.rvx{box-shadow:inset 0 1px 0 var(--line)}.rvx:active,.rvx.rvp{background:var(--card2)}
+.rvc{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--card2)}.rvc svg{width:18px;height:18px;stroke-width:1.8}
+.rvt{min-width:0;display:grid;gap:3px}.rvt b{font-size:15px;font-weight:600;line-height:1.25}.rvt small{font-size:12.5px;color:var(--muted);line-height:1.35}
+.rvx em{font-style:normal;font-size:14px;font-weight:650;color:var(--good);white-space:nowrap;align-self:start;padding-top:2px;font-variant-numeric:tabular-nums}
+.rvx.win .rvc{background:color-mix(in srgb,var(--good) 14%,var(--card));color:var(--good)}
 .vgp{width:100%;display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;padding:14px 16px;border:0;border-radius:20px;font:inherit;text-align:left;color:var(--ink);margin-top:-6px;
   background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.55));-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:inset 0 1px 0 #fff,inset 0 0 0 1px rgba(0,0,0,.04),0 8px 24px -14px rgba(31,163,74,.6)}
 [data-theme="dark"] .vgp{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04));box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 24px -14px rgba(48,209,88,.5)}
@@ -1837,15 +1852,16 @@ function gaugeCard(D,tdS,nr,rj){const G=gaugeData(D),nx=G.next,gap=Math.round(nx
   const last=S.gLast!=null?S.gLast:Math.max(0,cur-8),from=Math.min(last,cur);
   const R=128,CX=150,CY=150,pt=f=>{const a=Math.PI*(1-f/100);return[(CX+R*Math.cos(a)).toFixed(1),(CY-R*Math.sin(a)).toFixed(1)]};
   const ticks=G.P.map(x=>{const on=x.v<=G.pos,[tx,ty]=pt(G.pct(x.v));return `<circle class="gnd${on?' on':''}${x===nx?' nx':''} k-${x.k}" cx="${tx}" cy="${ty}" r="${x.k==='g'?5.5:x===nx?5:3.5}"/>`}).join('');
-  const lab=nx.k==='g'?'pour revenir au vert':'pour débloquer « '+esc(nx.k==='b'?'Bénéfice':nx.l)+' »';
+  const tg=Math.round(-G.pos),nl=nx.k==='b'?'Bénéfice':nx.l;
   setTimeout(()=>gaugeAnim(cur,G),60);
   return `<button class="gauge" data-a="vg" id="gge" aria-label="Ta progression"><div class="gw">
    <svg viewBox="0 0 300 166" aria-hidden="true"><defs><linearGradient id="ggr" gradientUnits="userSpaceOnUse" x1="22" x2="278" y1="0" y2="0"><stop offset=".5" style="stop-color:var(--ink)"/><stop offset=".5" style="stop-color:var(--good)"/></linearGradient></defs>
     <path class="gtk" d="M22 150A128 128 0 0 1 278 150" pathLength="100"/>
     <path class="gfl" d="M22 150A128 128 0 0 1 278 150" pathLength="100" stroke="url(#ggr)" style="stroke-dashoffset:${100-from}"/>
     <line class="gz" x1="150" y1="10" x2="150" y2="34"/>${ticks}<circle class="ghd" cx="${pt(cur)[0]}" cy="${pt(cur)[1]}" r="7"/></svg>
-   <div class="gc"><small>Niveau ${G.done}</small><strong>${eur0(gap)}</strong><span>${lab}</span></div></div>
-   <div class="gft"><span>Aujourd’hui <b>${nr&&rj>0?'max '+eur0(rj):'journée à 0 €'}</b></span>${d!=null?`<span>${d<=1?'Demain':'≈ '+d+' jours'}</span>`:''}</div></button>`}
+   <div class="gc"><small>Il te manque</small><strong>${eur0(tg)}</strong><span>pour revenir au vert${d!=null&&nx.k==='g'?' · '+(d<=1?'demain':'≈ '+d+' j'):''}</span></div></div>
+   <div class="gft"><span>Niveau ${G.done}</span>${nx.k!=='g'?`<span>Palier « ${esc(nl)} » dans <b>${eur0(gap)}</b></span>`:`<span>Dernier palier : <b>le vert</b></span>`}</div>
+   <span class="gcta">Comment remonter ${ic('next')}</span></button>`}
 function gaugeAnim(cur,G){const f=document.querySelector('#gge .gfl');if(!f)return;requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.strokeDashoffset=100-cur}));
   const prev=S.gDone;S.gLast=cur;S.gDone=G.done;try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
   if(prev!=null&&G.done>prev){const x=G.P[G.done-1];setTimeout(()=>{const n=document.querySelectorAll('#gge .gnd')[G.done-1];if(n)n.classList.add('pop');buzz([12,60,18]);sfx('big');
@@ -1872,14 +1888,35 @@ function vgPlan(V){const L=[];if(!V||V.def<=0)return L;const nr=V.nr;
   const fr=S.e.filter(x=>x.c==='frais'&&x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);if(fr>0)L.push({i:'bank',t:'Récupérer tes frais bancaires ('+eur0(fr)+')',s:'Une lettre toute prête pour ta banque.',k:'fr',go:droitsScr});
   L.push({i:'check',t:'Chaque journée à 0 €',s:V.tg>0?'C’est '+eur0(V.tg)+' de plus vers le vert, et deux briques dorées.':'Deux briques dorées.',k:'z'});
   return L}
-function vgScr(){const V=vgState();if(!V)return;const gold=S.vgG||0,P=[25,50,75,90],got=S.vgP||[];
-  const holes=[...Array(10)].map((_,i)=>{const k=9-i,on=k<V.br;return `<i class="${on?'on':''}${on&&k>=10-Math.min(gold,10)?' gd':''}"></i>`}).join('');
-  scr('Fondations',`<div class="fdn"><div class="grass"></div><div class="hole">${holes}</div></div>
-   <div class="big2"><small>${V.def>0?'Retour au vert':'Tu es dans le vert'}</small><strong>${V.def>0?(V.p>=.9?'Plus que '+eur0(V.def):V.br+' / 10'):'Au niveau du sol'}</strong><span>${V.def>0?(V.moved?'Le chantier a bougé, tes briques restent. ':'')+(V.when?'À ce rythme, tu y es en '+V.when+'.':'Chaque journée sous '+eur0(V.tg)+' compte.'):'Le trou est rempli. Maintenant, on construit.'}</span></div>
-   ${V.def>0?`<div class="seuil"><span>Seuil vert</span><b>0 €</b><em>Encore ${eur0(V.def)} à remonter</em></div><div class="sec" style="margin-top:2px"><h2>Ton retour au positif</h2></div><div class="vplan">${vgPlan(V).map((o,n)=>`<button class="vpl${o.k==='win'?' win':''}" ${o.go?`data-vp="${n}"`:'disabled'}><span class="vpi">${ic(o.i)}</span><span><b>${o.t}</b><small>${o.s}</small></span>${o.go?ic('next'):''}</button>`).join('')}</div>`:''}
-   <div class="tipb"><b>Mission du jour</b><p class="tl">${V.zero?'Journée à 0 €. Rien du tout, c’est déjà une victoire.':'Rester sous '+eur0(V.tg)+'. Ça suffit pour que le trou ne grandisse pas.'}${V.H.tdS?' Aujourd’hui : '+eur0(V.H.tdS)+'.':''}</p><p class="tl">Elle se valide à ton point du soir. Réussie : une brique dorée. Journée à 0 € : deux.</p></div>
-   <div class="msum"><div><b>${gold}</b><small>briques dorées</small></div><div><b>${P.filter(x=>got.includes(x)).length} / 4</b><small>paliers</small></div><div><b>${Math.round(V.p*100)} %</b><small>du trou rempli</small></div></div>`);
-  const PL=vgPlan(V);document.querySelectorAll('[data-vp]').forEach(b=>b.onclick=()=>{buzz();const o=PL[+b.dataset.vp];closeScr();o.go()})}
+/* Les pistes concrètes pour remonter : chacune avec ce qu'elle rapporte et une action */
+function vgIdeas(V){const L=[],nr=V.nr,d30=addD(today,-30);
+  if(nr){const dd=Math.max(0,Math.round((pd(nr.dt)-pd(today))/864e5)),after=Math.round(V.def+V.tg*dd-nr.v);
+    L.push({i:'in',a:'+'+eur0(nr.v),t:after<=0?'Le '+pd(nr.dt).getDate()+' '+MN[pd(nr.dt).getMonth()]+', tu repasses au vert':esc(nr.n)+' arrive le '+pd(nr.dt).getDate()+' '+MN[pd(nr.dt).getMonth()],s:after<=0?'Avec '+esc(nr.n)+', si tu tiens d’ici là.':'Il restera environ '+eur0(after)+' à remonter.',win:after<=0})}
+  const th={};S.debts.filter(x=>x.w==='them').forEach(x=>th[x.p]=(th[x.p]||0)+x.v);const tt=Object.entries(th).sort((a,b)=>b[1]-a[1]);
+  if(tt.length)L.push({i:'users',a:'+'+eur0(tt.reduce((a,x)=>a+x[1],0)),t:'Récupère ce qu’on te doit',s:tt.slice(0,3).map(([p,v])=>esc(p)+' '+eur0(v)).join(' · ')+'. Un message est prêt.',go:()=>debtList()});
+  const cat={};S.e.filter(x=>x.d>d30&&x.d<=today&&!['dette','frais','courses','transport','sante'].includes(x.c)).forEach(x=>cat[x.c]=(cat[x.c]||0)+x.v);
+  const top=Object.entries(cat).sort((a,b)=>b[1]-a[1]).slice(0,2);
+  for(const [c,v] of top){const w=Math.round(v/4.3/2);if(w<5)continue;const n=CN[c]?CN[c][2]:'Autre';
+    L.push({i:CN[c]?CN[c][1]:'dots',a:'+'+eur0(w),t:'Une semaine à moitié moins de '+n.toLowerCase(),s:eur0(v)+' en 30 jours. Je te mets le défi dans l’agenda.',go:()=>{S.ag.push({id:uid(),t:'Défi de la semaine : moitié moins de '+n.toLowerCase()+' (+'+eur0(w)+')',d:today,h:'',rem:false,done:false});done(['Défi lancé','Il est dans ton agenda pour cette semaine'])}})}
+  const fx=(S.fx||[]).filter(x=>x.v>0&&x.v<60).sort((a,b)=>b.v-a.v).slice(0,3);
+  if(fx.length)L.push({i:'cal',a:'+'+eur0(fx[0].v)+'/mois',t:'Mets un abonnement en pause',s:fx.map(x=>esc(x.n)+' '+eur0(x.v)).join(' · ')+'. Juste le temps de remonter.',go:()=>BUD.fx()});
+  const wl=(S.wish||[]).filter(w=>w.st==='wait'&&w.v>0);
+  if(wl.length)L.push({i:'bag',a:eur0(wl.reduce((a,w)=>a+w.v,0)),t:'Repousse tes envies d’achat',s:wl.slice(0,3).map(w=>esc(w.n)).join(' · ')+'. Après le vert, elles auront meilleur goût.'});
+  L.push({i:'gift',a:'+30 à 100 €',t:'Vends 2 ou 3 trucs qui dorment',s:'Vêtements, jeux, objets. Vinted ou Leboncoin, 10 minutes.',href:'https://www.vinted.fr/items/new'});
+  if(S.cof&&S.cof.m>0)L.push({i:'safe',a:'+'+eur0(S.cof.m),t:'Coffre mensuel en pause ce mois-ci',s:'Tout va au retour au vert, tu le relances après.',go:()=>{S.cof.m0=S.cof.m;S.cof.m=0;done(['Coffre en pause','Ce mois-ci, tout va au retour au vert'])}});
+  else if(S.cof&&S.cof.w>0&&S.cof.sk!==wkMon())L.push({i:'safe',a:'+'+eur0(S.cof.w),t:'Coffre de la semaine en pause',s:'Tout va au retour au vert.',go:()=>{S.cof.sk=wkMon();done(['Coffre en pause','Cette semaine, tout va au retour au vert'])}});
+  const fr=S.e.filter(x=>x.c==='frais'&&x.d.startsWith(YM)).reduce((a,x)=>a+x.v,0);if(fr>0)L.push({i:'bank',a:'+'+eur0(fr),t:'Fais-toi rembourser tes frais bancaires',s:'Une lettre toute prête pour ta banque.',go:droitsScr});
+  L.push({i:'zap',a:'+50 à 150 €',t:'Un extra ponctuel',s:'Une mission d’un jour, du baby-sitting, un coup de main payé. Ça remonte vite.'});
+  L.push({i:'check',a:V.tg>0?'+'+eur0(V.tg)+'/jour':'',t:'Des journées à 0 €',s:V.tg>0?'Chaque journée sans dépense te rapproche de '+eur0(V.tg)+'.':'Elles empêchent le trou de grandir. Les autres pistes le remplissent.'});
+  return L}
+function vgScr(){const V=vgState();if(!V)return;if(V.def<=0){done(['Tu es dans le vert','Maintenant, on construit']);return}
+  const L=vgIdeas(V),pc=Math.round(V.p*100);
+  const x=scr('Comment remonter',`<div class="rv"><small>Il te manque</small><strong>${eur0(V.def)}</strong><span>pour revenir au vert${V.when?' · à ce rythme, en '+V.when:''}</span>
+    <div class="rvb"><i style="width:${Math.max(3,pc)}%"></i></div><div class="rvl"><span>${pc} % déjà remonté</span><span>0 €</span></div></div>
+   <div class="rvm"><small>Aujourd’hui</small><b>${V.zero?'Journée à 0 €':'Maximum '+eur0(V.tg)}</b><span>${V.H.tdS?eur0(V.H.tdS)+' dépensés':'Rien dépensé pour l’instant'}</span></div>
+   <div class="vh" style="margin-top:22px"><b>Tes pistes</b><small>Touche pour agir</small></div>
+   <div class="rvi">${L.map((o,n)=>`<button class="rvx${o.win?' win':''}" data-ri="${n}" ${o.go||o.href?'':'data-off="1"'}><span class="rvc">${ic(o.i)}</span><span class="rvt"><b>${o.t}</b><small>${o.s}</small></span>${o.a?`<em>${o.a}</em>`:''}</button>`).join('')}</div>`);
+  x.querySelectorAll('[data-ri]').forEach(b=>b.onclick=()=>{const o=L[+b.dataset.ri];if(o.href){buzz();window.open(o.href,'_blank');return}if(!o.go){buzz(4);b.classList.add('rvp');setTimeout(()=>b.classList.remove('rvp'),400);return}buzz();closeScr();o.go()})}
 function vgEve(msg){try{const V=vgState();if(!V||V.def<=0&&!(V.H.free+V.H.tdS<0))return msg;const sp=V.H.tdS,ok=sp<=V.tg+.5;S.vgM=S.vgM||{};if(S.vgM[today])return msg;S.vgM[today]=ok?1:-1;
   const nl=Math.max(1,V.H.left-1),tm=V.nr?Math.max(0,(V.H.free+V.nr.v)/nl):0;
   if(ok){const n=sp<.5?2:1;S.vgG=(S.vgG||0)+n;return[n>1?'Deux briques dorées':'Brique dorée','+'+(n*3)+' points · '+(V.nr?'demain, ton budget monte à '+eur0(tm)+'.':'le trou ne grandit pas.')]}
