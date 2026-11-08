@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794153632" data-theme="light">
+<html lang="fr" data-build="1794153874" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -832,6 +832,21 @@ body.rcon .strk,body.rcon .toast{visibility:hidden!important}
 .ftw.pop{animation:fwon .5s cubic-bezier(.2,.9,.3,1.4) both}
 .fms{display:flex;align-items:center;gap:6px;margin:4px 0 -4px 31px;font-size:12px;color:var(--ink)}.fms svg{width:13px;height:13px;color:#FF9F0A;stroke-width:2.4}.fms b{font-weight:650}.fms small{color:var(--muted);font-weight:500;font-family:var(--num)}.fms.past{opacity:.55}.fms.own svg{color:#AF52DE}.fms[data-ms="goal"],.fms[data-ms="goal"] svg{color:var(--c-cof)}
 .qrow{grid-template-columns:1fr auto!important;padding:12px 14px!important}.qrow small svg{width:16px;height:16px;color:var(--good);stroke-width:2.6}
+
+/* ===== Écrans de victoire : même DA que l'app (clair, sobre) ===== */
+.strk,.strk.vgw{position:fixed;inset:0;min-height:100lvh;background:var(--bg)!important;color:var(--ink);gap:8px;padding:30px 28px calc(30px + env(safe-area-inset-bottom,0px))}
+.strk b{color:var(--ink);font-size:28px!important;font-weight:750;letter-spacing:-.02em;line-height:1.15;text-align:center}
+.strk small,.strk.lvp small,.strk.bp small{color:var(--muted);font-size:15px;font-weight:500;max-width:300px;text-align:center;line-height:1.4}
+.strk.bp small:first-of-type,.strk.qp small:first-of-type{font-size:13px;font-weight:600;letter-spacing:.02em}
+.strk strong{color:var(--ink)}
+.strk button{background:var(--ink);color:var(--bg);height:54px;border-radius:16px;min-width:220px;margin-top:30px;font-size:16px}
+.strk.bp .bdx,.strk.qp .qbig{width:96px;height:96px;background:color-mix(in srgb,var(--ac,#FF9F0A) 15%,var(--card))!important;color:var(--ac,#FF9F0A);box-shadow:none;margin-bottom:18px}
+.strk.qp .qbig{--ac:var(--good)}.strk.qp .qbig svg{color:var(--good)}
+.strk.bp .bdx svg,.strk.qp .qbig svg{width:42px;height:42px;stroke-width:2}
+.strk.qp em{font-size:16px;font-weight:700;color:var(--good);margin-top:4px}
+.strk .fl2{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,#FF9F0A 15%,var(--card));margin-bottom:6px}.strk .fl2 svg{width:46px!important;height:46px!important}
+.strk strong{font-size:72px}
+.vgpb{width:200px;height:10px;border-radius:5px;background:var(--card2)!important;margin:0 auto 24px}.vgpb i{background:var(--ink)!important}.vgpb span{background:var(--good)!important;width:2px}
 </style>
 </head>
 <body>
@@ -1673,7 +1688,7 @@ function badgeList(){const V=vicStats(),g=S.cof&&S.cof.g,cv=cofV(),b=Math.max(V.
    ...(S.vice?[['7 jours sans',sans30().n>=7,'leaf']]:[])]}
 function badgeCheck(ms=1800){try{if(!S.name)return;const on=badgeList().filter(b=>b[1]);if(S.bdgN==null||on.length<S.bdgN||!S.bdgS){S.bdgN=on.length;S.bdgS=on.map(b=>b[0]);return}
   if(on.length>S.bdgN){const seen=S.bdgS||[],nw=on.find(b=>!seen.includes(b[0]))||on[on.length-1];S.bdgN=on.length;S.bdgS=on.map(b=>b[0]);save();setTimeout(()=>{if($('.strk'))return setTimeout(()=>badgePop(nw),2200);badgePop(nw)},ms)}else if(!S.bdgS)S.bdgS=on.map(b=>b[0])}catch(e){}}
-function badgePop([t,,i]){const o=document.createElement('div');o.className='strk bp';o.innerHTML=`<div class="bdx">${ic(i)}</div><small>Nouveau trophée</small><b>${esc(t)}</b><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
+function badgePop([t,,i]){const o=document.createElement('div');o.className='strk bp';const vc=(Object.values(typeof VT!=='undefined'?VT:{}).find(v=>v[1]===i)||[])[2];o.innerHTML=`<div class="bdx"${vc?` style="--ac:${vc}"`:''}>${ic(i)}</div><small>Nouveau trophée</small><b>${esc(t)}</b><button>Continuer</button>`;document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
 function budCard(){const fx=S.fixe||0,ri=(S.rin||[]).reduce((a,x)=>a+(x.v||0),0),lb=S.bal?liveBal():null,pb=mod('f')?proBal():null;
   const row=(a,i,c,l,v,sub)=>`<button class="bdr" data-a="${a}"><span class="ib ${c}">${ic(i)}</span><span class="bl"><b>${l}</b><small>${sub}</small></span><span class="bv">${v}</span>${ic('next')}</button>`;
   return `<div class="sec"><h2>Ton budget</h2></div><div class="bud">${row('bfx','home','t-out','Charges fixes',eur0(fx),(S.fx||[]).length?(S.fx.length+' par mois'):'Loyer, forfait, abonnements…')}${row('brin','in','t-in','Revenus réguliers',eur0(ri),(S.rin||[]).length?(S.rin.length+' par mois'):'Salaire, aides…')}${row('bbal','bank','t-ag','Mes comptes',lb!=null?eur0(lb):'—',(S.bal&&S.bal.acc&&S.bal.acc.length?S.bal.acc.map(a=>a.n).join(', '):S.bal?'Mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'À renseigner')+(S.bal&&S.bal.enc?' · encours déduit':''))}${row('cof','safe','t-cof','Coffre',cofPlan()?eur0(cofPlan()):eur0(cofV()),cofPlan()?(cofTodo()?'Encore '+eur0(cofTodo())+' ce mois':'Fait ce mois-ci')+(S.cof&&S.cof.g?' · '+esc(S.cof.g.n):''):cofV()?'De côté'+(S.cof.g?' pour '+esc(S.cof.g.n):''):'Rien de prévu · touche pour un objectif')}${mod('f')?row('pro','brief','t-moi','Côté pro',pb!=null?eur0(pb):'',pb!=null?'Compte pro':'Dépenses pro, comptable'):''}</div>`}
@@ -2015,7 +2030,7 @@ function vgCheck(){try{const V=vgState();if(!V)return;
       return vgPop(t,x===90?'Plus que '+eur0(V.def)+'. Tu y es presque.':'Les '+eur0(V.W-V.def)+' qui manquaient en moins, c’est toi qui les as remontés.')}
     save()}
   else if(S.vgSt){const n=Math.round((pd(today)-pd(S.vgSt))/864e5);if(n>=7&&!S.vgSd){S.vgSd=1;save();vgPop('Terrain stable','7 jours au-dessus de 0. Ta maison a un vrai sol maintenant.',1)}}}catch(e){}}
-function vgPop(t,s,big){if($('.strk'))return;const o=document.createElement('div');o.className='strk vgw'+(big?' big':'');const pp=(()=>{try{const V=vgState();return V&&V.def>0?Math.round(V.p*100):100}catch(e){return 100}})();o.innerHTML=`<div class="vgpb"><i style="width:${pp}%"></i><span></span></div><b>${esc(t)}</b><small>${esc(s)}</small><button>Continuer</button>`;
+function vgPop(t,s,big){if($('.strk'))return;const o=document.createElement('div');o.className='strk vgw'+(big?' big':'');const pp=(()=>{try{const V=vgState();return V&&V.def>0?Math.round(V.p*100):100}catch(e){return 100}})();o.innerHTML=`<div class="vgpb"><i style="width:${Math.min(50,pp/2)}%"></i><span></span></div><b>${esc(t)}</b><small>${esc(s)}</small><button>Continuer</button>`;
   document.body.appendChild(o);buzz([12,60,18]);sfx('big');o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
 
 /* ===== Le jeu : quêtes de la semaine + chantier dans Moi ===== */
