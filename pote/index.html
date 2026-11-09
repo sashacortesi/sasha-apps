@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794167719" data-theme="light">
+<html lang="fr" data-build="1794235673" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -2884,6 +2884,21 @@ function proIntro(n){if(FL||$('.fl')||$('.ok')||$('.strk')){if((n||0)<8)setTimeo
   flow([{k:'x',q:'Ton côté pro est prêt',sub:'Prends en photo tes factures, tes tickets, ou fais une capture de la notif de ta banque pro : je lis le montant et je range tout, à part de ton argent perso. Chaque début de mois, j’envoie le tout à ton comptable, photos comprises.',type:'tiles',opts:[{i:'cam',l:'Essayer maintenant',s:'Une facture, un ticket, une capture',one:1,cta:1,go:()=>scanPick('pro')},{i:'brief',l:'Voir mon côté pro',one:1,go:()=>{closeFl();proScr()}},{i:'later',l:'Plus tard',one:1,go:()=>closeFl()}]}],()=>['',''])}
 function applyMods(){{const j=CATS.findIndex(c=>c[0]==='conso');if(!S.vice&&j>=0)CATS.splice(j,1);else if(S.vice&&j<0)CATS.splice(Math.max(0,CATS.findIndex(c=>c[0]==='shopping')),0,CN.conso)}const i=CATS.findIndex(c=>c[0]==='pro');if(mod('f')&&i<0){CATS.splice(CATS.length-1,0,['pro','brief','Pro']);CN.pro=CATS.find(c=>c[0]==='pro')}else if(!mod('f')&&i>=0)CATS.splice(i,1);if(!CCOL.pro)CCOL.pro='#5E5CE6'}
 function pfFlow(first){flow(PF_STEPS(),v=>{pfApply(v);const n=(v.mods||'').length;return[first?'Ton Base est prêt':'C’est réglé',n?n+' fonction'+(n>1?'s':'')+' rien que pour toi':'Juste l’essentiel']},S.pf?{sit:S.pf.sit,mods:S.pf.mods,pa:S.pro&&S.pro.acc?'y':undefined}:null)}
+/* Mises à jour de charges préparées par Claude pour un utilisateur précis : proposées une fois, en un tap, annulables */
+const PATCHES=[{id:'2611-cetelem',who:/^sasha/i,q:'Tes charges à jour',sub:'Les 2 crédits Cetelem (prélevés « BNP PARIBAS PF » le 7) et une électricité plus réaliste.',
+  rows:[['Crédit iPhone 17 Pro Max',74.09,7],['Crédit iPhone 16 Pro',32.88,7],['Électricité',60,0]]}];
+function patchAsk(){if(!S||!S.name)return;S.pd=S.pd||{};const P=PATCHES.find(x=>x.who.test(S.name)&&!S.pd[x.id]);if(!P)return;
+  setTimeout(()=>{if(FL||$('.fl')||$('.scr')||$('#intro')||$('.strk')||$('#rcp')||document.hidden)return setTimeout(patchAsk,2500);
+    const nm=x=>String(x.n||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+    const apply=()=>{FLB=JSON.stringify(S);const F=(S.fx||[]).map(x=>({...x}));
+      for(const [n,v,d] of P.rows){if(/lectri/i.test(n)){const e=F.find(x=>/electri|glas|ekwateur|edf|engie|total ?energ/.test(nm(x)));if(e)e.v=v;else F.push({n,v});continue}
+        const e=F.find(x=>Math.abs((x.v||0)-v)<.01||nm(x)===nm({n}));if(e){e.v=v;if(d)e.d=d;if(/cetelem|bnp|credit|iphone|telephone/.test(nm(e)))e.n=n;continue}F.push({n,v,d})}
+      fxSave(F);S.pd[P.id]=1;save();home();done(['Charges à jour',eur0(S.fixe)+' par mois'])};
+    flow([{k:'x',q:P.q,sub:P.sub,type:'tiles',opts:[
+      ...P.rows.map(([n,v,d])=>({hd:n+' · '+eur(v)+(d?' · le '+d:'')})),
+      {i:'check',l:'Mettre à jour',one:1,go:()=>{closeFl();apply()}},
+      {i:'later',l:'Plus tard',one:1,go:()=>{closeFl()}},
+      {i:'x',l:'Non merci',one:1,go:()=>{S.pd[P.id]=1;save();closeFl()}}]}],()=>['',''])},1600)}
 function pfAsk(){if(!S.name||S.pf||(S.pfLater&&S.pfLater>addD(today,-3)))return;setTimeout(()=>{if(FL||$('.fl')||$('.scr')||$('#intro')||$('.strk'))return;
   flow([{k:'x',q:'Base s’adapte à toi',sub:'Dis-moi ce que tu fais dans la vie, je prépare les fonctions qui te servent vraiment. 30 secondes, rien n’est effacé.',type:'tiles',opts:[{i:'spark',l:'C’est parti',one:1,cta:1,go:()=>pfFlow(1)},{i:'later',l:'Plus tard',one:1,go:()=>{S.pfLater=today;closeFl();save()}}]}],()=>['',''])},2500)}
 function incSrc(){const s=(S.pf&&S.pf.sit)||'',L=[];if(mod('f'))L.push({v:'Paiement client',i:'brief',l:'Paiement client'});if(s.includes('e'))L.push({v:'Bourse',i:'book',l:'Bourse'});if(s.includes('j'))L.push({v:'France Travail',i:'search',l:'France Travail'});if(s.includes('i'))L.push({v:'Cachet',i:'spark',l:'Cachet / mission'});return L}
@@ -2954,7 +2969,7 @@ function intro(){const L=[['Chaque mois, l’argent file.',''],['Sans trop savoi
 function countUp(){const el=$('#balc strong');if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const L=liveBal();if(L==null)return;const t0=performance.now(),D=900;
   const f=t=>{const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=eur(Math.round(L*e*100)/100);if(k<1)requestAnimationFrame(f);else el.textContent=eur(L)};requestAnimationFrame(f)}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
-try{applyMods()}catch(e){}home();vgCheck();towerCheck();crackCheck();rcMaybe();lockCheck();jkToast();pfAsk();cofAsk();try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();0}
+try{applyMods()}catch(e){}home();vgCheck();towerCheck();crackCheck();rcMaybe();lockCheck();jkToast();pfAsk();cofAsk();try{patchAsk()}catch(e){}try{tPrev=S.name?tasks().length:0}catch(e){}if(needInstall())instGate();else if(!S.name)intro();else{countUp();0}
 </script>
 <script>
 (()=>{const mark=document.documentElement.getAttribute('data-build');if(!mark)return;let busy=0;
