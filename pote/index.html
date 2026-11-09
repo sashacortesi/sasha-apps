@@ -1331,18 +1331,30 @@ let tPrev=null;
 const OVS=['fl','scr','shb','ok'],isOv=n=>n.nodeType===1&&OVS.some(c=>n.classList.contains(c));
 new MutationObserver(rs=>{let gone=false;const add=[];rs.forEach(r=>{r.removedNodes.forEach(n=>{if(isOv(n))gone=true});r.addedNodes.forEach(n=>{if(isOv(n))add.push(n)})});if(!add.length)return;add.forEach(n=>{const other=[...document.body.children].some(x=>x!==n&&isOv(x)&&!x.classList.contains('out')&&!add.includes(x));if(gone||other)n.classList.add('keep')})}).observe(document.body,{childList:true});
 /* ===== Paiements Apple Pay automatiques : un raccourci iPhone envoie chaque paiement, Base le récupère ===== */
-const PAYW='https://base-pay.sashacortesi.workers.dev';
+const PAYW='https://base-pay.sashacortesi.workers.dev',PAYRX='\\d+(?:[.,]\\d{1,2})?(?=\\s?(?:€|EUR|eur))';
 const payK=()=>{if(!S.payK){const a=new Uint8Array(18);crypto.getRandomValues(a);S.payK=[...a].map(x=>x.toString(36).padStart(2,'0')).join('').slice(0,28);save()}return S.payK};
 function payCat(m){const t=String(m||'').toLowerCase(),R=[[/carrefour|monoprix|franprix|lidl|auchan|leclerc|intermarch|casino|picard|aldi|super|u express|g20|naturalia|biocoop|bio c|epicerie|boulang/,'courses'],
   [/mcdo|mcdonald|burger|kfc|quick|o'tacos|tacos|uber ?eats|deliveroo|just ?eat|subway|five guys|pizza|kebab|domino/,'ff'],
-  [/ratp|sncf|navigo|uber|bolt|heetch|g7|taxi|total|esso|shell|bp |lime|velib|blablacar|ouigo|air france|transavia|easyjet/,'transport'],
+  [/ratp|sncf|navigo|uber|bolt|\bvoi\b|dott|velib|heetch|g7|taxi|total|esso|shell|bp |lime|velib|blablacar|ouigo|air france|transavia|easyjet/,'transport'],
   [/zara|h&m|h & m|uniqlo|nike|adidas|primark|zalando|amazon|fnac|darty|apple|sephora|decathlon|vinted|shein|asos/,'shopping'],
   [/bar|pub|cin[ée]|ugc|path[ée]|mk2|concert|fnac spect|ticket|club|bowling|karaok|mus[ée]e/,'sorties'],
   [/tabac|bureau de tabac|civette/,'conso'],[/restaurant|resto|caf[ée]|brasserie|bistro|sushi|starbucks|columbus|paul |pret a manger|cojean|big mamma/,'resto']];
   for(const [r,c] of R)if(r.test(t))return c;return 'autre'}
+/* Le texte peut venir d'une notif de la banque (achats en ligne, dans les apps) : on en tire un nom propre, on ignore l'argent qui rentre */
+const PAYIN=/(re[çc]u|virement (entrant|re[çc]u)|cr[ée]dit(é|ee)?\b|rembours|versement|salaire|you received|refund)/i;
+function payLbl(m){const t=String(m||'').replace(/\s+/g,' ').trim();if(t.length<=24&&!/\d+[.,]\d{2}/.test(t))return t||'Apple Pay';
+  const nice=w=>w.replace(/\s+(le|du|the)\s+\d.*$/i,'').replace(/[\s\-–:,.]+$/,'').trim().replace(/\b([A-ZÀ-Ý]{2,})\b/g,x=>x[0]+x.slice(1).toLowerCase()).slice(0,30);
+  let r=/(?:^|\s)(?:chez|aupr[eè]s de)\s+([^,;.\n€]{2,30})/i.exec(t);if(r)return nice(r[1]);
+  const C=t.match(/[A-ZÀ-Ý0-9][A-ZÀ-Ý0-9&'’.\-]{2,}(?:\s+[A-ZÀ-Ý0-9&'’.\-]{2,})*/g)||[];const w=C.filter(x=>/[A-ZÀ-Ý]{3}/.test(x)&&!/^(EUR|CB|CARTE|PAIEMENT|ACHAT|APPLE PAY)$/.test(x)).sort((x,y)=>y.length-x.length)[0];if(w)return nice(w);
+  r=/(?:^|\s)(?:à|a|at)\s+([A-ZÀ-Ý0-9][^,;.\n€]{1,28})/.exec(t);if(r)return nice(r[1]);
+  return nice(t.replace(/\d+([.,]\d{1,2})?\s?(€|eur)/ig,' '))||'Paiement'}
 let PAYB=0;async function payPull(){if(!S.payK||!S.payOn||PAYB)return;PAYB=1;try{const r=await fetch(PAYW+'/pull?k='+S.payK,{cache:'no-store'});const L=await r.json();if(Array.isArray(L)&&L.length){FLB=JSON.stringify(S);
-    let t=0;for(const x of L){const v=Math.round((+x.a||0)*100)/100;if(!(v>0))continue;const d=iso(new Date(x.t||Date.now()));addE({id:uid(),d:d>today?today:d,v,c:payCat(x.m),s:String(x.m||'Apple Pay').slice(0,40),ap:1});t+=v}
-    save();home();unPush(L.length+' paiement'+(L.length>1?'s':'')+' Apple Pay ajouté'+(L.length>1?'s':'')+' · '+eur(t))}}catch(e){}PAYB=0}
+    const R=(S.payR||[]).filter(o=>Date.now()-o.t<864e5);let t=0,n=0;
+    for(const x of L){const v=Math.round((+x.a||0)*100)/100;if(!(v>0))continue;if(PAYIN.test(x.m||''))continue;const at=+x.t||Date.now();
+      /* même montant à moins de 10 min : c'est le même achat vu deux fois (Apple Pay + notif banque) */
+      if(R.some(o=>o.v===v&&Math.abs(o.t-at)<6e5))continue;R.push({v,t:at});
+      const d=iso(new Date(at));addE({id:uid(),d:d>today?today:d,v,c:payCat(x.m),s:payLbl(x.m),ap:1});t+=v;n++}
+    S.payR=R.slice(-60);save();if(n){home();unPush(n+' paiement'+(n>1?'s':'')+' ajouté'+(n>1?'s':'')+' · '+eur(t))}}}catch(e){}PAYB=0}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(payPull,800)});setTimeout(payPull,2500);
 function apScr(){const k=payK(),u=PAYW+'/add?k='+k+'&a=';const x=scr('Paiements automatiques',`<div style="display:grid;gap:14px">
   <div class="mm"><small>Apple Pay → Base</small><strong style="font-size:30px">${S.payOn?'Activé':'À installer'}</strong><span>Chaque paiement Apple Pay s’ajoute tout seul à tes dépenses, avec la bonne catégorie.</span></div>
@@ -1351,7 +1363,15 @@ function apScr(){const k=payK(),u=PAYW+'/add?k='+k+'&a=';const x=scr('Paiements 
   <button class="vng" id="pcp">${ic('share')}<span><b>Copier le lien</b><br><small style="color:var(--muted);word-break:break-all">${esc(u)}</small></span>${ic('next')}</button>
   <a class="vng" href="shortcuts://" style="text-decoration:none">${ic('next')}<span><b>Ouvrir Raccourcis</b></span>${ic('next')}</a>
   <button class="vng" id="pon">${ic(S.payOn?'x':'check')}<span><b>${S.payOn?'Couper les paiements automatiques':'J’ai installé le raccourci'}</b></span>${ic('next')}</button>
-  <button class="vng" id="pts">${ic('zap')}<span><b>Tester</b> · ajoute un faux paiement de 1 €</span>${ic('next')}</button></div>`);
+  <button class="vng" id="pts">${ic('zap')}<span><b>Tester</b> · ajoute un faux paiement de 1 €</span>${ic('next')}</button>
+  <div class="sec"><h2>Achats en ligne et dans les apps</h2></div>
+  <p style="margin:0;color:var(--muted);font-size:14px;line-height:1.45">Apple ne prévient Raccourcis que quand tu passes ton iPhone en magasin. Pour le reste (Carrefour, Uber, sites…), Base lit la notif de ta banque. iOS 27 minimum. Si un achat arrive deux fois, Base n’en garde qu’un.</p>
+  <div class="list">${[['1','Raccourcis → Automatisation → +','Choisis « Notification », puis l’app de ta banque (et Revolut si tu l’utilises). « Exécuter immédiatement ».'],['2','Ajoute « Faire correspondre le texte »','Dans « Message » de la notification. Motif : copie-le avec le bouton ci-dessous.'],['3','Ajoute « Obtenir l’élément de la liste »','« Premier élément » des correspondances.'],['4','Ajoute « Obtenir le contenu de l’URL »','Colle le lien, ajoute la variable « Élément de la liste », tape &m= puis ajoute « Message ».'],['5','Touche OK','Paie en ligne, rouvre Base : la dépense est là.']].map(([n,a,b])=>`<div class="li"><span class="ck pv" style="font-size:13px;font-weight:700;color:var(--ink)">${n}</span><span class="t">${a}<small>${b}</small></span><span class="r"></span></div>`).join('')}</div>
+  <button class="vng" id="prx">${ic('share')}<span><b>Copier le motif</b><br><small style="color:var(--muted)">${esc(PAYRX)}</small></span>${ic('next')}</button>
+  <button class="vng" id="pai">${ic('zap')}<span><b>Ou laisse l’iPhone le créer</b><br><small style="color:var(--muted)">Copie la phrase, colle-la dans « Décrire un raccourci »</small></span>${ic('next')}</button></div>`);
+  const cp=async(v,t)=>{buzz();try{await navigator.clipboard.writeText(v);done([t,'Colle-le dans Raccourcis'])}catch(e){prompt('Copie',v)}};
+  x.querySelector('#prx').onclick=()=>cp(PAYRX,'Motif copié');
+  x.querySelector('#pai').onclick=()=>cp('Crée une automatisation : quand je reçois une notification de l’app de ma banque, exécuter immédiatement. Trouver dans le message de la notification le premier montant en euros (motif '+PAYRX+'), puis ouvrir en arrière-plan l’URL '+u+'[montant]&m=[message de la notification].','Phrase copiée');
   x.querySelector('#pcp').onclick=async()=>{buzz();try{await navigator.clipboard.writeText(u);done(['Lien copié','Colle-le dans Raccourcis'])}catch(e){prompt('Copie ce lien',u)}};
   x.querySelector('#pon').onclick=()=>{buzz();S.payOn=S.payOn?0:1;save();closeScr();done([S.payOn?'Activé':'Coupé',S.payOn?'Tes paiements Apple Pay arriveront tout seuls':'Plus d’ajout automatique'])};
   x.querySelector('#pts').onclick=async()=>{buzz();try{const r=await fetch(u+'1&m=Test%20Base');if(!r.ok)throw 0;S.payOn=1;save();closeScr();setTimeout(payPull,400)}catch(e){done(['Le serveur ne répond pas','Vérifie qu’il est bien créé et déployé'])}}}
