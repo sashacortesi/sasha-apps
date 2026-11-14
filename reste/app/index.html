@@ -389,7 +389,7 @@ function useBase(N,from){const had=!!S.name;const snap=JSON.stringify(S);S=N;sav
   toast(N.e.length+N.inc.length+' mouvements, '+N.fx.length+' charges, '+N.debts.length+' dettes repris')}
 function baseSheet(){const L=fromBase(baseLocal());
   sheet('Reprendre mes données de Base',`${L?`<button class="go" id="loc" style="margin:0 0 14px">Reprendre tout de suite<br><small style="font-weight:500;opacity:.7">${esc(L.name)} · solde, ${L.fx.length} charges, ${L.e.length} dépenses</small></button>`:''}
-   <p class="foot" style="text-align:left;margin:0 0 10px">Dans Base : Moi › Ma base › « Envoyer vers ${APP} ». Le code est copié : colle-le ici.</p>
+   <p class="foot" style="text-align:left;margin:0 0 10px">Le plus simple : dans Base, Moi › Ma base › « Envoyer vers ${APP} ». Tout arrive ici tout seul. Sinon, colle un code ou choisis un fichier.</p>
    <div class="fld"><textarea id="cp" rows="4" placeholder="Colle le code ici" style="width:100%;padding:14px;border-radius:14px;border:0;background:var(--card);box-shadow:var(--shadow);font:inherit;font-size:14px;outline:0;resize:none"></textarea></div>
    <button class="go" id="ok">Reprendre</button><button class="del" id="fi" style="color:var(--muted)">Ou choisir un fichier de sauvegarde</button><input type="file" id="ff" accept="application/json,.json" hidden>`,(b,close)=>{
    const go=N=>{if(!N){toast('Code illisible');return}close();useBase(N)};
@@ -423,7 +423,14 @@ function theme(){const t=S.t||(matchMedia('(prefers-color-scheme: dark)').matche
 theme();matchMedia('(prefers-color-scheme: dark)').addEventListener('change',theme);
 $('#fab').innerHTML=ic('plus');$('#fab').onclick=()=>{buzz();if(S.name)addSheet()};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&iso(new Date())!==today)render()});
-render();
+/* lien depuis Base : #base=… contient les données, on les reprend en un geste */
+async function fromLink(){const m=/[#&]base=([zj])\.([A-Za-z0-9_-]+)/.exec(location.hash);if(!m)return;history.replaceState(null,'',location.pathname);
+  try{const b64=m[2].replace(/-/g,'+').replace(/_/g,'/'),bin=atob(b64+'==='.slice((b64.length+3)%4));let t;
+    if(m[1]==='z'){const u=Uint8Array.from(bin,c=>c.charCodeAt(0));t=await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text()}else t=decodeURIComponent(escape(bin));
+    const N=fromBase(JSON.parse(t));if(!N)throw 0;
+    if(S.name){sheet('Remplacer par tes données de Base ?',`<p class="foot" style="text-align:left;margin:-6px 0 12px">Ce que tu as noté ici sera remplacé. Tu pourras annuler juste après.</p><button class="go" id="ok">Remplacer</button><button class="del" id="no" style="color:var(--muted)">Garder ce qu’il y a ici</button>`,(b,close)=>{b.querySelector('#ok').onclick=()=>{close();useBase(N)};b.querySelector('#no').onclick=close})}
+    else useBase(N)}catch(e){toast('Le lien n’a pas pu être lu')}}
+render();fromLink();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
