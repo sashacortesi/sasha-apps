@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794235673" data-theme="light">
+<html lang="fr" data-build="1794647400" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -982,13 +982,16 @@ const crT=id=>{const t=parseInt(String(id).slice(0,-4),36);return isFinite(t)?t:
 const lastDay=(y,m)=>new Date(y,m+1,0).getDate();
 const fxDate=(x,ym)=>{const y=+ym.slice(0,4),m=+ym.slice(5,7)-1;return ym+'-'+String(Math.min(x.d,lastDay(y,m))).padStart(2,'0')};
 const fxDated=()=>(S.fx||[]).filter(x=>x.d>=1&&x.d<=31);
-const fxThisMonth=()=>fxDated().map(x=>({...x,dt:fxDate(x,YM)})).sort((a,b)=>a.dt.localeCompare(b.dt));
+/* Opérations ponctuelles à venir (S.up) : une seule fois, à une date précise, comme l’onglet « À venir » de la banque */
+const upOne=k=>(S.up||[]).filter(x=>x.k===k&&x.v>0&&x.d);
+const fxThisMonth=()=>[...fxDated().map(x=>({...x,dt:fxDate(x,YM)})),...upOne('out').filter(x=>x.d.startsWith(YM)).map(x=>({n:x.n,v:x.v,d:+x.d.slice(8),dt:x.d,one:1}))].sort((a,b)=>a.dt.localeCompare(b.dt));
 const fxUpcoming=()=>fxThisMonth().filter(x=>x.dt>today);
 function liveBal(){const b=S.bal;if(!b)return null;let v=b.v;
   for(const x of S.inc)if(!x.nb&&crT(x.id)>b.ts)v+=x.v;
   for(const x of S.e)if(!x.nb&&crT(x.id)>b.ts)v-=x.v;
   let ym=b.d.slice(0,7);for(let k=0;k<36&&ym<=YM;k++){for(const x of fxDated()){const dt=fxDate(x,ym);if(dt>b.d&&dt<=today)v-=x.v}
     const y=+ym.slice(0,4),m=+ym.slice(5,7);ym=m===12?(y+1)+'-01':y+'-'+String(m+1).padStart(2,'0')}
+  for(const x of upOne('out'))if(x.d>b.d&&x.d<=today)v-=x.v;
   return Math.round(v*100)/100}
 const upSum=()=>fxUpcoming().reduce((a,x)=>a+x.v,0)+debtDue();
 const DDC_STEPS=()=>[{k:'ddq',q:'Tu as une carte à débit différé ?',sub:'Tes paiements carte partent en une fois, en fin de mois. Ta banque les montre à part, en « encours » ou « opérations à venir ».',type:'tiles',skip:()=>S.ddc!=null,opts:[{v:1,i:'card',l:'Oui',s:'Je te demanderai ton encours'},{v:0,i:'x',l:'Non',s:'Ou je ne sais pas'}]},
@@ -1492,7 +1495,7 @@ const rinSave=R=>{S.rin=R.filter(x=>x.v>0).map(x=>{const o={n:x.n||'Revenu',v:x.
 const rinSub=()=>(S.rin||[]).length?eur0(S.rin.reduce((a,x)=>a+x.v,0))+' par mois · '+S.rin.length+' revenu'+(S.rin.length>1?'s':''):'Salaire, aides…';
 const RIN_STEP={k:'rin',type:'fixes',seed:rinSeed,sug:RXS,ph:'Nom (ex. Salaire)',tl:'Total par mois',none:'Rien de régulier',sub:'Salaire, CAF, aide… Ce qui tombe chaque mois. Le jour, si tu le connais.'};
 const rinKey=(x,ym)=>ym+'|'+pk(x.n);
-const rinMonth=()=>(S.rin||[]).map(x=>({...x,dt:x.d?fxDate(x,YM):null,ok:!!(S.rok||{})[rinKey(x,YM)]}));
+const rinMonth=()=>[...(S.rin||[]).map(x=>({...x,dt:x.d?fxDate(x,YM):null,ok:!!(S.rok||{})[rinKey(x,YM)]})),...upOne('in').filter(x=>x.d.startsWith(YM)).map(x=>({n:x.n,v:x.v,dt:x.d,one:1,ok:!!(S.rok||{})[rinKey(x,YM)]}))];
 const rinDue=()=>rinMonth().filter(x=>!x.ok&&x.dt&&x.dt<=today&&!((S.rsn||{})[rinKey(x,YM)]===today));
 const inSum=()=>rinMonth().filter(x=>!x.ok&&x.dt&&x.dt>today).reduce((a,x)=>a+x.v,0);
 function flowRinQ(x){const k=rinKey(x,YM),ok=v=>{S.rok=S.rok||{};S.rok[k]=1;if(v>0)S.inc.push({id:uid(),d:today,v,n:x.n})};flow([
@@ -2885,10 +2888,12 @@ function proIntro(n){if(FL||$('.fl')||$('.ok')||$('.strk')){if((n||0)<8)setTimeo
 function applyMods(){{const j=CATS.findIndex(c=>c[0]==='conso');if(!S.vice&&j>=0)CATS.splice(j,1);else if(S.vice&&j<0)CATS.splice(Math.max(0,CATS.findIndex(c=>c[0]==='shopping')),0,CN.conso)}const i=CATS.findIndex(c=>c[0]==='pro');if(mod('f')&&i<0){CATS.splice(CATS.length-1,0,['pro','brief','Pro']);CN.pro=CATS.find(c=>c[0]==='pro')}else if(!mod('f')&&i>=0)CATS.splice(i,1);if(!CCOL.pro)CCOL.pro='#5E5CE6'}
 function pfFlow(first){flow(PF_STEPS(),v=>{pfApply(v);const n=(v.mods||'').length;return[first?'Ton Base est prêt':'C’est réglé',n?n+' fonction'+(n>1?'s':'')+' rien que pour toi':'Juste l’essentiel']},S.pf?{sit:S.pf.sit,mods:S.pf.mods,pa:S.pro&&S.pro.acc?'y':undefined}:null)}
 /* Mises à jour de charges préparées par Claude pour un utilisateur précis : proposées une fois, en un tap, annulables */
-const PATCHES=[{id:'2611-cetelem',who:/^sasha/i,q:'Tes charges à jour',sub:'Les 2 crédits Cetelem (prélevés « BNP PARIBAS PF » le 7) et une électricité plus réaliste.',
+const PATCHES=[{id:'2611-solde',who:/^sasha/i,until:'2026-11-30',paste:1},
+ {id:'2611-cetelem',who:/^sasha/i,q:'Tes charges à jour',sub:'Les 2 crédits Cetelem (prélevés « BNP PARIBAS PF » le 7) et une électricité plus réaliste.',
   rows:[['Crédit iPhone 17 Pro Max',74.09,7],['Crédit iPhone 16 Pro',32.88,7],['Électricité',60,0]]}];
-function patchAsk(){if(!S||!S.name)return;S.pd=S.pd||{};const P=PATCHES.find(x=>x.who.test(S.name)&&!S.pd[x.id]);if(!P)return;
+function patchAsk(){if(!S||!S.name)return;S.pd=S.pd||{};const P=PATCHES.find(x=>x.who.test(S.name)&&!S.pd[x.id]&&!(x.until&&today>x.until));if(!P)return;
   setTimeout(()=>{if(FL||$('.fl')||$('.scr')||$('#intro')||$('.strk')||$('#rcp')||document.hidden)return setTimeout(patchAsk,2500);
+    if(P.paste)return patchPaste(P);
     const nm=x=>String(x.n||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
     const apply=()=>{FLB=JSON.stringify(S);const F=(S.fx||[]).map(x=>({...x}));
       for(const [n,v,d] of P.rows){if(/lectri/i.test(n)){const e=F.find(x=>/electri|glas|ekwateur|edf|engie|total ?energ/.test(nm(x)));if(e)e.v=v;else F.push({n,v});continue}
@@ -2899,6 +2904,33 @@ function patchAsk(){if(!S||!S.name)return;S.pd=S.pd||{};const P=PATCHES.find(x=>
       {i:'check',l:'Mettre à jour',one:1,go:()=>{closeFl();apply()}},
       {i:'later',l:'Plus tard',one:1,go:()=>{closeFl()}},
       {i:'x',l:'Non merci',one:1,go:()=>{S.pd[P.id]=1;save();closeFl()}}]}],()=>['',''])},1600)}
+/* Solde + encours carte + opérations à venir, lus sur une capture de la banque : un tap, annulable */
+/* Les chiffres ne sont jamais dans le code (public) : Claude donne un code à copier, l’app le lit ici, sur le téléphone seulement */
+function patchRead(t){try{const m=String(t||'').match(/BASE1:([A-Za-z0-9_-]+)/);if(!m)return null;const D=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,'+').replace(/_/g,'/')))));
+  const num=x=>typeof x==='number'&&isFinite(x)&&x>=0&&x<1e7,dt=x=>/^20\d\d-\d\d-\d\d$/.test(x),tx=x=>String(x||'').replace(/[<>&"]/g,'').slice(0,40),b=D.b;
+  if(!b||!num(b.v)||!num(b.enc||0)||!dt(b.d)||!(b.ts>1e12&&b.ts<1e13))return null;let m2=/^$/;try{m2=new RegExp(String(b.m||'^$').slice(0,60))}catch(e){}
+  return{bal:{n:tx(b.n)||'Compte',m:m2,v:b.v,enc:b.enc||0,d:b.d,ts:b.ts},up:(Array.isArray(D.u)?D.u:[]).slice(0,20).filter(x=>Array.isArray(x)&&/^[a-z0-9]{3,12}$/.test(x[0])&&(x[1]==='in'||x[1]==='out')&&num(x[3])&&dt(x[4])).map(x=>[x[0],x[1],tx(x[2])||'Opération',x[3],x[4]])}}catch(e){return null}}
+function patchPaste(P){const use=t=>{const D=patchRead(t);if(D){patchBal({id:P.id,...D});return 1}return 0};
+  const hand=()=>flow([{k:'t',q:'Colle le code ici',sub:'Appuie longtemps dans la case, puis « Coller ».',type:'text',ph:'BASE1:…',ml:4000}],v=>{if(!patchRead(v.t))return['Code non reconnu','Recopie-le depuis Claude'];setTimeout(()=>use(v.t),2600);return['Code lu','Vérifie tes chiffres']});
+  flow([{k:'x',q:'Tes chiffres sont prêts',sub:'Copie le code que Claude t’a donné, puis touche « Coller ». Tes chiffres restent sur ton téléphone.',type:'tiles',opts:[
+    {i:'check',l:'Coller',one:1,cta:1,go:async()=>{let t='';try{t=await navigator.clipboard.readText()}catch(e){}closeFl();if(!use(t))hand()}},
+    {i:'later',l:'Plus tard',one:1,go:()=>{closeFl()}},
+    {i:'x',l:'Non merci',one:1,go:()=>{S.pd[P.id]=1;save();closeFl()}}]}],()=>['',''])}
+function patchBal(P){const B=P.bal,nm=x=>String(x.n||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),r2=x=>Math.round(x*100)/100;
+  const fresh=!S.bal||(S.bal.ts||0)<B.ts,A=()=>(S.bal&&Array.isArray(S.bal.acc)?S.bal.acc:[]),dl=d=>pd(d).getDate()+' '+MN[pd(d).getMonth()];
+  const apply=j=>{FLB=JSON.stringify(S);
+    if(fresh){let acc=A().map(x=>({...x}));if(j>=0&&acc[j])acc[j].v=B.v;else if(j===-2||!acc.length)acc=[...(j===-2?acc:[]),{n:B.n,v:B.v}];
+      S.ddc=1;S.bal={v:r2(acc.reduce((a,x)=>a+x.v,0)-B.enc),d:B.d,ts:B.ts,acc,enc:B.enc}}
+    S.up=S.up||[];for(const [id,k,n,v,d] of P.up||[])if(!S.up.some(x=>x.id===id))S.up.push({id,k,n,v,d});
+    S.pd[P.id]=1;save();home();done([fresh?'Solde à jour':'Opérations ajoutées',fresh?eur(liveBal())+' · encours carte de '+eur0(B.enc)+' déduit':(P.up||[]).length+' opérations à venir'])};
+  const go=()=>{const a=A(),j=a.findIndex(x=>B.m.test(nm(x)));if(!fresh||!a.length||j>=0||a.length===1&&!a[0].n)return apply(j>=0?j:a.length?0:-1);
+    flow([{k:'x',q:'C’est quel compte ?',sub:'Le compte de la capture : '+eur(B.v)+'.',type:'tiles',opts:[...a.map((x,i)=>({i:'bank',l:x.n||'Compte',s:'Noté '+eur(x.v)+' · je remplace',one:1,go:()=>{closeFl();apply(i)}})),{i:'plus',l:B.n,s:'Un compte en plus',one:1,go:()=>{closeFl();apply(-2)}}]}],()=>['',''])};
+  flow([{k:'x',q:fresh?'Ton solde à jour':'Tes opérations à venir',sub:fresh?'Capture du '+dl(B.d)+' : tes charges déjà payées par carte sont dans l’encours, elles ne sont pas comptées deux fois.':'Les opérations prévues par ta banque ce mois-ci.',type:'tiles',opts:[
+    ...(fresh?[{hd:'Compte · '+eur(B.v)},{hd:'Encours carte · −'+eur(B.enc)},{hd:'Ce que tu as vraiment · '+eur(r2(B.v-B.enc))}]:[]),
+    ...(P.up||[]).map(([id,k,n,v,d])=>({hd:dl(d)+' · '+n+' · '+(k==='in'?'+':'−')+eur(v)})),
+    {i:'check',l:'Mettre à jour',one:1,cta:1,go:()=>{closeFl();go()}},
+    {i:'later',l:'Plus tard',one:1,go:()=>{closeFl()}},
+    {i:'x',l:'Non merci',one:1,go:()=>{S.pd[P.id]=1;save();closeFl()}}]}],()=>['',''])}
 function pfAsk(){if(!S.name||S.pf||(S.pfLater&&S.pfLater>addD(today,-3)))return;setTimeout(()=>{if(FL||$('.fl')||$('.scr')||$('#intro')||$('.strk'))return;
   flow([{k:'x',q:'Base s’adapte à toi',sub:'Dis-moi ce que tu fais dans la vie, je prépare les fonctions qui te servent vraiment. 30 secondes, rien n’est effacé.',type:'tiles',opts:[{i:'spark',l:'C’est parti',one:1,cta:1,go:()=>pfFlow(1)},{i:'later',l:'Plus tard',one:1,go:()=>{S.pfLater=today;closeFl();save()}}]}],()=>['',''])},2500)}
 function incSrc(){const s=(S.pf&&S.pf.sit)||'',L=[];if(mod('f'))L.push({v:'Paiement client',i:'brief',l:'Paiement client'});if(s.includes('e'))L.push({v:'Bourse',i:'book',l:'Bourse'});if(s.includes('j'))L.push({v:'France Travail',i:'search',l:'France Travail'});if(s.includes('i'))L.push({v:'Cachet',i:'spark',l:'Cachet / mission'});return L}
