@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794649000" data-theme="light">
+<html lang="fr" data-build="1794650000" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -1384,12 +1384,12 @@ function payLbl(m){const t=String(m||'').replace(/\s+/g,' ').trim();if(t.length<
   r=/(?:^|\s)(?:à|a|at)\s+([A-ZÀ-Ý0-9][^,;.\n€]{1,28})/.exec(t);if(r)return nice(r[1]);
   return nice(t.replace(/\d+([.,]\d{1,2})?\s?(€|eur)/ig,' '))||'Paiement'}
 let PAYB=0;async function payPull(){if(!S.payK||!S.payOn||PAYB)return;PAYB=1;try{const r=await fetch(PAYW+'/pull?k='+S.payK,{cache:'no-store'});const L=await r.json();if(Array.isArray(L)&&L.length){FLB=JSON.stringify(S);
-    const R=(S.payR||[]).filter(o=>Date.now()-o.t<864e5);let t=0,n=0;
+    const R=(S.payR||[]).filter(o=>Date.now()-o.t<864e5);let t=0,n=0;const PC=new Set();
     for(const x of L){const v=Math.round((+x.a||0)*100)/100;if(!(v>0))continue;if(PAYIN.test(x.m||''))continue;const at=+x.t||Date.now();
       /* même montant à moins de 10 min : c'est le même achat vu deux fois (Apple Pay + notif banque) */
       if(R.some(o=>o.v===v&&Math.abs(o.t-at)<6e5))continue;R.push({v,t:at});
-      const d=iso(new Date(at));addE({id:uid(),d:d>today?today:d,v,c:payCat(x.m),s:payLbl(x.m),ap:1});t+=v;n++}
-    S.payR=R.slice(-60);save();if(n){home();unPush(n+' paiement'+(n>1?'s':'')+' ajouté'+(n>1?'s':'')+' · '+eur(t))}}}catch(e){}PAYB=0}
+      const d=iso(new Date(at)),pc=payCat(x.m);addE({id:uid(),d:d>today?today:d,v,c:pc,s:payLbl(x.m),ap:1});PC.add(pc);t+=v;n++}
+    S.payR=R.slice(-60);save();if(n){home();const el=PC.size===1?envLeft([...PC][0]):'';unPush((n>1?n+' paiements · ':'')+eur(t)+(el||(n>1?' ajoutés':' ajouté')))}}}catch(e){}PAYB=0}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(payPull,800)});setTimeout(payPull,2500);
 function apScr(){const k=payK(),u=PAYW+'/add?k='+k+'&a=';const x=scr('Paiements automatiques',`<div style="display:grid;gap:14px">
   <div class="mm"><small>Apple Pay → Base</small><strong style="font-size:30px">${S.payOn?'Activé':'À installer'}</strong><span>Chaque paiement Apple Pay s’ajoute tout seul à tes dépenses, avec la bonne catégorie.</span></div>
