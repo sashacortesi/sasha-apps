@@ -2025,10 +2025,13 @@ function moiBilan(){const sc=spendCmp(),V=vicStats(),st=Math.max(okStreak(),0),B
   return `<div class="sec"><h2>Ton bilan</h2><button class="lk" data-a="bilan">Le mois en détail</button></div>
   <button class="mbl" data-a="bilan"><div class="mbn">${T.map(([v,l,c])=>`<span><b class="${c}">${v}</b><small>${l}</small></span>`).join('')}</div>
   <div class="mbt">${B.map(([l,ok,i])=>`<span class="${ok?'on':''}" title="${esc(l)}">${ic(i)}</span>`).join('')}<small>${got.length}/${B.length} trophées${got.length?' · dernier : '+esc(got.at(-1)[0]):''}</small></div></button>`}
+const NEWAPP='https://sashacortesi.github.io/sasha-apps/reste/app/';
+async function toNew(){const t=JSON.stringify({app:'libre',S});let ok=0;try{await navigator.clipboard.writeText(t);ok=1}catch(e){}
+  if(ok){done(['Données copiées','Dans la nouvelle app : « J’ai déjà Base », puis colle']);setTimeout(()=>{location.href=NEWAPP},1600)}else backup()}
 function baseScr(){const x=scr('Ma base',`<div style="display:grid;gap:14px">${budCard().replace('<div class="sec"><h2>Ton budget</h2></div>','')}
   <p class="foot">Ce qui ne bouge presque jamais. Le quotidien se modifie depuis l’accueil.</p>
-  <div class="list">${[['set','gear','Réglages','Profil, rappels, apparence'],['bk','folder','Sauvegarder mes données',S.bk?'Dernière le '+dDay(S.bk):'Au cas où tu perds ton téléphone'],['help','help','Aide','Comment marche Base']].map(([m,i,l,sb])=>`<button class="li" data-m="${m}"><span class="ck ico">${ic(i)}</span><span class="t">${l}<small>${sb}</small></span><span class="r">${ic('next')}</span></button>`).join('')}</div></div>`);
-  homeBind();x.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{buzz();({set:setSheet,bk:backup,help:()=>helpScr()})[b.dataset.m]()});SCR_RE=baseScr}
+  <div class="list">${[['nw','share','Envoyer vers Reste','Copie tes données pour la nouvelle app'],['set','gear','Réglages','Profil, rappels, apparence'],['bk','folder','Sauvegarder mes données',S.bk?'Dernière le '+dDay(S.bk):'Au cas où tu perds ton téléphone'],['help','help','Aide','Comment marche Base']].map(([m,i,l,sb])=>`<button class="li" data-m="${m}"><span class="ck ico">${ic(i)}</span><span class="t">${l}<small>${sb}</small></span><span class="r">${ic('next')}</span></button>`).join('')}</div></div>`);
+  homeBind();x.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{buzz();({nw:toNew,set:setSheet,bk:backup,help:()=>helpScr()})[b.dataset.m]()});SCR_RE=baseScr}
 function moiView(B){const g=S.cof&&S.cof.g,cv=cofV();
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
   ${S.start&&S.start<=addD(today,-7)&&(!S.bk||S.bk<=addD(today,-14))?`<button class="vng" data-m="bk">${ic('folder')}<span><b>Sauvegarde tes données</b><br><small style="color:var(--muted)">${S.bk?'Dernière le '+dDay(S.bk):'Au cas où tu perds ton téléphone'}</small></span>${ic('next')}</button>`:''}

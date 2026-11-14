@@ -68,7 +68,7 @@ button:active{opacity:.6}
 .foot{text-align:center;font-size:12.5px;color:var(--muted);margin:2px 0}
 .empt{text-align:center;color:var(--muted);padding:18px 0}
 /* feuilles (ajout / modification) */
-.sh{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.32);display:flex;align-items:flex-end;animation:fd .18s}
+.sh{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.32);display:flex;align-items:flex-end;animation:fd .18s}
 @keyframes fd{from{opacity:0}}
 .shb{width:100%;max-width:500px;margin:0 auto;background:var(--bg);border-radius:26px 26px 0 0;padding:10px 20px calc(20px + env(safe-area-inset-bottom));max-height:92vh;overflow-y:auto;animation:up .24s cubic-bezier(.2,.9,.3,1)}
 @keyframes up{from{transform:translateY(40%)}}
@@ -163,7 +163,7 @@ function toast(label){clearTimeout(UT);const o=$('.toast');if(o)o.remove();const
 /* ---- le calcul ---- */
 const created=id=>{const t=parseInt(String(id).slice(0,-4),36);return isFinite(t)?t:0};
 /* une ligne compte dans le solde si elle date d'après la mise à jour du solde */
-const counts=x=>S.bal&&x.d>=S.bal.d&&created(x.id)>S.bal.ts&&x.d<=today;
+const counts=x=>S.bal&&!x.nb&&x.d>=S.bal.d&&created(x.id)>S.bal.ts&&x.d<=today;
 function fxOcc(from,to){const L=[];let ym=from.slice(0,7);for(let k=0;k<40&&ym<=to.slice(0,7);k++){for(const x of S.fx){if(!x.d)continue;const dt=onDay(ym,x.d);if(dt>from&&dt<=to)L.push({...x,dt})}ym=addM(ym,1)}return L}
 function liveBal(){if(!S.bal)return null;let v=S.bal.v;
   for(const x of S.inc)if(counts(x))v+=x.v;for(const x of S.e)if(counts(x))v-=x.v;
@@ -290,14 +290,14 @@ function calScr(keep){CALM=CALM||YM;CALD=CALD||today;const ym=CALM,first=pd(ym+'
   ${addb('aup','cal','Prévoir un paiement ce jour-là','out')}`,calScr,keep);
   bind(x,{pm:()=>{CALM=addM(CALM,-1);CALD=CALM+'-01';calScr(true)},nm:()=>{CALM=addM(CALM,1);CALD=CALM+'-01';calScr(true)},day:d=>{CALD=d;calScr(true)},fx:id=>lineSheet('fx',id),rin:id=>lineSheet('rin',id),up:upSheet,dt:debtSheet,e:id=>moveSheet('e',id),i:id=>moveSheet('i',id),aup:k=>upSheet(null,k,CALD>today?CALD:null)})}
 function setScr(keep){const x=scr('Réglages',`<div class="list">${row('name','','users','','Prénom',esc(S.name),'')}${row('bal','','bank','','Mon solde','Noté '+(S.bal?(S.bal.d===today?'aujourd’hui':'le '+dd(S.bal.d)):'jamais'),S.bal?eur0(liveBal()):'—')}${row('th','','moon','','Apparence',S.t==='dark'?'Sombre':S.t==='light'?'Clair':'Comme le téléphone','')}</div>
-  ${lh('Tes données')}<div class="list">${row('ex','','down','','Exporter','Un fichier à garder au cas où','')}${row('im','','up2','','Importer','Reprendre un fichier exporté','')}</div>
+  ${lh('Tes données')}<div class="list">${row('bs','','down','','Reprendre mes données de Base','Remplace ce qu’il y a ici','')}${row('ex','','down','','Exporter','Un fichier à garder au cas où','')}${row('im','','up2','','Importer','Reprendre un fichier exporté','')}</div>
   <p class="foot">Tout reste sur ton téléphone. Rien n’est envoyé.</p>
   <div class="list">${row('fd','','ig','','Devenir membre fondateur','Écris FONDATEUR en message à @sashacortesi','')}</div>
   <input type="file" id="imf" accept="application/json" hidden>`,setScr,keep);
   bind(x,{name:()=>textSheet('Ton prénom',S.name,v=>mut('Prénom changé',()=>S.name=v)),bal:balSheet,th:()=>{S.t=S.t==='dark'?'light':S.t==='light'?'':'dark';save();theme();setScr(true)},
    ex:()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='reste-'+today+'.json';a.click();S.bk=today;save()},
-   im:()=>x.querySelector('#imf').click(),fd:()=>{location.href='https://ig.me/m/sashacortesi'}});
-  x.querySelector('#imf').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(!d||!d.name)throw 0;mut('Données reprises',()=>{S={fx:[],rin:[],up:[],e:[],inc:[],debts:[],rok:{},env:{},...d}})}catch(er){toast('Fichier illisible')}}}
+   bs:baseSheet,im:()=>x.querySelector('#imf').click(),fd:()=>{location.href='https://ig.me/m/sashacortesi'}});
+  x.querySelector('#imf').onchange=async e=>{try{let d=JSON.parse(await e.target.files[0].text());if(d&&d.app==='libre'){const N=parseBase(JSON.stringify(d));if(!N)throw 0;return useBase(N)}if(!d||!d.name)throw 0;mut('Données reprises',()=>{S={fx:[],rin:[],up:[],e:[],inc:[],debts:[],rok:{},env:{},...d}})}catch(er){toast('Fichier illisible')}}}
 
 /* ---- feuilles ---- */
 function sheet(title,html,onBind){const o=document.createElement('div');o.className='sh';o.innerHTML=`<div class="shb"><div class="grab"></div>${title?`<h3>${title}</h3>`:''}${html}</div>`;document.body.appendChild(o);
@@ -369,11 +369,40 @@ function arrived(x){sheet(esc(x.n)+' est arrivé ?',`${amtF(x.v,0)}<p class="foo
   b.querySelector('#ok').onclick=()=>{const v=val(b)||x.v;close();mut('+ '+eur(v)+' · '+x.n,()=>{S.inc.push({id:uid(),d:today,v,n:x.n});if(x.k==='in'){const u=S.up.find(y=>y.id===x.id);if(u)S.up.splice(S.up.indexOf(u),1)}else S.rok[rinKey(x,YM)]=1})};
   b.querySelector('#no').onclick=close})}
 
+const APP='Reste';
+/* ---- reprendre les données de Base (même site : lecture directe, sinon code copié ou fichier de sauvegarde) ---- */
+const BC={courses:'courses',resto:'resto',ff:'ff',sorties:'sorties',transport:'transport',shopping:'shopping',sante:'sante',forme:'autre',conso:'autre',frais:'autre',autre:'autre',pro:'autre'};
+function fromBase(B){if(!B||!B.name)return null;const ym=iso(new Date()).slice(0,7),pk=n=>String(n||'').trim().toLowerCase(),okR=n=>!!(B.rok||{})[ym+'|'+pk(n)];
+  const N={fx:[],rin:[],up:[],e:[],inc:[],debts:[],rok:{},env:{},name:String(B.name).split(' ')[0],start:B.start||today,from:'base'};
+  if(B.bal)N.bal={v:r2(B.bal.v),d:B.bal.d,ts:B.bal.ts||0,acc:(B.bal.acc||[]).map(a=>({n:a.n||'Compte',v:r2(a.v)}))};
+  for(const x of B.fx||[])if(x.v>0)N.fx.push({id:uid(),n:x.n||'Charge',v:r2(x.v),...(x.d>=1&&x.d<=31?{d:x.d}:{})});
+  for(const x of B.rin||[])if(x.v>0){const o={id:uid(),n:x.n||'Revenu',v:r2(x.v),...(x.d>=1&&x.d<=31?{d:x.d}:{})};N.rin.push(o);if(okR(x.n))N.rok[ym+'|'+o.id]=1}
+  for(const x of B.up||[])if(x.v>0&&x.d&&!(x.k==='in'&&okR(x.n)))N.up.push({id:x.id||uid(),k:x.k==='in'?'in':'out',n:x.n||'Prévu',v:r2(x.v),d:x.d});
+  for(const x of B.e||[]){if(!(x.v>0)||!x.d)continue;const o={id:x.id||uid(),d:x.d,v:r2(x.v),c:BC[x.c]||'autre'};const n=x.c==='dette'?'Remboursé à '+(x.p||''):x.ap&&x.s?x.s:'';if(n)o.n=n;if(x.nb)o.nb=1;N.e.push(o)}
+  for(const x of B.inc||[]){if(!(x.v>0)||!x.d)continue;const o={id:x.id||uid(),d:x.d,v:r2(x.v),n:x.n||'Rentrée'};if(x.rc&&BC[x.rc])o.rc=BC[x.rc];if(x.nb)o.nb=1;N.inc.push(o)}
+  for(const x of B.debts||[])if(x.v>0)N.debts.push({id:x.id||uid(),p:x.p||'?',t:x.t||'',v:r2(x.v),w:x.w==='them'?'them':'me',d:x.d||today,due:x.dd||''});
+  for(const [c,b] of Object.entries(B.env||{})){const k=BC[c];if(k&&b>0)N.env[k]=(N.env[k]||0)+b}
+  return N}
+const baseLocal=()=>{try{return JSON.parse(localStorage.getItem('librePote:v1'))}catch(e){return null}};
+function parseBase(t){try{let d=JSON.parse(String(t).trim());if(d&&d.S)d=d.S;return fromBase(d)}catch(e){return null}}
+function useBase(N,from){const had=!!S.name;const snap=JSON.stringify(S);S=N;save();const o=$('.onb');if(o)o.remove();UNDO=had?{snap,label:''}:null;render();buzz([10,40,14]);
+  toast(N.e.length+N.inc.length+' mouvements, '+N.fx.length+' charges, '+N.debts.length+' dettes repris')}
+function baseSheet(){const L=fromBase(baseLocal());
+  sheet('Reprendre mes données de Base',`${L?`<button class="go" id="loc" style="margin:0 0 14px">Reprendre tout de suite<br><small style="font-weight:500;opacity:.7">${esc(L.name)} · solde, ${L.fx.length} charges, ${L.e.length} dépenses</small></button>`:''}
+   <p class="foot" style="text-align:left;margin:0 0 10px">Dans Base : Moi › Ma base › « Envoyer vers ${APP} ». Le code est copié : colle-le ici.</p>
+   <div class="fld"><textarea id="cp" rows="4" placeholder="Colle le code ici" style="width:100%;padding:14px;border-radius:14px;border:0;background:var(--card);box-shadow:var(--shadow);font:inherit;font-size:14px;outline:0;resize:none"></textarea></div>
+   <button class="go" id="ok">Reprendre</button><button class="del" id="fi" style="color:var(--muted)">Ou choisir un fichier de sauvegarde</button><input type="file" id="ff" accept="application/json,.json" hidden>`,(b,close)=>{
+   const go=N=>{if(!N){toast('Code illisible');return}close();useBase(N)};
+   const l=b.querySelector('#loc');if(l)l.onclick=()=>go(L);
+   b.querySelector('#ok').onclick=()=>go(parseBase(b.querySelector('#cp').value));
+   b.querySelector('#fi').onclick=()=>b.querySelector('#ff').click();
+   b.querySelector('#ff').onchange=async e=>go(parseBase(await e.target.files[0].text()))})}
+
 /* ---- premier lancement : 4 écrans, tout se passe ---- */
 let OB={i:0,n:'',acc:[{n:'',v:null}],fx:[{n:'',v:null,d:null}],rin:[{n:'',v:null,d:null}]};
 function onboard(){let o=$('.onb');if(!o){o=document.createElement('div');o.className='onb';document.body.appendChild(o)}const i=OB.i;
   const lines=(L,ph,dl)=>`<div class="lrh"><span>Nom</span><span>Montant</span><span>${dl}</span><span></span></div>${L.map((x,j)=>`<div class="lr"><input data-j="${j}" data-f="n" placeholder="${ph[j%ph.length]}" value="${esc(x.n)}"><input data-j="${j}" data-f="v" inputmode="decimal" placeholder="0 €" value="${x.v!=null?String(x.v).replace('.',','):''}"><input data-j="${j}" data-f="d" inputmode="numeric" maxlength="2" placeholder="—" value="${x.d||''}"><button class="x" data-x="${j}">${ic('x')}</button></div>`).join('')}<button class="ladd" id="la">${ic('plus')}Ajouter une ligne</button>`;
-  const P=[[`Combien il te reste.<br>Vraiment.`,'Pas un relevé de banque : un chiffre par jour, et ce qui arrive. Ton prénom ?',`<input class="txt" id="nm" placeholder="Prénom" value="${esc(OB.n)}" style="padding:16px;border-radius:16px;border:0;background:var(--card);box-shadow:var(--shadow);font-size:18px;outline:0">`],
+  const P=[[`Combien il te reste.<br>Vraiment.`,'Pas un relevé de banque : un chiffre par jour, et ce qui arrive. Ton prénom ?',`<button class="addb" id="fb" style="margin-bottom:6px">${ic('down')}<span>J’ai déjà Base : reprendre mes données</span></button><input class="txt" id="nm" placeholder="Prénom" value="${esc(OB.n)}" style="padding:16px;border-radius:16px;border:0;background:var(--card);box-shadow:var(--shadow);font-size:18px;outline:0">`],
    ['Ce que tu as','Le total de tes comptes, aujourd’hui. Mets − si tu es à découvert.',`${OB.acc.map((a,j)=>`<div class="lr" style="grid-template-columns:1fr 120px 30px"><input data-j="${j}" data-f="n" placeholder="${j?'Revolut':'Ta banque'}" value="${esc(a.n)}"><input data-j="${j}" data-f="v" inputmode="decimal" placeholder="0 €" value="${a.v!=null?String(a.v).replace('.',','):''}"><button class="x" data-x="${j}">${ic('x')}</button></div>`).join('')}<button class="ladd" id="la">${ic('plus')}Un autre compte</button>`],
    ['Ce qui part chaque mois','Loyer, forfait, abonnements. Le jour du prélèvement, si tu le sais.',lines(OB.fx,['Loyer','Forfait','Spotify','Assurance'],'Le')],
    ['Ce qui rentre chaque mois','Salaire, aides… Le jour où ça tombe.',lines(OB.rin,['Salaire','CAF','Aide'],'Le')]];
@@ -382,7 +411,7 @@ function onboard(){let o=$('.onb');if(!o){o=document.createElement('div');o.clas
   if(L){o.querySelectorAll('[data-j]').forEach(e=>e.oninput=()=>{const x=L[+e.dataset.j],f=e.dataset.f;if(f==='n')x.n=e.value;else if(f==='v'){const n=parseFloat(e.value.replace(/\s/g,'').replace(',','.').replace('−','-'));x.v=isNaN(n)?null:n}else{const d=parseInt(e.value,10);x.d=d>=1&&d<=31?d:null}});
     o.querySelectorAll('[data-x]').forEach(e=>e.onclick=()=>{L.splice(+e.dataset.x,1);if(!L.length)L.push({n:'',v:null,d:null});onboard()});
     o.querySelector('#la').onclick=()=>{L.push({n:'',v:null,d:null});onboard();const n=o.querySelectorAll('[data-f="n"]');n[n.length-1].focus()}}
-  else{const nm=o.querySelector('#nm');nm.oninput=()=>OB.n=nm.value;setTimeout(()=>nm.focus(),200)}
+  else{const nm=o.querySelector('#nm');nm.oninput=()=>OB.n=nm.value;o.querySelector('#fb').onclick=()=>{buzz();baseSheet()};if(!baseLocal())setTimeout(()=>nm.focus(),200)}
   const fin=()=>{S.name=OB.n.trim()||'toi';const acc=OB.acc.filter(a=>a.v!=null).map(a=>({n:a.n||'Compte',v:r2(a.v)}));if(acc.length)S.bal={v:r2(sum(acc)),d:today,ts:Date.now(),acc};
     S.fx=OB.fx.filter(x=>x.v>0).map(x=>({id:uid(),n:x.n||'Charge',v:r2(x.v),...(x.d?{d:x.d}:{})}));S.rin=OB.rin.filter(x=>x.v>0).map(x=>({id:uid(),n:x.n||'Revenu',v:r2(x.v),...(x.d?{d:x.d}:{})}));
     for(const x of S.rin)if(x.d&&onDay(YM,x.d)<=today)S.rok[rinKey(x,YM)]=1;S.start=today;save();o.remove();buzz([10,40,14]);render()};
