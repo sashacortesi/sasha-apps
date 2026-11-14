@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794650000" data-theme="light">
+<html lang="fr" data-build="1794651500" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -1033,11 +1033,15 @@ function catsCard(){const m={};let t=0;for(const x of S.e.filter(x=>x.d.startsWi
   return `<div class="cats"><div class="hd"><b>Où part ton argent</b><span>${MNL[+YM.slice(5,7)-1]}</span></div><div class="bar">${L.map(([c,v])=>`<i style="width:${v/t*100}%;background:${CCOL[c]||'#8E8E93'}"></i>`).join('')}</div>${L.slice(0,5).map(([c,v])=>`<div class="cr"><span class="dot" style="background:${CCOL[c]||'#8E8E93'}"></span><span>${esc(CN[c]?CN[c][2]:'Autre')}<small>${Math.round(v/t*100)} %</small></span><b>${eur(v)}</b></div>`).join('')}${m.conso?`<div class="dnote" style="text-align:left;padding:0">${esc(CN.conso[2])} : ${eur0(m.conso)} ce mois, soit ${eur0(m.conso/Math.max(1,+today.slice(8))*30)} sur un mois entier à ce rythme.</div>`:''}</div>`}
 /* Tout d’un coup d’œil : ce que j’ai, ce qui part, ce qui arrive, ce qu’il reste, et où part l’argent (avec budget par catégorie) */
 const envLeft=c=>{const b=(S.env||{})[c];if(!b)return '';const sp=S.e.filter(x=>x.d.startsWith(YM)&&x.c===c).reduce((a,x)=>a+x.v,0),l=Math.round(b-sp);return l>=0?' · reste '+eur0(l)+' en '+CN[c][2]:' · budget '+CN[c][2]+' dépassé de '+eur0(-l)};
+const envRest=()=>Object.entries(S.env||{}).filter(([c,b])=>CN[c]&&b>0).map(([c,b])=>[c,Math.max(0,b-S.e.filter(x=>x.d.startsWith(YM)&&x.c===c).reduce((a,x)=>a+x.v,0))]).filter(x=>x[1]>=1);
+const envTodo=()=>Math.round(envRest().reduce((a,x)=>a+x[1],0));
+const envCats=()=>{const L=envRest().map(x=>CN[x[0]][2]);return L.length>3?L.slice(0,3).join(', ')+'…':L.join(', ')};
 function glanceCard(){if(!S.name)return '';const mn=MNL[+YM.slice(5,7)-1],now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth());let A='';
-  if(S.bal){const L=liveBal(),up=upSum(),inn=inSum(),cv=cofV(),fin=Math.round((L-up+inn-cv)*100)/100;
+  if(S.bal){const L=liveBal(),up=upSum(),inn=inSum(),cv=cofV(),ev=envTodo(),fin=Math.round((L-up+inn-cv-ev)*100)/100;
     A=`<button class="gl" data-a="data"><h3><span>Ton argent · ${mn}</span></h3>
     <div class="r"><span>Sur ton compte${S.bal.enc?'<small>carte à débit différé déjà retirée</small>':''}</span><b class="${L<0?'neg':''}">${eur0(L)}</b></div>
     ${up?`<div class="r"><span>Encore à payer<small>d’ici le ${ld} ${mn}</small></span><b>− ${eur0(up)}</b></div>`:''}
+    ${ev?`<div class="r"><span>Prévu dans tes budgets<small>${envCats()}</small></span><b>− ${eur0(ev)}</b></div>`:''}
     ${inn?`<div class="r"><span>À recevoir</span><b class="pos">+ ${eur0(inn)}</b></div>`:''}
     ${cv>0?`<div class="r"><span>Dans ton coffre<small>à ne pas toucher</small></span><b>− ${eur0(cv)}</b></div>`:''}
     <div class="r t"><span>Il te restera fin ${mn}</span><b class="${fin<0?'neg':'pos'}">${eur0(fin)}</b></div></button>`}
@@ -2920,7 +2924,7 @@ function proIntro(n){if(FL||$('.fl')||$('.ok')||$('.strk')){if((n||0)<8)setTimeo
 function applyMods(){{const j=CATS.findIndex(c=>c[0]==='conso');if(!S.vice&&j>=0)CATS.splice(j,1);else if(S.vice&&j<0)CATS.splice(Math.max(0,CATS.findIndex(c=>c[0]==='shopping')),0,CN.conso)}const i=CATS.findIndex(c=>c[0]==='pro');if(mod('f')&&i<0){CATS.splice(CATS.length-1,0,['pro','brief','Pro']);CN.pro=CATS.find(c=>c[0]==='pro')}else if(!mod('f')&&i>=0)CATS.splice(i,1);if(!CCOL.pro)CCOL.pro='#5E5CE6'}
 function pfFlow(first){flow(PF_STEPS(),v=>{pfApply(v);const n=(v.mods||'').length;return[first?'Ton Base est prêt':'C’est réglé',n?n+' fonction'+(n>1?'s':'')+' rien que pour toi':'Juste l’essentiel']},S.pf?{sit:S.pf.sit,mods:S.pf.mods,pa:S.pro&&S.pro.acc?'y':undefined}:null)}
 /* Mises à jour de charges préparées par Claude pour un utilisateur précis : proposées une fois, en un tap, annulables */
-const PATCHES=[{id:'2611-solde',who:/^sasha/i,until:'2026-11-30',paste:1},
+const PATCHES=[{id:'2611-carte',who:/^sasha/i,until:'2026-11-30',paste:1},
  {id:'2611-cetelem',who:/^sasha/i,q:'Tes charges à jour',sub:'Les 2 crédits Cetelem (prélevés « BNP PARIBAS PF » le 7) et une électricité plus réaliste.',
   rows:[['Crédit iPhone 17 Pro Max',74.09,7],['Crédit iPhone 16 Pro',32.88,7],['Électricité',60,0]]}];
 function patchAsk(){if(!S||!S.name)return;S.pd=S.pd||{};const P=PATCHES.find(x=>x.who.test(S.name)&&!S.pd[x.id]&&!(x.until&&today>x.until));if(!P)return;
@@ -2941,9 +2945,12 @@ function patchAsk(){if(!S||!S.name)return;S.pd=S.pd||{};const P=PATCHES.find(x=>
 function patchRead(t){try{const m=String(t||'').match(/BASE1:([A-Za-z0-9_-]+)/);if(!m)return null;const D=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,'+').replace(/_/g,'/')))));
   const num=x=>typeof x==='number'&&isFinite(x)&&x>=0&&x<1e7,dt=x=>/^20\d\d-\d\d-\d\d$/.test(x),tx=x=>String(x||'').replace(/[<>&"]/g,'').slice(0,40),b=D.b;
   if(!b||!num(b.v)||!num(b.enc||0)||!dt(b.d)||!(b.ts>1e12&&b.ts<1e13))return null;let m2=/^$/;try{m2=new RegExp(String(b.m||'^$').slice(0,60))}catch(e){}
-  return{bal:{n:tx(b.n)||'Compte',m:m2,v:b.v,enc:b.enc||0,d:b.d,ts:b.ts},up:(Array.isArray(D.u)?D.u:[]).slice(0,20).filter(x=>Array.isArray(x)&&/^[a-z0-9]{3,12}$/.test(x[0])&&(x[1]==='in'||x[1]==='out')&&num(x[3])&&dt(x[4])).map(x=>[x[0],x[1],tx(x[2])||'Opération',x[3],x[4]])}}catch(e){return null}}
+  const ex=(Array.isArray(D.e)?D.e:[]).slice(0,300).filter(x=>Array.isArray(x)&&dt(x[0])&&num(x[1])&&x[1]>0).map(x=>[x[0],Math.round(x[1]*100)/100,CN[x[2]]?x[2]:'autre',tx(x[3]).slice(0,24)]);
+  const fxs=(Array.isArray(D.f)?D.f:[]).slice(0,30).filter(x=>Array.isArray(x)&&num(x[1])&&x[1]>0&&x[2]>=1&&x[2]<=31).map(x=>{let r=/^$/;try{r=new RegExp(String(x[3]||'^$').slice(0,60))}catch(e){}return[tx(x[0])||'Abonnement',x[1],Math.round(x[2]),r]});
+  const env={};if(D.env&&typeof D.env==='object')for(const c in D.env)if(CN[c]&&num(D.env[c])&&D.env[c]>0)env[c]=Math.round(D.env[c]);
+  return{ex,fxs,env,bal:{n:tx(b.n)||'Compte',m:m2,v:b.v,enc:b.enc||0,d:b.d,ts:b.ts},up:(Array.isArray(D.u)?D.u:[]).slice(0,20).filter(x=>Array.isArray(x)&&/^[a-z0-9]{3,12}$/.test(x[0])&&(x[1]==='in'||x[1]==='out')&&num(x[3])&&dt(x[4])).map(x=>[x[0],x[1],tx(x[2])||'Opération',x[3],x[4]])}}catch(e){return null}}
 function patchPaste(P){const use=t=>{const D=patchRead(t);if(D){patchBal({id:P.id,...D});return 1}return 0};
-  const hand=()=>flow([{k:'t',q:'Colle le code ici',sub:'Appuie longtemps dans la case, puis « Coller ».',type:'text',ph:'BASE1:…',ml:4000}],v=>{if(!patchRead(v.t))return['Code non reconnu','Recopie-le depuis Claude'];setTimeout(()=>use(v.t),2600);return['Code lu','Vérifie tes chiffres']});
+  const hand=()=>flow([{k:'t',q:'Colle le code ici',sub:'Appuie longtemps dans la case, puis « Coller ».',type:'text',ph:'BASE1:…',ml:30000}],v=>{if(!patchRead(v.t))return['Code non reconnu','Recopie-le depuis Claude'];setTimeout(()=>use(v.t),2600);return['Code lu','Vérifie tes chiffres']});
   flow([{k:'x',q:'Tes chiffres sont prêts',sub:'Copie le code que Claude t’a donné, puis touche « Coller ». Tes chiffres restent sur ton téléphone.',type:'tiles',opts:[
     {i:'check',l:'Coller',one:1,cta:1,go:async()=>{let t='';try{t=await navigator.clipboard.readText()}catch(e){}closeFl();if(!use(t))hand()}},
     {i:'later',l:'Plus tard',one:1,go:()=>{closeFl()}},
@@ -2954,12 +2961,20 @@ function patchBal(P){const B=P.bal,nm=x=>String(x.n||'').normalize('NFD').replac
     if(fresh){let acc=A().map(x=>({...x}));if(j>=0&&acc[j])acc[j].v=B.v;else if(j===-2||!acc.length)acc=[...(j===-2?acc:[]),{n:B.n,v:B.v}];
       S.ddc=1;S.bal={v:r2(acc.reduce((a,x)=>a+x.v,0)-B.enc),d:B.d,ts:B.ts,acc,enc:B.enc}}
     S.up=S.up||[];for(const [id,k,n,v,d] of P.up||[])if(!S.up.some(x=>x.id===id))S.up.push({id,k,n,v,d});
+    /* paiements carte : déjà dans l’encours, donc sans effet sur le solde (nb) ; pas de doublon avec ce qui est déjà noté */
+    {const used=new Set(),dd=(a,b)=>Math.abs((pd(a)-pd(b))/864e5);for(const [d,v,c,l] of P.ex||[]){const j=S.e.findIndex((x,i)=>!used.has(i)&&Math.abs(x.v-v)<.006&&dd(x.d,d)<=1);if(j>=0){used.add(j);continue}
+      const o={id:uid(),d,v,c,nb:1,imp:1};if(l)o.s=l;S.e.push(o);used.add(S.e.length-1)}}
+    {S.fx=S.fx||[];for(const [n,v,d,r] of P.fxs||[])if(!S.fx.some(x=>(Math.abs((x.v||0)-v)<.005&&v%1>.001)||r.test(nm(x))))S.fx.push({n,v,d})}
+    {S.env=S.env||{};for(const c in P.env||{})if(S.env[c]==null)S.env[c]=P.env[c]}
     S.pd[P.id]=1;save();home();done([fresh?'Solde à jour':'Opérations ajoutées',fresh?eur(liveBal())+' · encours carte de '+eur0(B.enc)+' déduit':(P.up||[]).length+' opérations à venir'])};
   const go=()=>{const a=A(),j=a.findIndex(x=>B.m.test(nm(x)));if(!fresh||!a.length||j>=0||a.length===1&&!a[0].n)return apply(j>=0?j:a.length?0:-1);
     flow([{k:'x',q:'C’est quel compte ?',sub:'Le compte de la capture : '+eur(B.v)+'.',type:'tiles',opts:[...a.map((x,i)=>({i:'bank',l:x.n||'Compte',s:'Noté '+eur(x.v)+' · je remplace',one:1,go:()=>{closeFl();apply(i)}})),{i:'plus',l:B.n,s:'Un compte en plus',one:1,go:()=>{closeFl();apply(-2)}}]}],()=>['',''])};
   flow([{k:'x',q:fresh?'Ton solde à jour':'Tes opérations à venir',sub:fresh?'Capture du '+dl(B.d)+' : tes charges déjà payées par carte sont dans l’encours, elles ne sont pas comptées deux fois.':'Les opérations prévues par ta banque ce mois-ci.',type:'tiles',opts:[
     ...(fresh?[{hd:'Compte · '+eur(B.v)},{hd:'Encours carte · −'+eur(B.enc)},{hd:'Ce que tu as vraiment · '+eur(r2(B.v-B.enc))}]:[]),
     ...(P.up||[]).map(([id,k,n,v,d])=>({hd:dl(d)+' · '+n+' · '+(k==='in'?'+':'−')+eur(v)})),
+    ...((P.ex||[]).length?[{hd:P.ex.length+' paiements carte · '+eur0(P.ex.reduce((a,x)=>a+x[1],0))+' · rangés par catégorie, solde inchangé'}]:[]),
+    ...((P.fxs||[]).length?[{hd:P.fxs.length+' abonnements reconnus · comptés en charges fixes, pas en dépenses'}]:[]),
+    ...(Object.keys(P.env||{}).length?[{hd:'Budget · '+Object.entries(P.env).map(([c,v])=>CN[c][2]+' '+eur0(v)).join(', ')}]:[]),
     {i:'check',l:'Mettre à jour',one:1,cta:1,go:()=>{closeFl();go()}},
     {i:'later',l:'Plus tard',one:1,go:()=>{closeFl()}},
     {i:'x',l:'Non merci',one:1,go:()=>{S.pd[P.id]=1;save();closeFl()}}]}],()=>['',''])}
