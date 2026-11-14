@@ -412,6 +412,14 @@ label.tile{position:relative;overflow:hidden}.tlink.set .tl{color:var(--ink)!imp
 .gl button.r:active,.gl .c:active,button.li:active,button.gl:active{opacity:.55}
 button.li{font:inherit;color:inherit;cursor:pointer}.scr button.li .t{font-size:16px}
 .mm .gfb2{display:block;height:8px;border-radius:4px;background:var(--card2);overflow:hidden;margin:8px 0 2px}.mm .gfb2 i{display:block;height:100%;border-radius:4px;background:var(--good)}
+.gl.g1{padding:18px 18px 16px;gap:2px;cursor:pointer}.gl.g1 h3{margin:0;align-items:center}.gl.g1 strong{font-family:var(--num);font-variant-numeric:tabular-nums;font-size:44px;font-weight:800;letter-spacing:-.045em;line-height:1.1}
+.g1s{display:flex;gap:18px;margin-top:10px;padding-top:12px;border-top:1px solid var(--line)}.g1s>span{display:grid;gap:1px;font-size:12px;font-weight:600;color:var(--muted)}.g1s b{font-family:var(--num);font-variant-numeric:tabular-nums;font-size:16px;font-weight:700;color:var(--ink);white-space:nowrap}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.g2.odd .gt:last-child{grid-column:1/-1}
+.gt{display:grid;align-content:start;gap:3px;padding:15px 16px 14px;border-radius:20px;border:0;background:var(--card);color:var(--ink);font:inherit;text-align:left;min-width:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.gt small{font-size:13px;font-weight:700;color:var(--muted)}.gt strong{font-family:var(--num);font-variant-numeric:tabular-nums;font-size:24px;font-weight:800;letter-spacing:-.03em;white-space:nowrap}
+.gt>span:last-child{font-size:12px;font-weight:500;color:var(--muted);line-height:1.3}.gt .gtb{display:block;height:5px;border-radius:3px;background:var(--card2);overflow:hidden;margin:4px 0 3px}.gt .gtb i{display:block;height:100%;border-radius:3px}
+.gt:active,.gl.g1:active{opacity:.55}.gt .pos,.g1s .pos{color:var(--good)}.g1s .neg{color:var(--bad)}.chs{display:flex;flex-wrap:wrap;gap:8px}
+[data-theme="light"] .gt{box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .gl .gh{font-size:12px;color:var(--muted);font-weight:500;padding:6px 0 4px}
 .mlink{justify-self:center;display:flex;align-items:center;gap:4px;border:0;background:none;font:inherit;font-size:14px;font-weight:600;color:var(--muted);padding:10px}.mlink svg{width:14px;height:14px}
 
@@ -1047,33 +1055,6 @@ const catNet=c=>Math.max(0,S.e.filter(x=>x.d.startsWith(YM)&&x.c===c).reduce((a,
 const envRest=()=>Object.entries(S.env||{}).filter(([c,b])=>CN[c]&&b>0).map(([c,b])=>[c,Math.max(0,b-catNet(c))]).filter(x=>x[1]>=1);
 const envTodo=()=>Math.round(envRest().reduce((a,x)=>a+x[1],0));
 const envCats=()=>{const L=envRest().map(x=>CN[x[0]][2]);return L.length>3?L.slice(0,3).join(', ')+'…':L.join(', ')};
-function glanceCard(){if(!S.name)return '';const mn=MNL[+YM.slice(5,7)-1],now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),FXM=fxThisMonth().filter(x=>!x.one);let A='';
-  if(S.bal){const L=liveBal(),up=upSum(),inn=inSum(),cv=cofV(),ev=envTodo(),fin=Math.round((L-up+inn-cv-ev)*100)/100,fu=FXM.filter(x=>x.dt>today).reduce((a,x)=>a+x.v,0),ot=Math.round((up-fu)*100)/100;
-    const RI=rinMonth().filter(x=>!x.ok&&x.dt&&x.dt>today).sort((a,b)=>a.dt.localeCompare(b.dt)),nf=FXM.find(x=>x.dt>today);
-    A=`<div class="gl"><h3><span>Ton argent · ${mn}</span></h3>
-    <button class="r" data-dt="acc"><span>Sur ton compte<small>${S.bal.enc?'carte à débit différé déjà retirée · ':''}noté ${S.bal.d===today?'aujourd’hui':'le '+dDay(S.bal.d)}</small></span><b class="${L<0?'neg':''}">${eur0(L)}</b>${GC}</button>
-    ${fu?`<button class="r" data-dt="fxs"><span>Charges fixes à payer<small>${nf?'prochaine : '+esc(nf.n)+' le '+dDay(nf.dt):'d’ici le '+ld+' '+mn}</small></span><b>− ${eur0(fu)}</b>${GC}</button>`:''}
-    ${ot>=1?`<button class="r" data-dt="oth"><span>Autres paiements prévus<small>virements, dettes</small></span><b>− ${eur0(ot)}</b>${GC}</button>`:''}
-    ${ev?`<button class="r" data-dt="env"><span>Charges variables prévues<small>budget restant : ${envCats()}</small></span><b>− ${eur0(ev)}</b>${GC}</button>`:''}
-    ${RI.length&&RI.length<=3?RI.map(x=>`<button class="r" data-dt="rin"><span>${esc(x.n)}<small>à recevoir le ${dDay(x.dt)} · ${inDays(x.dt)}</small></span><b class="pos">+ ${eur0(x.v)}</b>${GC}</button>`).join(''):inn?`<button class="r" data-dt="rin"><span>À recevoir<small>${RI.length} rentrées · prochaine le ${dDay(RI[0].dt)}</small></span><b class="pos">+ ${eur0(inn)}</b>${GC}</button>`:''}
-    ${cv>0?`<button class="r" data-dt="cof"><span>Dans ton coffre<small>à ne pas toucher</small></span><b>− ${eur0(cv)}</b>${GC}</button>`:''}
-    <button class="r t" data-dt="mois"><span>Il te restera fin ${mn}</span><b class="${fin<0?'neg':'pos'}">${eur0(fin)}</b>${GC}</button></div>`}
-  const m={},E=S.env||{};let t=0;for(const x of S.e.filter(x=>x.d.startsWith(YM)&&x.c!=='dette'&&CN[x.c])){m[x.c]=(m[x.c]||0)+x.v;t+=x.v}
-  const RB=rbM();for(const c in RB)if(m[c]){const k=Math.min(m[c],RB[c]);m[c]-=k;t-=k}
-  for(const c in E)if(CN[c]&&!m[c])m[c]=0;
-  const L2=Object.entries(m).sort((a,b)=>b[1]-a[1]),mx=Math.max(1,...L2.map(x=>x[1]));
-  const row=([c,v])=>{const b=E[c],l=b?Math.round(b-v):0,col=CCOL[c]||'#8E8E93';
-    return `<button class="c" data-dt="cat:${c}"><span class="gi" style="background:${col}">${ic(CN[c][1])}</span><span>${esc(CN[c][2])}</span><b>${eur0(v)}${b?`<small> / ${eur0(b)}</small>`:''}</b>
-     <span class="tr"><i style="width:${Math.min(100,b?v/b*100:v/mx*100)}%;background:${b&&l<0?'var(--bad)':col}"></i></span>${b||RB[c]?`<em class="${b&&l<0?'neg':''}">${b?(l>=0?'Reste '+eur0(l):'Dépassé de '+eur0(-l)):''}${b&&RB[c]?' · ':''}${RB[c]?eur0(RB[c])+' remboursés':''}</em>`:''}</button>`};
-  let F='';{const nod=(S.fx||[]).filter(x=>!(x.d>=1&&x.d<=31)&&x.v>0),tot=FXM.reduce((a,x)=>a+x.v,0)+nod.reduce((a,x)=>a+x.v,0);
-    if(tot>0){const paid=FXM.filter(x=>x.dt<=today),upc=FXM.filter(x=>x.dt>today),pv=paid.reduce((a,x)=>a+x.v,0),uv=upc.reduce((a,x)=>a+x.v,0);
-      F=`<button class="gl" data-dt="fxs"><h3><span>Charges fixes</span><b>${eur0(tot)}<small> / mois</small></b></h3>
-      <span class="gfb"><i style="width:${Math.min(100,pv/tot*100)}%"></i></span>
-      <div class="gfs"><span><em class="pos">${ic('check')}</em>Payé ${eur0(pv)}${paid.length?' · '+paid.length+' charge'+(paid.length>1?'s':''):''}</span><span>Reste ${eur0(uv)}</span></div>
-      ${upc.slice(0,4).map(x=>`<div class="r"><span>${esc(x.n)}<small>le ${pd(x.dt).getDate()} ${MN[pd(x.dt).getMonth()]}</small></span><b>${eur0(x.v)}</b></div>`).join('')}
-      ${upc.length>4?`<div class="gh">+ ${upc.length-4} autres</div>`:''}${nod.length?`<div class="gh">Sans date : ${nod.map(x=>esc(x.n)).join(', ')} (${eur0(nod.reduce((a,x)=>a+x.v,0))})</div>`:''}${!upc.length&&!nod.length?'<div class="gh">Tout est payé ce mois-ci.</div>':''}</button>`}}
-  const Bc=`<div class="gl"><h3><span>Charges variables · ${mn}</span><b>${eur0(t)}</b></h3>${L2.length?L2.slice(0,12).map(row).join(''):'<div class="gh">Rien de noté ce mois-ci.</div>'}${L2.length&&!Object.keys(E).length?'<div class="gh">Touche une catégorie pour voir ses dépenses et lui fixer un budget.</div>':''}</div>`;
-  return A+debtCard()+F+Bc}
 /* ===== Chaque bloc ouvre son propre détail : dates visibles, tout se modifie ===== */
 var SCR_RE=null;
 function scrRe(){const f=SCR_RE,s=$('.scr');if(!f||!s)return;const y=s.scrollTop;try{f()}catch(e){}const n=$('.scr');if(n){n.style.animation='none';n.scrollTop=y}}
@@ -1085,7 +1066,7 @@ const edTxt=(q,cur,cb)=>flow([{k:'t',q,type:'text',ph:cur||''}],v=>cb(v.t),{t:cu
 const edDom=(q,cur,cb)=>flow([{k:'t',q,sub:'Un chiffre entre 1 et 31. Laisse vide si tu ne sais pas.',type:'text',ph:'Ex. 5',ml:2,num:1,opt:1}],v=>{const d=parseInt(v.t,10);return cb(d>=1&&d<=31?d:null)},{t:cur?String(cur):''});
 const dtBind=r=>r.querySelectorAll('[data-dt]').forEach(b=>b.onclick=e=>{e.stopPropagation();buzz();dtGo(b.dataset.dt)});
 function dtGo(k){const i=k.indexOf(':'),a=i<0?k:k.slice(0,i),b=i<0?'':k.slice(i+1);
-  const M={acc:accScr,fxs:fxScr,oth:othScr,env:envScr,rin:rinScr,cof:()=>cofScr(),mois:dataScr,cat:()=>catScr(b),fx:()=>lineOne('fx',+b),rn:()=>lineOne('rin',+b),up:()=>upEdit(b),fxadd:()=>lineAdd('fx'),rnadd:()=>lineAdd('rin'),upadd:()=>upAdd(b),
+  const M={arg:argScr,var:varScr,dts:dtsScr,sol:()=>solScr(),acc:accScr,fxs:fxScr,oth:othScr,env:envScr,rin:rinScr,cof:()=>cofScr(),mois:dataScr,cat:()=>catScr(b),fx:()=>lineOne('fx',+b),rn:()=>lineOne('rin',+b),up:()=>upEdit(b),fxadd:()=>lineAdd('fx'),rnadd:()=>lineAdd('rin'),upadd:()=>upAdd(b),
     per:()=>{const o=grpOf(decodeURIComponent(b));if(o.l.length)person(o)},bal:()=>flowBal(),bud:()=>envFlow(b),dep:()=>flowDep(null,b),debt:()=>flowDebt()};if(M[a])M[a]()}
 const secH=(t,s)=>`<div class="sec"><h2>${t}</h2>${s?`<small>${s}</small>`:''}</div>`;
 const addB=(k,i,t,s)=>`<button class="vng" data-dt="${k}">${ic(i)}<span><b>${t}</b>${s?`<br><small style="color:var(--muted)">${s}</small>`:''}</span>${ic('next')}</button>`;
@@ -1197,6 +1178,56 @@ function catScr(c){if(!CN[c])return;const n=CN[c][2],col=CCOL[c]||'#8E8E93',mn=M
    ${L.length?secH('Dépenses',String(L.length))+`<div class="list">${L.slice(0,150).map(mvRow).join('')}</div>`:''}
    ${RB.length?secH('Remboursé',eur0(RB.reduce((a,x)=>a+x.v,0)))+`<div class="list">${RB.map(mvRow).join('')}</div>`:''}
    ${addB('dep:'+c,'plus','Ajouter une dépense '+esc(n))}${L.length?FOOT:''}</div>`);dtBind(x);bindMv(x);SCR_RE=()=>catScr(c)}
+function glanceCard(){if(!S.name)return '';const mn=MNL[+YM.slice(5,7)-1],FXM=fxThisMonth().filter(x=>!x.one);let A='';const T=[];
+  if(S.bal){const L=liveBal(),up=upSum(),inn=inSum(),cv=cofV(),ev=envTodo(),out=Math.round(up+ev+cv),fin=Math.round((L-up+inn-cv-ev)*100)/100;
+    A=`<button class="gl g1" data-dt="arg"><h3><span>Il te restera fin ${mn}</span>${GC}</h3><strong class="${fin<0?'neg':'pos'}">${eur0(fin)}</strong>
+    <span class="g1s"><span><b class="${L<0?'neg':''}">${eur0(L)}</b>sur ton compte</span>${out?`<span><b>− ${eur0(out)}</b>à sortir</span>`:''}${inn?`<span><b class="pos">+ ${eur0(inn)}</b>à recevoir</span>`:''}</span></button>`}
+  {const nod=(S.fx||[]).filter(x=>!(x.d>=1&&x.d<=31)&&x.v>0),tot=FXM.reduce((a,x)=>a+x.v,0)+nod.reduce((a,x)=>a+x.v,0),upc=FXM.filter(x=>x.dt>today),uv=upc.reduce((a,x)=>a+x.v,0);
+    if(tot>0)T.push(['fxs','Charges fixes',eur0(uv),'',upc.length?'à payer · '+esc(upc[0].n)+' le '+dDay(upc[0].dt):'tout est payé ce mois-ci',Math.min(100,(tot-uv)/tot*100),'var(--good)'])}
+  {let t=0;for(const x of S.e)if(x.d.startsWith(YM)&&x.c!=='dette'&&CN[x.c])t+=x.v;const RB=rbM();for(const c in RB)t-=Math.min(RB[c],S.e.filter(x=>x.d.startsWith(YM)&&x.c===c).reduce((a,x)=>a+x.v,0));t=Math.max(0,t);
+    const bt=Object.entries(S.env||{}).filter(([c,b])=>CN[c]&&b>0).reduce((a,x)=>a+x[1],0),ev=envTodo();
+    T.push(['var','Charges variables',eur0(t),'',bt?'reste '+eur0(ev)+' dans tes budgets':t?'dépensés en '+mn:'rien de noté en '+mn,bt?Math.min(100,(bt-ev)/bt*100):null,'var(--c-out)'])}
+  {const RI=[...rinMonth().filter(x=>!x.ok&&x.dt&&x.dt>today).sort((a,b)=>a.dt.localeCompare(b.dt))],inn=inSum();
+    if(inn)T.push(['rin','À recevoir','+ '+eur0(inn),'pos',esc(RI[0].n)+' le '+dDay(RI[0].dt)+(RI.length>1?' · + '+(RI.length-1):''),null])}
+  {const G=debtGrp(),th=G.filter(o=>o.net>0),me=G.filter(o=>o.net<0),tv=th.reduce((a,o)=>a+o.net,0),mv=-me.reduce((a,o)=>a+o.net,0),since=L=>{const d=L.flatMap(o=>o.l.map(x=>x.d||'')).filter(Boolean).sort()[0];return d?' · depuis le '+dDay(d):''};
+    if(th.length)T.push(['dts','On te doit','+ '+eur0(tv),'pos',(th.length===1?esc(th[0].n):th.length+' personnes')+since(th),null]);
+    if(me.length)T.push(['dts','Tu dois','− '+eur0(mv),'',(me.length===1?'à '+esc(me[0].n):'à '+me.length+' personnes')+since(me),null])}
+  return A+`<div class="g2${T.length%2?' odd':''}">${T.map(([k,l,v,cl,s,p,col])=>`<button class="gt" data-dt="${k}"><small>${l}</small><strong class="${cl}">${v}</strong>${p!=null?`<span class="gtb"><i style="width:${p}%;background:${col}"></i></span>`:''}<span>${s}</span></button>`).join('')}</div>`}
+/* --- Ton argent : le calcul complet, ligne par ligne --- */
+function argScr(){if(!S.bal)return flowBal();const mn=MNL[+YM.slice(5,7)-1],now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),FXM=fxThisMonth().filter(x=>!x.one);
+  const L=liveBal(),up=upSum(),inn=inSum(),cv=cofV(),ev=envTodo(),fin=Math.round((L-up+inn-cv-ev)*100)/100,fu=FXM.filter(x=>x.dt>today).reduce((a,x)=>a+x.v,0),ot=Math.round((up-fu)*100)/100,nf=FXM.find(x=>x.dt>today);
+  const RI=rinMonth().filter(x=>!x.ok&&x.dt&&x.dt>today).sort((a,b)=>a.dt.localeCompare(b.dt));
+  const x=scr('Ton argent',`<div style="display:grid;gap:14px">
+   <div class="mm"><small>Il te restera fin ${mn}</small><strong class="${fin<0?'neg':''}"${fin>=0?' style="color:var(--good)"':''}>${eur0(fin)}</strong><span>Ce que tu as, moins ce qui doit sortir, plus ce qui doit rentrer.</span></div>
+   <div class="gl">
+    <button class="r" data-dt="acc"><span>Sur ton compte<small>${S.bal.enc?'carte à débit différé déjà retirée · ':''}noté ${S.bal.d===today?'aujourd’hui':'le '+dDay(S.bal.d)}</small></span><b class="${L<0?'neg':''}">${eur0(L)}</b>${GC}</button>
+    ${fu?`<button class="r" data-dt="fxs"><span>Charges fixes à payer<small>${nf?'prochaine : '+esc(nf.n)+' le '+dDay(nf.dt):'d’ici le '+ld+' '+mn}</small></span><b>− ${eur0(fu)}</b>${GC}</button>`:''}
+    ${ot>=1?`<button class="r" data-dt="oth"><span>Autres paiements prévus<small>virements, dettes</small></span><b>− ${eur0(ot)}</b>${GC}</button>`:''}
+    ${ev?`<button class="r" data-dt="var"><span>Charges variables prévues<small>budget restant : ${envCats()}</small></span><b>− ${eur0(ev)}</b>${GC}</button>`:''}
+    ${RI.map(x=>`<button class="r" data-dt="rin"><span>${esc(x.n)}<small>à recevoir le ${dDay(x.dt)} · ${inDays(x.dt)}</small></span><b class="pos">+ ${eur0(x.v)}</b>${GC}</button>`).join('')}
+    ${cv>0?`<button class="r" data-dt="cof"><span>Dans ton coffre<small>à ne pas toucher</small></span><b>− ${eur0(cv)}</b>${GC}</button>`:''}
+    <div class="r t"><span>Il te restera fin ${mn}</span><b class="${fin<0?'neg':'pos'}">${eur0(fin)}</b></div></div>
+   ${addB('mois','week','Mon mois','Historique, bilan, coffre')}
+   <p class="foot">Touche une ligne pour voir son détail.</p></div>`);dtBind(x);SCR_RE=argScr}
+/* --- Charges variables : toutes les catégories --- */
+function varScr(){const mn=MNL[+YM.slice(5,7)-1],m={},E=S.env||{};let t=0;for(const x of S.e.filter(x=>x.d.startsWith(YM)&&x.c!=='dette'&&CN[x.c])){m[x.c]=(m[x.c]||0)+x.v;t+=x.v}
+  const RB=rbM();for(const c in RB)if(m[c]){const k=Math.min(m[c],RB[c]);m[c]-=k;t-=k}for(const c in E)if(CN[c]&&!m[c])m[c]=0;
+  const L2=Object.entries(m).sort((a,b)=>b[1]-a[1]),mx=Math.max(1,...L2.map(x=>x[1])),rest=CATS.filter(c=>!(c[0] in m));
+  const row=([c,v])=>{const b=E[c],l=b?Math.round(b-v):0,col=CCOL[c]||'#8E8E93';
+    return `<button class="c" data-dt="cat:${c}"><span class="gi" style="background:${col}">${ic(CN[c][1])}</span><span>${esc(CN[c][2])}</span><b>${eur0(v)}${b?`<small> / ${eur0(b)}</small>`:''}</b>
+     <span class="tr"><i style="width:${Math.min(100,b?v/b*100:v/mx*100)}%;background:${b&&l<0?'var(--bad)':col}"></i></span>${b||RB[c]?`<em class="${b&&l<0?'neg':''}">${b?(l>=0?'Reste '+eur0(l):'Dépassé de '+eur0(-l)):''}${b&&RB[c]?' · ':''}${RB[c]?eur0(RB[c])+' remboursés':''}</em>`:''}</button>`};
+  const x=scr('Charges variables',`<div style="display:grid;gap:14px">
+   <div class="mm"><small>Charges variables · ${mn}</small><strong>${eur0(t)}</strong><span>${envTodo()?'Reste '+eur0(envTodo())+' dans tes budgets':t?'Dépensés ce mois-ci':'Rien de noté ce mois-ci'}</span>${t?`<div class="bar">${L2.filter(x=>x[1]>0).map(([c,v])=>`<i style="width:${v/t*100}%;background:${CCOL[c]||'#8E8E93'}"></i>`).join('')}</div>`:''}</div>
+   ${L2.length?`<div class="gl">${L2.map(row).join('')}</div>`:''}
+   ${rest.length?secH('Autres catégories')+`<div class="chs">${rest.map(c=>`<button class="chip" data-dt="cat:${c[0]}">${esc(c[2])}</button>`).join('')}</div>`:''}
+   <p class="foot">Touche une catégorie pour voir ses dépenses et son budget.</p></div>`);dtBind(x);SCR_RE=varScr}
+/* --- Dettes : qui, combien, depuis quand --- */
+function dtsScr(){const G=debtGrp(),th=G.filter(o=>o.net>0),me=G.filter(o=>o.net<0),tv=th.reduce((a,o)=>a+o.net,0),mv=-me.reduce((a,o)=>a+o.net,0);
+  const x=scr('Dettes',`<div style="display:grid;gap:14px">
+   <div class="mm"><small>${tv>=mv?'On te doit':'Tu dois'}</small><strong>${eur0(tv>=mv?tv:mv)}</strong><span>${tv&&mv?(tv>=mv?'Et tu dois '+eur0(mv):'Et on te doit '+eur0(tv)):G.length?'Touche une personne pour régler ou modifier':'Aucune dette en cours'}</span></div>
+   ${th.length?secH('On te doit',eur0(tv))+`<div class="list">${th.map(o=>debtRow(o,'li')).join('')}</div>`:''}
+   ${me.length?secH('Tu dois',eur0(mv))+`<div class="list">${me.map(o=>debtRow(o,'li')).join('')}</div>`:''}
+   ${addB('debt','plus','Ajouter une dette','Je dois ou on me doit')}${(S.dsol||[]).length?addB('sol','check','Dettes soldées',S.dsol.length+' réglée'+(S.dsol.length>1?'s':'')):''}</div>`);dtBind(x);SCR_RE=dtsScr}
 function envFlow(c){if(!CN[c])return;const n=CN[c][2];flow([{k:'v',q:'Ton budget '+n+' par mois ?',sub:'À chaque dépense, je te montre ce qu’il te reste dans cette catégorie.',type:'amount',idk:'Pas de budget'}],v=>{S.env=S.env||{};if(v.v>0)S.env[c]=Math.round(v.v);else delete S.env[c];return[v.v>0?'Budget fixé':'Budget retiré',v.v>0?n+' · '+eur0(v.v)+' par mois':n]},(S.env||{})[c]?{v:S.env[c]}:null)}
 async function shareApp(){const u=location.origin+location.pathname,t='Base : l’app qui m’aide à tenir mon argent et mes journées. Gratuite, sans compte.';try{if(navigator.share){await navigator.share({title:'Base',text:t,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t+' '+u);done(['Lien copié','Colle-le à qui tu veux'])}catch(e){done(['Le lien',u])}}
 function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x.v||0),0)*100)/100;try{snapBal()}catch(e){}const r=reste(),now=new Date(),left=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1;
@@ -1216,7 +1247,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   ${heroCard()}
   ${glanceCard()}
   ${momentCard()}
-  <button class="mlink" data-a="data">Mon mois ${ic('next')}</button>`+TB;
+`+TB;
   homeBind();dtBind($('#app'))}
 function homeBind(){const B=badges();bindCopy($('#app'));try{const n=S.name?tasks().length:0;if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}{const m=$('#mvl');if(m)bindMv(m)}{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
   document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({tour:tourScr,vg:vgScr,rcp:()=>recap(),why:whySheet,bin:binFlow,droits:droitsScr,pay:payScr,wish:flowWish,eve:flowEve,bilan:()=>bilanScr(YM),data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,gput:goalPut,gnew:goalFlow,pro:proScr,bfx:()=>BUD.fx(),brin:()=>BUD.rin(),bbal:()=>flowBal(),wk:()=>wkScr(wkStart())})[b.dataset.a]()});
