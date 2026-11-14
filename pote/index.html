@@ -420,6 +420,11 @@ button.li{font:inherit;color:inherit;cursor:pointer}.scr button.li .t{font-size:
 .gt>span:last-child{font-size:12px;font-weight:500;color:var(--muted);line-height:1.3}.gt .gtb{display:block;height:5px;border-radius:3px;background:var(--card2);overflow:hidden;margin:4px 0 3px}.gt .gtb i{display:block;height:100%;border-radius:3px}
 .gt:active,.gl.g1:active{opacity:.55}.gt .pos,.g1s .pos{color:var(--good)}.g1s .neg{color:var(--bad)}.chs{display:flex;flex-wrap:wrap;gap:8px}
 [data-theme="light"] .gt{box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.finl{display:flex;justify-content:center;align-items:center;gap:6px;margin:-6px auto 2px;padding:8px 14px;border:0;border-radius:999px;background:var(--card);color:var(--muted);font:inherit;font-size:15px;font-weight:600;cursor:pointer}.finl b{font-family:var(--num);font-variant-numeric:tabular-nums;font-weight:800}.finl b.pos{color:var(--good)}.finl b.neg{color:var(--bad)}.finl svg{width:13px;height:13px;opacity:.6}
+.tl3{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px;scroll-snap-type:x proximity}.tl3::-webkit-scrollbar{display:none}
+.tl3 button{flex:0 0 auto;display:grid;gap:1px;min-width:96px;max-width:140px;padding:11px 13px;border:0;border-radius:16px;background:var(--card);color:var(--ink);font:inherit;text-align:left;scroll-snap-align:start;cursor:pointer}
+.tl3 small{font-size:12px;font-weight:700;color:var(--muted)}.tl3 b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tl3 span{font-family:var(--num);font-variant-numeric:tabular-nums;font-size:15px;font-weight:700}.tl3 .pos{color:var(--good)}.tl3 button:active,.finl:active{opacity:.55}
+[data-theme="light"] .tl3 button,[data-theme="light"] .finl{box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .gl .gh{font-size:12px;color:var(--muted);font-weight:500;padding:6px 0 4px}
 .mlink{justify-self:center;display:flex;align-items:center;gap:4px;border:0;background:none;font:inherit;font-size:14px;font-weight:600;color:var(--muted);padding:10px}.mlink svg{width:14px;height:14px}
 
@@ -1179,20 +1184,22 @@ function catScr(c){if(!CN[c])return;const n=CN[c][2],col=CCOL[c]||'#8E8E93',mn=M
    ${RB.length?secH('Remboursé',eur0(RB.reduce((a,x)=>a+x.v,0)))+`<div class="list">${RB.map(mvRow).join('')}</div>`:''}
    ${addB('dep:'+c,'plus','Ajouter une dépense '+esc(n))}${L.length?FOOT:''}</div>`);dtBind(x);bindMv(x);SCR_RE=()=>catScr(c)}
 function glanceCard(){if(!S.name)return '';const mn=MNL[+YM.slice(5,7)-1],FXM=fxThisMonth().filter(x=>!x.one);let A='';const T=[];
-  if(S.bal){const L=liveBal(),up=upSum(),inn=inSum(),cv=cofV(),ev=envTodo(),out=Math.round(up+ev+cv),fin=Math.round((L-up+inn-cv-ev)*100)/100;
-    A=`<button class="gl g1" data-dt="arg"><h3><span>Il te restera fin ${mn}</span>${GC}</h3><strong class="${fin<0?'neg':'pos'}">${eur0(fin)}</strong>
-    <span class="g1s"><span><b class="${L<0?'neg':''}">${eur0(L)}</b>sur ton compte</span>${out?`<span><b>− ${eur0(out)}</b>à sortir</span>`:''}${inn?`<span><b class="pos">+ ${eur0(inn)}</b>à recevoir</span>`:''}</span></button>`}
-  {const nod=(S.fx||[]).filter(x=>!(x.d>=1&&x.d<=31)&&x.v>0),tot=FXM.reduce((a,x)=>a+x.v,0)+nod.reduce((a,x)=>a+x.v,0),upc=FXM.filter(x=>x.dt>today),uv=upc.reduce((a,x)=>a+x.v,0);
-    if(tot>0)T.push(['fxs','Charges fixes',eur0(uv),'',upc.length?'à payer · '+esc(upc[0].n)+' le '+dDay(upc[0].dt):'tout est payé ce mois-ci',Math.min(100,(tot-uv)/tot*100),'var(--good)'])}
+  if(S.bal){const L=liveBal(),up=upSum(),inn=inSum(),cv=cofV(),ev=envTodo(),fin=Math.round((L-up+inn-cv-ev)*100)/100;
+    A=`<button class="finl" data-dt="arg"><span><b class="${fin<0?'neg':'pos'}">${eur0(fin)}</b> fin ${mn}${inn?' si tout arrive':''}</span>${ic('next')}</button>`}
+  /* Prochains jours : ce qui sort et ce qui rentre, par date */
+  const N=[...FXM.filter(x=>x.dt>today).map(x=>({d:x.dt,n:x.n,v:-x.v,k:'fxs'})),...upOne('out').filter(x=>x.d>today).map(x=>({d:x.d,n:x.n,v:-x.v,k:'up:'+x.id})),
+    ...(S.rin||[]).map(x=>({x,dt:x.d?fxDate(x,YM):null})).filter(o=>o.dt&&o.dt>today&&!(S.rok||{})[rinKey(o.x,YM)]).map(o=>({d:o.dt,n:o.x.n,v:o.x.v,k:'rin'})),
+    ...upOne('in').filter(x=>x.d>today).map(x=>({d:x.d,n:x.n,v:x.v,k:'up:'+x.id})),
+    ...S.debts.filter(x=>x.dd&&x.dd>today).map(x=>({d:x.dd,n:x.p,v:x.w==='them'?x.v:-x.v,k:'per:'+encodeURIComponent(pk(x.p))}))].sort((a,b)=>a.d.localeCompare(b.d)).slice(0,6);
+  const tl=N.length?`<div class="tl3">${N.map(e=>`<button data-dt="${e.k}"><small>${dDay(e.d)}</small><b>${esc(e.n)}</b><span class="${e.v>0?'pos':''}">${e.v>0?'+':'−'}${eur0(Math.abs(e.v))}</span></button>`).join('')}</div>`:'';
+  {const nod=(S.fx||[]).filter(x=>!(x.d>=1&&x.d<=31)&&x.v>0),tot=FXM.reduce((a,x)=>a+x.v,0)+nod.reduce((a,x)=>a+x.v,0),uv=FXM.filter(x=>x.dt>today).reduce((a,x)=>a+x.v,0);
+    if(tot>0)T.push(['fxs','Charges fixes',eur0(uv),'',uv?'à payer':'tout est payé',Math.min(100,(tot-uv)/tot*100),'var(--good)'])}
   {let t=0;for(const x of S.e)if(x.d.startsWith(YM)&&x.c!=='dette'&&CN[x.c])t+=x.v;const RB=rbM();for(const c in RB)t-=Math.min(RB[c],S.e.filter(x=>x.d.startsWith(YM)&&x.c===c).reduce((a,x)=>a+x.v,0));t=Math.max(0,t);
     const bt=Object.entries(S.env||{}).filter(([c,b])=>CN[c]&&b>0).reduce((a,x)=>a+x[1],0),ev=envTodo();
-    T.push(['var','Charges variables',eur0(t),'',bt?'reste '+eur0(ev)+' dans tes budgets':t?'dépensés en '+mn:'rien de noté en '+mn,bt?Math.min(100,(bt-ev)/bt*100):null,'var(--c-out)'])}
-  {const RI=[...rinMonth().filter(x=>!x.ok&&x.dt&&x.dt>today).sort((a,b)=>a.dt.localeCompare(b.dt))],inn=inSum();
-    if(inn)T.push(['rin','À recevoir','+ '+eur0(inn),'pos',esc(RI[0].n)+' le '+dDay(RI[0].dt)+(RI.length>1?' · + '+(RI.length-1):''),null])}
-  {const G=debtGrp(),th=G.filter(o=>o.net>0),me=G.filter(o=>o.net<0),tv=th.reduce((a,o)=>a+o.net,0),mv=-me.reduce((a,o)=>a+o.net,0),since=L=>{const d=L.flatMap(o=>o.l.map(x=>x.d||'')).filter(Boolean).sort()[0];return d?' · depuis le '+dDay(d):''};
-    if(th.length)T.push(['dts','On te doit','+ '+eur0(tv),'pos',(th.length===1?esc(th[0].n):th.length+' personnes')+since(th),null]);
-    if(me.length)T.push(['dts','Tu dois','− '+eur0(mv),'',(me.length===1?'à '+esc(me[0].n):'à '+me.length+' personnes')+since(me),null])}
-  return A+`<div class="g2${T.length%2?' odd':''}">${T.map(([k,l,v,cl,s,p,col])=>`<button class="gt" data-dt="${k}"><small>${l}</small><strong class="${cl}">${v}</strong>${p!=null?`<span class="gtb"><i style="width:${p}%;background:${col}"></i></span>`:''}<span>${s}</span></button>`).join('')}</div>`}
+    T.push(['var','Dépenses',eur0(t),'',bt?'reste '+eur0(ev):'en '+mn,bt?Math.min(100,(bt-ev)/bt*100):null,'var(--c-out)'])}
+  {const inn=inSum();if(inn)T.push(['rin','À recevoir','+ '+eur0(inn),'pos','ce mois-ci',null])}
+  {const G=debtGrp(),net=G.reduce((a,o)=>a+o.net,0);if(G.length)T.push(['dts','Dettes',(net>=0?'+ ':'− ')+eur0(Math.abs(net)),net>=0?'pos':'',G.length===1?esc(G[0].n):G.length+' personnes',null])}
+  return A+tl+`<div class="g2${T.length%2?' odd':''}">${T.map(([k,l,v,cl,s,p,col])=>`<button class="gt" data-dt="${k}"><small>${l}</small><strong class="${cl}">${v}</strong>${p!=null?`<span class="gtb"><i style="width:${p}%;background:${col}"></i></span>`:''}<span>${s}</span></button>`).join('')}</div>`}
 /* --- Ton argent : le calcul complet, ligne par ligne --- */
 function argScr(){if(!S.bal)return flowBal();const mn=MNL[+YM.slice(5,7)-1],now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),FXM=fxThisMonth().filter(x=>!x.one);
   const L=liveBal(),up=upSum(),inn=inSum(),cv=cofV(),ev=envTodo(),fin=Math.round((L-up+inn-cv-ev)*100)/100,fu=FXM.filter(x=>x.dt>today).reduce((a,x)=>a+x.v,0),ot=Math.round((up-fu)*100)/100,nf=FXM.find(x=>x.dt>today);
@@ -1265,7 +1272,7 @@ function xpDays(){let n=0,d=S.start||today;for(let k=0;k<500&&d<=today;k++){if(d
 function lvl(){const x=xpPts();let i=0;while(i<LV.length-1&&x>=LV[i+1][0])i++;const nx=LV[i+1];return{n:i+1,name:LV[i][1],x,left:nx?nx[0]-x:0,p:nx?(x-LV[i][0])/(nx[0]-LV[i][0]):1}}
 function heroCard(){if(!S.bal)return balCard();
   const L=liveBal(),up=upSum(),now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),left=ld-now.getDate()+1,free=L-up-cofV()-cofTodo(),tdS=S.e.filter(x=>x.d===today).reduce((a,x)=>a+x.v,0),nr=nextRin();
-  const inx=nr?`<em class="inx">+${eur0(nr.v)} attendus le ${pd(nr.dt).getDate()} (${esc(nr.n)}), comptés quand ils arrivent</em>`:'';
+  const inx='';
   if(free+tdS>=0){if(S.vgW>0)S.vgWin=1;delete S.low;const base=(free+tdS)/left,rest=base-tdS;
     if(rest>=-.5)return `<div class="h2" data-a="why"><small>${tdS?'Il te reste aujourd’hui':'Pour aujourd’hui'}</small><strong>${eur0(Math.max(0,rest))}</strong><span>${tdS?'sur '+eur0(base)+' pour la journée':'Tu restes dans le vert jusqu’au '+ld+' '+MNL[now.getMonth()]+'.'}</span>${inx}<span class="howc">Comment c’est calculé ›</span></div>`;
     const tm=left>1?free/(left-1):0;return `<div class="h2" data-a="why"><small>Aujourd’hui, au-dessus de ta journée</small><strong class="hv over">${eur0(-rest)}</strong><span>Pas grave : à partir de demain, ${tm>0?eur0(tm)+' par jour.':'on lève le pied.'}</span>${inx}<span class="howc">Comment c’est calculé ›</span></div>`}
@@ -1872,7 +1879,7 @@ let MO=null;
 function moment(){if(!S.name)return null;const n=new Date(),nm=n.getHours()*60+n.getMinutes();
   const soon=S.ag.filter(a=>a.d===today&&!a.done&&a.h).map(a=>{const[h,m]=a.h.split(':').map(Number);return{a,d:h*60+m-nm}}).filter(x=>x.d>=-5&&x.d<=120).sort((x,y)=>x.d-y.d)[0];
   if(soon){const d=soon.d,w=d<=1?'maintenant':d<60?'dans '+d+' min':'dans '+Math.floor(d/60)+'\u00a0h'+(d%60?'\u00a0'+String(d%60).padStart(2,'0'):'');return{t:soon.a.t+' '+w,s:'Touche quand c’est fait',i:'later',go:()=>agItem(soon.a.id)}}
-  const T=stepT();if(T.length){const t=T[0];return{t:t.t,s:t.s,i:t.i,go:t.go,task:1}}
+  const T=stepT().filter(t=>t.i!=='folder');if(T.length){const t=T[0];return{t:t.t,s:t.s,i:t.i,go:t.go,task:1}}
   const td=S.ag.filter(a=>a.d===today&&!a.done),st=okStreak();
   if(td.length)return{t:td.length===1?td[0].t+' aujourd’hui':td.length+' choses prévues aujourd’hui',s:td.length>1?td.slice(0,3).map(a=>a.t).join(', '):(td[0].h?'À '+hl(td[0].h):'Dans la journée'),i:'cal',go:()=>tabTo('agenda')};
   if(st>=2&&dayOk(today))return{t:'Tout est à jour',s:st+' jours d’affilée. Reviens demain pour la garder.',i:'flame'};
@@ -2010,6 +2017,7 @@ function budCard(){const fx=S.fixe||0,ri=(S.rin||[]).reduce((a,x)=>a+(x.v||0),0)
   return `<div class="sec"><h2>Ton budget</h2></div><div class="bud">${row('bfx','home','t-out','Charges fixes',eur0(fx),(S.fx||[]).length?(S.fx.length+' par mois'):'Loyer, forfait, abonnements…')}${row('brin','in','t-in','Revenus réguliers',eur0(ri),(S.rin||[]).length?(S.rin.length+' par mois'):'Salaire, aides…')}${row('bbal','bank','t-ag','Mes comptes',lb!=null?eur0(lb):'—',(S.bal&&S.bal.acc&&S.bal.acc.length?S.bal.acc.map(a=>a.n).join(', '):S.bal?'Mis à jour le '+pd(S.bal.d).getDate()+' '+MN[pd(S.bal.d).getMonth()]:'À renseigner')+(S.bal&&S.bal.enc?' · encours déduit':''))}${row('cof','safe','t-cof','Coffre',cofPlan()?eur0(cofPlan()):eur0(cofV()),cofPlan()?(cofTodo()?'Encore '+eur0(cofTodo())+' ce mois':'Fait ce mois-ci')+(S.cof&&S.cof.g?' · '+esc(S.cof.g.n):''):cofV()?'De côté'+(S.cof.g?' pour '+esc(S.cof.g.n):''):'Rien de prévu · touche pour un objectif')}${mod('f')?row('pro','brief','t-moi','Côté pro',pb!=null?eur0(pb):'',pb!=null?'Compte pro':'Dépenses pro, comptable'):''}</div>`}
 function moiView(B){const g=S.cof&&S.cof.g,cv=cofV();
   return `<div class="ttl ttl2"><span>Moi</span><button class="ib2" data-m="all" aria-label="Réglages" style="position:relative">${ic('gear')}${B.set?'<i class="dot2"></i>':''}</button></div>
+  ${S.start&&S.start<=addD(today,-7)&&(!S.bk||S.bk<=addD(today,-14))?`<button class="vng" data-m="bk">${ic('folder')}<span><b>Sauvegarde tes données</b><br><small style="color:var(--muted)">${S.bk?'Dernière le '+dDay(S.bk):'Au cas où tu perds ton téléphone'}</small></span>${ic('next')}</button>`:''}
   ${moiTour()}
   ${budCard()}
   <div class="sec"><h2>Ton objectif</h2></div>
