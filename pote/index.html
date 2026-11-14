@@ -1254,7 +1254,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
     document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{buzz();({all:setSheet,ics:icsExport,set:settings,push:()=>pushOn()?pushOff():pushEnable(),bk:backup,help:()=>helpScr(),share:shareApp})[b.dataset.m]()});
     return}
   $('#app').innerHTML=`
-  <div class="hi"><span data-a="rcp"><b>${new Date().getHours()<18?'Bonjour':'Bonsoir'}${S.name?', '+esc(S.name):''}</b></span>${unGet().length?`<button class="unh" data-un aria-label="Annuler une action">${ic('undo')}</button>`:''}${fireChip()}</div>
+  <div class="hi"><span data-a="rcp"><b>${new Date().getHours()<18?'Bonjour':'Bonsoir'}${S.name?', '+esc(S.name):''}</b></span>${unGet().length?`<button class="unh" data-un aria-label="Annuler une action">${ic('undo')}</button>`:''}</div>
   ${heroCard()}
   ${glanceCard()}
   ${momentCard()}
