@@ -406,6 +406,12 @@ label.tile{position:relative;overflow:hidden}.tlink.set .tl{color:var(--ink)!imp
 .gl .c em{font-style:normal;font-size:12px;font-weight:600;color:var(--muted);grid-column:2/-1}.gl .c em.neg{color:var(--bad)}
 .gl h3 b small{font-size:13px;font-weight:600;color:var(--muted)}.gl .gfb{display:block;height:8px;border-radius:4px;background:var(--card2);overflow:hidden;margin:4px 0 8px}.gl .gfb i{display:block;height:100%;border-radius:4px;background:var(--good)}
 .gl .gfs{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--muted);padding-bottom:6px}.gl .gfs span{display:flex;align-items:center;gap:5px}.gl .gfs em{display:inline-grid}.gl .gfs svg{width:14px;height:14px}
+.gl button.r{border:0;background:none;color:inherit;font:inherit;font-size:16px;font-weight:500;text-align:left;width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.gl button.r.t{font-weight:700;border-top:1px solid var(--line)}.gl button.r>span:first-child{flex:1;min-width:0}
+.gl .gc{display:grid;margin-left:-6px}.gl .gc svg{width:13px;height:13px;color:var(--muted);opacity:.55}
+.gl button.r:active,.gl .c:active,button.li:active,button.gl:active{opacity:.55}
+button.li{font:inherit;color:inherit;cursor:pointer}.scr button.li .t{font-size:16px}
+.mm .gfb2{display:block;height:8px;border-radius:4px;background:var(--card2);overflow:hidden;margin:8px 0 2px}.mm .gfb2 i{display:block;height:100%;border-radius:4px;background:var(--good)}
 .gl .gh{font-size:12px;color:var(--muted);font-weight:500;padding:6px 0 4px}
 .mlink{justify-self:center;display:flex;align-items:center;gap:4px;border:0;background:none;font:inherit;font-size:14px;font-weight:600;color:var(--muted);padding:10px}.mlink svg{width:14px;height:14px}
 
@@ -1043,31 +1049,155 @@ const envTodo=()=>Math.round(envRest().reduce((a,x)=>a+x[1],0));
 const envCats=()=>{const L=envRest().map(x=>CN[x[0]][2]);return L.length>3?L.slice(0,3).join(', ')+'…':L.join(', ')};
 function glanceCard(){if(!S.name)return '';const mn=MNL[+YM.slice(5,7)-1],now=new Date(),ld=lastDay(now.getFullYear(),now.getMonth()),FXM=fxThisMonth().filter(x=>!x.one);let A='';
   if(S.bal){const L=liveBal(),up=upSum(),inn=inSum(),cv=cofV(),ev=envTodo(),fin=Math.round((L-up+inn-cv-ev)*100)/100,fu=FXM.filter(x=>x.dt>today).reduce((a,x)=>a+x.v,0),ot=Math.round((up-fu)*100)/100;
-    A=`<button class="gl" data-a="data"><h3><span>Ton argent · ${mn}</span></h3>
-    <div class="r"><span>Sur ton compte${S.bal.enc?'<small>carte à débit différé déjà retirée</small>':''}</span><b class="${L<0?'neg':''}">${eur0(L)}</b></div>
-    ${fu?`<div class="r"><span>Charges fixes à payer<small>d’ici le ${ld} ${mn}</small></span><b>− ${eur0(fu)}</b></div>`:''}
-    ${ot>=1?`<div class="r"><span>Autres paiements prévus<small>virements, dettes</small></span><b>− ${eur0(ot)}</b></div>`:''}
-    ${ev?`<div class="r"><span>Charges variables prévues<small>budget restant : ${envCats()}</small></span><b>− ${eur0(ev)}</b></div>`:''}
-    ${inn?`<div class="r"><span>À recevoir</span><b class="pos">+ ${eur0(inn)}</b></div>`:''}
-    ${cv>0?`<div class="r"><span>Dans ton coffre<small>à ne pas toucher</small></span><b>− ${eur0(cv)}</b></div>`:''}
-    <div class="r t"><span>Il te restera fin ${mn}</span><b class="${fin<0?'neg':'pos'}">${eur0(fin)}</b></div></button>`}
+    const RI=rinMonth().filter(x=>!x.ok&&x.dt&&x.dt>today).sort((a,b)=>a.dt.localeCompare(b.dt)),nf=FXM.find(x=>x.dt>today);
+    A=`<div class="gl"><h3><span>Ton argent · ${mn}</span></h3>
+    <button class="r" data-dt="acc"><span>Sur ton compte<small>${S.bal.enc?'carte à débit différé déjà retirée · ':''}noté ${S.bal.d===today?'aujourd’hui':'le '+dDay(S.bal.d)}</small></span><b class="${L<0?'neg':''}">${eur0(L)}</b>${GC}</button>
+    ${fu?`<button class="r" data-dt="fxs"><span>Charges fixes à payer<small>${nf?'prochaine : '+esc(nf.n)+' le '+dDay(nf.dt):'d’ici le '+ld+' '+mn}</small></span><b>− ${eur0(fu)}</b>${GC}</button>`:''}
+    ${ot>=1?`<button class="r" data-dt="oth"><span>Autres paiements prévus<small>virements, dettes</small></span><b>− ${eur0(ot)}</b>${GC}</button>`:''}
+    ${ev?`<button class="r" data-dt="env"><span>Charges variables prévues<small>budget restant : ${envCats()}</small></span><b>− ${eur0(ev)}</b>${GC}</button>`:''}
+    ${RI.length&&RI.length<=3?RI.map(x=>`<button class="r" data-dt="rin"><span>${esc(x.n)}<small>à recevoir le ${dDay(x.dt)} · ${inDays(x.dt)}</small></span><b class="pos">+ ${eur0(x.v)}</b>${GC}</button>`).join(''):inn?`<button class="r" data-dt="rin"><span>À recevoir<small>${RI.length} rentrées · prochaine le ${dDay(RI[0].dt)}</small></span><b class="pos">+ ${eur0(inn)}</b>${GC}</button>`:''}
+    ${cv>0?`<button class="r" data-dt="cof"><span>Dans ton coffre<small>à ne pas toucher</small></span><b>− ${eur0(cv)}</b>${GC}</button>`:''}
+    <button class="r t" data-dt="mois"><span>Il te restera fin ${mn}</span><b class="${fin<0?'neg':'pos'}">${eur0(fin)}</b>${GC}</button></div>`}
   const m={},E=S.env||{};let t=0;for(const x of S.e.filter(x=>x.d.startsWith(YM)&&x.c!=='dette'&&CN[x.c])){m[x.c]=(m[x.c]||0)+x.v;t+=x.v}
   const RB=rbM();for(const c in RB)if(m[c]){const k=Math.min(m[c],RB[c]);m[c]-=k;t-=k}
   for(const c in E)if(CN[c]&&!m[c])m[c]=0;
   const L2=Object.entries(m).sort((a,b)=>b[1]-a[1]),mx=Math.max(1,...L2.map(x=>x[1]));
   const row=([c,v])=>{const b=E[c],l=b?Math.round(b-v):0,col=CCOL[c]||'#8E8E93';
-    return `<button class="c" data-env="${c}"><span class="gi" style="background:${col}">${ic(CN[c][1])}</span><span>${esc(CN[c][2])}</span><b>${eur0(v)}${b?`<small> / ${eur0(b)}</small>`:''}</b>
+    return `<button class="c" data-dt="cat:${c}"><span class="gi" style="background:${col}">${ic(CN[c][1])}</span><span>${esc(CN[c][2])}</span><b>${eur0(v)}${b?`<small> / ${eur0(b)}</small>`:''}</b>
      <span class="tr"><i style="width:${Math.min(100,b?v/b*100:v/mx*100)}%;background:${b&&l<0?'var(--bad)':col}"></i></span>${b||RB[c]?`<em class="${b&&l<0?'neg':''}">${b?(l>=0?'Reste '+eur0(l):'Dépassé de '+eur0(-l)):''}${b&&RB[c]?' · ':''}${RB[c]?eur0(RB[c])+' remboursés':''}</em>`:''}</button>`};
   let F='';{const nod=(S.fx||[]).filter(x=>!(x.d>=1&&x.d<=31)&&x.v>0),tot=FXM.reduce((a,x)=>a+x.v,0)+nod.reduce((a,x)=>a+x.v,0);
     if(tot>0){const paid=FXM.filter(x=>x.dt<=today),upc=FXM.filter(x=>x.dt>today),pv=paid.reduce((a,x)=>a+x.v,0),uv=upc.reduce((a,x)=>a+x.v,0);
-      F=`<button class="gl" data-a="data"><h3><span>Charges fixes</span><b>${eur0(tot)}<small> / mois</small></b></h3>
+      F=`<button class="gl" data-dt="fxs"><h3><span>Charges fixes</span><b>${eur0(tot)}<small> / mois</small></b></h3>
       <span class="gfb"><i style="width:${Math.min(100,pv/tot*100)}%"></i></span>
       <div class="gfs"><span><em class="pos">${ic('check')}</em>Payé ${eur0(pv)}${paid.length?' · '+paid.length+' charge'+(paid.length>1?'s':''):''}</span><span>Reste ${eur0(uv)}</span></div>
       ${upc.slice(0,4).map(x=>`<div class="r"><span>${esc(x.n)}<small>le ${pd(x.dt).getDate()} ${MN[pd(x.dt).getMonth()]}</small></span><b>${eur0(x.v)}</b></div>`).join('')}
       ${upc.length>4?`<div class="gh">+ ${upc.length-4} autres</div>`:''}${nod.length?`<div class="gh">Sans date : ${nod.map(x=>esc(x.n)).join(', ')} (${eur0(nod.reduce((a,x)=>a+x.v,0))})</div>`:''}${!upc.length&&!nod.length?'<div class="gh">Tout est payé ce mois-ci.</div>':''}</button>`}}
-  const Bc=`<div class="gl"><h3><span>Charges variables · ${mn}</span><b>${eur0(t)}</b></h3>${L2.length?L2.slice(0,12).map(row).join(''):'<div class="gh">Rien de noté ce mois-ci.</div>'}${L2.length&&!Object.keys(E).length?'<div class="gh">Touche une catégorie pour lui fixer un budget : je te montre ce qu’il reste.</div>':''}</div>`;
-  return A+F+Bc}
-function envFlow(c){if(!CN[c])return;const n=CN[c][2];flow([{k:'v',q:'Ton budget '+n+' par mois ?',sub:'À chaque dépense, je te montre ce qu’il te reste dans cette catégorie.',type:'amount',idk:'Pas de budget'}],v=>{S.env=S.env||{};if(v.v>0)S.env[c]=Math.round(v.v);else delete S.env[c];return[v.v>0?'Budget fixé':'Budget retiré',v.v>0?n+' · '+eur0(v.v)+' par mois':n]})}
+  const Bc=`<div class="gl"><h3><span>Charges variables · ${mn}</span><b>${eur0(t)}</b></h3>${L2.length?L2.slice(0,12).map(row).join(''):'<div class="gh">Rien de noté ce mois-ci.</div>'}${L2.length&&!Object.keys(E).length?'<div class="gh">Touche une catégorie pour voir ses dépenses et lui fixer un budget.</div>':''}</div>`;
+  return A+debtCard()+F+Bc}
+/* ===== Chaque bloc ouvre son propre détail : dates visibles, tout se modifie ===== */
+var SCR_RE=null;
+function scrRe(){const f=SCR_RE,s=$('.scr');if(!f||!s)return;const y=s.scrollTop;try{f()}catch(e){}const n=$('.scr');if(n){n.style.animation='none';n.scrollTop=y}}
+const GC='<i class="gc">'+ic('next')+'</i>';
+const dDay=k=>{const d=pd(k);return d.getDate()+' '+MN[d.getMonth()]};
+const inDays=dt=>{const n=Math.round((pd(dt)-pd(today))/864e5);return n===0?'aujourd’hui':n===1?'demain':n>1?'dans '+n+' j':n===-1?'hier':'il y a '+(-n)+' j'};
+const edAmt=(q,cur,cb)=>flow([{k:'v',q,type:'amount'}],v=>cb(v.v),{v:cur});
+const edTxt=(q,cur,cb)=>flow([{k:'t',q,type:'text',ph:cur||''}],v=>cb(v.t),{t:cur||''});
+const edDom=(q,cur,cb)=>flow([{k:'t',q,sub:'Un chiffre entre 1 et 31. Laisse vide si tu ne sais pas.',type:'text',ph:'Ex. 5',ml:2,num:1,opt:1}],v=>{const d=parseInt(v.t,10);return cb(d>=1&&d<=31?d:null)},{t:cur?String(cur):''});
+const dtBind=r=>r.querySelectorAll('[data-dt]').forEach(b=>b.onclick=e=>{e.stopPropagation();buzz();dtGo(b.dataset.dt)});
+function dtGo(k){const i=k.indexOf(':'),a=i<0?k:k.slice(0,i),b=i<0?'':k.slice(i+1);
+  const M={acc:accScr,fxs:fxScr,oth:othScr,env:envScr,rin:rinScr,cof:()=>cofScr(),mois:dataScr,cat:()=>catScr(b),fx:()=>lineOne('fx',+b),rn:()=>lineOne('rin',+b),up:()=>upEdit(b),fxadd:()=>lineAdd('fx'),rnadd:()=>lineAdd('rin'),upadd:()=>upAdd(b),
+    per:()=>{const o=grpOf(decodeURIComponent(b));if(o.l.length)person(o)},bal:()=>flowBal(),bud:()=>envFlow(b),dep:()=>flowDep(null,b),debt:()=>flowDebt()};if(M[a])M[a]()}
+const secH=(t,s)=>`<div class="sec"><h2>${t}</h2>${s?`<small>${s}</small>`:''}</div>`;
+const addB=(k,i,t,s)=>`<button class="vng" data-dt="${k}">${ic(i)}<span><b>${t}</b>${s?`<br><small style="color:var(--muted)">${s}</small>`:''}</span>${ic('next')}</button>`;
+const FOOT='<p class="foot">Touche une ligne pour la modifier.</p>';
+/* Dettes : par personne, avec leurs dates */
+const debtGrp=()=>{const g=new Map();for(const x of S.debts){const k=pk(x.p);if(!g.has(k))g.set(k,{n:x.p,l:[]});g.get(k).l.push(x)}return [...g.values()].map(o=>({...o,net:o.l.reduce((a,x)=>a+(x.w==='them'?x.v:-x.v),0)})).filter(o=>Math.abs(o.net)>.004)};
+const debtWhen=o=>{const d0=o.l.map(x=>x.d||'').filter(Boolean).sort()[0],nx=o.l.map(x=>x.dd||'').filter(Boolean).sort()[0],pm=o.l.map(x=>x.pm||'').filter(Boolean).sort()[0];
+  return [d0?'depuis le '+dDay(d0):'',nx?'prochaine échéance le '+dDay(nx):pm?(pm<=YM?'prévu ce mois-ci':pm===nYM?'prévu le mois prochain':'prévu en '+MNL[+pm.slice(5,7)-1]):'sans date de retour'].filter(Boolean).join(' · ')};
+const debtRow=(o,cl)=>cl==='li'?`<button class="li" data-dt="per:${encodeURIComponent(pk(o.n))}"><span class="ck ico">${ic('user')}</span><span class="t">${o.net<0?'Tu dois à '+esc(o.n):esc(o.n)+' te doit'}<small>${debtWhen(o)}</small></span><span class="r"><b${o.net>0?' style="color:var(--good)"':''}>${o.net<0?'−':'+'}${eur(Math.abs(o.net))}</b></span></button>`
+  :`<button class="r" data-dt="per:${encodeURIComponent(pk(o.n))}"><span>${o.net<0?'Tu dois à '+esc(o.n):esc(o.n)+' te doit'}<small>${debtWhen(o)}</small></span><b class="${o.net<0?'':'pos'}">${o.net<0?'− ':'+ '}${eur0(Math.abs(o.net))}</b>${GC}</button>`;
+function debtCard(){const G=debtGrp();if(!G.length)return '';const th=G.filter(o=>o.net>0),me=G.filter(o=>o.net<0),L=[...th,...me];
+  return `<div class="gl"><h3><span>${th.length&&!me.length?'On te doit':me.length&&!th.length?'Tu dois':'On te doit · tu dois'}</span>${th.length&&!me.length?`<b>${eur0(th.reduce((a,o)=>a+o.net,0))}</b>`:me.length&&!th.length?`<b>${eur0(-me.reduce((a,o)=>a+o.net,0))}</b>`:''}</h3>${L.slice(0,6).map(o=>debtRow(o)).join('')}${L.length>6?`<div class="gh">+ ${L.length-6} autres</div>`:''}</div>`}
+function debtOne(x){const e=!!x.ech,them=x.w==='them';
+  const setAg=()=>{if(x.ag){const g=S.ag.find(a=>a.id===x.ag);if(g){g.t=g.t.replace(/[\d\s.,]+ €$/,' '+eur(x.v));if(x.dd)g.d=x.dd}}};
+  flow([{k:'x',q:(them?esc(x.p)+' te doit ':'Tu dois ')+eur(x.v)+(them?'':' à '+esc(x.p)),sub:[x.t?esc(x.t):'',x.d?'Noté le '+dDay(x.d):'',x.dd?'Échéance le '+dDay(x.dd):x.pm?(x.pm<=YM?'Prévu ce mois-ci':'Prévu en '+MNL[+x.pm.slice(5,7)-1]):'Sans date de retour'].filter(Boolean).join(' · '),type:'tiles',opts:[
+   {i:'wallet',l:'Changer le montant',s:eur(x.v),one:1,go:()=>edAmt('Le bon montant ?',x.v,v=>{x.v=v;if(x.v0!=null)x.v0=Math.max(x.v0,v);setAg();return['Modifié',x.p+' · '+eur(v)]})},
+   e?{i:'later',l:'Changer l’échéance',s:x.dd?dLab(x.dd):'',one:1,go:()=>flow([{k:'d',q:'Quel jour ?',type:'date'}],v=>{x.dd=v.d;x.pm=v.d.slice(0,7);setAg();return['Déplacé',dLab(v.d)]})}
+    :{i:'later',l:them?'Il me rend ça quand ?':'Je règle ça quand ?',s:x.pm?(x.pm<=YM?'Ce mois-ci':MNL[+x.pm.slice(5,7)-1]):'Pas de date',one:1,go:()=>flow([{k:'pm',q:them?'Il te rend ça quand ?':'Tu le règles quand ?',type:'tiles',opts:[{v:YM,i:'now',l:'Ce mois-ci'},{v:nYM,i:'next',l:'Le mois prochain'},{v:'',i:'later',l:'Plus tard',one:1}]}],v=>{x.pm=v.pm;return['Modifié',v.pm?(v.pm===YM?'Ce mois-ci':'Le mois prochain'):'Plus tard']})},
+   {i:'cal',l:'Changer la date de départ',s:x.d?dLab(x.d):'Pas de date',one:1,go:()=>flow([{k:'d',q:'C’était quel jour ?',type:'pdate'}],v=>{x.d=v.d;return['Modifié','Depuis le '+dDay(v.d)]})},
+   ...(e?[]:[{i:'pen',l:x.t?'Changer la note':'Ajouter une note',s:x.t||'Ex. le resto de samedi',one:1,go:()=>edTxt('C’est pour quoi ?',x.t,t=>{x.t=t;return['Noté',t]})}]),
+   {i:'user',l:'Changer le prénom',s:x.p,one:1,go:()=>edTxt('Son prénom ?',x.p,t=>{const o=pk(x.p);S.debts.forEach(y=>{if(pk(y.p)===o)y.p=t});S.ppl=[...new Set([...(S.ppl||[]).filter(p=>pk(p)!==o),t])];return['Renommé',t]})},
+   {i:'trash',l:'Supprimer',s:'Sans toucher à ton solde',one:1,go:()=>{S.debts=S.debts.filter(y=>y!==x);if(x.ag)S.ag=S.ag.filter(a=>a.id!==x.ag);done(['Supprimé',x.p+' · '+eur(x.v)])}},
+   {i:'undo',l:'Garder',one:1,go:()=>closeFl()}]}],()=>['',''])}
+function debtEdit(o){if(o.l.length===1)return debtOne(o.l[0]);
+  flow([{k:'x',q:'Laquelle ?',sub:esc(o.n),type:'tiles',opts:[...o.l.map(x=>({i:x.w==='them'?'in':'out',l:(x.t||(x.w==='them'?'Te doit':'Tu dois'))+' · '+eur(x.v),s:x.dd?'Échéance le '+dDay(x.dd):x.d?'Noté le '+dDay(x.d):'',one:1,go:()=>debtOne(x)})),{i:'undo',l:'Retour',one:1,go:()=>closeFl()}]}],()=>['',''])}
+/* Une charge fixe ou un revenu régulier, modifiable seul */
+function lineOne(kind,i){const out=kind==='fx',A=out?S.fx:S.rin,x=A&&A[i];if(!x)return;const k=out?'':rinKey(x,YM),got=!out&&!!(S.rok||{})[k];
+  flow([{k:'x',q:esc(x.n)+' · '+eur(x.v),sub:(x.d?(out?'Prélevé le ':'Arrive le ')+x.d+' de chaque mois':'Pas de jour fixé')+(got?' · reçu ce mois-ci':''),type:'tiles',opts:[
+   ...(!out&&!got&&x.d&&fxDate(x,YM)<=today?[{i:'check',l:'C’est arrivé',s:'Je l’ajoute à ton solde',one:1,cta:1,go:()=>flowRinQ({...x,dt:fxDate(x,YM)})}]:[]),
+   {i:'wallet',l:'Changer le montant',s:eur(x.v)+' par mois',one:1,go:()=>edAmt('Le nouveau montant ?',x.v,v=>{x.v=v;return['Modifié',x.n+' · '+eur(v)]})},
+   {i:'cal',l:x.d?'Changer le jour':'Mettre un jour',s:x.d?'Le '+x.d+' du mois':'Pour le voir à sa date',one:1,go:()=>edDom(out?'Prélevé quel jour du mois ?':'Ça arrive quel jour du mois ?',x.d,d=>{if(d)x.d=d;else delete x.d;return['Modifié',x.n+(d?' · le '+d+' du mois':' · sans jour')]})},
+   {i:'pen',l:'Renommer',s:x.n,one:1,go:()=>edTxt('Le nouveau nom ?',x.n,t=>{if(!out&&S.rok&&S.rok[k]){delete S.rok[k];x.n=t;S.rok[rinKey(x,YM)]=1}else x.n=t;return['Renommé',t]})},
+   {i:'trash',l:'Supprimer',s:out?'Je ne paie plus ça':'Je ne reçois plus ça',one:1,go:()=>{A.splice(i,1);done(['Supprimé',x.n])}},
+   {i:'undo',l:'Garder',one:1,go:()=>closeFl()}]}],()=>['',''])}
+function lineAdd(kind){const out=kind==='fx';flow([
+  {k:'n',q:out?'Tu paies quoi chaque mois ?':'Qu’est-ce qui rentre chaque mois ?',type:'text',ph:out?'Ex. Forfait':'Ex. Salaire',ml:40},
+  {k:'v',q:'Combien par mois ?',type:'amount'},
+  {k:'t',q:out?'Prélevé quel jour du mois ?':'Ça arrive quel jour du mois ?',sub:'Un chiffre entre 1 et 31. Laisse vide si tu ne sais pas.',type:'text',ph:'Ex. 5',ml:2,num:1,opt:1}
+ ],v=>{const d=parseInt(v.t,10),o={n:v.n,v:v.v};if(d>=1&&d<=31)o.d=d;if(out){S.fx=Array.isArray(S.fx)?S.fx:[];S.fx.push(o)}else{S.rin=S.rin||[];S.rin.push(o)}return['Ajouté',v.n+' · '+eur(v.v)+(o.d?' · le '+o.d+' du mois':'')]})}
+/* Un paiement ou une rentrée ponctuelle, à une date précise */
+function upAdd(k){const out=k==='out';flow([
+  {k:'n',q:out?'Tu vas payer quoi ?':'Qui te doit ça, ou c’est quoi ?',type:'text',ph:out?'Ex. Caution':'Ex. Facture Next Spain',ml:40},
+  {k:'v',q:'Combien ?',type:'amount'},
+  {k:'d',q:out?'Ça part quel jour ?':'Ça arrive quel jour ?',type:'date'}
+ ],v=>{S.up=S.up||[];S.up.push({id:uid(),k:out?'out':'in',n:v.n,v:v.v,d:v.d});return['C’est prévu',v.n+' · '+eur(v.v)+' · '+dLab(v.d)]})}
+function upEdit(id){const x=(S.up||[]).find(y=>y.id===id);if(!x)return;const out=x.k==='out';
+  flow([{k:'x',q:esc(x.n)+' · '+eur(x.v),sub:(out?'Part le ':'Arrive le ')+dDay(x.d)+' · une seule fois',type:'tiles',opts:[
+   ...(!out&&x.d<=today&&x.d.startsWith(YM)&&!(S.rok||{})[rinKey(x,YM)]?[{i:'check',l:'C’est arrivé',s:'Je l’ajoute à ton solde',one:1,cta:1,go:()=>flowRinQ({n:x.n,v:x.v,dt:x.d,one:1})}]:[]),
+   {i:'wallet',l:'Changer le montant',s:eur(x.v),one:1,go:()=>edAmt('Le bon montant ?',x.v,v=>{x.v=v;return['Modifié',x.n+' · '+eur(v)]})},
+   {i:'cal',l:'Changer la date',s:dLab(x.d),one:1,go:()=>flow([{k:'d',q:'Quel jour ?',type:'date'}],v=>{x.d=v.d;return['Déplacé',dLab(v.d)]})},
+   {i:'pen',l:'Renommer',s:x.n,one:1,go:()=>edTxt('Le nouveau nom ?',x.n,t=>{x.n=t;return['Renommé',t]})},
+   {i:'trash',l:'Supprimer',one:1,go:()=>{S.up=S.up.filter(y=>y!==x);done(['Supprimé',x.n])}},
+   {i:'undo',l:'Garder',one:1,go:()=>closeFl()}]}],()=>['',''])}
+const upRow=x=>`<button class="li" data-dt="up:${x.id}"><span class="ck ico">${ic(x.k==='in'?'in':'calp')}</span><span class="t">${esc(x.n)}<small>Le ${dDay(x.d)} · ${inDays(x.d)} · une seule fois</small></span><span class="r"><b${x.k==='in'?' style="color:var(--good)"':''}>${x.k==='in'?'+':''}${eur(x.v)}</b></span></button>`;
+/* --- Sur ton compte --- */
+function accScr(){if(!S.bal)return flowBal();const b=S.bal,L=liveBal(),A=b.acc&&b.acc.length?b.acc:[{n:'Mon compte',v:b.v}],since=mvAll().filter(x=>!x.nb&&crT(x.id)>b.ts),FX=[];
+  let ym=b.d.slice(0,7);for(let k=0;k<36&&ym<=YM;k++){for(const x of fxDated()){const dt=fxDate(x,ym);if(dt>b.d&&dt<=today)FX.push({n:x.n,v:x.v,dt})}ym=addM(ym,1)}
+  for(const x of upOne('out'))if(x.d>b.d&&x.d<=today)FX.push({n:x.n,v:x.v,dt:x.d});FX.sort((a,c)=>c.dt.localeCompare(a.dt));
+  const x=scr('Sur ton compte',`<div style="display:grid;gap:14px">
+   <div class="mm"><small>${A.length>1?'Sur tes comptes':'Sur ton compte'} · aujourd’hui</small><strong class="${L<0?'neg':''}">${eur(L)}</strong><span>Solde noté ${b.d===today?'aujourd’hui':'le '+dDay(b.d)}, tenu à jour depuis avec ce que tu notes.</span></div>
+   ${secH(A.length>1?'Tes comptes':'Ton compte','le '+dDay(b.d))}
+   <div class="list">${A.map(a=>`<button class="li" data-dt="bal"><span class="ck ico">${ic('bank')}</span><span class="t">${esc(a.n||'Compte')}<small>Toucher pour corriger</small></span><span class="r"><b>${eur(a.v)}</b></span></button>`).join('')}${b.enc?`<div class="li"><span class="ck ico">${ic('card')}</span><span class="t">Encours carte<small>Déjà retiré de ton solde</small></span><span class="r">−${eur(b.enc)}</span></div>`:''}</div>
+   ${secH('Depuis le '+dDay(b.d),since.length+FX.length?String(since.length+FX.length):'')}
+   ${since.length||FX.length?`<div class="list">${since.slice(0,60).map(mvRow).join('')}${FX.map(f=>`<div class="li paid"><span class="ck">${ic('check')}</span><span class="t">${esc(f.n)}<small>Prélevé le ${dDay(f.dt)}</small></span><span class="r">−${eur(f.v)}</span></div>`).join('')}</div>`:'<p class="emp2">Rien n’a bougé depuis.</p>'}
+   ${addB('bal','bank','Mettre à jour mon solde','Si le chiffre ne colle pas avec ta banque')}${since.length?FOOT:''}</div>`);dtBind(x);bindMv(x);SCR_RE=accScr}
+/* --- Charges fixes --- */
+function fxScr(){const mn=MNL[+YM.slice(5,7)-1],F=(S.fx||[]).map((x,i)=>({x,i,dt:x.d>=1&&x.d<=31?fxDate(x,YM):null})),U=upOne('out').filter(x=>x.d>today).sort((a,b)=>a.d.localeCompare(b.d));
+  const dated=F.filter(o=>o.dt).sort((a,b)=>a.dt.localeCompare(b.dt)),up=dated.filter(o=>o.dt>today),paid=dated.filter(o=>o.dt<=today),nod=F.filter(o=>!o.dt),sum=l=>l.reduce((a,o)=>a+(o.x.v||0),0),tot=sum(F);
+  const row=(o,st)=>`<button class="li${st==='p'?' paid':''}" data-dt="fx:${o.i}"><span class="ck${st==='p'?'':' pv'}"${st==='n'?' style="border-style:dashed"':''}>${st==='p'?ic('check'):''}</span><span class="t">${esc(o.x.n)}<small>${st==='p'?'Prélevé le '+dDay(o.dt):st==='u'?'Le '+dDay(o.dt)+' · '+inDays(o.dt):'Pas de jour · touche pour l’ajouter'}</small></span><span class="r"><b>${eur(o.x.v)}</b></span></button>`;
+  const x=scr('Charges fixes',`<div style="display:grid;gap:14px">
+   <div class="mm"><small>Charges fixes · ${mn}</small><strong>${eur0(tot)}</strong><span>${tot?'Payé '+eur0(sum(paid))+' · reste '+eur0(sum(up))+' à payer':'Aucune charge notée pour l’instant'}</span>${tot?`<span class="gfb2"><i style="width:${Math.min(100,sum(paid)/tot*100)}%"></i></span>`:''}</div>
+   ${up.length?secH('À venir',eur0(sum(up)))+`<div class="list">${up.map(o=>row(o,'u')).join('')}</div>`:''}
+   ${U.length?secH('Paiements prévus',eur0(U.reduce((a,u)=>a+u.v,0)))+`<div class="list">${U.map(upRow).join('')}</div>`:''}
+   ${paid.length?secH('Déjà payé',eur0(sum(paid)))+`<div class="list">${paid.map(o=>row(o,'p')).join('')}</div>`:''}
+   ${nod.length?secH('Sans date',eur0(sum(nod)))+`<div class="list">${nod.map(o=>row(o,'n')).join('')}</div>`:''}
+   ${addB('fxadd','plus','Ajouter une charge fixe','Chaque mois, le même montant')}${addB('upadd:out','calp','Ajouter un paiement prévu','Une seule fois, à une date précise')}${F.length||U.length?FOOT:''}</div>`);dtBind(x);SCR_RE=fxScr}
+/* --- Autres paiements prévus --- */
+function othScr(){const U=upOne('out').filter(x=>x.d>today).sort((a,b)=>a.d.localeCompare(b.d)),D=debtGrp().filter(o=>o.net<0);
+  const x=scr('Paiements prévus',`<div style="display:grid;gap:14px">
+   <div class="mm"><small>Hors charges fixes</small><strong>${eur0(U.filter(u=>u.d.startsWith(YM)).reduce((a,u)=>a+u.v,0)+debtDue())}</strong><span>À sortir d’ici la fin du mois</span></div>
+   ${U.length?secH('Paiements ponctuels')+`<div class="list">${U.map(upRow).join('')}</div>`:''}
+   ${D.length?secH('Tu dois')+`<div class="list">${D.map(o=>debtRow(o,'li')).join('')}</div>`:''}
+   ${!U.length&&!D.length?'<p class="emp2">Rien de prévu.</p>':''}
+   ${addB('upadd:out','calp','Ajouter un paiement prévu','Une seule fois, à une date précise')}${addB('debt','users','Ajouter une dette')}${U.length||D.length?FOOT:''}</div>`);dtBind(x);SCR_RE=othScr}
+/* --- À recevoir : revenus, rentrées prévues, ce qu'on te doit --- */
+function rinScr(){const mn=MNL[+YM.slice(5,7)-1],R=(S.rin||[]).map((x,i)=>({x,i,dt:x.d?fxDate(x,YM):null,ok:!!(S.rok||{})[rinKey(x,YM)]})).sort((a,b)=>(a.dt||'9').localeCompare(b.dt||'9'));
+  const U=upOne('in').filter(x=>!(x.d.startsWith(YM)&&(S.rok||{})[rinKey(x,YM)])&&x.d>=YM+'-01').sort((a,b)=>a.d.localeCompare(b.d)),D=debtGrp().filter(o=>o.net>0),got=S.inc.filter(x=>x.d.startsWith(YM)).map(x=>({...x,k:'i'})).sort((a,b)=>b.d.localeCompare(a.d)),gv=got.reduce((a,x)=>a+x.v,0);
+  const st=o=>o.ok?'Reçu ce mois-ci':!o.dt?'Pas de jour · touche pour l’ajouter':o.dt>today?'Le '+dDay(o.dt)+' · '+inDays(o.dt):'Prévu le '+dDay(o.dt)+' · pas encore noté';
+  const row=o=>`<button class="li${o.ok?' paid':''}" data-dt="rn:${o.i}"><span class="ck${o.ok?'':' pv'}">${o.ok?ic('check'):''}</span><span class="t">${esc(o.x.n)}<small>${st(o)}</small></span><span class="r"><b${o.ok?'':' style="color:var(--good)"'}>+${eur(o.x.v)}</b></span></button>`;
+  const x=scr('À recevoir',`<div style="display:grid;gap:14px">
+   <div class="mm"><small>À recevoir · ${mn}</small><strong>${eur0(inSum())}</strong><span>${gv?'Déjà reçu '+eur0(gv)+' ce mois-ci':'Rien de reçu ce mois-ci pour l’instant'}</span></div>
+   ${R.length?secH('Chaque mois')+`<div class="list">${R.map(row).join('')}</div>`:''}
+   ${U.length?secH('Rentrées prévues',eur0(U.reduce((a,u)=>a+u.v,0)))+`<div class="list">${U.map(upRow).join('')}</div>`:''}
+   ${D.length?secH('On te doit',eur0(D.reduce((a,o)=>a+o.net,0)))+`<div class="list">${D.map(o=>debtRow(o,'li')).join('')}</div>`:''}
+   ${got.length?secH('Reçu en '+mn,eur0(gv))+`<div class="list">${got.slice(0,40).map(mvRow).join('')}</div>`:''}
+   ${addB('upadd:in','calp','Ajouter une rentrée prévue','Une facture, un virement, à une date précise')}${addB('rnadd','plus','Ajouter un revenu régulier','Chaque mois, le même montant')}${addB('debt','users','Quelqu’un me doit de l’argent')}${R.length||U.length||D.length||got.length?FOOT:''}</div>`);dtBind(x);bindMv(x);SCR_RE=rinScr}
+/* --- Charges variables prévues : les budgets --- */
+function envScr(){const E=Object.entries(S.env||{}).filter(([c,b])=>CN[c]&&b>0),mn=MNL[+YM.slice(5,7)-1];
+  const x=scr('Budgets',`<div style="display:grid;gap:14px">
+   <div class="mm"><small>Charges variables prévues · ${mn}</small><strong>${eur0(envTodo())}</strong><span>Ce qu’il te reste à dépenser dans tes budgets</span></div>
+   ${E.length?`<div class="list">${E.map(([c,b])=>{const sp=catNet(c),l=Math.round(b-sp);return `<button class="li" data-dt="cat:${c}"><span class="ck ico" style="background:${CCOL[c]||'#8E8E93'};color:#fff">${ic(CN[c][1])}</span><span class="t">${esc(CN[c][2])}<small>${eur0(sp)} dépensés sur ${eur0(b)}</small></span><span class="r"><b${l<0?' style="color:var(--bad)"':''}>${l>=0?'Reste '+eur0(l):'− '+eur0(-l)}</b></span></button>`}).join('')}</div>`:'<p class="emp2">Aucun budget fixé.</p>'}
+   <p class="foot">Touche une catégorie pour voir ses dépenses et changer son budget.</p></div>`);dtBind(x);SCR_RE=envScr}
+/* --- Une catégorie : ses dépenses datées, son budget --- */
+function catScr(c){if(!CN[c])return;const n=CN[c][2],col=CCOL[c]||'#8E8E93',mn=MNL[+YM.slice(5,7)-1],L=S.e.filter(x=>x.d.startsWith(YM)&&x.c===c).map(x=>({...x,k:'e'})).sort((a,b)=>b.d.localeCompare(a.d)||crT(b.id)-crT(a.id));
+  const RB=S.inc.filter(x=>x.rc===c&&x.d.startsWith(YM)).map(x=>({...x,k:'i'})),net=catNet(c),b=(S.env||{})[c]||0,l=Math.round(b-net),pv=S.e.filter(x=>x.d.startsWith(prevYM())&&x.c===c).reduce((a,x)=>a+x.v,0);
+  const x=scr(esc(n),`<div style="display:grid;gap:14px">
+   <div class="mm"><small>${esc(n)} · ${mn}</small><strong>${eur(net)}</strong><span${b&&l<0?' style="color:var(--bad)"':''}>${b?(l>=0?'Reste '+eur0(l)+' sur '+eur0(b):'Budget de '+eur0(b)+' dépassé de '+eur0(-l)):L.length?L.length+' dépense'+(L.length>1?'s':'')+' ce mois-ci':'Rien de noté ce mois-ci'}</span>${b?`<span class="gfb2"><i style="width:${Math.min(100,net/b*100)}%;background:${l<0?'var(--bad)':col}"></i></span>`:''}${pv?`<span>${eur0(pv)} en ${ymLab(prevYM())}</span>`:''}</div>
+   <button class="solr" data-dt="bud:${c}"><span>Budget par mois<small>toucher pour ${b?'le changer':'en fixer un'}</small></span><b>${b?eur0(b):'—'}</b>${ic('next')}</button>
+   ${L.length?secH('Dépenses',String(L.length))+`<div class="list">${L.slice(0,150).map(mvRow).join('')}</div>`:''}
+   ${RB.length?secH('Remboursé',eur0(RB.reduce((a,x)=>a+x.v,0)))+`<div class="list">${RB.map(mvRow).join('')}</div>`:''}
+   ${addB('dep:'+c,'plus','Ajouter une dépense '+esc(n))}${L.length?FOOT:''}</div>`);dtBind(x);bindMv(x);SCR_RE=()=>catScr(c)}
+function envFlow(c){if(!CN[c])return;const n=CN[c][2];flow([{k:'v',q:'Ton budget '+n+' par mois ?',sub:'À chaque dépense, je te montre ce qu’il te reste dans cette catégorie.',type:'amount',idk:'Pas de budget'}],v=>{S.env=S.env||{};if(v.v>0)S.env[c]=Math.round(v.v);else delete S.env[c];return[v.v>0?'Budget fixé':'Budget retiré',v.v>0?n+' · '+eur0(v.v)+' par mois':n]},(S.env||{})[c]?{v:S.env[c]}:null)}
 async function shareApp(){const u=location.origin+location.pathname,t='Base : l’app qui m’aide à tenir mon argent et mes journées. Gratuite, sans compte.';try{if(navigator.share){await navigator.share({title:'Base',text:t,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t+' '+u);done(['Lien copié','Colle-le à qui tu veux'])}catch(e){done(['Le lien',u])}}
 function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x.v||0),0)*100)/100;try{snapBal()}catch(e){}const r=reste(),now=new Date(),left=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1;
   const its=S.ag.filter(a=>a.d===today).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'));
@@ -1087,7 +1217,7 @@ function home(){if(Array.isArray(S.fx))S.fixe=Math.round(S.fx.reduce((t,x)=>t+(x
   ${glanceCard()}
   ${momentCard()}
   <button class="mlink" data-a="data">Mon mois ${ic('next')}</button>`+TB;
-  homeBind();$$('[data-env]').forEach(b=>b.onclick=()=>{buzz();envFlow(b.dataset.env)})}
+  homeBind();dtBind($('#app'))}
 function homeBind(){const B=badges();bindCopy($('#app'));try{const n=S.name?tasks().length:0;if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}{const m=$('#mvl');if(m)bindMv(m)}{const l=$('#tdl');if(l)bindTodo(l,tasks())}const bc=$('#balc');if(bc)bc.onclick=()=>{buzz();flowBal()};
   document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{buzz();{const P={dep:'out',fume:'smoke'}[b.dataset.a],t=P&&tasks().find(x=>x.i===P);if(t){t.go();return}}({tour:tourScr,vg:vgScr,rcp:()=>recap(),why:whySheet,bin:binFlow,droits:droitsScr,pay:payScr,wish:flowWish,eve:flowEve,bilan:()=>bilanScr(YM),data:dataScr,prog:progScr,ihide:()=>{S.instHide=1;save();home()},hist:histScr,push:pushEnable,dep:flowDep,inc:flowInc,ag:()=>{agD=today;agScr('day')},debts:debtList,sos:openSOS,help:()=>helpScr(),gains:gainsScr,vset:flowVice,lg0:()=>logZero(),lg1:flowSmoked,fume:fumeScr,cof:cofScr,gput:goalPut,gnew:goalFlow,pro:proScr,bfx:()=>BUD.fx(),brin:()=>BUD.rin(),bbal:()=>flowBal(),wk:()=>wkScr(wkStart())})[b.dataset.a]()});
   document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{const a=S.ag.find(x=>x.id===b.dataset.ck);a.done=!a.done;save();buzz(a.done?[10,40,10]:8);home()});
@@ -1236,14 +1366,22 @@ const mvIc=x=>x.k==='i'?'in':(CN[x.c]?CN[x.c][1]:'out');
 const mvRow=x=>`<div class="li mv" data-mv="${x.k}:${x.id}"><span class="ck ico">${ic(mvIc(x))}</span><span class="t">${esc(mvLab(x))}<small>${dLab(x.d)}</small></span><span class="r ${x.k==='i'?'pos':''}">${x.k==='i'?'+':'−'}${eur(x.v)}</span></div>`;
 function mvSec(){const l=mvAll().slice(0,4);if(!l.length)return '';return `<div class="sec"><h2>Derniers mouvements</h2><button class="lk" data-a="hist">Tout voir</button></div><div class="list" id="mvl">${l.map(mvRow).join('')}</div>`}
 function bindMv(root){root.querySelectorAll('[data-mv]').forEach(el=>el.onclick=()=>{buzz();const [k,id]=el.dataset.mv.split(':'),L=k==='i'?S.inc:S.e,x=L.find(y=>y.id===id);if(!x)return;
-  flow([{k:'x',q:(k==='i'?'+':'−')+eur(x.v)+' · '+esc(mvLab({...x,k})),sub:dLab(x.d).replace(/^./,c=>c.toUpperCase())+(x.nb?' · déjà compté dans ton solde':''),type:'tiles',opts:[{i:'cal',l:'Changer le jour',s:'Ton solde se recale tout seul',one:1,go:()=>mvRedate(x,k)},{i:'trash',l:'Supprimer',one:1,go:()=>{const i=L.indexOf(x);if(i>-1)L.splice(i,1);closeScr&&$('.scr')&&closeScr();done(['Supprimé',''])}},{i:'undo',l:'Garder',one:1,go:()=>closeFl()}]}],()=>['',''])})}
-function mvRedate(x,k){flow([{k:'d',q:'C’était quel jour ?',type:'pdate'},SAMEQ(k==='i'?'in':'out')],v=>{x.d=v.d;if(x.d===today){delete x.nb}else{const nb=nbFor(x.d,v.sb);if(nb)x.nb=1;else delete x.nb}if($('.scr'))closeScr();return['Déplacé',dLab(x.d)]})}
+  const lk=x.c==='dette'||(k==='i'&&/^Remboursement de /.test(x.n||'')),lab=()=>mvLab({...x,k});
+  flow([{k:'x',q:(k==='i'?'+':'−')+eur(x.v)+' · '+esc(lab()),sub:dLab(x.d).replace(/^./,c=>c.toUpperCase())+(x.nb?' · déjà compté dans ton solde':''),type:'tiles',opts:[
+   ...(lk?[]:[{i:'wallet',l:'Changer le montant',s:eur(x.v),one:1,go:()=>edAmt('Le bon montant ?',x.v,v=>{x.v=v;return['Modifié',lab()+' · '+eur(v)]})}]),
+   ...(k==='e'&&!lk&&CN[x.c]?[{i:'folder',l:'Changer la catégorie',s:CN[x.c][2],one:1,go:()=>flow([{k:'c',q:'C’était quoi ?',type:'tiles',opts:CATS.map(([v,i,l])=>({v,i,l}))}],v=>{if(v.c!==x.c&&x.s&&!x.ap)delete x.s;x.c=v.c;return['Modifié',CN[v.c][2]+' · '+eur(x.v)+envLeft(v.c)]})}]:[]),
+   ...(k==='e'&&x.ap?[{i:'pen',l:'Renommer',s:x.s||'',one:1,go:()=>edTxt('Le bon nom ?',x.s,t=>{x.s=t;return['Renommé',t]})}]:[]),
+   ...(k==='i'&&!lk?[{i:'pen',l:'Renommer',s:x.n||'Reçu',one:1,go:()=>edTxt('Ça vient d’où ?',x.n,t=>{x.n=t;return['Renommé',t]})}]:[]),
+   {i:'cal',l:'Changer le jour',s:'Ton solde se recale tout seul',one:1,go:()=>mvRedate(x,k)},
+   {i:'trash',l:'Supprimer',one:1,go:()=>{const i=L.indexOf(x);if(i>-1)L.splice(i,1);if($('.scr')&&!SCR_RE)closeScr();done(['Supprimé',''])}},
+   {i:'undo',l:'Garder',one:1,go:()=>closeFl()}]}],()=>['',''])})}
+function mvRedate(x,k){flow([{k:'d',q:'C’était quel jour ?',type:'pdate'},SAMEQ(k==='i'?'in':'out')],v=>{x.d=v.d;if(x.d===today){delete x.nb}else{const nb=nbFor(x.d,v.sb);if(nb)x.nb=1;else delete x.nb}if($('.scr')&&!SCR_RE)closeScr();return['Déplacé',dLab(x.d)]})}
 function pdateUI(st,body){const o=[[today,'sun','Aujourd’hui'],[addD(today,-1),'moon','Hier'],[addD(today,-2),'cal',dLab(addD(today,-2)).replace(/^./,c=>c.toUpperCase())]];
   body.innerHTML=`<div class="tiles">${o.map(([k,i,l])=>`<button class="tile tc t-ag" data-d="${k}"><span class="ib">${ic(i)}</span><b>${l}</b></button>`).join('')}<label class="tile tc t-ag"><span class="ib">${ic('calp')}</span><b>Autre jour</b><input type="date" class="dtin" id="dd" max="${today}"></label></div>`;
   body.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{buzz();FL.v[st.k]=b.dataset.d;nextStep()});
   const di=body.querySelector('#dd');
   di.onchange=()=>{if(di.value&&di.value<=today){FL.v[st.k]=di.value;nextStep()}}}
-function histScr(){const l=mvAll();const x=scr('Mouvements',l.length?`<div class="list">${l.slice(0,200).map(mvRow).join('')}</div><p class="foot">Touche une ligne pour la supprimer.</p>`:'<div class="empty">Rien pour l’instant.</div>');bindMv(x)}
+function histScr(){const l=mvAll();const x=scr('Mouvements',l.length?`<div class="list">${l.slice(0,200).map(mvRow).join('')}</div><p class="foot">Touche une ligne pour la modifier.</p>`:'<div class="empty">Rien pour l’instant.</div>');bindMv(x);SCR_RE=histScr}
 
 /* ---------- Sauvegarde ---------- */
 async function backup(){const data=JSON.stringify({app:'libre',k:K,at:new Date().toISOString(),S});const name='libre-sauvegarde-'+today+'.json';
@@ -1443,13 +1581,13 @@ function unList(){const L=unGet();if(!L.length){done(['Rien à annuler','Tes der
   const ago=t=>{const m=Math.round((Date.now()-t)/6e4);return m<1?'à l’instant':m<60?'il y a '+m+' min':m<1440?'il y a '+Math.round(m/60)+' h':'il y a '+Math.round(m/1440)+' j'};
   flow([{k:'x',q:'Annuler une action',sub:'Tout revient comme juste avant. Si tu remontes plus loin, ce qui a suivi est annulé aussi.',type:'tiles',opts:L.map((x,i)=>({i:'undo',l:x.l,s:ago(x.t)+(i?' · et les '+i+' suivante'+(i>1?'s':''):''),one:1,go:()=>unDo(i)}))}],()=>['',''])}
 function done([t,s]){const f=$('.fl');if(f)f.remove();FL=null;save();unPush(t||'');if(COFA&&t){const c=COFA;COFA=null;document.body.style.overflow='';return cofAnim(c,t,s)}COFA=null;
-  if(!t){home();rcBack();return}
+  if(!t){home();scrRe();rcBack();return}
   let n=0;try{n=S.name?tasks().length:0}catch(e){}const all=tPrev>0&&n===0;tPrev=n;
   const big=all||/jours? sans fumer|Bienvenue|C’est prêt|Bien reçu|Réglé|Mis de côté|Objectif atteint|C’est planifié/.test(t+' '+(s||''));
   const N=big?14:9,parts=Array.from({length:N},(_,i)=>`<i style="--a:${Math.round(i*360/N)}deg;--d:${big?-86:-66}px"></i>`).join('');
   const o=document.createElement('div');o.className='ok'+(big?' grand':'');
   o.innerHTML=`<div class="stp"><span class="rg"></span>${parts}<svg class="dr" viewBox="0 0 104 104"><circle cx="52" cy="52" r="48"/><path d="M33 53l13 13 25-27"/></svg></div><b>${esc(t)}</b>${s?`<small>${esc(s)}</small>`:''}${all?'<span class="xt">Tout est à jour</span>':''}`;
-  document.body.appendChild(o);home();vgCheck();qCheck();streakCheck(all?2350:1800);badgeCheck(all?2350:1800);levelCheck(all?2600:2000);
+  document.body.appendChild(o);home();scrRe();vgCheck();qCheck();streakCheck(all?2350:1800);badgeCheck(all?2350:1800);levelCheck(all?2600:2000);
   setTimeout(()=>{buzz(9);sfx('stamp')},80);setTimeout(()=>{buzz(big?[12,60,18]:10);sfx(big?'big':'ok')},470);
   setTimeout(()=>o.classList.add('out'),all?1900:1350);setTimeout(()=>{o.remove();rcBack()},all?2250:1700);
   o.onclick=()=>{o.classList.add('out');setTimeout(()=>o.remove(),300)}}
@@ -1498,7 +1636,7 @@ function tilesUI(st,body){const opts=typeof st.opts==='function'?st.opts(FL.v):s
    const lb=w.querySelector('.tlink'),ti=w.querySelector('#tt'),tl=w.querySelector('.tl');
    lb.onclick=e=>{if(e.target.closest('.tv')){e.preventDefault();if(ti.value){buzz();FL.v[st.k]=ti.value;nextStep()}}};
    const upd=()=>{if(ti.value){tl.textContent='À '+hl(ti.value);lb.classList.add('set')}};ti.oninput=upd;ti.onchange=upd}}
-function textUI(st,body,btm){body.innerHTML=`<input class="txt" id="tx" placeholder="${esc(st.ph||'')}" maxlength="${st.ml||60}" value="${esc(FL.v[st.k]||'')}" autocomplete="off">`;
+function textUI(st,body,btm){body.innerHTML=`<input class="txt" id="tx" placeholder="${esc(st.ph||'')}" maxlength="${st.ml||60}" value="${esc(FL.v[st.k]||'')}" autocomplete="off"${st.num?' inputmode="numeric"':''}>`;
   btm.innerHTML=`<button class="go" id="go">Suivant</button>`;const i=body.querySelector('#tx'),g=btm.querySelector('#go');const chk=()=>{if(st.opt){g.disabled=false;g.textContent=i.value.trim()?'Suivant':'Passer'}else g.disabled=!i.value.trim()};chk();i.oninput=chk;
   setTimeout(()=>i.focus(),250);const fin=()=>{if(!i.value.trim()&&!st.opt)return;FL.v[st.k]=i.value.trim();nextStep()};g.onclick=fin;i.onkeydown=e=>{if(e.key==='Enter')fin()}}
 function dateUI(st,body){const o=st.far?[]:[[today,'sun','Aujourd’hui'],[addD(today,1),'moon','Demain'],[addD(today,2),'cal',dLab(addD(today,2))]];
@@ -2608,9 +2746,10 @@ function flowPay(o,full,fix){const owe=o.net<0,abs=Math.abs(o.net),amt=fix||abs;
     {v:'n',i:'bank',l:owe?'Enlève-le de mon solde':'Ajoute-le à mon solde',s:'Envoyé après ma dernière mise à jour'},
     {v:'y',i:'check',l:'Il est déjà compté',s:'Envoyé avant ma dernière mise à jour'}]}
  ],v=>payDebt(o,full?amt:v.v,v.nb==='y'))}
-function person(o){const owe=o.net<0,abs=Math.abs(o.net),d0=o.l.map(x=>x.d||'').sort()[0]||'',pdv=(owe?S.e.filter(x=>x.c==='dette'&&x.p&&pk(x.p)===pk(o.n)):S.inc.filter(x=>x.n&&pk(x.n)===pk('Remboursement de '+o.n))).filter(x=>x.d>=d0).reduce((a,x)=>a+x.v,0);flow([{k:'x',q:owe?`Tu dois ${eur(abs)} à ${esc(o.n)}`:`${esc(o.n)} te doit ${eur(abs)}`,sub:[pdv>0?(owe?'Déjà remboursé ':'Déjà reçu ')+eur(pdv):'',...(o.l.some(x=>x.ech)?(()=>{const n=o.l.filter(x=>x.ech).sort((a,b)=>(a.dd||'').localeCompare(b.dd||''));return['Encore '+n.length+' échéance'+(n.length>1?'s':''),n[0]&&n[0].dd?'Prochaine : '+eur(n[0].v)+' le '+pd(n[0].dd).getDate()+' '+MN[pd(n[0].dd).getMonth()]:'']})():o.l.map(x=>x.t?esc(x.t):''))].filter(Boolean).join(' · '),type:'tiles',opts:[
+function person(o){const owe=o.net<0,abs=Math.abs(o.net),d0=o.l.map(x=>x.d||'').sort()[0]||'',pdv=(owe?S.e.filter(x=>x.c==='dette'&&x.p&&pk(x.p)===pk(o.n)):S.inc.filter(x=>x.n&&pk(x.n)===pk('Remboursement de '+o.n))).filter(x=>x.d>=d0).reduce((a,x)=>a+x.v,0);flow([{k:'x',q:owe?`Tu dois ${eur(abs)} à ${esc(o.n)}`:`${esc(o.n)} te doit ${eur(abs)}`,sub:[debtWhen(o).replace(/^./,c=>c.toUpperCase()),pdv>0?(owe?'Déjà remboursé ':'Déjà reçu ')+eur(pdv):'',...(o.l.some(x=>x.ech)?(()=>{const n=o.l.filter(x=>x.ech).sort((a,b)=>(a.dd||'').localeCompare(b.dd||''));return['Encore '+n.length+' échéance'+(n.length>1?'s':''),n[0]&&n[0].dd?'Prochaine : '+eur(n[0].v)+' le '+pd(n[0].dd).getDate()+' '+MN[pd(n[0].dd).getMonth()]:'']})():o.l.map(x=>x.t?esc(x.t):''))].filter(Boolean).join(' · '),type:'tiles',opts:[
    {i:'check',l:'C’est réglé',s:'Tout est remboursé',one:1,go:()=>flowPay(o,1)},
    {i:'pen',l:owe?'J’ai remboursé une partie':'J’ai reçu une partie',s:'Ex. 100 € sur '+eur(abs),one:1,go:()=>flowPay(o,0)},
+   {i:'wallet',l:'Modifier',s:'Montant, dates, note, prénom',one:1,go:()=>debtEdit(o)},
    {i:'phone',l:owe?'Lui écrire':'Lui faire un petit rappel',s:'Un message prêt à envoyer',one:1,go:()=>{closeFl();debtMsg(o)}},
    {i:'next',l:'Le mois prochain',s:owe?'Je le rembourse en '+new Date(nYM+'-01T12:00').toLocaleDateString('fr-FR',{month:'long'}):'Il me le rend plus tard',one:1,go:()=>{if(o.l.some(x=>x.ech))o.l.forEach(x=>{if(!x.pm)return;x.pm=addM(x.pm<YM?YM:x.pm,1);if(x.dd){x.dd=fxDate({d:+x.dd.slice(8)},x.pm);const a=S.ag.find(a=>a.id===x.ag);if(a)a.d=x.dd}});else o.l.forEach(x=>x.pm=nYM);done(['Décalé',o.l.some(x=>x.ech)?'Tout l’échéancier glisse d’un mois':'Au mois prochain'])}},
    {i:'undo',l:'Retour',one:1,go:()=>debtList()}]}],()=>['',''])}
@@ -2725,8 +2864,8 @@ function flowSmoked(){flow([
 /* ---------- Envie de fumer ---------- */
 let sT=null,sB=null,rI=Math.floor(Math.random()*100);
 const RS=()=>REASONS.filter(([k])=>k==='Toi'||(k==='Cannabis'&&has('j'))||(k==='Tabac'&&has('c')));
-function closeScr(){clearInterval(sT);clearInterval(sB);clearInterval(eT);const x=$('.scr');if(x)x.remove();document.body.style.overflow='';home()}
-function scr(title,html){let x=$('.scr');if(x)x.remove();x=document.createElement('div');x.className='scr';x.innerHTML=`<div class="in2"><div class="top"><button class="back" aria-label="Fermer">${ic('x')}</button><span>${title}</span><span></span></div>${html}</div>`;document.body.appendChild(x);document.body.style.overflow='hidden';x.querySelector('.back').onclick=()=>{buzz();closeScr()};return x}
+function closeScr(){SCR_RE=null;clearInterval(sT);clearInterval(sB);clearInterval(eT);const x=$('.scr');if(x)x.remove();document.body.style.overflow='';home()}
+function scr(title,html){SCR_RE=null;let x=$('.scr');if(x)x.remove();x=document.createElement('div');x.className='scr';x.innerHTML=`<div class="in2"><div class="top"><button class="back" aria-label="Fermer">${ic('x')}</button><span>${title}</span><span></span></div>${html}</div>`;document.body.appendChild(x);document.body.style.overflow='hidden';x.querySelector('.back').onclick=()=>{buzz();closeScr()};return x}
 function openSOS(){clearInterval(sT);clearInterval(sB);
   const won=S.crav.filter(c=>c.w).length,rs=RS();
   const x=scr('Une envie',`<div class="orbw"><div class="orb" id="orb"></div><div class="orbt"><b id="bT">Inspire</b><small id="cT">3:00</small></div></div>
