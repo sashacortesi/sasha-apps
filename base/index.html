@@ -416,12 +416,12 @@ function parseBase(t){try{let d=JSON.parse(String(t).trim());if(d&&d.S)d=d.S;ret
 function useBase(N,from){const had=!!S.name;const snap=JSON.stringify(S);S=N;save();const o=$('.onb');if(o)o.remove();UNDO=had?{snap,label:''}:null;render();buzz([10,40,14]);
   toast(N.e.length+N.inc.length+' mouvements, '+N.fx.length+' charges, '+N.debts.length+' dettes repris')}
 function baseSheet(){const L=fromBase(baseLocal());
-  sheet('Reprendre mes données de Base',`${L?`<button class="go" id="loc" style="margin:0 0 14px">Reprendre tout de suite<br><small style="font-weight:500;opacity:.7">${esc(L.name)} · solde, ${L.fx.length} charges, ${L.e.length} dépenses</small></button>`:''}
-   <p class="foot" style="text-align:left;margin:0 0 10px">Tes données de l’ancienne Base sont reprises en un geste. Sinon, colle un code ou choisis un fichier.</p>
+  sheet('Reprendre mes données de Base',`<button class="go" id="clip" style="margin:0 0 14px">Coller depuis l’ancienne Base<br><small style="font-weight:500;opacity:.7">Dans l’ancienne Base : Moi › Copier vers la nouvelle Base</small></button>${L?`<button class="go" id="loc" style="margin:0 0 14px">Reprendre tout de suite<br><small style="font-weight:500;opacity:.7">${esc(L.name)} · solde, ${L.fx.length} charges, ${L.e.length} dépenses</small></button>`:''}
+   <p class="foot" style="text-align:left;margin:0 0 10px">Sinon, colle le code ici à la main ou choisis un fichier de sauvegarde.</p>
    <div class="fld"><textarea id="cp" rows="4" placeholder="Colle le code ici" style="width:100%;padding:14px;border-radius:14px;border:0;background:var(--card);box-shadow:var(--shadow);font:inherit;font-size:14px;outline:0;resize:none"></textarea></div>
    <button class="go" id="ok">Reprendre</button><button class="del" id="fi" style="color:var(--muted)">Ou choisir un fichier de sauvegarde</button><input type="file" id="ff" accept="application/json,.json" hidden>`,(b,close)=>{
    const go=N=>{if(!N){toast('Code illisible');return}close();useBase(N)};
-   const l=b.querySelector('#loc');if(l)l.onclick=()=>go(L);
+   const l=b.querySelector('#loc');if(l)l.onclick=()=>go(L);b.querySelector('#clip').onclick=async()=>{let t='';try{t=await navigator.clipboard.readText()}catch(e){}if(!t){toast('Rien à coller : copie d’abord depuis l’ancienne Base');return}go(parseBase(t))};
    b.querySelector('#ok').onclick=()=>go(parseBase(b.querySelector('#cp').value));
    b.querySelector('#fi').onclick=()=>b.querySelector('#ff').click();
    b.querySelector('#ff').onchange=async e=>go(parseBase(await e.target.files[0].text()))})}
