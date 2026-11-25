@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-build="1794654500" data-theme="light">
+<html lang="fr" data-build="1795639166" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -3274,6 +3274,18 @@ const chk=()=>{if(busy||!navigator.onLine)return;busy=1;fetch(location.pathname+
 chk();setInterval(()=>{if(document.visibilityState==='visible')chk()},5*60e3);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')chk()});
 addEventListener('pageshow',chk);addEventListener('focus',chk);addEventListener('online',chk);})();
+</script>
+<script>
+/* transfert vers la nouvelle Base : un seul bouton, seulement pour Sasha */
+(()=>{try{if(!S||!/sasha/i.test(S.name||'')||S.movedBase)return}catch(e){return}
+const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:9999;background:#F2F2F7;color:#111113;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:32px 24px calc(32px + env(safe-area-inset-bottom));font-family:-apple-system,system-ui,sans-serif';
+o.innerHTML='<div style="font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.1">Passe à la nouvelle Base</div><div style="font-size:16px;color:#8A8A90;line-height:1.4">Un geste ici, un geste là-bas. Tout ton budget et ton objectif suivent.</div><button id="mvb" style="margin-top:18px;padding:18px;border:0;border-radius:16px;background:#111113;color:#fff;font:inherit;font-size:17px;font-weight:700">Transférer mes données</button><button id="mvl" style="padding:12px;border:0;background:none;color:#8A8A90;font:inherit;font-size:15px">Plus tard</button>';
+document.body.appendChild(o);
+o.querySelector('#mvl').onclick=()=>o.remove();
+o.querySelector('#mvb').onclick=async()=>{const P={};for(const k of ['name','start','bal','fx','rin','up','e','inc','debts','env','rok','cof'])if(S[k]!=null)P[k]=S[k];
+  try{await navigator.clipboard.writeText(JSON.stringify(P));S.movedBase=1;localStorage.setItem(K,JSON.stringify(S));
+    o.innerHTML='<div style="font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.1">C’est copié.</div><div style="font-size:17px;color:#8A8A90;line-height:1.45">Ouvre la nouvelle Base et touche <b style="color:#111113">Coller mes données</b>. Tu peux ensuite supprimer cette icône.</div>'}
+  catch(e){toNew()}}})();
 </script>
 </body>
 </html>
